@@ -11,6 +11,7 @@ public sealed class TinDangQuanLyItemViewModel
     public string TieuDe { get; init; } = string.Empty;
     public string MaPhong { get; init; } = string.Empty;
     public string TrangThai { get; init; } = string.Empty;
+    public bool DaTuDongAnDoQuaHan { get; init; }
 }
 
 public sealed class TinDangChiTietViewModel

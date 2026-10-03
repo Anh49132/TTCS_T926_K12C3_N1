@@ -84,19 +84,31 @@ public class TinDangController(AppDbContext db, YeuCauThueService requests, Dich
         if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var ownerId))
             return Forbid();
 
-        var listings = await (
+        var now = DateTime.UtcNow;
+        var rows = await (
             from listing in db.TinDangs.AsNoTracking()
             join room in db.PhongTros.AsNoTracking() on listing.PhongId equals room.Id
             join building in db.ToaNhas.AsNoTracking() on room.ToaNhaId equals building.Id
             where building.ChuNhaId == ownerId
             orderby listing.NgayTao descending
-            select new TinDangQuanLyItemViewModel
+            select new
             {
                 Id = listing.Id,
                 TieuDe = listing.TieuDe,
                 MaPhong = room.MaPhong,
-                TrangThai = listing.TrangThai
+                TrangThai = listing.TrangThai,
+                NgayHetHan = listing.NgayHetHan
             }).ToListAsync();
+        var listings = rows.Select(listing => new TinDangQuanLyItemViewModel
+        {
+            Id = listing.Id,
+            TieuDe = listing.TieuDe,
+            MaPhong = listing.MaPhong,
+            TrangThai = listing.TrangThai,
+            DaTuDongAnDoQuaHan = listing.TrangThai == "TAM_AN"
+                && listing.NgayHetHan is { } expiry
+                && expiry < now
+        }).ToArray();
 
         return View(new DanhSachTinDangQuanLyViewModel { TinDangs = listings });
     }

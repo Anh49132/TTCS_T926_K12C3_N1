@@ -40,7 +40,13 @@ else
                 {
                     var label = statusLabels.GetValueOrDefault(tin.TrangThai, tin.TrangThai);
                     <tr>
-                        <th scope="row">@tin.TieuDe</th>
+                        <th scope="row">
+                            @tin.TieuDe
+                            @if (tin.DaTuDongAnDoQuaHan)
+                            {
+                                <span class="d-block text-danger small fw-semibold" role="status">⚠ Tin đã quá hạn hiển thị</span>
+                            }
+                        </th>
                         <td>@tin.MaPhong</td>
                         <td>@label</td>
                         <td>

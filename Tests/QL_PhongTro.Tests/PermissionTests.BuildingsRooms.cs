@@ -1,5 +1,7 @@
 using System.Net;
+using System.Globalization;
 using System.Text.RegularExpressions;
+using QL_PhongTro.Models;
 using Xunit;
 
 namespace QL_PhongTro.Tests;
@@ -103,5 +105,85 @@ public sealed partial class PermissionTests
         Assert.Equal(HttpStatusCode.NotFound, (await client.PostAsync($"/PhongTro/Edit/{roomId}", new FormUrlEncodedContent(form))).StatusCode);
         Assert.Equal(HttpStatusCode.NotFound, (await client.PostAsync($"/PhongTro/Delete/{roomId}", new FormUrlEncodedContent(form))).StatusCode);
         Assert.Equal(HttpStatusCode.NotFound, (await client.PostAsync($"/PhongTro/XoaToaNha/{buildingId}", new FormUrlEncodedContent(form))).StatusCode);
+    }
+
+    [Fact]
+    public async Task RoomListDisablesListingActionForOccupiedRoomWithReason()
+    {
+        using var client = await Login("CHU_NHA");
+        var buildingId = await CreateTestBuilding(client);
+        Execute("""
+            INSERT INTO phong_tro(toa_nha_id,ma_phong,tang,dien_tich,gia_thue,tien_coc_du_kien,so_nguoi_toi_da,trang_thai,ngay_tao,phien_ban)
+            VALUES($building,'R001',1,25,2000000,0,2,'DANG_THUE',$created,0)
+            """, ("$building", buildingId), ("$created", DateTime.UtcNow.ToString("O")));
+        var roomId = Convert.ToInt32(Scalar("SELECT id FROM phong_tro WHERE toa_nha_id=$id AND ma_phong='R001'", ("$id", buildingId)));
+
+        var html = WebUtility.HtmlDecode(await client.GetStringAsync($"/PhongTro?toaNhaId={buildingId}"));
+        var row = Regex.Match(html, "<tr>[\\s\\S]*?R001[\\s\\S]*?</tr>").Value;
+        Assert.NotEmpty(row);
+        Assert.Contains("disabled", row);
+        Assert.Contains("Phòng đang được thuê", row);
+        Assert.Equal(HttpStatusCode.Redirect, (await client.GetAsync($"/TinDang/Tao?phongId={roomId}")).StatusCode);
+        Assert.Equal(0L, Scalar("SELECT COUNT(*) FROM tin_dang WHERE phong_id=$id", ("$id", roomId)));
+    }
+
+    [Fact]
+    public async Task LandlordCreatesDraftWithRoomDataLockedAndThirtyDayExpiry()
+    {
+        using var client = await Login("CHU_NHA");
+        var buildingId = await CreateTestBuilding(client);
+        var roomForm = await RoomForm(client, buildingId);
+        roomForm["MaPhong"] = "DRAFT1";
+        roomForm["DienTich"] = "25.5";
+        roomForm["GiaThueDisplay"] = "2.500.000";
+        Assert.Equal(HttpStatusCode.Redirect, (await client.PostAsync("/PhongTro/Create", new FormUrlEncodedContent(roomForm))).StatusCode);
+        var roomId = Convert.ToInt32(Scalar("SELECT id FROM phong_tro WHERE toa_nha_id=$id AND ma_phong='DRAFT1'", ("$id", buildingId)));
+
+        Execute("INSERT INTO anh_phong(phong_id,duong_dan,duong_dan_anh_nho,thu_tu,mo_ta,ngay_tao) VALUES($room,'/images/draft-room.jpg','/images/draft-room-small.jpg',1,'Phòng sáng',$created)",
+            ("$room", roomId), ("$created", DateTime.UtcNow.ToString("O")));
+        var electricity = CreateService(buildingId, "DIEN", "Điện");
+        AddServicePrice(buildingId, electricity, accounts["CHU_NHA"], CachTinhDichVu.TheoChiSo, "kWh", 3500);
+        AddRoomSelection(buildingId, roomId, electricity, 4200);
+        var parking = CreateService(buildingId, "GUI_XE", "Gửi xe");
+        AddServicePrice(buildingId, parking, accounts["CHU_NHA"], CachTinhDichVu.CoDinh, "phòng/tháng", 100000);
+
+        var formUrl = $"/TinDang/Tao?phongId={roomId}";
+        var html = WebUtility.HtmlDecode(await client.GetStringAsync(formUrl));
+        Assert.Contains("value=\"25,5 m²\" readonly", html);
+        Assert.Contains("value=\"2.500.000 đ\" readonly", html);
+        Assert.Contains("/images/draft-room-small.jpg", html);
+        Assert.Contains("Điện", html);
+        Assert.Contains("4.200", html);
+        Assert.Contains("Gửi xe", html);
+        Assert.Contains("100.000", html);
+        var titleInput = Regex.Match(html, "<input[^>]*id=\"TieuDe\"[^>]*>").Value;
+        Assert.NotEmpty(titleInput);
+        Assert.DoesNotContain("readonly", titleInput);
+        var descriptionField = Regex.Match(html, "<textarea[^>]*id=\"MoTaThem\"[^>]*>").Value;
+        Assert.NotEmpty(descriptionField);
+        Assert.DoesNotContain("readonly", descriptionField);
+        Assert.Contains("id=\"NgayHetHan\"", html);
+        Assert.Contains("readonly", Regex.Match(html, "<input[^>]*id=\"NgayHetHan\"[^>]*>").Value);
+
+        var token = await PropertyToken(client, formUrl);
+        var response = await client.PostAsync("/TinDang/Tao", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["__RequestVerificationToken"] = token,
+            ["PhongId"] = roomId.ToString(),
+            ["TieuDe"] = "Phòng DRAFT1 thoáng mát",
+            ["MoTaThem"] = "Có cửa sổ và chỗ để xe.",
+            ["DienTich"] = "1",
+            ["GiaThue"] = "1"
+        }));
+        Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
+
+        Assert.Equal("Phòng DRAFT1 thoáng mát", Scalar("SELECT tieu_de FROM tin_dang WHERE phong_id=$id", ("$id", roomId)));
+        Assert.Equal("Có cửa sổ và chỗ để xe.", Scalar("SELECT noi_dung FROM tin_dang WHERE phong_id=$id", ("$id", roomId)));
+        Assert.Equal("NHAP", Scalar("SELECT trang_thai FROM tin_dang WHERE phong_id=$id", ("$id", roomId)));
+        var created = DateTime.Parse(Convert.ToString(Scalar("SELECT ngay_tao FROM tin_dang WHERE phong_id=$id", ("$id", roomId)))!, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+        var expires = DateTime.Parse(Convert.ToString(Scalar("SELECT ngay_het_han FROM tin_dang WHERE phong_id=$id", ("$id", roomId)))!, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind);
+        Assert.Equal(TimeSpan.FromDays(30), expires - created);
+        Assert.Equal(25.5m, Convert.ToDecimal(Scalar("SELECT dien_tich FROM phong_tro WHERE id=$id", ("$id", roomId))));
+        Assert.Equal(2500000L, Scalar("SELECT gia_thue FROM phong_tro WHERE id=$id", ("$id", roomId)));
     }
 }

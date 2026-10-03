@@ -158,6 +158,8 @@ builder.Services.AddScoped<DichVuService>();
 builder.Services.AddScoped<YeuCauThueService>();
 builder.Services.AddScoped<DichVuPhongService>();
 builder.Services.AddScoped<HoaDonDichVuService>();
+builder.Services.AddScoped<TinDangExpiryService>();
+builder.Services.AddHostedService<TinDangExpiryBackgroundService>();
 builder.Services.Configure<DichVuMacDinhOptions>(builder.Configuration.GetSection("DichVuMacDinh"));
 
 builder.Services.AddAuthentication()
