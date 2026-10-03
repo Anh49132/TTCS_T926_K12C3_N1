@@ -165,6 +165,9 @@ public partial class AppDbContext(DbContextOptions<AppDbContext> options, IHttpC
         listing.Property(e => e.TrangThai).HasColumnName("trang_thai").IsRequired().HasMaxLength(25).HasDefaultValue("NHAP");
         listing.Property(e => e.NgayTao).HasColumnName("ngay_tao").IsRequired();
         listing.HasIndex(e => new { e.PhongId, e.TrangThai });
+        listing.HasIndex(e => e.PhongId).IsUnique()
+            .HasFilter("trang_thai = 'DANG_HIEN_THI'")
+            .HasDatabaseName("ux_tin_dang_phong_dang_hien_thi");
         listing.HasIndex(e => new { e.TrangThai, e.NgayHetHan });
         listing.HasOne<PhongTro>().WithMany().HasForeignKey(e => e.PhongId).OnDelete(DeleteBehavior.Restrict);
         listing.HasOne<TaiKhoan>().WithMany().HasForeignKey(e => e.NguoiDangId).OnDelete(DeleteBehavior.Restrict);

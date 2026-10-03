@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using QL_PhongTro.Authorization;
 using QL_PhongTro.Data;
@@ -76,6 +77,87 @@ public class TinDangController(AppDbContext db, YeuCauThueService requests, Dich
         if (!await requests.IsInstalled()) return View("ChuaCaiDat");
         return View(await requests.PublicListings().OrderByDescending(t => t.NgayDang).Take(100).ToListAsync());
     }
+
+    [Authorize(Roles = "CHU_NHA"), ModuleAccess("PHONG_TRO", write: true), HttpGet]
+    public async Task<IActionResult> QuanLy()
+    {
+        if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var ownerId))
+            return Forbid();
+
+        var listings = await (
+            from listing in db.TinDangs.AsNoTracking()
+            join room in db.PhongTros.AsNoTracking() on listing.PhongId equals room.Id
+            join building in db.ToaNhas.AsNoTracking() on room.ToaNhaId equals building.Id
+            where building.ChuNhaId == ownerId
+            orderby listing.NgayTao descending
+            select new TinDangQuanLyItemViewModel
+            {
+                Id = listing.Id,
+                TieuDe = listing.TieuDe,
+                MaPhong = room.MaPhong,
+                TrangThai = listing.TrangThai
+            }).ToListAsync();
+
+        return View(new DanhSachTinDangQuanLyViewModel { TinDangs = listings });
+    }
+
+    [Authorize(Roles = "CHU_NHA"), ModuleAccess("PHONG_TRO", write: true), HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> CapNhatTrangThai(int id, string trangThai)
+    {
+        if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var ownerId))
+            return Forbid();
+
+        if (trangThai is not ("NHAP" or "DANG_HIEN_THI" or "TAM_AN" or "DA_CHO_THUE"))
+        {
+            TempData["Error"] = "Trạng thái tin đăng không hợp lệ.";
+            return RedirectToAction(nameof(QuanLy));
+        }
+
+        var listing = await (
+            from post in db.TinDangs
+            join room in db.PhongTros on post.PhongId equals room.Id
+            join building in db.ToaNhas on room.ToaNhaId equals building.Id
+            where post.Id == id && building.ChuNhaId == ownerId
+            select post).SingleOrDefaultAsync();
+
+        if (listing is null)
+            return NotFound();
+
+        if (trangThai == "DANG_HIEN_THI" &&
+            await db.TinDangs.AnyAsync(other => other.PhongId == listing.PhongId
+                && other.Id != listing.Id && other.TrangThai == "DANG_HIEN_THI"))
+        {
+            TempData["Error"] = "Không thể hiển thị tin này vì phòng đã có một tin khác đang hiển thị. Hãy tạm ẩn tin hiện tại trước.";
+            return RedirectToAction(nameof(QuanLy));
+        }
+
+        var changed = listing.TrangThai != trangThai;
+        listing.TrangThai = trangThai;
+        if (changed && trangThai == "DANG_HIEN_THI")
+            listing.NgayDang = DateTime.UtcNow;
+
+        try
+        {
+            await db.SaveChangesAsync();
+        }
+        catch (DbUpdateException error) when (error.InnerException is SqliteException { SqliteExtendedErrorCode: 2067 })
+        {
+            TempData["Error"] = "Không thể hiển thị tin này vì phòng đã có một tin khác đang hiển thị. Hãy tạm ẩn tin hiện tại trước.";
+            return RedirectToAction(nameof(QuanLy));
+        }
+
+        TempData["Success"] = $"Đã cập nhật trạng thái tin đăng thành “{TrangThaiLabel(trangThai)}”.";
+        return RedirectToAction(nameof(QuanLy));
+    }
+
+    private static string TrangThaiLabel(string trangThai) => trangThai switch
+    {
+        "NHAP" => "Nháp",
+        "DANG_HIEN_THI" => "Đang hiển thị",
+        "TAM_AN" => "Tạm ẩn",
+        "DA_CHO_THUE" => "Đã cho thuê",
+        _ => trangThai
+    };
 
     [HttpGet]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]

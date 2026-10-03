@@ -1,5 +1,18 @@
 namespace QL_PhongTro.ViewModels;
 
+public sealed class DanhSachTinDangQuanLyViewModel
+{
+    public IReadOnlyList<TinDangQuanLyItemViewModel> TinDangs { get; init; } = [];
+}
+
+public sealed class TinDangQuanLyItemViewModel
+{
+    public int Id { get; init; }
+    public string TieuDe { get; init; } = string.Empty;
+    public string MaPhong { get; init; } = string.Empty;
+    public string TrangThai { get; init; } = string.Empty;
+}
+
 public sealed class TinDangChiTietViewModel
 {
     public int Id { get; init; }

@@ -26,7 +26,10 @@ var selected = module.Code switch {
     _ => controller == "Modules" && ViewContext.RouteData.Values["code"]?.ToString() == module.Code
 };
 var icon = module.Code switch { "PHONG_TRO" => "▦", "TAI_KHOAN" => "⚙", "TAI_CHINH" => "◇", "HOP_DONG" => "▤", "DIEN_NUOC" => "◉", "BAO_CAO" => "▥", _ => "▣" };
-<a class="sidebar-link @Active(selected)" data-menu-module="@module.Code" href="@QL_PhongTro.Authorization.PermissionService.Url(module.Code)" aria-current="@(selected ? "page" : null)"><span class="menu-icon" aria-hidden="true">@icon</span>@module.Name</a>
+var moduleUrl = module.Code == "TIN_DANG" && User.IsInRole("CHU_NHA")
+    ? Url.Action("QuanLy", "TinDang")
+    : QL_PhongTro.Authorization.PermissionService.Url(module.Code);
+<a class="sidebar-link @Active(selected)" data-menu-module="@module.Code" href="@moduleUrl" aria-current="@(selected ? "page" : null)"><span class="menu-icon" aria-hidden="true">@icon</span>@module.Name</a>
 @if (module.Code == "PHONG_TRO" && (User.IsInRole("CHU_NHA") || User.IsInRole("QUAN_LY") || User.IsInRole("ADMIN"))) {
 <a class="sidebar-link @Active(buildingPage)" asp-controller="PhongTro" asp-action="ToaNha" aria-current="@(buildingPage ? "page" : null)"><span class="menu-icon" aria-hidden="true">▥</span>Quản lý tòa nhà</a>
 @if (User.IsInRole("CHU_NHA")) {
