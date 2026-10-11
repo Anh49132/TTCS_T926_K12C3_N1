@@ -6,7 +6,7 @@
     var today = DateOnly.FromDateTime(Model.NowUtc.AddHours(7));
     var pending = all.Count(x => TrangThaiYeuCau.ChuaXuLy(x.TrangThai));
     var overdue = all.Count(x => x.QuaHanChuaXuLy);
-    var approved = all.Count(x => x.LoaiYeuCau == "THUE_NGAY" && x.TrangThai == "DA_DUYET" && !x.DaLapHopDong);
+    var approved = all.Count(x => x.TrangThai == "DA_DUYET" && !x.DaLapHopDong);
     var appointments = all.Where(x => x.TrangThai == "DA_HEN_LICH" && x.LichHen.HasValue && DateOnly.FromDateTime(x.LichHen.Value.AddHours(7)) == today).OrderBy(x => x.LichHen).ToList();
     var monthCount = all.Count(x => x.NgayTao.AddHours(7).Year == today.Year && x.NgayTao.AddHours(7).Month == today.Month);
 }
@@ -15,7 +15,7 @@
 <section class="or-stats">
 <article aria-label="@pending yêu cầu chưa xử lý"><span class="or-icon amber">◷</span><div><span>Chờ xử lý</span><strong>@pending</strong><small class="or-tag danger">@overdue yêu cầu quá 24 giờ</small></div></article>
 <article><span class="or-icon blue">▦</span><div><span>Lịch hẹn hôm nay</span><strong>@appointments.Count</strong><small class="or-tag blue">@today.ToString("dd/MM/yyyy")</small></div></article>
-<article><span class="or-icon green">✓</span><div><span>Thuê ngay đã duyệt</span><strong>@approved</strong><small class="or-tag green">Chưa lập hợp đồng</small></div></article>
+<article><span class="or-icon green">✓</span><div><span>Yêu cầu đã duyệt</span><strong>@approved</strong><small class="or-tag green">Chưa lập hợp đồng</small></div></article>
 <article><span class="or-icon">▤</span><div><span>Tổng yêu cầu tháng này</span><strong>@monthCount</strong></div></article>
 </section>
 <div class="or-layout"><section class="or-card or-list"><h2>Danh sách yêu cầu</h2>
@@ -29,6 +29,6 @@
 </tbody></table></div><p id="or-empty" class="or-empty" hidden="@(Model.YeuCaus.Count > 0)">Không có yêu cầu phù hợp. Thử bỏ bộ lọc.</p><footer class="or-pagination"><span id="or-count">@Model.YeuCaus.Count yêu cầu</span><nav id="or-pages" aria-label="Phân trang yêu cầu"></nav></footer>
 </section><aside>
 <section class="or-card"><h2>Lịch hẹn hôm nay</h2><p class="or-muted">@today.ToString("dd/MM/yyyy")</p>@if (appointments.Count == 0) { <p class="or-muted">Chưa có lịch hẹn hôm nay.</p> }@foreach(var item in appointments){<a class="or-appointment" asp-controller="LichHen" asp-action="ChiTiet" asp-route-id="@item.Id"><strong>@item.LichHen!.Value.AddHours(7).ToString("HH:mm")</strong><span>@item.MaPhong · @item.TenToaNha<b>@item.TenKhach</b><small>Đã hẹn lịch</small></span><span>›</span></a>}</section>
-<section class="or-card"><h2>Cần chú ý</h2><div class="or-attention"><span class="or-tag danger">@overdue</span> yêu cầu quá 24 giờ</div><div class="or-attention"><span class="or-tag amber">@all.Count(x => x.TrangThai == "MOI")</span> yêu cầu mới chưa phản hồi</div><div class="or-attention"><span class="or-tag green">@approved</span> thuê ngay đã duyệt chưa lập hợp đồng</div></section>
+<section class="or-card"><h2>Cần chú ý</h2><div class="or-attention"><span class="or-tag danger">@overdue</span> yêu cầu quá 24 giờ</div><div class="or-attention"><span class="or-tag amber">@all.Count(x => x.TrangThai == "MOI")</span> yêu cầu mới chưa phản hồi</div><div class="or-attention"><span class="or-tag green">@approved</span> yêu cầu đã duyệt chưa lập hợp đồng</div></section>
 <p class="or-notice">Yêu cầu mới nên được phản hồi trong vòng 24 giờ. Phản hồi kịp thời giúp khách sắp xếp lịch xem và thuê phòng.</p>
 </aside></div></div>

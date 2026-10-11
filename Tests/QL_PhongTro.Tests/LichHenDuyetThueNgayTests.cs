@@ -140,6 +140,52 @@ public class LichHenDuyetThueNgayTests : IDisposable
     private string TrangThaiPhong() => Scalar("SELECT trang_thai FROM phong_tro WHERE id=$id", ("$id", _phongId));
 
     [Fact]
+    public async Task DuyetSauKhiXem_GiuLichHenVaGiuPhong()
+    {
+        var appointment = _hienTai.AddDays(-1);
+        var id = TaoYeuCau(LichHenTrangThai.LoaiXemPhong, LichHenTrangThai.DaHenLich, appointment);
+        await _service.DuyetSauKhiXemAsync(id, _chuNhaId, default);
+        Assert.Equal("DA_DUYET", Scalar("SELECT trang_thai FROM yeu_cau_thue WHERE id=$id", ("$id", id)));
+        Assert.Equal("DA_DAT_COC", TrangThaiPhong());
+        Assert.Equal(appointment.ToString("yyyy-MM-dd HH:mm:ss"), Scalar("SELECT lich_hen FROM yeu_cau_thue WHERE id=$id", ("$id", id)));
+        Assert.Equal(HanhDongYeuCau.DuyetSauKhiXem, Scalar("SELECT hanh_dong FROM yeu_cau_thue_lich_su WHERE yeu_cau_thue_id=$id", ("$id", id)));
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _service.DuyetSauKhiXemAsync(id, _chuNhaId, default));
+    }
+
+    [Theory]
+    [InlineData("XEM_PHONG", "MOI")]
+    [InlineData("THUE_NGAY", "DA_HEN_LICH")]
+    [InlineData("XEM_PHONG", "DA_HUY")]
+    public async Task DuyetSauKhiXem_ChanLoaiHoacTrangThaiSai(string type, string status)
+    {
+        var id = TaoYeuCau(type, status);
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _service.DuyetSauKhiXemAsync(id, _chuNhaId, default));
+        Assert.Equal("TRONG", TrangThaiPhong());
+    }
+
+    [Fact]
+    public async Task DuyetSauKhiXem_ChanChuKhacVaSucChuaDaThayDoi()
+    {
+        var id = TaoYeuCau(LichHenTrangThai.LoaiXemPhong, LichHenTrangThai.DaHenLich);
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => _service.DuyetSauKhiXemAsync(id, _chuNhaKhacId, default));
+        Insert("UPDATE phong_tro SET so_nguoi_toi_da=1 WHERE id=$id", ("$id", _phongId));
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _service.DuyetSauKhiXemAsync(id, _chuNhaId, default));
+        Assert.Equal("TRONG", TrangThaiPhong());
+        Assert.Equal("DA_HEN_LICH", Scalar("SELECT trang_thai FROM yeu_cau_thue WHERE id=$id", ("$id", id)));
+    }
+
+    [Fact]
+    public async Task DuyetSauKhiXem_RollbackNeuGhiLichSuLoi()
+    {
+        var id = TaoYeuCau(LichHenTrangThai.LoaiXemPhong, LichHenTrangThai.DaHenLich);
+        Insert("CREATE TRIGGER viewing_audit_fail BEFORE INSERT ON yeu_cau_thue_lich_su BEGIN SELECT RAISE(ABORT,'test failure'); END;");
+        await Assert.ThrowsAsync<SqliteException>(() => _service.DuyetSauKhiXemAsync(id, _chuNhaId, default));
+        Assert.Equal("TRONG", TrangThaiPhong());
+        Assert.Equal("DA_HEN_LICH", Scalar("SELECT trang_thai FROM yeu_cau_thue WHERE id=$id", ("$id", id)));
+        Assert.Equal("DANG_HIEN_THI", Scalar("SELECT trang_thai FROM tin_dang WHERE id=$id", ("$id", _tinDangId)));
+    }
+
+    [Fact]
     public async Task Duyet_DuyetYeuCauVaChuyenPhongSangDaDatCoc()
     {
         var id = TaoYeuCau();

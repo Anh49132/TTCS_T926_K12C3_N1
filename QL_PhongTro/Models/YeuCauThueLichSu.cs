@@ -42,6 +42,7 @@ public static class HanhDongYeuCau
     public const string XacNhan = "XAC_NHAN";
     public const string DoiLich = "DOI_LICH";
     public const string DuyetThueNgay = "DUYET_THUE_NGAY";
+    public const string DuyetSauKhiXem = "DUYET_SAU_KHI_XEM";
     public const string TuChoi = "TU_CHOI";
     public const string Huy = "HUY_YEU_CAU";
 
@@ -58,6 +59,7 @@ public static class HanhDongYeuCau
         XacNhan => "Chủ nhà xác nhận lịch hẹn",
         DoiLich => "Chủ nhà đổi lịch hẹn",
         DuyetThueNgay => "Chủ nhà duyệt thuê ngay",
+        DuyetSauKhiXem => "Chủ nhà duyệt thuê sau khi xem phòng",
         TuChoi => "Chủ nhà từ chối yêu cầu",
         Huy => "Hủy yêu cầu",
         TaoYeuCau => "Khách gửi yêu cầu",

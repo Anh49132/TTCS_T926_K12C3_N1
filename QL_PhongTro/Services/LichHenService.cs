@@ -378,12 +378,18 @@ public class LichHenService(AppDbContext db, ITimeProvider clock)
     /// rejection. Request and room move inside one transaction, so a failure between them rolls
     /// back instead of leaving a request approved for a room that is still free.
     /// </summary>
-    public async Task DuyetThueNgayAsync(int yeuCauId, int accountId, CancellationToken ct)
+    public Task DuyetThueNgayAsync(int yeuCauId, int accountId, CancellationToken ct) => DuyetThueAsync(yeuCauId, accountId, false, ct);
+
+    public Task DuyetSauKhiXemAsync(int yeuCauId, int accountId, CancellationToken ct) => DuyetThueAsync(yeuCauId, accountId, true, ct);
+
+    private async Task DuyetThueAsync(int yeuCauId, int accountId, bool sauKhiXem, CancellationToken ct)
     {
         var yeuCau = await LoadAsync(yeuCauId, ct) ?? throw new KeyNotFoundException("Yêu cầu không tồn tại.");
         if (!await CoQuyenXuLyAsync(accountId, yeuCau, ct))
             throw new UnauthorizedAccessException("Chỉ chủ nhà của phòng này mới duyệt được yêu cầu.");
-        if (yeuCau.LoaiYeuCau != LichHenTrangThai.LoaiThueNgay)
+        if (sauKhiXem && (yeuCau.LoaiYeuCau != LichHenTrangThai.LoaiXemPhong || yeuCau.TrangThai != LichHenTrangThai.DaHenLich))
+            throw new InvalidOperationException("Chỉ yêu cầu xem phòng đã hẹn lịch mới được duyệt thuê sau khi xem.");
+        if (!sauKhiXem && yeuCau.LoaiYeuCau != LichHenTrangThai.LoaiThueNgay)
             throw new InvalidOperationException("Chỉ yêu cầu loại Thuê ngay mới duyệt theo cách này.");
         if (yeuCau.TrangThai is not (LichHenTrangThai.Moi or LichHenTrangThai.DaHenLich))
             throw new InvalidOperationException("Yêu cầu này không còn ở trạng thái cho phép duyệt.");
@@ -393,6 +399,22 @@ public class LichHenService(AppDbContext db, ITimeProvider clock)
 
         await db.Database.OpenConnectionAsync();
         using var tx = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        if (sauKhiXem)
+        {
+            using var check = tx.Connection!.CreateCommand();
+            check.Transaction = tx;
+            check.CommandText = """
+                SELECT CASE WHEN p.so_nguoi_toi_da < $people THEN 'CAPACITY'
+                    WHEN EXISTS(SELECT 1 FROM hop_dong h WHERE h.phong_id=p.id AND h.trang_thai IN ('CHO_HIEU_LUC','DANG_HIEU_LUC')) THEN 'CONTRACT'
+                    WHEN EXISTS(SELECT 1 FROM yeu_cau_thue r JOIN tin_dang t ON t.id=r.tin_dang_id WHERE t.phong_id=p.id AND r.id<>$request AND r.trang_thai='DA_DUYET') THEN 'APPROVED'
+                    ELSE 'OK' END FROM phong_tro p WHERE p.id=$room;
+                """;
+            check.Parameters.AddWithValue("$people", yeuCau.SoNguoiDuKien);
+            check.Parameters.AddWithValue("$request", yeuCauId);
+            check.Parameters.AddWithValue("$room", yeuCau.PhongId);
+            if (await check.ExecuteScalarAsync(ct) is not string result || result != "OK")
+                throw new InvalidOperationException("Phòng không còn đủ điều kiện giữ chỗ: kiểm tra sức chứa, hợp đồng và yêu cầu đã duyệt khác.");
+        }
         using (var update = tx.Connection!.CreateCommand())
         {
             update.Transaction = tx;
@@ -430,9 +452,9 @@ public class LichHenService(AppDbContext db, ITimeProvider clock)
         await GhiNhatKyPhongAsync(tx, yeuCau.PhongId, LichHenTrangThai.PhongTrong,
             LichHenTrangThai.PhongDaDatCoc, accountId, ten, vaiTro, now, ct);
         await GhiLichSuAsync(tx, yeuCauId, yeuCau.TrangThai, LichHenTrangThai.DaDuyet,
-            HanhDongYeuCau.DuyetThueNgay, accountId, ten, vaiTro, yeuCau.LichHen, yeuCau.LichHen, null, null, now, ct);
+            sauKhiXem ? HanhDongYeuCau.DuyetSauKhiXem : HanhDongYeuCau.DuyetThueNgay, accountId, ten, vaiTro, yeuCau.LichHen, yeuCau.LichHen, null, null, now, ct);
         await GhiThongBaoAsync(tx, yeuCau, LoaiThongBaoYeuCau.YeuCauDuyet,
-            "Yêu cầu thuê ngay đã được duyệt",
+            sauKhiXem ? "Yêu cầu thuê sau khi xem phòng đã được duyệt" : "Yêu cầu thuê ngay đã được duyệt",
             $"Yêu cầu {yeuCau.MaYeuCau} đã được duyệt. Phòng {yeuCau.MaPhong} chuyển sang Đã đặt cọc.",
             now, ct);
         tx.Commit();

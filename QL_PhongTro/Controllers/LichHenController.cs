@@ -63,6 +63,8 @@ public class LichHenController(
                 && yeuCau.TrangThai is LichHenTrangThai.Moi or LichHenTrangThai.DaHenLich,
             HienThiNutLapHopDong = laChuNha
                 && yeuCau.TrangThai == LichHenTrangThai.DaDuyet,
+            HienThiNutDuyetSauKhiXem = laChuNha && yeuCau.LoaiYeuCau == LichHenTrangThai.LoaiXemPhong
+                && yeuCau.TrangThai == LichHenTrangThai.DaHenLich && yeuCau.TrangThaiPhong == LichHenTrangThai.PhongTrong,
             HienThiNutHuy = yeuCau.TrangThai is LichHenTrangThai.Moi or LichHenTrangThai.DaHenLich,
             LichSu = lichSu
         };
@@ -191,6 +193,21 @@ public class LichHenController(
         catch (UnauthorizedAccessException) { return Forbid(); }
         catch (LichHenConflictException ex) { TempData["LichHenError"] = ex.Message; }
         catch (InvalidOperationException ex) { TempData["LichHenError"] = ex.Message; }
+        return RedirectToAction(nameof(ChiTiet), new { id });
+    }
+
+    [HttpPost("/LichHen/DuyetSauKhiXem"), ValidateAntiForgeryToken, ModuleAccess("YEU_CAU_THUE", write: true)]
+    public async Task<IActionResult> DuyetSauKhiXem(int id, bool daDongYThue, CancellationToken ct)
+    {
+        try
+        {
+            if (!daDongYThue) throw new InvalidOperationException("Hãy xác nhận khách đã đồng ý thuê sau khi xem phòng.");
+            await service.DuyetSauKhiXemAsync(id, AccountId, ct);
+            TempData["LichHenOk"] = "Đã duyệt thuê sau khi xem phòng. Bạn có thể lập hợp đồng.";
+        }
+        catch (KeyNotFoundException) { return NotFound(); }
+        catch (UnauthorizedAccessException) { return Forbid(); }
+        catch (Exception ex) when (ex is InvalidOperationException or LichHenConflictException) { TempData["LichHenError"] = ex.Message; }
         return RedirectToAction(nameof(ChiTiet), new { id });
     }
 

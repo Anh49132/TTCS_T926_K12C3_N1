@@ -33,6 +33,7 @@ public sealed class LichHenChiTietViewModel
     /// an appointment or a rejection. The room moves to Đã đặt cọc on approval.
     /// </summary>
     public bool HienThiNutDuyetThueNgay { get; init; }
+    public bool HienThiNutDuyetSauKhiXem { get; init; }
 
     /// <summary>
     /// After approval the request is the input of a rental contract, so the landlord gets the

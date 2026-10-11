@@ -122,10 +122,20 @@
 }
 
 @if (Model.HienThiNutLapHopDong) {
+@* Cùng luồng lập hợp đồng cho thuê ngay và thuê sau khi xem. *@
 <div class="mb-4">
     <a class="btn btn-primary" href="@LichHenChiTietViewModel.DuongDanLapHopDong?@($"id={yeuCau.Id}")">Lập hợp đồng</a>
     <span class="text-muted">Yêu cầu đã duyệt và phòng đã đặt cọc, sẵn sàng lập hợp đồng.</span>
 </div>
+}
+
+@if (Model.HienThiNutDuyetSauKhiXem) {
+<h2>Duyệt thuê sau khi xem phòng</h2>
+<p class="text-muted">Sau khi khách xem phòng và đồng ý thuê, duyệt yêu cầu để giữ phòng và lập hợp đồng. Thao tác này chưa ghi nhận tiền cọc thực thu.</p>
+<form method="post" asp-action="DuyetSauKhiXem" asp-route-id="@yeuCau.Id" class="mb-4">
+    <label class="d-flex align-items-center gap-2 mb-3"><input type="checkbox" name="daDongYThue" value="true" required /> Khách đã đồng ý thuê sau khi xem phòng.</label>
+    <button class="btn btn-primary" type="submit">Duyệt thuê sau khi xem</button>
+</form>
 }
 
 @if (Model.HienThiFormTuChoi) {

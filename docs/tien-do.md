@@ -1,3 +1,9 @@
+## 11/10/2026 — Duyệt thuê sau khi xem phòng
+
+- Chủ nhà có nút Duyệt thuê sau khi xem cho yêu cầu XEM_PHONG/DA_HEN_LICH khi phòng còn trống. Phải xác nhận khách đồng ý thuê ở form và backend; loại/trạng thái khác bị từ chối. Giữ nguyên loại yêu cầu, lịch hẹn và lịch sử.
+- Dùng cùng transaction giữ phòng như thuê ngay: yêu cầu DA_DUYET, phòng DA_DAT_COC, tin DA_CHO_THUE, lịch sử/nhật ký/thông báo. Kiểm tra sức chứa hiện tại, hợp đồng đang/chờ hiệu lực và yêu cầu đã duyệt khác trong khóa SQLite; lỗi rollback. Lập hợp đồng dùng luồng hiện có từ yêu cầu đã duyệt. Không tự ghi nhận cọc.
+- Thống kê đã duyệt chưa lập hợp đồng bao gồm cả hai loại yêu cầu. Không đổi schema/DB thật. Build PASS; 28 test duyệt cũ/mới và HTTP đến form hợp đồng PASS, gồm CSRF, thiếu xác nhận, sai loại/trạng thái, trái quyền, sức chứa giảm, gửi lại và rollback lịch sử. Chưa kiểm tra trực quan trình duyệt.
+
 ## 11/10/2026 — Email yêu cầu mới và thay đổi lịch hẹn
 
 - Khách gửi yêu cầu thành công: gửi email tới tài khoản chủ sở hữu tòa của phòng trong tin, chứa mã yêu cầu, khách, phòng, loại, ngày mong muốn và link xử lý. Yêu cầu trùng hoặc không được lưu không gửi email.
