@@ -1,3 +1,10 @@
+## 11/10/2026 — Email yêu cầu mới và thay đổi lịch hẹn
+
+- Khách gửi yêu cầu thành công: gửi email tới tài khoản chủ sở hữu tòa của phòng trong tin, chứa mã yêu cầu, khách, phòng, loại, ngày mong muốn và link xử lý. Yêu cầu trùng hoặc không được lưu không gửi email.
+- Chủ nhà đổi lịch thành công: gửi email cho tài khoản khách của yêu cầu với giờ mới theo Việt Nam và link chi tiết. Giữ email xác nhận lịch hiện có; thiếu người nhận/dịch vụ gửi cũng báo lỗi thay vì im lặng.
+- Email gửi sau khi nghiệp vụ được lưu; lỗi gửi không rollback dữ liệu và được báo qua giao diện. Dùng cấu hình PasswordReset SMTP/pickup hiện có, không đổi cấu hình/bí mật/DB. Chưa có hàng đợi tự gửi lại email lỗi.
+- Build PASS; kiểm thử HTTP email thành công và lỗi SMTP, đúng chủ/khách, yêu cầu trùng và thao tác trái quyền không gửi email. Chưa gửi thử SMTP tới hộp thư thật.
+
 ## 11/10/2026 — Giao diện chủ nhà quản lý yêu cầu
 
 - Danh sách có bốn thống kê từ dữ liệu thật, tab trạng thái, tìm kiếm, lọc loại/tòa, phân trang 10 dòng, xuất CSV UTF-8 có chống công thức, lịch hẹn hôm nay và cảnh báo quá 24 giờ. Thống kê trong phạm vi tòa đang chọn và không bị lọc theo trạng thái. Thuê ngay đã duyệt chỉ đếm yêu cầu chưa có hợp đồng chưa hủy.

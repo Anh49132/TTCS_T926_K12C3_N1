@@ -35,6 +35,8 @@ public interface IRegistrationEmailSender
 public interface IAppointmentEmailSender
 {
     Task SendConfirmedAsync(string email, string name, string requestCode, DateTime appointmentLocal, int requestId);
+    Task SendRescheduledAsync(string email, string name, string requestCode, DateTime appointmentLocal, int requestId);
+    Task SendNewRequestAsync(string email, string ownerName, string requestCode, string tenantName, string roomCode, string requestType, DateOnly desiredDate, int requestId);
 }
 
 public interface IInvoiceEmailSender
@@ -94,6 +96,29 @@ public sealed class PasswordEmailSender(IOptions<PasswordResetOptions> options, 
             $"Thời gian: {appointmentLocal:dd/MM/yyyy HH:mm}\n" +
             $"Xem chi tiết yêu cầu: {detailUrl}\n\nNếu cần thay đổi, vui lòng liên hệ chủ nhà qua thông tin trong yêu cầu.");
     }
+
+    private string RequestUrl(int requestId)
+    {
+        var baseUrl = options.Value.PublicBaseUrl;
+        if (!Uri.TryCreate(baseUrl, UriKind.Absolute, out var origin) ||
+            (origin.Scheme != "https" && !(environment.IsDevelopment() && origin.Scheme == "http" && origin.IsLoopback)) ||
+            !string.IsNullOrEmpty(origin.UserInfo) || !string.IsNullOrEmpty(origin.Query) || !string.IsNullOrEmpty(origin.Fragment))
+            throw new InvalidOperationException("Configure a trusted PublicBaseUrl.");
+        return $"{baseUrl.TrimEnd('/')}/LichHen/ChiTiet/{requestId}";
+    }
+
+    public Task SendRescheduledAsync(string email, string name, string requestCode, DateTime appointmentLocal, int requestId) =>
+        DeliverAsync(email, $"Lịch hẹn xem phòng đã thay đổi - {requestCode}",
+            $"Xin chào {name},\n\nChủ nhà đã đổi lịch hẹn của yêu cầu {requestCode}.\n" +
+            $"Thời gian mới: {appointmentLocal:dd/MM/yyyy HH:mm}\n" +
+            $"Xem chi tiết yêu cầu: {RequestUrl(requestId)}\n\nVui lòng kiểm tra lịch mới trước khi đến xem phòng.");
+
+    public Task SendNewRequestAsync(string email, string ownerName, string requestCode, string tenantName, string roomCode, string requestType, DateOnly desiredDate, int requestId) =>
+        DeliverAsync(email, $"Yêu cầu thuê phòng mới - {requestCode}",
+            $"Xin chào {ownerName},\n\nBạn có yêu cầu mới từ khách {tenantName}.\n" +
+            $"Mã yêu cầu: {requestCode}\nPhòng: {roomCode}\nLoại yêu cầu: {QL_PhongTro.Models.TrangThaiYeuCau.LoaiLabel(requestType)}\n" +
+            $"Ngày mong muốn: {desiredDate:dd/MM/yyyy}\n" +
+            $"Xử lý yêu cầu: {RequestUrl(requestId)}\n\nBạn nên phản hồi yêu cầu trong vòng 24 giờ.");
 
     private async Task<EmailDeliveryResult> DeliverAsync(string email, string subject, string body)
     {

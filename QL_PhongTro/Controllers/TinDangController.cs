@@ -12,7 +12,7 @@ namespace QL_PhongTro.Controllers;
 
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public class TinDangController(AppDbContext db, YeuCauThueService requests, DichVuService services,
-    DichVuPhongService roomServices, TinDangExpirationService expiration) : Controller
+    DichVuPhongService roomServices, TinDangExpirationService expiration, IAppointmentEmailSender? email = null) : Controller
 {
     private int AccountId => int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : 0;
 
@@ -317,6 +317,25 @@ public class TinDangController(AppDbContext db, YeuCauThueService requests, Dich
         try
         {
             var request = await requests.Send(id, accountId, form);
+            if (request is not null)
+            {
+                try
+                {
+                    var recipient = await (from listing in db.TinDangs.AsNoTracking()
+                        join room in db.PhongTros.AsNoTracking() on listing.PhongId equals room.Id
+                        join building in db.ToaNhas.AsNoTracking() on room.ToaNhaId equals building.Id
+                        join owner in db.TaiKhoans.AsNoTracking() on building.ChuNhaId equals owner.Id
+                        join tenant in db.KhachThues.AsNoTracking() on request.KhachThueId equals tenant.Id
+                        where listing.Id == request.TinDangId && owner.DangHoatDong && !owner.IsDeleted
+                        select new { owner.Email, owner.HoTen, TenantName = tenant.HoTen, room.MaPhong }).SingleOrDefaultAsync();
+                    if (recipient is null || email is null) throw new InvalidOperationException("Không có người nhận hoặc dịch vụ email.");
+                    await email.SendNewRequestAsync(recipient.Email, recipient.HoTen, request.MaYeuCau, recipient.TenantName, recipient.MaPhong, request.LoaiYeuCau, request.NgayMongMuon, request.Id);
+                }
+                catch (Exception)
+                {
+                    TempData["Error"] = "Yêu cầu đã được lưu nhưng chưa gửi được email báo cho chủ nhà. Chủ nhà vẫn xem được yêu cầu trong hệ thống.";
+                }
+            }
             return request is null ? NotFound() : RedirectToAction(nameof(ThanhCong), new { id = request.Id });
         }
         catch (UnauthorizedAccessException) { return Forbid(); }

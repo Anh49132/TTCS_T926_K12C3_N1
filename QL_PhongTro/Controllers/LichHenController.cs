@@ -127,8 +127,8 @@ public class LichHenController(
                                        join account in db.TaiKhoans.AsNoTracking() on tenant.TaiKhoanId equals account.Id
                                        where request.Id == id && account.DangHoatDong && !account.IsDeleted
                                        select new { account.Email, tenant.HoTen, request.MaYeuCau }).SingleOrDefaultAsync(ct);
-                if (recipient is not null && email is not null)
-                    await email.SendConfirmedAsync(recipient.Email, recipient.HoTen, recipient.MaYeuCau, nhap, id);
+                if (recipient is null || email is null) throw new InvalidOperationException("Không có người nhận hoặc dịch vụ email.");
+                await email.SendConfirmedAsync(recipient.Email, recipient.HoTen, recipient.MaYeuCau, nhap, id);
             }
             catch (Exception)
             {
@@ -157,6 +157,20 @@ public class LichHenController(
             if (LichHenNhap is not { } nhap) throw new InvalidOperationException("Hãy chọn ngày giờ hẹn mới.");
             await service.DoiLichAsync(id, AccountId, ChuyenNhapSangUtc(nhap)!.Value, ct);
             TempData["LichHenOk"] = "Đã đổi lịch hẹn.";
+            try
+            {
+                var recipient = db is null || email is null ? null : await (from request in db.YeuCauThues.AsNoTracking()
+                    join tenant in db.KhachThues.AsNoTracking() on request.KhachThueId equals tenant.Id
+                    join account in db.TaiKhoans.AsNoTracking() on tenant.TaiKhoanId equals account.Id
+                    where request.Id == id && account.DangHoatDong && !account.IsDeleted
+                    select new { account.Email, tenant.HoTen, request.MaYeuCau }).SingleOrDefaultAsync(ct);
+                if (recipient is null || email is null) throw new InvalidOperationException("Không có người nhận hoặc dịch vụ email.");
+                await email.SendRescheduledAsync(recipient.Email, recipient.HoTen, recipient.MaYeuCau, nhap, id);
+            }
+            catch (Exception)
+            {
+                TempData["LichHenWarning"] = "Lịch hẹn đã được đổi nhưng chưa gửi được email cho khách. Hãy kiểm tra cấu hình SMTP.";
+            }
         }
         catch (KeyNotFoundException) { return NotFound(); }
         catch (UnauthorizedAccessException) { return Forbid(); }
