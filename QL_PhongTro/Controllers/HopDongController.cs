@@ -40,6 +40,33 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
                           GiaThue = p.GiaThue, TienCoc = p.GiaThue, NgayChot = b.NgayChotHangThang, PhienBanPhong = p.PhienBan }).ToListAsync(ct);
     }
 
+    [HttpGet, Authorize(Roles = "CHU_NHA"), ModuleAccess("HOP_DONG", write: true)]
+    public async Task<IActionResult> ThemKhachThue(int? hopDongId, CancellationToken ct)
+    {
+        if (!await db.TaiKhoans.AnyAsync(x => x.Id == AccountId && x.VaiTro == "CHU_NHA" && x.DangHoatDong && !x.IsDeleted, ct))
+            return Forbid();
+        if (hopDongId.HasValue)
+        {
+            if (!await db.HopDongs.AnyAsync(x => x.Id == hopDongId.Value, ct)) return NotFound();
+            if (!await OwnContract(hopDongId.Value, ct)) return Forbid();
+        }
+        var options = await (from contract in db.HopDongs.AsNoTracking()
+            join room in db.PhongTros.AsNoTracking() on contract.PhongId equals room.Id
+            join building in db.ToaNhas.AsNoTracking() on room.ToaNhaId equals building.Id
+            where building.ChuNhaId == AccountId && building.DangHoatDong && contract.KhachDungTenId != null &&
+                (contract.TrangThai == "CHO_HIEU_LUC" || contract.TrangThai == "DANG_HIEU_LUC")
+            orderby building.TenToaNha, room.MaPhong
+            select new { contract.Id, contract.MaHopDong, room.MaPhong, building.TenToaNha }).ToListAsync(ct);
+        if (hopDongId.HasValue && !options.Any(x => x.Id == hopDongId.Value))
+            return BadRequest("Chỉ thêm khách vào hợp đồng chờ hiệu lực hoặc đang hiệu lực tại cơ sở đang hoạt động.");
+        return View(new ThemKhachThueViewModel {
+            HopDongId = hopDongId,
+            HopDongs = options.Select(x => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem(
+                $"{x.MaPhong} · {x.TenToaNha} · {x.MaHopDong}", x.Id.ToString())).ToList(),
+            Selected = hopDongId.HasValue ? await DetailModel(hopDongId.Value, null, ct) : null
+        });
+    }
+
     public async Task<IActionResult> Index(CancellationToken ct)
     {
         var admin = await IsAdmin(ct);

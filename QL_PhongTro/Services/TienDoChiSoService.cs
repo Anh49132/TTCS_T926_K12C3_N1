@@ -144,6 +144,54 @@ public sealed class TienDoChiSoService(AppDbContext db)
         return new PhongConThieuViewModel(building.Id, building.TenToaNha, year, month, missingRooms);
     }
 
+    public async Task<List<HomeMeterRoom>> PhongChuaChotDashboardAsync(int ownerId, int year, int month, int? buildingId, CancellationToken ct)
+    {
+        ValidatePeriod(year, month);
+        await EnsureLandlordAsync(ownerId, ct);
+        if (!await CoBangChiSoAsync(ct)) return [];
+        var first = new DateOnly(year, month, 1);
+        var last = first.AddMonths(1).AddDays(-1);
+        var activeBuildings = await db.ToaNhas.AsNoTracking().Where(x => x.ChuNhaId == ownerId && x.DangHoatDong &&
+            (!buildingId.HasValue || x.Id == buildingId.Value)).Select(x => x.Id).ToListAsync(ct);
+        var rooms = (await GetLeasedRoomsAsync(ownerId, first, last, ct)).Where(x => activeBuildings.Contains(x.Id)).ToList();
+        var confirmed = await GetConfirmedContractsAsync(rooms, first, last, ct);
+        rooms = rooms.Where(x => !confirmed.Contains(x.ContractId)).ToList();
+        var ids = rooms.Select(x => x.ContractId).Distinct().ToList();
+        var contracts = await (from contract in db.HopDongs.AsNoTracking()
+            join tenant in db.KhachThues.AsNoTracking() on contract.KhachDungTenId equals tenant.Id into tenants
+            from tenant in tenants.DefaultIfEmpty()
+            where ids.Contains(contract.Id)
+            select new { contract.Id, contract.NgayChot, Name = tenant == null ? "Khách thuê" : tenant.HoTen }).ToDictionaryAsync(x => x.Id, ct);
+        var services = await db.DichVus.AsNoTracking().Where(x => x.MaDichVu == "DIEN" || x.MaDichVu == "NUOC")
+            .Select(x => new { x.Id, x.MaDichVu }).ToListAsync(ct);
+        var readings = await db.ChiSoDienNuocs.AsNoTracking().Where(x => ids.Contains(x.HopDongId) &&
+            x.TuNgay <= first && x.DenNgay >= last && x.ChiSoDau >= 0 && x.ChiSoCuoi >= x.ChiSoDau)
+            .Select(x => new { x.HopDongId, x.DichVuId }).ToListAsync(ct);
+        var pricing = new DichVuPhongService(db, new DichVuService(db));
+        var result = new List<HomeMeterRoom>();
+        foreach (var room in rooms.DistinctBy(x => x.ContractId).OrderBy(x => x.Floor).ThenBy(x => x.RoomCode))
+        {
+            var contract = contracts[room.ContractId];
+            var configMissing = services.Count != 2 || contract.NgayChot is < 1 or > 31;
+            var missingElectricity = false;
+            var missingWater = false;
+            var cutoff = new DateOnly(year, month, Math.Clamp(contract.NgayChot, 1, last.Day));
+            foreach (var service in services)
+            {
+                var price = await pricing.LayGiaHoaDonAsync(ownerId, room.RoomId, service.Id, cutoff);
+                if (price is null || price.DonGia <= 0 || (price.CachTinh != QL_PhongTro.Models.CachTinhDichVu.TheoNguoi &&
+                    price.CachTinh != QL_PhongTro.Models.CachTinhDichVu.TheoChiSo)) { configMissing = true; continue; }
+                if (price.CachTinh == QL_PhongTro.Models.CachTinhDichVu.TheoNguoi) continue;
+                var missing = !readings.Any(x => x.HopDongId == room.ContractId && x.DichVuId == service.Id);
+                if (service.MaDichVu == "DIEN") missingElectricity = missing;
+                else missingWater = missing;
+            }
+            result.Add(new HomeMeterRoom(room.Id, room.RoomCode, contract.Name, missingElectricity, missingWater, configMissing));
+        }
+        return result.GroupBy(x => new { x.BuildingId, x.Code }).Select(g => new HomeMeterRoom(g.Key.BuildingId, g.Key.Code,
+            g.First().TenantName, g.Any(x => x.MissingElectricity), g.Any(x => x.MissingWater), g.Any(x => x.NeedsConfiguration))).ToList();
+    }
+
     private async Task EnsureLandlordAsync(int ownerId, CancellationToken ct)
     {
         if (!await db.TaiKhoans.AsNoTracking().AnyAsync(x => x.Id == ownerId

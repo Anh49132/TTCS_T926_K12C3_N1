@@ -23,6 +23,9 @@ public sealed partial class ContractCreationTests
         static string Token(string html)=>WebUtility.HtmlDecode(Regex.Match(html,"name=\"__RequestVerificationToken\"[^>]*value=\"([^\"]+)\"").Groups[1].Value);
         async Task<HttpClient> Login(string email){var client=factory.CreateClient(new(){AllowAutoRedirect=false});var page=await client.GetStringAsync("/Account/Login");Assert.Equal(HttpStatusCode.Redirect,(await client.PostAsync("/Account/Login",new FormUrlEncodedContent(new Dictionary<string,string>{{"TaiKhoanDangNhap",email},{"MatKhau","RoommateTest!2026"},{"__RequestVerificationToken",Token(page)}}))).StatusCode);return client;}
         using var owner=await Login("owner@s301.test");
+        var addPage=WebUtility.HtmlDecode(await owner.GetStringAsync("/HopDong/ThemKhachThue?hopDongId=8"));
+        Assert.Contains("Thêm khách thuê",addPage);Assert.Contains("Input.SoGiayTo",addPage);
+        Assert.Contains("/HopDong/ThemNguoi/8",addPage);
         var overview=WebUtility.HtmlDecode(await owner.GetStringAsync("/HopDong/Details/8"));Assert.Contains("Thông tin hợp đồng",overview);Assert.Contains("Quản lý người ở ghép",overview);Assert.Contains("Chỉ số bàn giao đầu kỳ",overview);
         var page=await owner.GetStringAsync("/HopDong/Details/8?tab=people");
         var readable=WebUtility.HtmlDecode(page);Assert.Contains("Người đứng tên duy nhất",readable);Assert.Contains("1/2 người",readable);Assert.Contains("Input.SoGiayTo",page);
@@ -34,6 +37,7 @@ public sealed partial class ContractCreationTests
         fields["__RequestVerificationToken"]=Token(page);fields["Input.PhienBanPhong"]="1";fields["Input.SoGiayTo"]="987654321";
         var rejected=await owner.PostAsync("/HopDong/ThemNguoi/8",new FormUrlEncodedContent(fields));Assert.Equal(HttpStatusCode.OK,rejected.StatusCode);Assert.Contains("tối đa 2 người",WebUtility.HtmlDecode(await rejected.Content.ReadAsStringAsync()));
         using var other=await Login("other@s301.test");Assert.Equal(HttpStatusCode.Forbidden,(await other.GetAsync("/HopDong/Details/8")).StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden,(await other.GetAsync("/HopDong/ThemKhachThue?hopDongId=8")).StatusCode);
         fields["__RequestVerificationToken"]=Token(await other.GetStringAsync("/Account/ChangePassword"));
         Assert.Equal(HttpStatusCode.Forbidden,(await other.PostAsync("/HopDong/ThemNguoi/8",new FormUrlEncodedContent(fields))).StatusCode);
         using var check=Context();Assert.Single(await check.NguoiOGheps.ToListAsync());

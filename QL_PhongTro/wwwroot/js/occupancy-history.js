@@ -1,0 +1,19 @@
+(() => {
+const page=document.querySelector('.occupancy-history');if(!page)return;
+const rows=[...page.querySelectorAll('[data-history-row]')];const search=page.querySelector('[data-history-search]');const state=page.querySelector('[data-history-state]');
+const filter=()=>{const query=search.value.trim().toLocaleLowerCase('vi');let count=0;rows.forEach(row=>{row.hidden=!(row.textContent.toLocaleLowerCase('vi').includes(query)&&(state.value==='all'||row.dataset.state===state.value));if(!row.hidden)count++;});const output=page.querySelector('[data-history-count]');if(output)output.textContent=count;const empty=page.querySelector('[data-history-empty]');if(empty)empty.hidden=count!==0;};search.addEventListener('input',filter);state.addEventListener('change',filter);filter();
+if(state){
+const wrap=document.createElement('div');wrap.className='oh-state-picker';
+const trigger=document.createElement('button');trigger.type='button';trigger.className='oh-state-trigger';trigger.setAttribute('aria-label','Trạng thái');trigger.setAttribute('aria-haspopup','listbox');trigger.setAttribute('aria-expanded','false');
+const menu=document.createElement('div');menu.className='oh-state-menu';menu.id='oh-state-menu';menu.setAttribute('role','listbox');menu.setAttribute('aria-label','Trạng thái');menu.hidden=true;trigger.setAttribute('aria-controls',menu.id);
+state.before(wrap);wrap.append(state,trigger,menu);state.hidden=true;state.labels[0]?.setAttribute('for','oh-state-trigger');trigger.id='oh-state-trigger';
+const options=[...state.options].map(option=>{const button=document.createElement('button');button.type='button';button.setAttribute('role','option');button.textContent=option.textContent;button.dataset.value=option.value;button.addEventListener('click',()=>{state.value=option.value;state.dispatchEvent(new Event('change',{bubbles:true}));close();trigger.focus();});menu.append(button);return button;});
+const sync=()=>{trigger.textContent=state.selectedOptions[0].textContent;options.forEach(button=>button.setAttribute('aria-selected',String(button.dataset.value===state.value)));};
+const close=()=>{menu.hidden=true;trigger.setAttribute('aria-expanded','false');};
+const open=()=>{menu.hidden=false;trigger.setAttribute('aria-expanded','true');(options.find(button=>button.dataset.value===state.value)||options[0]).focus();};
+trigger.addEventListener('click',()=>menu.hidden?open():close());
+wrap.addEventListener('keydown',event=>{if(event.key==='Escape'){close();trigger.focus();event.preventDefault();}else if(event.key==='ArrowDown'||event.key==='ArrowUp'){event.preventDefault();if(menu.hidden){open();return;}const index=options.indexOf(document.activeElement);options[(index+(event.key==='ArrowDown'?1:-1)+options.length)%options.length].focus();}else if(event.key==='Home'||event.key==='End'){if(!menu.hidden){event.preventDefault();options[event.key==='Home'?0:options.length-1].focus();}}});
+wrap.addEventListener('focusout',event=>{if(!wrap.contains(event.relatedTarget))close();});document.addEventListener('click',event=>{if(!wrap.contains(event.target))close();});state.addEventListener('change',sync);sync();
+}
+page.querySelector('[data-history-export]').addEventListener('click',()=>{const quote=raw=>{const value=/^[=+@-]/.test(raw.trimStart())?String.fromCharCode(39)+raw:raw;return '"'+value.replace(/"/g,'""')+'"';};const data=[['Người ở','Phòng / tòa nhà','Ngày vào','Ngày ra','Thời gian cư trú','Trạng thái'],...rows.filter(row=>!row.hidden).map(row=>[...row.cells].slice(0,6).map(cell=>cell.innerText.trim()))];const url=URL.createObjectURL(new Blob(['\uFEFF'+data.map(row=>row.map(quote).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'}));const link=document.createElement('a');link.href=url;link.download='lich-su-nguoi-o.csv';link.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
+})();

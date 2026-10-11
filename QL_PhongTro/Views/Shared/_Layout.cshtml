@@ -24,6 +24,7 @@
 <link rel="stylesheet" href="~/css/champagne-theme.css" asp-append-version="true" />
 @if (isTenant) { <link rel="stylesheet" href="~/css/tenant-header.css" asp-append-version="true" /> }
 @if (User.IsInRole("CHU_NHA")) { <link rel="stylesheet" href="~/css/owner-dashboard.css" asp-append-version="true" /> }
+@if (useHomepageTheme && !isTenant) { <link rel="stylesheet" href="~/css/dashboard-spacing.css" asp-append-version="true" /> }
 </head>
 <body class="@(useHomepageTheme ? "homepage-dashboard-theme" : "") @roleClass">
 <a class="skip-link" href="#main-content">Đến nội dung chính</a>
@@ -109,6 +110,12 @@ else if (User.IsInRole("CHU_NHA") && (ViewContext.RouteData.Values["controller"]
 var requestModel = Model as QL_PhongTro.ViewModels.LichHenChiTietViewModel;
 <button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
 <nav class="or-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index" aria-label="Về tổng quan">⌂</a><span>/</span><a asp-controller="YeuCau" asp-action="Index">Yêu cầu của khách</a>@if(requestModel is not null){<span>/</span><strong aria-current="page">@requestModel.YeuCau.MaYeuCau</strong>}</nav>
+}
+else if (ViewContext.RouteData.Values["controller"]?.ToString() == "HopDong" && ViewContext.RouteData.Values["action"]?.ToString() == "LichSuNguoiO")
+{
+var historyRoom = Model as QL_PhongTro.ViewModels.LichSuNguoiOViewModel;
+<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
+<nav class="oh-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index" aria-label="Về tổng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10ZM9 20v-7h6v7"/></svg></a><span aria-hidden="true">/</span><a asp-controller="PhongTro" asp-action="Index">Phòng cho thuê</a><span aria-hidden="true">/</span><a asp-controller="PhongTro" asp-action="Details" asp-route-id="@historyRoom?.PhongId">@historyRoom?.Phong</a><span aria-hidden="true">/</span><strong aria-current="page">Lịch sử</strong></nav>
 }
 else if (User.IsInRole("CHU_NHA"))
 {

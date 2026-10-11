@@ -18,7 +18,7 @@
 </div>
 <button type="button" class="account-trigger" id="account-toggle" aria-controls="account-popover" aria-expanded="false">
 <span class="account-avatar" aria-hidden="true">@(owner ? (string.IsNullOrEmpty(initials) ? "N" : initials) : string.IsNullOrWhiteSpace(name) ? "N" : System.Globalization.StringInfo.GetNextTextElement(name).ToUpperInvariant())</span>
-<span class="account-label"><strong>@name</strong><small>@(owner ? "Chủ nhà" : role)</small></span><span class="account-chevron" aria-hidden="true">@(owner ? "⌄" : "⌃")</span>
+<span class="account-label"><strong>@name</strong><small>@(owner ? "Chủ nhà" : role)</small></span><span class="account-chevron" aria-hidden="true">@if (owner) { <svg viewBox="0 0 16 16"><path d="m4 6 4 4 4-4" /></svg> } else { <text>⌃</text> }</span>
 </button>
 } else {
 <a href="@Url.Action("Login", "Account")" id="loginBtn" class="sidebar-link">Đăng nhập</a>

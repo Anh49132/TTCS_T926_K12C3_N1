@@ -363,5 +363,11 @@
         }
     });
 
+    const dropZone = manager.querySelector('.re-photo-drop');
+    if (dropZone) {
+        ['dragenter','dragover'].forEach(name => dropZone.addEventListener(name,event => { event.preventDefault(); dropZone.classList.add('is-dragging'); }));
+        dropZone.addEventListener('dragleave',()=>dropZone.classList.remove('is-dragging'));
+        dropZone.addEventListener('drop',event => { event.preventDefault(); dropZone.classList.remove('is-dragging'); if (!event.dataTransfer.files.length) return; input.files=event.dataTransfer.files; input.dispatchEvent(new Event('change',{bubbles:true})); });
+    }
     updateCount();
 })();

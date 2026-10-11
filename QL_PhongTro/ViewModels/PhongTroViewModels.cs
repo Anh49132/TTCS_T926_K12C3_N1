@@ -38,6 +38,9 @@ public class DanhSachPhongViewModel
 
 public class TaoPhongViewModel
 {
+    public bool DichVuDaChon { get; set; }
+    public List<DichVuPhongMoiInput> DichVuMoi { get; set; } = [];
+    public List<IFormFile> AnhPhongMoi { get; set; } = [];
     [StringLength(500, ErrorMessage = "Ghi chú không được vượt quá 500 ký tự.")]
     public string? GhiChuNoiBo { get; set; }
     public List<string> TienNghi { get; set; } = [];
@@ -79,6 +82,14 @@ public class TaoPhongViewModel
 
     public IReadOnlyList<SelectListItem> ToaNhaOptions { get; set; } = [];
     public IReadOnlyList<AnhPhongQuanLyViewModel> Anh { get; set; } = [];
+}
+
+public sealed class DichVuPhongMoiInput
+{
+    public int CatalogId { get; set; }
+    public bool ApDung { get; set; }
+    public string? Gia { get; set; }
+    public string CachTinh { get; set; } = "CO_DINH";
 }
 
 public class TaoPhongHangLoatViewModel
@@ -195,6 +206,7 @@ public class TaoToaNhaViewModel
 
 public class DanhSachToaNhaViewModel
 {
+    public int HopDongSapHetHan { get; set; }
     public string? TuKhoa { get; set; }
     public IReadOnlyList<ToaNhaTongHopViewModel> ToaNhas { get; set; } = [];
 }
