@@ -13,17 +13,30 @@
     var gioHenNhap = Model.LichHenNhap?.ToString("HH':'mm", CultureInfo.InvariantCulture);
     var lichHenNhap = Model.LichHenNhap?.ToString("yyyy-MM-ddTHH':'mm", CultureInfo.InvariantCulture);
 }
+@if(Model.LaChuNha) {
+<div class="owner-requests or-detail">
+<a class="or-back" asp-controller="YeuCau" asp-action="Index">← Quay lại danh sách</a>
+<header class="or-heading"><div><p class="or-eyebrow">@LichHenTrangThai.LoaiLabel(yeuCau.LoaiYeuCau).ToUpperInvariant()</p><h1>@yeuCau.MaYeuCau <span class="or-tag amber">@LichHenTrangThai.LabelHienThi(yeuCau.TrangThai, yeuCau.DaDoiLich)</span></h1><p>Gửi lúc @LichHenService.HienThoiGio(yeuCau.NgayTao)</p></div><a class="or-button" asp-controller="TinDang" asp-action="ChiTiet" asp-route-id="@ViewData["RequestedListingId"]">Mở tin đăng ↗</a></header>
+@if(yeuCau.TrangThai is "MOI" or "DA_HEN_LICH") { <p class="or-notice">@(yeuCau.LoaiYeuCau == "THUE_NGAY" ? "Phòng chỉ được giữ cho khách sau khi yêu cầu được duyệt." : "Yêu cầu mới nên được phản hồi trong vòng 24 giờ.")</p> }
+</div>
+}
+<div class="@(Model.LaChuNha ? "owner-requests or-detail-body" : "")">
+@if(!Model.LaChuNha) {
 <p class="eyebrow">LỊCH HẸN XEM PHÒNG</p>
 <h1>@yeuCau.MaYeuCau</h1>
 <p>
     Phòng <strong>@yeuCau.MaPhong</strong> · @yeuCau.TenToaNha
     @if (!string.IsNullOrWhiteSpace(yeuCau.DiaChiToaNha)) { <text>· @yeuCau.DiaChiToaNha</text> }
 </p>
+}
 
 @if (ok is not null) { <p class="text-success">@ok</p> }
 @if (warning is not null) { <div class="alert alert-warning" role="alert">@warning</div> }
 @if (err is not null) { <p class="text-danger">@err</p> }
 
+<div class="@(Model.LaChuNha ? "or-layout" : "")"><div class="or-detail-main">
+<section class="@(Model.LaChuNha ? "or-card" : "")">
+@if(Model.LaChuNha){<h2>Thông tin yêu cầu</h2>}
 <div class="table-responsive mb-4">
 <table class="table align-top">
     <tbody>
@@ -31,9 +44,9 @@
     <tr><th>Trạng thái</th><td><span class="badge @LichHenTrangThai.BadgeClass(yeuCau.TrangThai)">@LichHenTrangThai.LabelHienThi(yeuCau.TrangThai, yeuCau.DaDoiLich)</span></td></tr>
     <tr><th>Khách</th><td>@yeuCau.TenKhach @if (!string.IsNullOrWhiteSpace(yeuCau.SoDienThoaiKhach)) { <text>· @yeuCau.SoDienThoaiKhach</text> }</td></tr>
     @if (!Model.LaChuNha) { <tr><th>Chủ nhà</th><td>@yeuCau.TenChuNha</td></tr> }
-    <tr><th>Ngày mong muốn</th><td>@yeuCau.NgayMongMuon</td></tr>
+    <tr><th>Ngày mong muốn</th><td>@(DateOnly.TryParseExact(yeuCau.NgayMongMuon, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var wantedDate) ? wantedDate.ToString("dd/MM/yyyy") : yeuCau.NgayMongMuon)</td></tr>
     <tr><th>Số người dự kiến</th><td>@yeuCau.SoNguoiDuKien</td></tr>
-    @if (!string.IsNullOrWhiteSpace(yeuCau.LoiNhan)) { <tr><th>Lý do</th><td>@yeuCau.LoiNhan</td></tr> }
+    @if (!string.IsNullOrWhiteSpace(yeuCau.LoiNhan)) { <tr><th>Lời nhắn</th><td>@yeuCau.LoiNhan</td></tr> }
     @if (yeuCau.TrangThai == LichHenTrangThai.TuChoi) {
     <tr><th>Lý do từ chối</th><td>@(yeuCau.LyDoTuChoi is null ? "" : LichHenService.LyDoLabel(yeuCau.LyDoTuChoi))</td></tr>
     @if (!string.IsNullOrWhiteSpace(yeuCau.GhiChuTuChoi)) { <tr><th>Ghi chú</th><td>@yeuCau.GhiChuTuChoi</td></tr> }
@@ -51,8 +64,10 @@
     </tbody>
 </table>
 </div>
+</section>
+<section class="@(Model.LaChuNha ? "or-card or-processing" : "")">
 
-@if (Model.HienThiFormXacNhan) {
+@if (Model.HienThiFormXacNhan && (!Model.LaChuNha || yeuCau.LoaiYeuCau == "XEM_PHONG")) {
 <h2>Xác nhận lịch hẹn</h2>
 <form method="post" class="row g-3 mb-4" asp-action="XacNhanLich" asp-route-id="@yeuCau.Id">
     <div class="col-md-3">
@@ -97,6 +112,7 @@
 }
 
 @if (Model.HienThiNutDuyetThueNgay) {
+<h2>Xử lý yêu cầu thuê ngay</h2><p class="text-muted">Kiểm tra thông tin phòng và khách trước khi duyệt. Hệ thống sẽ kiểm tra lại điều kiện giữ phòng khi lưu.</p>
 <form method="post" class="row g-3 mb-4" asp-action="DuyetThueNgay" asp-route-id="@yeuCau.Id">
     <div class="col-md-4 d-flex align-items-center gap-2">
         <button class="btn btn-success" type="submit">Duyệt thuê ngay</button>
@@ -144,6 +160,7 @@
 </section>
 }
 
+</section><section class="@(Model.LaChuNha ? "or-card or-history" : "")">
 <h2>Lịch sử yêu cầu</h2>
 @if (Model.LichSu.Count == 0) {
     <p class="text-muted mb-4">Chưa có thay đổi nào được ghi nhận.</p>
@@ -184,6 +201,19 @@
     </ul>
 }
 
+</section></div>
+@if(Model.LaChuNha){
+<aside><section class="or-card"><h2>Khách thuê</h2><div class="or-customer"><span class="or-icon">@(string.IsNullOrEmpty(yeuCau.TenKhach) ? "—" : yeuCau.TenKhach[..1])</span><div><strong>@yeuCau.TenKhach</strong><p>@yeuCau.SoDienThoaiKhach</p></div></div></section>
+<section class="or-card"><h2>Phòng được yêu cầu</h2>
+@if(ViewData["RequestedRoomImage"] is string photo){<img class="or-room-photo" src="@photo" alt="Ảnh phòng @yeuCau.MaPhong" />}
+<h3>Phòng @yeuCau.MaPhong</h3><p>@yeuCau.TenToaNha</p><p class="or-muted">@yeuCau.DiaChiToaNha</p>
+@if(ViewData["RequestedRoom"] is PhongTro room){<strong class="or-room-price">@room.GiaThue.ToString("N0", CultureInfo.GetCultureInfo("vi-VN")) đ / tháng</strong><p>@room.DienTich.ToString("0.#", CultureInfo.GetCultureInfo("vi-VN")) m² · Tối đa @room.SoNguoiToiDa người</p>}
+<span class="or-tag">@QL_PhongTro.Controllers.PhongTroController.StatusLabel(Enum.Parse<TrangThaiPhong>(yeuCau.TrangThaiPhong))</span><a class="or-button or-full" asp-controller="PhongTro" asp-action="Details" asp-route-id="@yeuCau.PhongId">Xem thông tin phòng</a></section>
+@if(yeuCau.LoaiYeuCau == "THUE_NGAY"){<section class="or-card"><h2>Sau khi duyệt</h2><p>Phòng được giữ cho khách và mở thao tác lập hợp đồng.</p><p class="or-muted">Duyệt yêu cầu không tự tạo hợp đồng và không ghi nhận tiền cọc thực thu.</p></section>}
+</aside>
+}
+</div></div>
+@section Styles { @if(Model.LaChuNha){<link rel="stylesheet" href="~/css/owner-requests.css" asp-append-version="true" />} }
 @section Scripts {
 <script src="~/js/lich-hen.js" asp-append-version="true"></script>
 }

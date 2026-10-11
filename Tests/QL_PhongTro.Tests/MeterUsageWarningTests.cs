@@ -143,7 +143,7 @@ public sealed partial class MeterReadingListTests
         Execute("UPDATE toa_nha SET quan_ly_id=3 WHERE id=1");
         await Assert.ThrowsAsync<UnauthorizedAccessException>(()=>Save(input));Assert.Empty(await ConfirmationFlags());
         Execute("UPDATE toa_nha SET quan_ly_id=2 WHERE id=1;DELETE FROM chi_so_dien_nuoc;DELETE FROM hop_dong_chi_so_dau_ky");
-        Assert.Contains("DienMoi",(await Save(input)).Keys);Assert.Empty(await ConfirmationFlags());
+        Assert.Contains("DienDau",(await Save(input)).Keys);Assert.Empty(await ConfirmationFlags());
     }
     [Fact] public async Task UsageHttpForgedWarningCorrectionConfirmationReload()
     {

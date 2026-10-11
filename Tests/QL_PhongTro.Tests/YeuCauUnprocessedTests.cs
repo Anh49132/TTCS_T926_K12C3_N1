@@ -27,5 +27,16 @@ public sealed partial class PermissionTests
         }
         var closedRow = Regex.Match(html, "(?s)<tr[^>]*>.*?YC-UNPROCESSED-CLOSED.*?</tr>").Value;
         Assert.DoesNotContain("Quá 24 giờ, chưa xử lý", closedRow);
+        Assert.Contains("Lịch hẹn hôm nay", html);
+        Assert.Contains("owner-requests.js", html);
+        var detail = WebUtility.HtmlDecode(await owner.GetStringAsync($"/LichHen/ChiTiet/{moi}"));
+        Assert.Contains("Thông tin yêu cầu", detail);
+        Assert.Contains("Phòng được yêu cầu", detail);
+        Assert.Contains("XacNhanLich", detail);
+        Assert.Contains("TuChoi", detail);
+        Execute("UPDATE yeu_cau_thue SET loai_yeu_cau='THUE_NGAY' WHERE id=$id", ("$id", moi));
+        var instant = WebUtility.HtmlDecode(await owner.GetStringAsync($"/LichHen/ChiTiet/{moi}"));
+        Assert.Contains("DuyetThueNgay", instant);
+        Assert.DoesNotContain("action=\"/LichHen/XacNhanLich", instant);
     }
 }

@@ -7,7 +7,7 @@ namespace QL_PhongTro.Data;
 // Append new versions; never rewrite an update already shared with the team.
 public static class DatabaseUpdates
 {
-    internal const int CurrentVersion = 23;
+    internal const int CurrentVersion = 24;
     private static SqliteConnection Open(string path, bool readOnly)
     {
         var c = new SqliteConnection(new SqliteConnectionStringBuilder
@@ -96,6 +96,8 @@ public static class DatabaseUpdates
                 columns = columns.Where(column => column is not ("dien_tich_dat" or "thang_may" or "bai_do_xe" or "camera_an_ninh" or "bao_ve_24h" or "khu_giat_say" or "san_thuong"));
             if (table == "chi_so_dien_nuoc" && schemaVersion < 18)
                 columns = columns.Where(column => column != "da_xac_nhan_bat_thuong");
+            if (table == "phong_tro" && schemaVersion < 24)
+                columns = columns.Where(column => column is not ("ghi_chu_noi_bo" or "tien_nghi"));
             if (table == "hoa_don" && schemaVersion < 20)
                 columns = columns.Where(column => column != "ngay_phat_hanh_nghiep_vu");
             Probe(table, columns);
@@ -447,6 +449,7 @@ public static class DatabaseUpdates
         if (version < 21) InvoiceNotificationSchema.Upgrade(c);
         if (version < 22) InvoiceCancellationSchema.Upgrade(c);
         if (version < 23) InvoicePaymentSchema.Upgrade(c);
+        if (version < 24) RoomDetailsSchema.Upgrade(c);
         Check(path);
         Console.WriteLine($"Database updated to version {CurrentVersion}. Existing business rows preserved.");
     }

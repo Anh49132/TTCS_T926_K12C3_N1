@@ -21,14 +21,18 @@ public class DichVuPhongController(DichVuPhongService services) : Controller
         catch (UnauthorizedAccessException) { return Forbid(); }
     }
 
+    private IActionResult AfterSave(int phongId, bool returnToRoom) => returnToRoom
+        ? RedirectToAction("Edit", "PhongTro", new { id = phongId }, "room-services")
+        : RedirectToAction(nameof(Index), new { phongId });
+
     [HttpPost, ValidateAntiForgeryToken, ModuleAccess("PHONG_TRO", write: true)]
-    public async Task<IActionResult> Set(int phongId, int dichVuToaNhaId, bool enabled, long? donGiaRieng)
+    public async Task<IActionResult> Set(int phongId, int dichVuToaNhaId, bool enabled, long? donGiaRieng, bool returnToRoom = false)
     {
         if (!ModelState.IsValid) return BadRequest();
         if (donGiaRieng < 0)
         {
             TempData["Error"] = "Đơn giá riêng phải là số nguyên không âm.";
-            return RedirectToAction(nameof(Index), new { phongId });
+            return AfterSave(phongId, returnToRoom);
         }
         try
         {
@@ -37,17 +41,17 @@ public class DichVuPhongController(DichVuPhongService services) : Controller
         }
         catch (UnauthorizedAccessException) { return Forbid(); }
         catch (DbUpdateException) { TempData["Error"] = "Dịch vụ vừa thay đổi. Vui lòng tải lại và thử lại."; }
-        return RedirectToAction(nameof(Index), new { phongId });
+        return AfterSave(phongId, returnToRoom);
     }
 
     [HttpPost, ValidateAntiForgeryToken, ModuleAccess("PHONG_TRO", write: true)]
-    public async Task<IActionResult> SetPrice(int phongId, int dichVuToaNhaId, long? donGiaRieng)
+    public async Task<IActionResult> SetPrice(int phongId, int dichVuToaNhaId, long? donGiaRieng, bool returnToRoom = false)
     {
         if (!ModelState.IsValid) return BadRequest();
         if (donGiaRieng < 0)
         {
             TempData["Error"] = "Đơn giá riêng phải là số nguyên không âm.";
-            return RedirectToAction(nameof(Index), new { phongId });
+            return AfterSave(phongId, returnToRoom);
         }
         try
         {
@@ -57,6 +61,6 @@ public class DichVuPhongController(DichVuPhongService services) : Controller
         catch (UnauthorizedAccessException) { return Forbid(); }
         catch (InvalidOperationException) { return NotFound(); }
         catch (DbUpdateException) { TempData["Error"] = "Dịch vụ vừa thay đổi. Vui lòng tải lại và thử lại."; }
-        return RedirectToAction(nameof(Index), new { phongId });
+        return AfterSave(phongId, returnToRoom);
     }
 }

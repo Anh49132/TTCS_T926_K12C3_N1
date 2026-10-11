@@ -3,42 +3,10 @@
 @using QL_PhongTro.Services
 @{ ViewData["Title"] = Model.LaKhachThue ? "Yêu cầu của tôi" : "Yêu cầu của khách"; }
 @if(Model.LaKhachThue) { <partial name="_TenantRequests" model="Model" /> }
-else {
-<section class="mb-4"><p class="text-uppercase text-secondary small fw-semibold mb-2">Vận hành nhà cho thuê</p><h1 class="h2 mb-1">@(Model.LaKhachThue ? "Yêu cầu của tôi" : "Yêu cầu của khách")</h1><p class="text-secondary mb-0">@(Model.LaKhachThue ? "Theo dõi lịch hẹn và phản hồi từ chủ nhà." : "Lọc yêu cầu theo trạng thái và tòa nhà.")</p></section>
-<form method="get" asp-action="Index" class="row g-2 align-items-end mb-4">
-    <div class="col-sm-6 col-md-4"><label for="trangThai" class="form-label">Trạng thái</label><select id="trangThai" name="trangThai" class="form-select"><option value="">Tất cả trạng thái</option>@foreach (var item in TrangThaiYeuCau.Labels) { <option value="@item.Key" selected="@(Model.TrangThai == item.Key)">@item.Value</option> }</select></div>
-    @if (!Model.LaKhachThue) {
-    <div class="col-sm-6 col-md-4"><label for="toaNhaId" class="form-label">Tòa nhà</label><select id="toaNhaId" name="toaNhaId" class="form-select"><option value="">Tất cả tòa nhà</option>@foreach (var item in Model.ToaNhaOptions) { <option value="@item.Value" selected="@(Model.ToaNhaId?.ToString() == item.Value)">@item.Text</option> }</select></div>
-    }
-    <div class="col-auto"><button class="btn btn-primary" type="submit">Lọc danh sách</button><a class="btn btn-outline-secondary ms-1" asp-action="Index">Bỏ bộ lọc</a></div>
-</form>
-@if (Model.YeuCaus.Count == 0) { <div class="border-top border-bottom py-4"><h2 class="h5">Không có yêu cầu phù hợp</h2><p class="text-secondary mb-0">Thử bỏ một hoặc cả hai bộ lọc.</p></div> }
-    else
-    {
-        <div class="table-responsive"><table class="table table-hover align-middle">
-            <thead class="table-light"><tr><th>STT</th><th>Mã yêu cầu</th><th>Khách</th><th>Phòng</th><th>Loại yêu cầu</th><th>Ngày mong muốn</th><th>Lời nhắn</th><th>Trạng thái</th><th class="text-end">Thao tác</th></tr></thead>
-            <tbody>
-            @{ var ownerStt = 0; }
-            @foreach (var item in Model.YeuCaus)
-            {
-                ownerStt++;
-                <tr class="@(item.QuaHanChuaXuLy ? "table-warning" : null)">
-                    <td>@ownerStt</td><th>@item.MaYeuCau</th>
-                    <td><strong>@item.TenKhach</strong><small class="d-block text-secondary">@item.SoDienThoai</small></td>
-                    <td>@item.MaPhong</td><td>@TrangThaiYeuCau.LoaiLabel(item.LoaiYeuCau)</td>
-                    <td>@(item.NgayMongMuon?.ToString("dd/MM/yyyy") ?? "—")</td>
-                    <td class="request-message">@(string.IsNullOrWhiteSpace(item.LoiNhan) ? "—" : item.LoiNhan)</td>
-                    <td><span class="badge @TrangThaiYeuCau.BadgeClass(item.TrangThai)">@TrangThaiYeuCau.Labels.GetValueOrDefault(item.TrangThai, item.TrangThai)</span>@if (item.QuaHanChuaXuLy) { <span class="badge text-bg-warning d-block mt-1">Quá 24 giờ, chưa xử lý</span> }</td>
-                    <td class="text-end"><a class="btn btn-sm btn-outline-primary" asp-controller="LichHen" asp-action="ChiTiet" asp-route-id="@item.Id">Chi tiết</a></td>
-                </tr>
-            }
-            </tbody>
-        </table></div>
-    }
-
-}
-@section Styles { @if(Model.LaKhachThue){<link rel="stylesheet" href="~/css/tenant-requests.css" asp-append-version="true" />} }
+else { <partial name="_OwnerRequests" model="Model" /> }
+@section Styles { @if(Model.LaKhachThue){<link rel="stylesheet" href="~/css/tenant-requests.css" asp-append-version="true" />}else{<link rel="stylesheet" href="~/css/owner-requests.css" asp-append-version="true" />} }
 @section Scripts {
     @if(Model.LaKhachThue){<script src="~/js/tenant-requests.js" asp-append-version="true"></script>}
+    @if(!Model.LaKhachThue){<script src="~/js/owner-requests.js" asp-append-version="true"></script>}
     <script src="~/js/tenant-request-cancel-confirmation.js" asp-append-version="true"></script>
 }

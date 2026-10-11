@@ -15,4 +15,8 @@ public class QuanLyDichVuViewModel
     [DataType(DataType.Date), Display(Name = "Ngày bắt đầu hiệu lực")]
     public DateOnly? TuNgay { get; set; }
     [ValidateNever] public List<CauHinhDichVu> LichSu { get; set; } = [];
+    [ValidateNever] public string TenToaNha { get; set; } = "";
+    [ValidateNever] public int SoPhongApDung { get; set; }
+    [ValidateNever] public int SoPhongGiaRieng { get; set; }
+    [ValidateNever] public bool ApDungMacDinh { get; set; }
 }

@@ -26,6 +26,8 @@ public class PhongTro
     public string TrangThai { get; set; } = "TRONG";
 
     public string? MoTa { get; set; }
+    public string? GhiChuNoiBo { get; set; }
+    public string? TienNghi { get; set; }
     public DateTime NgayTao { get; set; }
     public int PhienBan { get; set; }
 }

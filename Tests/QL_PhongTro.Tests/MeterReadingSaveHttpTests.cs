@@ -33,20 +33,14 @@ public sealed partial class MeterReadingListTests
         Execute("UPDATE role_permission SET AccessLevel='WRITE' WHERE RoleCode='QUAN_LY' AND ModuleCode='DIEN_NUOC'");
         reload["DienMoi"]="bad";response=await manager.PostAsync("/ChiSoDienNuoc/Save",new FormUrlEncodedContent(reload));Assert.Equal(HttpStatusCode.OK,response.StatusCode);Assert.Equal(2,Count("chi_so_dien_nuoc"));
     }
-    [Fact] public async Task MeterUiOnlyShowsApplicableInputsAndMissingReferenceDisablesSave()
+    [Fact] public async Task MeterUiAllowsExplicitBaselineWhenReferenceMissing()
     {
         MeterFixture(waterMeter:false,handover:false);using var factory=Factory();using var manager=await Login(factory,"manager@meter.test");
         var html=WebUtility.HtmlDecode(await manager.GetStringAsync("/ChiSoDienNuoc?toaNhaId=1"));
-        Assert.Contains("name=\"DienMoi\"",html);Assert.DoesNotContain("name=\"NuocMoi\"",html);Assert.Contains("Chưa có dữ liệu tham chiếu",html);Assert.Contains("disabled",html);Assert.Contains("meter-readings.js",html);
-        foreach(var form in Regex.Matches(html,"(?s)<form[^>]*data-meter-form.*?</form>").Cast<Match>())
-            Assert.Equal(1,Regex.Matches(form.Value,"Chưa có dữ liệu tham chiếu").Count);
-        var fields=await MeterForm(manager);fields["DienMoi"]="10";
+        Assert.Contains("name=\"DienDau\"",html);Assert.DoesNotContain("name=\"NuocDau\"",html);
+        var fields=await MeterForm(manager);fields["DienMoi"]="110";fields["DienDau"]="100";
         var response=await manager.PostAsync("/ChiSoDienNuoc/Save",new FormUrlEncodedContent(fields));
-        Assert.Equal(HttpStatusCode.OK,response.StatusCode);
-        html=WebUtility.HtmlDecode(await response.Content.ReadAsStringAsync());
-        foreach(var form in Regex.Matches(html,"(?s)<form[^>]*data-meter-form.*?</form>").Cast<Match>())
-            Assert.Equal(1,Regex.Matches(form.Value,"Chưa có dữ liệu tham chiếu").Count);
-        Assert.Equal(0,Count("chi_so_dien_nuoc"));
+        Assert.Equal(HttpStatusCode.Redirect,response.StatusCode);Assert.Equal(1,Count("chi_so_dien_nuoc"));
     }
     [Fact] public async Task StaleHttpFormKeepsOldVersionUntilExplicitReload()
     {

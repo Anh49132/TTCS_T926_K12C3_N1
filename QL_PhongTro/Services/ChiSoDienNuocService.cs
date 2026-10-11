@@ -83,8 +83,11 @@ public sealed partial class ChiSoDienNuocService(AppDbContext db, ITimeProvider 
                 var previous = readings.Where(x => x.HopDongId == room.HopDongId && x.MaDichVu == code && x.DenNgay < first)
                     .OrderByDescending(x => x.DenNgay).ThenByDescending(x => x.Id).ThenByDescending(x => x.LineId).FirstOrDefault();
                 if (previous != null) return new(previous.ChiSoCuoi);
-                return handovers.TryGetValue(room.HopDongId, out var handover)
-                    ? new(code == "DIEN" ? handover.ChiSoDien : handover.ChiSoNuoc, true) : new(null);
+                if (handovers.TryGetValue(room.HopDongId, out var handover))
+                    return new(code == "DIEN" ? handover.ChiSoDien : handover.ChiSoNuoc, true);
+                var current = saved.FirstOrDefault(x => x.HopDongId == room.HopDongId
+                    && x.TuNgay == first && x.DenNgay == last && serviceCodes.GetValueOrDefault(x.DichVuId) == code);
+                return new(current?.ChiSoDau);
             }
             bool Current(string code) => readings.Any(x => x.HopDongId == room.HopDongId && x.MaDichVu == code
                 && x.TuNgay >= first && x.DenNgay <= last);
@@ -147,13 +150,18 @@ public sealed partial class ChiSoDienNuocService(AppDbContext db, ITimeProvider 
         else if(input.Ky!=model.DauKy || input.PhienBanPhong!=room.PhienBanPhong)
             Error("Phong","Kỳ hoặc thông tin phòng đã thay đổi. Vui lòng tải lại trang.");
         if(room.DichVu.Count==0) Error("Phong","Phòng không có dịch vụ điện/nước theo chỉ số đang áp dụng.");
+        // A supplied baseline is accepted only when server-side history is absent.
+        room.DichVu = room.DichVu.Select(service => service.Truoc.GiaTri.HasValue ? service :
+            service with { Truoc = new(service.Ma == "DIEN" ? input.DienDau : input.NuocDau) }).ToList();
         foreach(var service in room.DichVu)
         {
             var field=service.Ma=="DIEN"?"DienMoi":"NuocMoi";
             var value=service.Ma=="DIEN"?input.DienMoi:input.NuocMoi;
             var version=service.Ma=="DIEN"?input.DienPhienBan:input.NuocPhienBan;
             if(service.DaKhoa || version!=service.PhienBan) Error(field,"Chỉ số đã thay đổi hoặc bị khóa. Vui lòng tải lại trang.");
-            else if(!service.Truoc.GiaTri.HasValue) Error(field,"Chưa có dữ liệu tham chiếu. Không thể chốt chỉ số.");
+            else if(!service.Truoc.GiaTri.HasValue || service.Truoc.GiaTri < 0
+                || service.Truoc.GiaTri > 99999999999.999m || decimal.Round(service.Truoc.GiaTri.Value,3) != service.Truoc.GiaTri)
+                Error(service.Ma == "DIEN" ? "DienDau" : "NuocDau", "Nhập chỉ số đầu kỳ không âm, tối đa 3 chữ số thập phân và không quá 99.999.999.999,999.");
             else if(!value.HasValue || value<0 || value>99999999999.999m || decimal.Round(value.Value,3)!=value)
                 Error(field,"Nhập chỉ số không âm, tối đa 3 chữ số thập phân và không quá 99.999.999.999,999.");
             else if(value<service.Truoc.GiaTri) Error(field,"Chỉ số mới không được nhỏ hơn chỉ số kỳ trước.");

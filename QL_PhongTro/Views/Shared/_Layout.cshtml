@@ -98,6 +98,18 @@ else if (ViewContext.RouteData.Values["controller"]?.ToString() == "DichVu" && V
 <button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
 <nav class="sc-header-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10ZM9 20v-7h6v7" /></svg><span>Không gian quản lý</span></a><span>›</span><a asp-controller="DichVu" asp-action="Index" asp-route-toaNhaId="@((Model as QL_PhongTro.ViewModels.TaoDichVuViewModel)?.ToaNhaId)">Dịch vụ &amp; đơn giá</a><span>›</span><strong aria-current="page">Thêm dịch vụ</strong></nav>
 }
+else if (ViewContext.RouteData.Values["controller"]?.ToString() == "DichVu" && ViewContext.RouteData.Values["action"]?.ToString() == "Manage")
+{
+var serviceModel = Model as QL_PhongTro.ViewModels.QuanLyDichVuViewModel;
+<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
+<nav class="sp-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index" aria-label="Về tổng quan">⌂</a><span>/</span><a asp-controller="DichVu" asp-action="Index" asp-route-toaNhaId="@serviceModel?.ToaNhaId">Dịch vụ &amp; đơn giá</a><span>/</span><span>@serviceModel?.TenToaNha</span><span>/</span><strong aria-current="page">@serviceModel?.LichSu.LastOrDefault()?.DichVu.TenDichVu</strong></nav>
+}
+else if (User.IsInRole("CHU_NHA") && (ViewContext.RouteData.Values["controller"]?.ToString() == "YeuCau" || ViewContext.RouteData.Values["controller"]?.ToString() == "LichHen"))
+{
+var requestModel = Model as QL_PhongTro.ViewModels.LichHenChiTietViewModel;
+<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
+<nav class="or-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index" aria-label="Về tổng quan">⌂</a><span>/</span><a asp-controller="YeuCau" asp-action="Index">Yêu cầu của khách</a>@if(requestModel is not null){<span>/</span><strong aria-current="page">@requestModel.YeuCau.MaYeuCau</strong>}</nav>
+}
 else if (User.IsInRole("CHU_NHA"))
 {
 <button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>

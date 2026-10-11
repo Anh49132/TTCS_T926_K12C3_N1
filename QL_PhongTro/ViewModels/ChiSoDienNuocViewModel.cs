@@ -12,6 +12,10 @@ public sealed record PhongGhiChiSo(int PhongId, int HopDongId, string MaPhong, i
 public sealed record MeterServiceRow(int Id, string Ma, ChiSoThamChieu Truoc, decimal? Moi, int PhienBan, bool DaKhoa);
 public sealed class LuuChiSoInput
 {
+    [Microsoft.AspNetCore.Mvc.ModelBinder(BinderType=typeof(ContractMeterBinder))]
+    public decimal? DienDau { get; set; }
+    [Microsoft.AspNetCore.Mvc.ModelBinder(BinderType=typeof(ContractMeterBinder))]
+    public decimal? NuocDau { get; set; }
     public bool XacNhanBatThuong { get; set; }
     public string? MaXacNhan { get; set; }
     [Microsoft.AspNetCore.Mvc.ModelBinding.BindNever]

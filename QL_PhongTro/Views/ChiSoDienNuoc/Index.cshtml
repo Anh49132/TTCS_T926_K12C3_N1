@@ -93,7 +93,14 @@
                                             var id=$"meter-{room.PhongId}-{service.Ma}";
                                             <p id="@(id+"-previous")" class="meter-previous"><span>@(service.Ma=="DIEN"?"Điện":"Nước") kỳ trước</span>
                                             @if(service.Truoc.GiaTri is {} previous){<strong>@previous.ToString("0.###",vi)</strong>@if(service.Truoc.LaBanGiao){<small>Bàn giao</small>}}
-                                            else{<strong>Chưa có dữ liệu</strong>}
+                                            else{
+                                                var startField = service.Ma == "DIEN" ? "DienDau" : "NuocDau";
+                                                var startValue = Model.Input?.PhongId == room.PhongId ? (service.Ma == "DIEN" ? Model.Input.DienDau : Model.Input.NuocDau) : null;
+                                                <label for="@(id+"-start")">Chỉ số đầu kỳ</label>
+                                                <input id="@(id+"-start")" name="@startField" type="number" inputmode="decimal" step="0.001" min="0" max="99999999999.999" required class="form-control" value="@startValue?.ToString(CultureInfo.InvariantCulture)" data-meter-baseline readonly="@(Model.KyDaKhoa || service.DaKhoa)" />
+                                                <small>Chưa có kỳ trước. Nhập chỉ số lúc bắt đầu tính phí.</small>
+                                                @if(Model.Input?.PhongId == room.PhongId && Model.Loi.TryGetValue(startField, out var startErrors)){<span class="text-danger">@string.Join(" ",startErrors)</span>}
+                                            }
                                             </p>
                                         }
                                     </div>
@@ -104,7 +111,6 @@
                                         var submitted=Model.Input?.PhongId==room.PhongId;
                                         var value=submitted?(service.Ma=="DIEN"?Model.Input!.DienMoi:Model.Input!.NuocMoi):service.Moi;
                                         var error=submitted && Model.Loi.TryGetValue(field,out var messages)?string.Join(" ",messages):"";
-                                        if (service.Truoc.GiaTri == null && error.Length == 0) error = "Chưa có dữ liệu tham chiếu. Không thể chốt chỉ số.";
                                         var version=submitted?(service.Ma=="DIEN"?Model.Input!.DienPhienBan:Model.Input!.NuocPhienBan):service.PhienBan;
                                         <input type="hidden" name="@(service.Ma=="DIEN"?"DienPhienBan":"NuocPhienBan")" value="@version" />
                                         <div class="meter-service @(service.Ma=="DIEN"?"meter-electric":"meter-water")">
@@ -112,7 +118,7 @@
                                         <span class="meter-saved-reading"><small>@label đã chốt</small><strong>@service.Moi?.ToString("0.###",vi)</strong></span>
                                         <input id="@id" name="@field" type="number" inputmode="decimal" step="0.001" min="0" max="99999999999.999" required
                                                value="@value?.ToString(CultureInfo.InvariantCulture)" class="form-control @(error.Length>0?"is-invalid":"")"
-                                               data-previous="@service.Truoc.GiaTri?.ToString(CultureInfo.InvariantCulture)" data-meter-input
+                                               data-previous="@service.Truoc.GiaTri?.ToString(CultureInfo.InvariantCulture)" data-baseline-id="@(id+"-start")" data-meter-input
                                                aria-describedby="@(id+"-previous"+" "+id+"-error")" aria-invalid="@(error.Length>0?"true":"false")" readonly="@(Model.KyDaKhoa || service.DaKhoa)" />
                                         <span id="@(id+"-error")" class="text-danger d-block" data-meter-error aria-live="polite">@error</span>
                                         </div>
@@ -126,7 +132,7 @@
                                     <div class="meter-row-status"><span class="meter-status-badge @(Model.KyDaKhoa?"is-locked":hasWarning?"is-warning":room.DaChot?"is-complete":"is-pending")">@(Model.KyDaKhoa?"Đã khóa":hasWarning?"Cần xác nhận":room.DaChot?"Đã chốt":"Chưa chốt")</span></div>
                                     <div class="meter-row-actions">
                                         @if(room.DaChot && !Model.KyDaKhoa){<button type="button" class="meter-edit" data-edit-room hidden>Sửa</button>}
-                                        <button class="btn btn-primary meter-save" type="submit" aria-label="Lưu phòng @room.MaPhong" disabled="@(Model.KyDaKhoa || room.DichVu.Any(x=>x.Truoc.GiaTri==null || x.DaKhoa))"><span class="meter-save-desktop">Lưu</span><span class="meter-save-mobile">Lưu phòng @room.MaPhong</span></button>
+                                        <button class="btn btn-primary meter-save" type="submit" aria-label="Lưu phòng @room.MaPhong" disabled="@(Model.KyDaKhoa || room.DichVu.Any(x=>x.DaKhoa))"><span class="meter-save-desktop">Lưu</span><span class="meter-save-mobile">Lưu phòng @room.MaPhong</span></button>
                                     </div>
                                     @if(Model.Input?.PhongId==room.PhongId && Model.Loi.TryGetValue("Phong",out var roomErrors)){<p class="text-danger meter-room-error" data-room-error tabindex="-1" role="alert">@string.Join(" ",roomErrors)</p>}
                                     @if (Model.Input?.PhongId == room.PhongId && Model.Input.CanhBaos.Count > 0)

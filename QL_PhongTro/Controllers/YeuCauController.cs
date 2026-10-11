@@ -70,7 +70,6 @@ public class YeuCauController(AppDbContext db, ITimeProvider clock, YeuCauThueSe
                     from account in accounts.DefaultIfEmpty()
                     where (laKhachThue ? tenant.TaiKhoanId == accountId : buildingIds.Contains(room.ToaNhaId))
                         && (laKhachThue || !validBuilding.HasValue || room.ToaNhaId == validBuilding)
-                        && (validStatus == null || request.TrangThai == validStatus)
                     orderby request.NgayTao descending, request.Id descending
                     select new YeuCauListItemViewModel
                     {
@@ -79,6 +78,9 @@ public class YeuCauController(AppDbContext db, ITimeProvider clock, YeuCauThueSe
                         TenKhach = tenant.HoTen,
                         SoDienThoai = tenant.SoDienThoai ?? (account == null ? "" : account.SoDienThoai),
                         MaPhong = room.MaPhong,
+                        TenToaNha = db.ToaNhas.Where(b => b.Id == room.ToaNhaId).Select(b => b.TenToaNha).FirstOrDefault() ?? "",
+                        LichHen = request.LichHen,
+                        DaLapHopDong = db.HopDongs.Any(h => h.YeuCauThueId == request.Id && h.TrangThai != "DA_HUY"),
                         LoaiYeuCau = request.LoaiYeuCau,
                         NgayMongMuon = request.NgayMongMuon,
                         TrangThai = request.TrangThai,
@@ -92,7 +94,7 @@ public class YeuCauController(AppDbContext db, ITimeProvider clock, YeuCauThueSe
             var createdUtc = item.NgayTao.Kind == DateTimeKind.Utc ? item.NgayTao : DateTime.SpecifyKind(item.NgayTao, DateTimeKind.Utc);
             item.QuaHanChuaXuLy = TrangThaiYeuCau.ChuaXuLy(item.TrangThai) && nowUtc - createdUtc >= TimeSpan.FromHours(24);
         }
-        return View(new DanhSachYeuCauViewModel { YeuCaus = items, LaKhachThue = laKhachThue, TrangThai = validStatus, ToaNhaId = validBuilding, ToaNhaOptions = buildings });
+        return View(new DanhSachYeuCauViewModel { YeuCaus = items.Where(x => validStatus == null || x.TrangThai == validStatus).ToList(), TongHop = items, NowUtc = nowUtc, LaKhachThue = laKhachThue, TrangThai = validStatus, ToaNhaId = validBuilding, ToaNhaOptions = buildings });
     }
 
     [HttpGet("/YeuCau/MoTinDang/{id:int}"), Authorize(Roles = "KHACH_THUE")]

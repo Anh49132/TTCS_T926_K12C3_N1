@@ -1,0 +1,37 @@
+@model QL_PhongTro.ViewModels.DichVuPhongViewModel
+@using System.Globalization
+@using QL_PhongTro.Models
+<div id="room-services" class="rc-services">
+    <div class="rc-services-heading"><h2>Phí dịch vụ</h2><a asp-controller="DichVu" asp-action="Create" asp-route-toaNhaId="@Model.ToaNhaId">＋ Khai báo dịch vụ mới</a></div>
+    <p>Giá riêng chỉ áp dụng cho phòng này. Để trống để dùng giá chung của tòa.</p>
+    <p>Lưu từng dịch vụ bằng nút bên cạnh. Lưu thông tin phòng trước nếu bạn đang sửa các mục khác.</p>
+    @if (TempData["Success"] is {} success) { <div class="alert alert-success" role="status">@success</div> }
+    @if (TempData["Error"] is {} error) { <div class="alert alert-danger" role="alert">@error</div> }
+    @if (Model.DichVus.Count == 0) { <p>Tòa nhà chưa có dịch vụ. Khai báo dịch vụ mới để thêm vào phòng.</p> }
+    <div class="rc-service-table" role="group" aria-label="Dịch vụ của phòng">
+        <div class="rc-service-table-head"><span>Dịch vụ</span><span>Đơn giá riêng (đ)</span><span>Cách tính và thao tác</span></div>
+        @foreach (var item in Model.DichVus)
+        {
+            var priceForm = $"room-service-price-{item.Id}";
+            var stateForm = $"room-service-state-{item.Id}";
+            <div class="rc-service-row">
+                <div><strong>@item.Ten</strong><small style="display:block">@(item.DaChon ? "Đang áp dụng" : "Chưa chọn")</small>
+                    @if (item.NgungTuKy is {} stop) { <small class="text-warning">Ngừng từ @stop.ToString("dd/MM/yyyy")</small> }
+                </div>
+                <div>
+                    <label class="visually-hidden" for="@priceForm">Đơn giá riêng @item.Ten</label>
+                    <input id="@priceForm" form="@(item.DaChon ? priceForm+"-form" : stateForm)" name="donGiaRieng" type="number" min="0" step="1" value="@item.DonGiaRieng" placeholder="Dùng giá chung" />
+                    <small>Giá chung: @(item.Gia?.DonGia.ToString("N0", CultureInfo.GetCultureInfo("vi-VN")) ?? "Chưa thiết lập") đ</small>
+                </div>
+                <div class="room-service-actions">
+                    <span>@(item.Gia is null ? "Chưa có cấu hình" : CachTinhDichVu.Ten(item.Gia.CachTinh) + " · " + item.Gia.DonViTinh)</span>
+                    <div>
+                        @if (item.DaChon) { <button type="submit" form="@(priceForm+"-form")" class="btn btn-sm btn-outline-primary">Lưu giá</button> }
+                        <button type="submit" form="@stateForm" class="btn btn-sm btn-outline-secondary">@(item.DaChon ? item.NgungTuKy.HasValue ? "Áp dụng lại" : "Ngừng từ kỳ sau" : "Thêm vào phòng")</button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <p class="rc-service-help">Ngừng dịch vụ có hiệu lực từ kỳ sau. Hóa đơn đã phát hành giữ nguyên. Cách tính được quản lý trong cấu hình dịch vụ của tòa.</p>
+</div>

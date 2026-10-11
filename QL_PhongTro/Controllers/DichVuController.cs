@@ -117,13 +117,13 @@ public class DichVuController(AppDbContext db, DichVuService services, DichVuPho
     }
 
     [HttpPost, ValidateAntiForgeryToken, ModuleAccess("PHONG_TRO", write: true)]
-    public async Task<IActionResult> SetDefault(int toaNhaId, int dichVuId, bool enabled)
+    public async Task<IActionResult> SetDefault(int toaNhaId, int dichVuId, bool enabled, bool returnToManage = false)
     {
         if (!ModelState.IsValid) return BadRequest();
         try { await roomServices.DatMacDinhAsync(AccountId, toaNhaId, dichVuId, enabled); }
         catch (UnauthorizedAccessException) { return Forbid(); }
         catch (InvalidOperationException ex) { TempData["Error"] = ex.Message; }
-        return RedirectToAction(nameof(Index), new { toaNhaId });
+        return returnToManage ? RedirectToAction(nameof(Manage), new { toaNhaId, dichVuId }) : RedirectToAction(nameof(Index), new { toaNhaId });
     }
 
     [HttpGet]
@@ -135,8 +135,10 @@ public class DichVuController(AppDbContext db, DichVuService services, DichVuPho
             if (history.Count == 0) return NotFound();
             var latest = history.Last();
             var nextDate = latest.TuNgay.AddDays(1) > DichVuService.HomNay() ? latest.TuNgay.AddDays(1) : DichVuService.HomNay();
-            return View(new QuanLyDichVuViewModel { ToaNhaId = toaNhaId, DichVuId = dichVuId, LichSu = history,
-                DonGia = latest.DaChotGia ? latest.DonGia : null, GiaCu = latest.DonGia, PhienBan = latest.Id, TuNgay = nextDate });
+            var model = new QuanLyDichVuViewModel { ToaNhaId = toaNhaId, DichVuId = dichVuId, LichSu = history,
+                DonGia = latest.DaChotGia ? latest.DonGia : null, GiaCu = latest.DonGia, PhienBan = latest.Id, TuNgay = nextDate };
+            await FillManageAsync(model);
+            return View(model);
         }
         catch (UnauthorizedAccessException) { return Forbid(); }
     }
@@ -149,6 +151,7 @@ public class DichVuController(AppDbContext db, DichVuService services, DichVuPho
         {
             model.LichSu = await services.LichSuAsync(AccountId, model.ToaNhaId, model.DichVuId);
             if (model.LichSu.Count == 0) return NotFound();
+            await FillManageAsync(model);
             if (!ModelState.IsValid) return View("Manage", model);
             if (initial) await services.SuaGiaBanDauAsync(AccountId, model.ToaNhaId, model.DichVuId, model.DonGia!.Value, model.GiaCu);
             else await services.DoiGiaAsync(AccountId, model.ToaNhaId, model.DichVuId, model.DonGia!.Value, model.TuNgay!.Value, model.PhienBan);
@@ -157,6 +160,17 @@ public class DichVuController(AppDbContext db, DichVuService services, DichVuPho
         catch (UnauthorizedAccessException) { return Forbid(); }
         catch (InvalidOperationException ex) { ModelState.AddModelError("", ex.Message); return View("Manage", model); }
         return RedirectToAction(nameof(Manage), new { model.ToaNhaId, model.DichVuId });
+    }
+
+    private async Task FillManageAsync(QuanLyDichVuViewModel model)
+    {
+        model.TenToaNha = await db.ToaNhas.Where(x => x.Id == model.ToaNhaId).Select(x => x.TenToaNha).SingleAsync();
+        model.ApDungMacDinh = await db.DichVuToaNhas.AnyAsync(x => x.ToaNhaId == model.ToaNhaId && x.DichVuId == model.DichVuId && x.ApDungMacDinh);
+        var today = DichVuService.HomNay();
+        var selections = db.DichVuPhongs.AsNoTracking().Where(x => x.DichVuToaNha.ToaNhaId == model.ToaNhaId && x.DichVuToaNha.DichVuId == model.DichVuId
+            && !db.NgungDichVuPhongs.Any(n => n.DichVuPhongId == x.Id && n.NgungTuKy <= today && (n.ApDungLaiTuKy == null || n.ApDungLaiTuKy > today)));
+        model.SoPhongApDung = await selections.CountAsync();
+        model.SoPhongGiaRieng = await selections.CountAsync(x => x.DonGiaRieng != null);
     }
 
     [HttpPost, ValidateAntiForgeryToken, ModuleAccess("PHONG_TRO", write: true)]

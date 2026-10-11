@@ -25,7 +25,7 @@ public partial class AppDbContext
         [typeof(YeuCauThue)] = ["MaYeuCau", "TinDangId", "KhachThueId", "LoaiYeuCau", "NgayMongMuon", "SoNguoiDuKien", "TrangThai"],
         [typeof(TaiKhoan)] = ["HoTen", "VaiTro", "DangHoatDong", "MustChangePassword", "IsDeleted"],
         [typeof(ToaNha)] = ["ChuNhaId", "QuanLyId", "TenToaNha", "DiaChi", "PhuongXa", "QuanHuyen", "TinhThanh", "SoTang", "DienTichDat", "ThangMay", "BaiDoXe", "CameraAnNinh", "BaoVe24h", "KhuGiatSay", "SanThuong", "NgayChotHangThang", "DangHoatDong"],
-        [typeof(PhongTro)] = ["ToaNhaId", "MaPhong", "Tang", "LoaiPhong", "DienTich", "GiaThue", "TienCocDuKien", "SoNguoiToiDa", "TrangThai"],
+        [typeof(PhongTro)] = ["ToaNhaId", "MaPhong", "Tang", "LoaiPhong", "DienTich", "GiaThue", "TienCocDuKien", "SoNguoiToiDa", "TrangThai", "TienNghi"],
         [typeof(DichVuToaNha)] = ["ToaNhaId", "DichVuId", "ApDungMacDinh"],
         [typeof(NgungDichVuPhong)] = ["DichVuPhongId", "YeuCauLucUtc", "NgungTuKy", "ApDungLaiTuKy", "ApDungLaiLucUtc"],
         [typeof(DichVuPhong)] = ["PhongId", "DichVuToaNhaId", "DonGiaRieng"],

@@ -288,6 +288,43 @@ public sealed partial class RoomServicesTests : IDisposable
         var htmlB = await client.GetStringAsync($"/DichVuPhong?phongId={b}");
         Assert.Contains("data-total=\"100000\"", htmlB);
         Assert.DoesNotContain($"data-service-id=\"{extra}\"", htmlB);
+        var editHtml = await client.GetStringAsync($"/PhongTro/Edit/{a}");
+        Assert.Contains("id=\"room-services\"", editHtml);
+        Assert.Contains($"form=\"room-service-price-{standard}-form\"", editHtml);
+        Assert.Contains($"id=\"room-service-price-{standard}-form\"", editHtml);
+        Assert.Contains("name=\"GhiChuNoiBo\"", editHtml);
+        Assert.Contains("name=\"TienNghi\"", editHtml);
+        var roomEdit = new Dictionary<string,string> {
+            ["ToaNhaId"]="1",["MaPhong"]="A",["Tang"]="1",["DienTich"]="20",
+            ["GiaThueDisplay"]="1000000",["SoNguoiToiDa"]="2",["TrangThai"]="TRONG",
+            ["GhiChuNoiBo"]="Ghi chú riêng để kiểm thử",["TienNghi"]="DIEU_HOA"
+        };
+        Assert.Equal(HttpStatusCode.Redirect,(await Post(client,$"/PhongTro/Edit/{a}",roomEdit)).StatusCode);
+        using (var fresh = Context()) {
+            var saved = await fresh.PhongTros.FindAsync(a);
+            Assert.Equal("Ghi chú riêng để kiểm thử",saved!.GhiChuNoiBo);
+            Assert.Contains("DIEU_HOA",saved.TienNghi!);
+        }
+        Assert.Contains("Ghi chú riêng để kiểm thử",WebUtility.HtmlDecode(await client.GetStringAsync($"/PhongTro/Edit/{a}")));
+        roomEdit["TienNghi"]="FORGED";
+        Assert.Equal(HttpStatusCode.OK,(await Post(client,$"/PhongTro/Edit/{a}",roomEdit)).StatusCode);
+        roomEdit["TienNghi"]="DIEU_HOA";roomEdit["GhiChuNoiBo"]=new string('x',501);
+        Assert.Equal(HttpStatusCode.OK,(await Post(client,$"/PhongTro/Edit/{a}",roomEdit)).StatusCode);
+        var priceResponse = await Post(client, "/DichVuPhong/SetPrice", new()
+        { ["phongId"] = a.ToString(), ["dichVuToaNhaId"] = standard.ToString(), ["donGiaRieng"] = "123456", ["returnToRoom"] = "true" });
+        Assert.Equal(HttpStatusCode.Redirect, priceResponse.StatusCode);
+        Assert.Equal($"/PhongTro/Edit/{a}#room-services", priceResponse.Headers.Location?.ToString());
+        Assert.Contains("value=\"123456\"", await client.GetStringAsync(priceResponse.Headers.Location));
+        Assert.Equal(123456, (await Rooms(context).XemAsync(1, a)).DichVus.Single(x => x.Id == standard).DonGiaRieng);
+        Assert.Null((await Rooms(context).XemAsync(1, b)).DichVus.Single(x => x.Id == standard).DonGiaRieng);
+        var stopResponse = await Post(client, "/DichVuPhong/Set", new()
+        { ["phongId"] = a.ToString(), ["dichVuToaNhaId"] = extra.ToString(), ["enabled"] = "false", ["returnToRoom"] = "true" });
+        Assert.Equal($"/PhongTro/Edit/{a}#room-services", stopResponse.Headers.Location?.ToString());
+        Assert.NotNull((await Rooms(context).XemAsync(1, a)).DichVus.Single(x => x.Id == extra).NgungTuKy);
+        using var foreignOwner = factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+        await Login(foreignOwner, "other");
+        Assert.Equal(HttpStatusCode.Forbidden, (await Post(foreignOwner, "/DichVuPhong/SetPrice", new()
+        { ["phongId"] = a.ToString(), ["dichVuToaNhaId"] = standard.ToString(), ["donGiaRieng"] = "999", ["returnToRoom"] = "true" })).StatusCode);
         Assert.Equal(HttpStatusCode.BadRequest, (await client.PostAsync("/DichVuPhong/Set", new FormUrlEncodedContent(new Dictionary<string, string> { ["phongId"] = a.ToString() }))).StatusCode);
         using var tenant = factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
         await Login(tenant, "tenant");

@@ -52,6 +52,22 @@ public sealed partial class MeterReadingListTests
     [Fact] public async Task ExcessPrecisionRejected(){MeterFixture();Assert.Contains("DienMoi",(await Save(SaveInput(0.0001m))).Keys);}
     [Fact] public async Task MissingReferenceBlockedWithoutFakeZero()
     {MeterFixture(handover:false);var errors=await Save(SaveInput());Assert.Equal(2,errors.Count);Assert.Equal(0,Count("chi_so_dien_nuoc"));Assert.Null((await List()).Phongs.Single(x=>x.PhongId==1).Dien.GiaTri);}
+    [Fact] public async Task MissingReferenceCanBeSuppliedAndSurvivesReload()
+    {
+        MeterFixture(handover:false);
+        var input=SaveInput(110,25); input.DienDau=100; input.NuocDau=20;
+        Assert.Empty(await Save(input));
+        var room=(await List()).Phongs.Single(x=>x.PhongId==1);
+        Assert.Equal(100,room.Dien.GiaTri);Assert.Equal(20,room.Nuoc.GiaTri);
+        input.DienPhienBan=0;input.NuocPhienBan=0;input.DienDau=0;input.DienMoi=99;
+        Assert.Contains("DienMoi",(await Save(input)).Keys);
+    }
+    [Theory][InlineData(-1)][InlineData(100.0001)]
+    public async Task InvalidSuppliedBaselineDoesNotSave(double baseline)
+    {
+        MeterFixture(handover:false);var input=SaveInput(110,25);input.DienDau=(decimal)baseline;input.NuocDau=20;
+        Assert.Contains("DienDau",(await Save(input)).Keys);Assert.Equal(0,Count("chi_so_dien_nuoc"));
+    }
     [Fact] public async Task WaterPerPersonCreatesOnlyElectricReading()
     {MeterFixture(waterMeter:false);Assert.Empty(await Save(SaveInput(2,null)));Assert.Equal(1,Count("chi_so_dien_nuoc"));var room=(await List()).Phongs.Single(x=>x.PhongId==1);Assert.Single(room.DichVu);Assert.True(room.DaChot);}
     [Fact] public async Task RoomOverrideAndServiceStopRespected()

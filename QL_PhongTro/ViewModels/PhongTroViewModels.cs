@@ -21,7 +21,7 @@ public enum TrangThaiPhong
 
 public class DanhSachPhongViewModel
 {
-    public decimal DoanhThuPhongTrong { get; set; }
+    public decimal DoanhThuPhongDangThue { get; set; }
 
     public Dictionary<int, string> KhachTheoPhong { get; set; } = [];
 
@@ -38,6 +38,9 @@ public class DanhSachPhongViewModel
 
 public class TaoPhongViewModel
 {
+    [StringLength(500, ErrorMessage = "Ghi chú không được vượt quá 500 ký tự.")]
+    public string? GhiChuNoiBo { get; set; }
+    public List<string> TienNghi { get; set; } = [];
     [Required(ErrorMessage = "Vui lòng chọn tòa nhà.")]
     [Display(Name = "Tòa nhà")]
     public int? ToaNhaId { get; set; }
@@ -213,4 +216,5 @@ public class ChiTietPhongViewModel
 {
     public PhongTro Phong { get; set; } = null!;
     public ToaNha ToaNha { get; set; } = null!;
+    public IReadOnlyList<AnhPhongQuanLyViewModel> Anh { get; set; } = [];
 }

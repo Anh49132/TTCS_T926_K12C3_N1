@@ -139,8 +139,8 @@ public class PhongTroController(AppDbContext db, DichVuPhongService roomServices
                 statusCounts[count.Status] = count.Count;
         }
 
-        var vacantPrices = await db.PhongTros.AsNoTracking()
-            .Where(room => visibleBuildingIds.Contains(room.ToaNhaId) && (!selectedId.HasValue || room.ToaNhaId == selectedId) && room.TrangThai == "TRONG")
+        var rentedPrices = await db.PhongTros.AsNoTracking()
+            .Where(room => visibleBuildingIds.Contains(room.ToaNhaId) && (!selectedId.HasValue || room.ToaNhaId == selectedId) && room.TrangThai == "DANG_THUE")
             .Select(room => room.GiaThue).ToListAsync();
         return View(new DanhSachPhongViewModel
         {
@@ -153,7 +153,7 @@ public class PhongTroController(AppDbContext db, DichVuPhongService roomServices
             TrangThaiOptions = GetStatusOptions(),
             SoLuongTheoTrangThai = statusCounts,
             PhongTros = rooms,
-            DoanhThuPhongTrong = vacantPrices.Sum(price => (decimal)price),
+            DoanhThuPhongDangThue = rentedPrices.Sum(price => (decimal)price),
             KhachTheoPhong = tenantNames
         });
     }
@@ -558,7 +558,7 @@ public class PhongTroController(AppDbContext db, DichVuPhongService roomServices
         var building = await VisibleBuildings(accountId.Value, activeOnly: false)
             .SingleOrDefaultAsync(x => x.Id == room.ToaNhaId);
         if (building is null) return Forbid();
-        return View(new ChiTietPhongViewModel { Phong = room, ToaNha = building });
+        return View(new ChiTietPhongViewModel { Phong = room, ToaNha = building, Anh = await GetRoomImagesAsync(id) });
     }
 
     [HttpGet, ModuleAccess("PHONG_TRO", write: true)]
@@ -567,10 +567,13 @@ public class PhongTroController(AppDbContext db, DichVuPhongService roomServices
         var room = await GetOwnedRoom(id);
         if (room is null) return NotFound();
         ViewData["RoomId"] = id;
+        ViewData["RoomServices"] = await roomServices.XemAsync(CurrentAccountId()!.Value, id);
         return View("Create", new TaoPhongViewModel
         {
             ToaNhaId = room.ToaNhaId, MaPhong = room.MaPhong, Tang = room.Tang,
             DienTich = room.DienTich, GiaThue = room.GiaThue,
+            GhiChuNoiBo = room.GhiChuNoiBo,
+            TienNghi = string.IsNullOrWhiteSpace(room.TienNghi) ? [] : System.Text.Json.JsonSerializer.Deserialize<List<string>>(room.TienNghi) ?? [],
             GiaThueDisplay = room.GiaThue.ToString(CultureInfo.InvariantCulture),
             SoNguoiToiDa = room.SoNguoiToiDa, TrangThai = Enum.Parse<TrangThaiPhong>(room.TrangThai),
             ToaNhaOptions = await GetBuildingOptions(CurrentAccountId()!.Value),
@@ -584,7 +587,10 @@ public class PhongTroController(AppDbContext db, DichVuPhongService roomServices
         var room = await GetOwnedRoom(id);
         if (room is null) return NotFound();
         ViewData["RoomId"] = id;
+        ViewData["RoomServices"] = await roomServices.XemAsync(CurrentAccountId()!.Value, id);
         model.ToaNhaOptions = await GetBuildingOptions(CurrentAccountId()!.Value);
+        if (model.TienNghi.Any(x => !TienNghiPhong.Options.ContainsKey(x)))
+            ModelState.AddModelError(nameof(model.TienNghi), "Tiện nghi đã chọn không hợp lệ.");
         if (model.ToaNhaId != room.ToaNhaId)
             ModelState.AddModelError(nameof(model.ToaNhaId), "Không thể chuyển phòng sang tòa nhà khác.");
         BindRentPrice(nameof(model.GiaThue), model.GiaThueDisplay, price => model.GiaThue = price);
@@ -602,6 +608,8 @@ public class PhongTroController(AppDbContext db, DichVuPhongService roomServices
         room.GiaThue = model.GiaThue!.Value;
         room.SoNguoiToiDa = model.SoNguoiToiDa!.Value;
         room.TrangThai = model.TrangThai!.Value.ToString();
+        room.GhiChuNoiBo = string.IsNullOrWhiteSpace(model.GhiChuNoiBo) ? null : model.GhiChuNoiBo.Trim();
+        room.TienNghi = System.Text.Json.JsonSerializer.Serialize(model.TienNghi.Distinct().Order());
         try { await db.SaveChangesAsync(); }
         catch (DbUpdateException ex)
         {

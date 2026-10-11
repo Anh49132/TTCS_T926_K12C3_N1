@@ -7,7 +7,7 @@
 <div class="room-create-page room-edit-page">
 
 <header class="rc-heading"><div><h1>Chỉnh sửa phòng @Model.MaPhong <span class="re-status">● @(Model.TrangThai.HasValue ? QL_PhongTro.Controllers.PhongTroController.StatusLabel(Model.TrangThai.Value) : "Chưa xác định")</span></h1><p>@building · Cập nhật thông tin phòng, giá thuê và tiện nghi.</p></div><span>* Trường thông tin bắt buộc</span></header>
-<div class="re-warning"><strong>ⓘ Thông tin hợp đồng được giữ riêng</strong><p>Các giá trị trong hợp đồng không tự thay đổi khi sửa thông tin phòng. Tiền cọc, phí dịch vụ, tiện nghi và ghi chú trong form này chỉ là khung chưa hoạt động.</p></div>
+<div class="re-warning"><strong>ⓘ Thông tin hợp đồng được giữ riêng</strong><p>Các giá trị trong hợp đồng không tự thay đổi khi sửa thông tin phòng. Ghi chú và tiện nghi được lưu bằng nút Lưu thay đổi; phí dịch vụ được lưu riêng từng dòng.</p></div>
 <form asp-action="Edit" asp-route-id="@ViewData["RoomId"]" method="post" novalidate><div asp-validation-summary="ModelOnly" class="text-danger"></div><div class="rc-layout"><div class="rc-main">
 <section class="rc-card rc-basic-card"><div class="rc-card-heading"><span class="rc-icon">▥</span><div><h2>Thông tin cơ bản</h2><p>Thông tin định danh, diện tích và sức chứa của phòng.</p></div></div><div class="rc-fields">
 <div><label asp-for="ToaNhaId">Cơ sở <em>*</em></label><select asp-for="ToaNhaId" asp-items="Model.ToaNhaOptions" disabled></select><input type="hidden" asp-for="ToaNhaId" id="edit-building-id" /><small>@(locations?.GetValueOrDefault(Model.ToaNhaId?.ToString() ?? ""))</small><span asp-validation-for="ToaNhaId" class="text-danger"></span></div>
@@ -22,26 +22,18 @@
         <div><label for="rc-deposit-preview">Tiền cọc <em>*</em></label><div class="rc-unit"><input id="rc-deposit-preview" placeholder="4.800.000" disabled aria-describedby="rc-pricing-unavailable" /><span>đ</span></div></div>
     </div>
     <p class="rc-hint">ⓘ Tiền cọc tương đương 1 tháng thuê. Có thể điều chỉnh theo hợp đồng.</p>
-    <div class="rc-services">
-        <div class="rc-services-heading"><h2>Phí dịch vụ</h2><button type="button" disabled>＋ Thêm phí khác</button></div>
-        <p>Chọn các dịch vụ áp dụng cho phòng và điều chỉnh đơn giá.</p>
-        <div class="rc-service-table" role="group" aria-label="Khung cấu hình phí dịch vụ chưa hoạt động">
-            <div class="rc-service-table-head"><span>Dịch vụ áp dụng</span><span>Đơn giá</span><span>Cách tính</span></div>
-            @foreach (var service in new[] { (Name: "Điện", Icon: "ϟ", Price: "3.500", Unit: "kWh"), (Name: "Nước", Icon: "♧", Price: "20.000", Unit: "m³"), (Name: "Internet", Icon: "⌁", Price: "100.000", Unit: "phòng / tháng"), (Name: "Vệ sinh", Icon: "♲", Price: "30.000", Unit: "người / tháng") })
-            {
-                <div class="rc-service-row"><label><input type="checkbox" checked disabled /><span class="rc-service-icon" aria-hidden="true">@service.Icon</span><span>@service.Name</span></label><div class="rc-unit"><input placeholder="@service.Price" disabled aria-label="Đơn giá @service.Name — minh họa" /><span>đ</span></div><select disabled aria-label="Cách tính @service.Name"><option>@service.Unit</option></select></div>
-            }
-        </div>
-        <p class="rc-service-help">Điện, nước tính theo chỉ số công tơ; các phí còn lại thu cùng tiền thuê hàng tháng.</p>
-        <p id="rc-pricing-unavailable" class="rc-service-unavailable">Khung minh họa: tiền cọc, chọn dịch vụ, đơn giá, cách tính và thêm phí khác chưa hoạt động tại đây. Các mức giá mẫu không được lưu. Phòng mới vẫn nhận dịch vụ mặc định của cơ sở; sau khi lưu có thể cấu hình dịch vụ theo luồng hiện có.</p>
-    </div>
+    @if (ViewData["RoomServices"] is QL_PhongTro.ViewModels.DichVuPhongViewModel services)
+    {
+        <partial name="_RoomServices" model="services" />
+    }
+    <p id="rc-pricing-unavailable" class="rc-service-unavailable">Tiền cọc được quản lý trong hợp đồng.</p>
 </section>
-<section class="rc-card rc-room-notes"><div class="rc-card-heading"><span class="rc-icon">✎</span><div><h2>Ghi chú</h2><p>Thông tin nội bộ dành cho việc quản lý phòng.</p></div></div><textarea disabled rows="4" maxlength="500" placeholder="Thêm thông tin bổ sung cho phòng..." aria-label="Ghi chú chưa hỗ trợ lưu"></textarea><div class="rc-room-notes-footer"><span>Chỉ hiển thị cho chủ nhà</span><span>0 / 500 ký tự</span></div><small>Chưa hỗ trợ lưu ghi chú, tạm thời không hoạt động.</small></section>
+<section class="rc-card rc-room-notes"><div class="rc-card-heading"><span class="rc-icon">✎</span><div><h2><label for="GhiChuNoiBo">Ghi chú</label></h2><p>Thông tin nội bộ dành cho việc quản lý phòng.</p></div></div><textarea asp-for="GhiChuNoiBo" rows="4" maxlength="500" placeholder="Thêm thông tin bổ sung cho phòng..."></textarea><span asp-validation-for="GhiChuNoiBo" class="text-danger"></span><div class="rc-room-notes-footer"><span>Không hiển thị trên tin đăng công khai</span><span>Tối đa 500 ký tự</span></div></section>
 </div><aside class="rc-aside">
 @if (await Permissions.AllowsAsync("HOP_DONG")) {
 <section class="rc-card"><div class="rc-card-heading"><span class="rc-icon">♙</span><div><h2>Khách thuê &amp; hợp đồng</h2><p>Chỉ để tham khảo · không chỉnh sửa tại đây.</p></div></div><div class="re-tenant"><span>—</span><div><strong>Chưa kết nối khách thuê</strong><small>Không hiển thị dữ liệu cá nhân mẫu.</small></div></div><div class="re-contract"><strong>Hợp đồng: —</strong><dl><div><dt>Ngày bắt đầu</dt><dd>—</dd></div><div><dt>Ngày kết thúc</dt><dd>—</dd></div><div><dt>Chu kỳ thanh toán</dt><dd>—</dd></div><div><dt>Ngày thu tiền</dt><dd>—</dd></div></dl><div class="re-deposit">Tiền cọc đang giữ <strong>— đ</strong></div><button type="button" disabled class="re-full">Xem hợp đồng</button>@if (User.IsInRole("CHU_NHA")) { <a class="re-history" asp-controller="HopDong" asp-action="LichSuNguoiO" asp-route-phongId="@ViewData["RoomId"]">Lịch sử người ở ↗</a> }</div>@if (await Permissions.AllowsAsync("TAI_CHINH")) { <div class="re-balance"><small>Cần thu · kỳ hiện tại</small><strong>— đ</strong><p>Chưa kết nối hóa đơn vào form chỉnh sửa.</p></div> }</section>
 }
-<section class="rc-card"><div class="rc-card-heading"><span class="rc-icon">▣</span><div><h2>Tiện nghi</h2><p>Chọn tiện nghi có sẵn trong phòng.</p></div></div><div class="re-amenities">@foreach (var amenity in new[] { "Điều hòa", "Bình nóng lạnh", "Giường", "Tủ quần áo", "Khu bếp riêng", "Ban công", "Máy giặt", "Tủ lạnh" }) { <label><input type="checkbox" disabled />@amenity</label> }</div><p class="re-unavailable">Chưa hỗ trợ lưu tiện nghi; các lựa chọn tạm vô hiệu hóa.</p></section>
+<section class="rc-card"><div class="rc-card-heading"><span class="rc-icon">▣</span><div><h2>Tiện nghi</h2><p>Chọn tiện nghi có sẵn trong phòng.</p></div></div><div class="re-amenities">@foreach (var amenity in QL_PhongTro.ViewModels.TienNghiPhong.Options) { <label><input type="checkbox" name="TienNghi" value="@amenity.Key" checked="@Model.TienNghi.Contains(amenity.Key)" />@amenity.Value</label> }</div><span asp-validation-for="TienNghi" class="text-danger"></span><p>Tiện nghi được lưu cùng thông tin phòng.</p></section>
 <section class="rc-card room-image-manager"
              data-upload-url="@Url.Action("UploadImage", new { id = ViewData["RoomId"] })"
              data-reorder-url="@Url.Action("ReorderImages", new { id = ViewData["RoomId"] })"
@@ -76,3 +68,8 @@
             <p class="room-image-sort-status" data-sort-status role="status" aria-live="polite"></p>
         </section>
 </aside></div><footer class="rc-footer"><div class="re-save-info"><strong>Lưu thông tin phòng @Model.MaPhong tại @building.</strong><small>Khách thuê, hợp đồng và lịch sử hiện có được giữ nguyên.</small></div><div><a asp-action="Details" asp-route-id="@ViewData["RoomId"]">Hủy</a><button type="submit">✓ Lưu thay đổi</button></div></footer></form><p class="re-bottom">Thông tin phòng chỉ hiển thị trong không gian quản lý của bạn.</p></div>
+
+@if (ViewData["RoomServices"] is QL_PhongTro.ViewModels.DichVuPhongViewModel serviceForms)
+{
+    <partial name="_RoomServiceForms" model="serviceForms" />
+}

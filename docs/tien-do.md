@@ -1,3 +1,26 @@
+## 11/10/2026 — Giao diện chủ nhà quản lý yêu cầu
+
+- Danh sách có bốn thống kê từ dữ liệu thật, tab trạng thái, tìm kiếm, lọc loại/tòa, phân trang 10 dòng, xuất CSV UTF-8 có chống công thức, lịch hẹn hôm nay và cảnh báo quá 24 giờ. Thống kê trong phạm vi tòa đang chọn và không bị lọc theo trạng thái. Thuê ngay đã duyệt chỉ đếm yêu cầu chưa có hợp đồng chưa hủy.
+- Trang chi tiết chủ nhà chia thông tin/xử lý/lịch sử và cột khách/phòng có ảnh, giá, diện tích, sức chứa. Giữ form/CSRF và quy tắc hẹn, đổi lịch, từ chối, duyệt thuê ngay, hủy, lập hợp đồng. Chỉ hiện form xác nhận lịch cho loại xem phòng ở giao diện chủ nhà. Không thêm ghi chú hẹn hay xác thực khách giả khi chưa có cơ chế dữ liệu.
+- Không sửa CSDL. Build PASS; 57 test hẹn/duyệt/từ chối PASS; test HTTP danh sách và hai loại chi tiết PASS sau khi giữ nhãn số yêu cầu chưa xử lý. Chưa kiểm tra trực quan trình duyệt/360px và thao tác CSV thực tế.
+
+## 11/10/2026 — Giao diện sửa đơn giá dịch vụ của tòa
+
+- Trang DichVu/Manage chia thành thống kê, form cập nhật giá, thông tin dịch vụ, trạng thái áp dụng và lịch sử. Hiển thị giá đang hiệu lực thay vì lấy phiên bản tương lai; lịch sử phân biệt sắp áp dụng, đang áp dụng và đã kết thúc.
+- Số phòng lấy từ dịch vụ đã chọn còn áp dụng; tách phòng dùng giá riêng. Công tắc mặc định dùng SetDefault hiện có và quay lại trang Manage. Giữ CSRF, kiểm tra sở hữu, lịch giá và thao tác ngừng/kích hoạt từ kỳ sau. Không đổi schema; không thêm trường lý do chưa có cơ chế lưu.
+- Build PASS; chưa kiểm tra trực quan trình duyệt/360px.
+
+## 11/10/2026 — Doanh thu dự kiến trên danh sách phòng
+
+- Chỉ cộng giá thuê tháng của phòng DANG_THUE trong phạm vi tòa đang xem; loại phòng trống, đặt cọc và ngừng cho thuê. Nhãn ghi rõ doanh thu tiền phòng dự kiến; liên kết mở danh sách phòng đang thuê. Không cộng phí dịch vụ hoặc coi là tiền thực thu.
+- Build PASS; không đổi CSDL. Chưa kiểm tra trực quan trình duyệt.
+
+## 11/10/2026 — Ảnh trên trang chi tiết phòng
+
+- Trang /PhongTro/Details tải cùng danh sách ảnh đã lưu như trang sửa phòng, giữ thứ tự và đánh dấu ảnh đại diện. Bấm ảnh mở ảnh gốc; phòng chưa có ảnh có thông báo riêng. Lưới ảnh tự co theo chiều rộng màn hình.
+- Giữ kiểm tra quyền module và phạm vi tòa trước khi tải ảnh. Không đổi schema hoặc dữ liệu.
+- Build PASS; chưa kiểm tra trực quan trình duyệt/360px.
+
 ## 10/10/2026 — Chủ nhà chốt chỉ số điện nước như quản lý
 
 - Theo yêu cầu mới: ChiSoDienNuoc cho CHU_NHA và QUAN_LY dùng cùng màn hình/form chốt từng phòng. Service đọc vai trò đang hoạt động từ DB: chủ nhà chỉ tòa có chu_nha_id là mình; quản lý chỉ tòa có quan_ly_id là mình. Tòa/phòng/hợp đồng bị giả mạo vẫn bị chặn khi GET và POST.
@@ -1240,3 +1263,57 @@ Cách chạy lại: `dotnet run --project .\QL_PhongTro\QL_PhongTro.csproj --lau
 - Xác minh: `git diff --check` đạt. Chưa chạy được build/test hoàn chỉnh vì tiến trình web hiện hữu đang khóa `QL_PhongTro.dll/.exe`; thử output cách ly cần restore nhưng môi trường bị từ chối đọc `NuGet.Config`. Cần dừng tiến trình đó hoặc chạy terminal có quyền phù hợp rồi chạy lại test.
 - Xac minh bo sung sau khi dung dung tien trinh QL_PhongTro.exe PID 11296 dang khoa output: `dotnet test Tests/QL_PhongTro.Tests/QL_PhongTro.Tests.csproj --no-restore --filter FullyQualifiedName~HopDongCuaToiTests` PASS 18/18. Canh bao ImageSharp license va xUnit2013 la canh bao san co.
 - Cap nhat giao dien xem PDF hop dong theo mau: them route `PreviewPdf`/`PdfPreviewFile`, trang `Views/HopDongCuaToi/PreviewPdf.cshtml`, khung xem truoc PDF, header, file card, nut quay lai va nut tai xuong; nut tu danh sach/chi tiet chuyen sang Xem PDF. Build cach ly `data/pdf-preview-check-runtime` PASS 0 loi; canh bao ImageSharp/CS8601 da co san. Khong doi schema/database.
+# Cập nhật 11/10/2026 — ADMIN local trong run.bat
+
+- `run.bat` gọi `--create-local-admin` bằng profile Development sau khi kiểm tra schema và trước khi chạy web. Tài khoản dùng email theo yêu cầu; mật khẩu được băm BCrypt bởi initializer hiện có.
+- ADMIN đã tồn tại được giữ nguyên, không đặt lại mật khẩu. SĐT mặc định `0900000000`, có thể thay bằng `LocalAdmin__Phone` trong môi trường hoặc `.env.local`; SĐT trùng sẽ khiến script dừng.
+- `run.bat --check-only` không tạo tài khoản. Không đổi schema.
+- Đã kiểm tra profile `http`, luồng CLI và `git diff --check`; chưa chạy script trên DB thực tế.
+
+## 11/10/2026 — Bộ CSDL test Sprint 3 theo yêu cầu
+
+- Tạo bộ SQLite mới riêng trong `data/s308-demo/`, tài khoản chủ nhà theo yêu cầu; không sửa DB local hiện có. Credential và hướng dẫn chi tiết chỉ ở `data/` bị Git ignore.
+- Dữ liệu gồm yêu cầu đã duyệt, hợp đồng/người ở ghép, hợp đồng còn 20 ngày, lịch sử chỉ số ba kỳ, phòng thiếu chỉ số nước, hóa đơn nháp/đã phát hành và tòa 50 phòng đủ chỉ số.
+- Chạy lại web bằng `data/start-s3-test.bat`, cổng 5251; hướng dẫn theo story ở `data/HUONG-DAN-TEST-S3.md`.
+- Xác minh: build output riêng thành công; SQLite integrity_check và foreign_key_check đạt; đăng nhập chủ nhà thành công; trang hợp đồng, form tạo từ yêu cầu, hóa đơn tháng và tiến độ chỉ số trả HTTP 200. Chưa nghiệm thu toàn bộ AC, responsive 360px hoặc thời gian phát hành 50 phòng.
+
+## 11/10/2026 — Chuyển dữ liệu test vào CSDL mặc định
+
+- Theo yêu cầu mới của người dùng, dùng `QL_PhongTro/Data/local-dev.sqlite` và `run.bat` thông thường, cổng 5247. Khi kiểm tra, file DB mặc định chưa tồn tại và không có cấu hình DatabasePath khác.
+- Đã tạo DB mặc định từ dữ liệu test đã chuẩn bị; 102 phòng, đủ các tình huống Sprint 3. Tài khoản chủ nhà theo yêu cầu được giữ nguyên; tạo ADMIN bằng CLI hiện có theo yêu cầu trước đó, không reset tài khoản cũ.
+- Đã dừng web test cổng 5251. SQLite integrity/FK đã kiểm tra đạt; chưa chạy lại web mặc định.
+
+## 11/10/2026 — Thêm ảnh mẫu vào bản ghi mặc định
+
+- Đã thêm 306 ảnh phòng (3 ảnh/phòng cho 102 phòng), phân bổ luân phiên 10 ảnh do người dùng cung cấp; thumbnail qua RoomImageStore hiện có.
+- Đã thêm ảnh CCCD mẫu trước/sau cho 60 hồ sơ khách thuê còn thiếu ảnh, xử lý qua GiayToImageStore và lưu private ngoài wwwroot. Không đổi dữ liệu giấy tờ hoặc thông tin tài khoản.
+- Có backup SQLite trước khi nhập trong data/ (Git ignore). Kiểm tra toàn bộ đường dẫn ảnh/thumbnail có file, giới hạn 8 ảnh/phòng, integrity_check và foreign_key_check đều đạt. Chưa kiểm tra hiển thị qua trình duyệt.
+
+## 11/10/2026 — Cho nhập chỉ số đầu kỳ khi thiếu tham chiếu
+
+- Trang chốt chỉ số hiển thị ô chỉ số đầu kỳ điện/nước khi chưa có kỳ trước hoặc bàn giao. Cho nhập cùng chỉ số cuối kỳ, không mặc định đầu kỳ bằng 0.
+- Backend chỉ nhận mốc người dùng nhập khi không có lịch sử; kiểm tra không âm, tối đa 3 số thập phân, giới hạn chỉ số và cuối >= đầu. Lưu đầu/cuối cùng transaction hiện có; tải lại sử dụng mốc đầu đã lưu và không cho giả mốc mới để bỏ qua kiểm tra giảm chỉ số.
+- Giữ nguyên backend phân quyền, CSRF, khóa lạc quan, xác nhận bất thường và khóa kỳ sau phát hành. Không đổi schema hoặc DB thực tế.
+- Kiểm thử nhóm MeterReading/MeterUsageWarning: 100/101 đạt lần đầu, ca cũ còn kỳ vọng lỗi DienMoi được cập nhật thành DienDau và chạy lại PASS 1/1. Build thành công; git diff --check đạt. Chưa kiểm tra trực quan 360px trên trình duyệt.
+
+## 11/10/2026 — Làm lại dữ liệu mẫu mặc định còn 36 phòng
+
+- Theo yêu cầu trực tiếp, thay bộ dữ liệu test bằng 36 phòng (3 tòa x 12), 24 hợp đồng bắt đầu hôm nay, 6 yêu cầu đã duyệt. Giữ tài khoản/hash đăng nhập, ảnh phòng và hồ sơ mẫu; không đổi schema.
+- Không có hóa đơn phát hành, bản chốt hoặc hợp đồng lịch sử gây cảnh báo kỳ cũ. Có chỉ số bàn giao điện/nước cho 21 hợp đồng; 3 hợp đồng thiếu mốc đầu để thử chức năng nhập đầu kỳ mới. Kỳ hiện tại chưa khóa.
+- Đã sao lưu toàn bộ DB trước thay trong data/; đường dẫn và hướng dẫn mới ở data/HUONG-DAN-36-PHONG.md. Kiểm tra schema CLI, integrity/FK, số phòng và toàn bộ file ảnh đạt.
+
+## 11/10/2026 — Chỉnh dịch vụ ngay tại trang sửa phòng
+
+- Thay bảng giá minh họa ở /PhongTro/Edit bằng dịch vụ và giá thực tế của phòng. Cho lưu giá riêng (để trống dùng giá chung), thêm dịch vụ đã khai báo trong tòa, ngừng từ kỳ sau hoặc áp dụng lại ngay tại trang.
+- Dùng lại service/endpoint nghiệp vụ hiện có, form POST độc lập có CSRF; lưu xong quay lại phần phí dịch vụ của phòng. Các thao tác dịch vụ lưu riêng với thông tin phòng; UI nhắc lưu thông tin phòng trước khi thao tác dịch vụ. Cách tính tiếp tục theo cấu hình cấp tòa.
+- Kiểm tra sở hữu và quyền backend giữ nguyên; không đổi schema hay DB. Build PASS. Test HTTP mở trang sửa, khớp form/giá, lưu giá riêng không ảnh hưởng phòng khác, ngừng dịch vụ và chặn chủ nhà khác PASS 1/1 (HttpSingleAndBulkRoomsReceiveDefaultsAndRenderDistinctSelections). git diff --check đạt. Chưa kiểm tra trực quan 360px.
+## 11/10/2026 — Sửa chữ tiếng Việt ở trang sửa phòng
+
+- Sửa dòng bị mất dấu thành “Tiền cọc được quản lý trong hợp đồng.” trong `_EditRoomForm.cshtml`, giữ UTF-8.
+- Kiểm tra các partial dịch vụ liên quan không còn chữ bị thay bằng dấu hỏi; `git diff --check` đạt. Không đổi logic hoặc CSDL.
+
+## 11/10/2026 — Lưu ghi chú và tiện nghi phòng
+
+- Bật ghi chú tối đa 500 ký tự và 8 tiện nghi trên trang sửa phòng; lưu/tải lại dữ liệu bằng nút Lưu thay đổi. Ghi chú nội bộ tách khỏi mô tả công khai và không ghi nội dung vào audit.
+- Schema v24 thêm hai cột nullable, bước nâng cấp có transaction và backup. Đã thử trên bản sao v23, so sánh bảo toàn mọi dữ liệu cũ, integrity/FK đạt và chạy lặp không đổi; đã áp dụng vào DB mặc định. Tài liệu tại `schema-v24-ghi-chu-tien-nghi.md`.
+- Build đạt. Test HTTP lưu ghi chú/tiện nghi, tải lại, từ chối ghi chú quá dài/mã tiện nghi lạ và quyền chủ nhà khác đạt. Chưa kiểm tra trực quan mobile 360px.

@@ -8,27 +8,45 @@
     var latest = Model.LichSu.Last();
     var initial = Model.LichSu.Count == 1 && DichVuMacDinhOptions.LaMacDinh(latest.DichVu.MaDichVu);
     var write = await Permissions.AllowsAsync("PHONG_TRO", true);
+    var today = DichVuService.HomNay();
+    var current = Model.LichSu.LastOrDefault(x => x.TuNgay <= today && (x.DenNgay == null || x.DenNgay >= today));
+    var vn = CultureInfo.GetCultureInfo("vi-VN");
     var statusDate = DichVuService.KySau();
     if (statusDate <= latest.TuNgay) { statusDate = new DateOnly(latest.TuNgay.Year, latest.TuNgay.Month, 1).AddMonths(1); }
 }
-<a asp-action="Index" asp-route-toaNhaId="@Model.ToaNhaId">← Danh sách dịch vụ</a>
-<h1 class="h2 mt-3">@latest.DichVu.TenDichVu</h1>
-<p class="text-secondary">@CachTinhDichVu.Ten(latest.CachTinh) · @latest.DonViTinh</p>
+<div class="service-price-page">
+<a class="sp-back" asp-action="Index" asp-route-toaNhaId="@Model.ToaNhaId">← Quay lại danh sách dịch vụ</a>
+<header class="sp-heading"><span class="sp-icon">▣</span><div><h1>@latest.DichVu.TenDichVu <span class="sp-badge">@(current?.DangApDung == true ? "Đang áp dụng" : "Chưa áp dụng")</span></h1><p>@Model.TenToaNha · @CachTinhDichVu.Ten(latest.CachTinh)</p></div></header>
+<div class="sp-stats">
+<article><small>Đơn giá hiện tại</small><strong>@(current is { DaChotGia: true } ? current.DonGia.ToString("N0", vn) + " đ" : "Chưa thiết lập")</strong><small>@(current?.DonViTinh ?? latest.DonViTinh)</small></article>
+<article><small>Hiệu lực từ</small><strong>@(current?.TuNgay.ToString("dd/MM/yyyy") ?? "Chưa có")</strong></article>
+<article><small>Phòng đã chọn dịch vụ</small><strong>@Model.SoPhongApDung phòng</strong></article>
+<article><small>Mặc định cho phòng mới</small><strong>@(Model.ApDungMacDinh ? "Đang bật" : "Đang tắt")</strong></article>
+</div>
+<div class="sp-layout"><section class="sp-card"><h2>Cập nhật đơn giá</h2><p class="text-secondary">Tạo phiên bản giá mới, giữ nguyên hóa đơn đã phát hành.</p>
 @if (write)
 {
-    <form asp-action="SavePrice" method="post" class="row g-3 mb-4" style="max-width:800px">
+    <form asp-action="SavePrice" method="post" class="row g-3 mb-4">
         <div asp-validation-summary="All" class="text-danger" role="alert"></div>
         <input asp-for="ToaNhaId" type="hidden" /><input asp-for="DichVuId" type="hidden" />
         <input asp-for="PhienBan" type="hidden" /><input asp-for="GiaCu" type="hidden" />
-        <div class="col-sm-6"><label asp-for="DonGia" class="form-label"></label><input asp-for="DonGia" type="number" min="0" step="1" class="form-control" /></div>
+        <div class="col-sm-6"><label class="form-label">Đơn giá hiện tại</label><div class="sp-old-price">@(current is { DaChotGia: true } ? current.DonGia.ToString("N0", vn) + " đ" : "Chưa thiết lập")</div></div>
+        <div class="col-sm-6"><label asp-for="DonGia" class="form-label"></label><input asp-for="DonGia" type="number" min="0" step="1" inputmode="numeric" class="form-control" /><span asp-validation-for="DonGia" class="text-danger"></span></div>
         <div class="col-sm-6"><label asp-for="TuNgay" class="form-label"></label><input asp-for="TuNgay" type="date" class="form-control" /></div>
-        <p class="text-secondary small mb-0">Giá mới áp dụng từ ngày đã chọn; trùng ngày sẽ bị từ chối. Hóa đơn đã phát hành giữ nguyên đơn giá cũ.</p>
+        <div class="col-12"><p class="sp-notice">Giá mới áp dụng cho kỳ có ngày chốt từ ngày hiệu lực đã chọn; trùng ngày sẽ bị từ chối. Hóa đơn đã phát hành giữ nguyên đơn giá cũ.</p></div>
+        <div class="col-12"><div class="sp-impact"><h3>Phạm vi thay đổi giá chung</h3><strong>@Math.Max(0, Model.SoPhongApDung - Model.SoPhongGiaRieng) phòng dùng giá chung</strong><p>@Model.SoPhongGiaRieng phòng dùng giá riêng được giữ nguyên đơn giá. Dịch vụ chỉ tính cho phòng đã chọn và còn áp dụng tại kỳ hóa đơn.</p></div></div>
         <div class="col-12 d-flex flex-wrap gap-2">
             @if (initial) { <button class="btn btn-outline-primary" name="initial" value="true">Lưu giá ban đầu</button> }
-            <button class="btn btn-primary" name="initial" value="false">Thêm phiên bản giá</button>
+            <a class="btn btn-outline-secondary" asp-action="Index" asp-route-toaNhaId="@Model.ToaNhaId">Hủy thay đổi</a><button class="btn btn-primary" name="initial" value="false">Lưu phiên bản giá</button>
         </div>
         @if (initial) { <p class="small text-secondary">Giá ban đầu chỉ sửa trực tiếp được khi chưa dùng trong hợp đồng hoặc hóa đơn. Nút này không sử dụng ngày hiệu lực.</p> }
     </form>
+}
+</section><aside><section class="sp-card"><h2>Thông tin dịch vụ</h2><dl class="sp-info"><div><dt>Mã dịch vụ</dt><dd>@latest.DichVu.MaDichVu</dd></div><div><dt>Cách tính phí</dt><dd>@CachTinhDichVu.Ten(latest.CachTinh)</dd></div><div><dt>Đơn vị tính</dt><dd>@latest.DonViTinh</dd></div><div><dt>Tòa nhà</dt><dd>@Model.TenToaNha</dd></div></dl><a asp-controller="PhongTro" asp-action="Index" asp-route-toaNhaId="@Model.ToaNhaId">Xem danh sách phòng của tòa →</a></section>
+@if (write)
+{
+<section class="sp-card"><h2>Trạng thái áp dụng</h2>
+    <form asp-action="SetDefault" method="post" class="sp-default"><input name="toaNhaId" value="@Model.ToaNhaId" type="hidden" /><input name="dichVuId" value="@Model.DichVuId" type="hidden" /><input name="returnToManage" value="true" type="hidden" /><span>Áp dụng cho phòng tạo mới</span><button type="submit" class="sp-switch @(Model.ApDungMacDinh ? "on" : "")" name="enabled" value="@((!Model.ApDungMacDinh).ToString())" role="switch" aria-checked="@Model.ApDungMacDinh.ToString().ToLowerInvariant()" aria-label="Đổi mặc định cho phòng tạo mới"><span></span></button></form>
     <form asp-action="SetStatus" method="post" class="d-flex flex-wrap align-items-end gap-2 mb-4">
         <input name="toaNhaId" value="@Model.ToaNhaId" type="hidden" /><input name="dichVuId" value="@Model.DichVuId" type="hidden" />
         <input name="phienBan" value="@latest.Id" type="hidden" /><input name="active" value="@((!latest.DangApDung).ToString())" type="hidden" />
@@ -36,13 +54,15 @@
         <button class="btn btn-outline-secondary">@(latest.DangApDung ? "Ngừng áp dụng" : "Kích hoạt lại")</button>
     </form>
     <p class="small text-secondary">Chọn ngày đầu tháng từ kỳ sau, sau phiên bản mới nhất. Thông tin hợp đồng và hóa đơn cũ được giữ nguyên.</p>
+</section>
 }
-<h2 class="h4 mt-4">Lịch sử đơn giá và trạng thái</h2>
+</aside></div><section class="sp-card sp-history">
+<h2>Lịch sử đơn giá và trạng thái</h2><p class="text-secondary">Mỗi lần thay đổi được lưu thành một phiên bản.</p>
 <div class="table-responsive"><table class="table">
 <thead><tr><th>Từ ngày</th><th>Đến ngày</th><th class="text-end">Đơn giá (VND)</th><th>Trạng thái</th></tr></thead>
 <tbody>@foreach (var row in Model.LichSu.OrderByDescending(x => x.TuNgay))
 {
-    <tr><td>@row.TuNgay.ToString("dd/MM/yyyy")</td><td>@(row.DenNgay?.ToString("dd/MM/yyyy") ?? "Chưa kết thúc")</td><td class="text-end">@(row.DaChotGia ? row.DonGia.ToString("N0", CultureInfo.GetCultureInfo("vi-VN")) : "Chưa thiết lập")</td><td>@(row.DangApDung ? "Đang áp dụng" : "Ngừng áp dụng") @(row.TuNgay > DichVuService.HomNay() ? "(đã lên lịch)" : "")</td></tr>
+    <tr><td>@row.TuNgay.ToString("dd/MM/yyyy")</td><td>@(row.DenNgay?.ToString("dd/MM/yyyy") ?? "Chưa kết thúc")</td><td class="text-end">@(row.DaChotGia ? row.DonGia.ToString("N0", vn) + " đ" : "Chưa thiết lập")</td><td><span class="sp-badge">@(row.TuNgay > today ? (row.DangApDung ? "Sắp áp dụng" : "Sắp ngừng") : row.DenNgay < today ? "Đã kết thúc" : row.DangApDung ? "Đang áp dụng" : "Ngừng áp dụng")</span></td></tr>
 }</tbody></table></div>
 @if (write)
 {
@@ -50,3 +70,5 @@
     <p class="mt-2">Chỉ xóa khi chưa được hợp đồng hoặc hóa đơn tham chiếu. Dịch vụ mặc định đã xóa sẽ không tự xuất hiện lại.</p>
     <form asp-action="Delete" method="post"><input name="toaNhaId" value="@Model.ToaNhaId" type="hidden" /><input name="dichVuId" value="@Model.DichVuId" type="hidden" /><button class="btn btn-outline-danger">Xác nhận xóa dịch vụ</button></form></details>
 }
+</section></div>
+@section Styles { <link rel="stylesheet" href="~/css/service-price.css" asp-append-version="true" /> }

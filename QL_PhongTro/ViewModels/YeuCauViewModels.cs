@@ -8,6 +8,9 @@ public class YeuCauListItemViewModel
     public string TrangThai { get; set; } = ""; public DateTime NgayTao { get; set; }
     public string? LoiNhan { get; set; }
     public bool QuaHanChuaXuLy { get; set; }
+    public string TenToaNha { get; set; } = "";
+    public DateTime? LichHen { get; set; }
+    public bool DaLapHopDong { get; set; }
 }
 public class DanhSachYeuCauViewModel
 {
@@ -17,4 +20,6 @@ public class DanhSachYeuCauViewModel
     public string? TrangThai { get; set; }
     public int? ToaNhaId { get; set; }
     public IReadOnlyList<SelectListItem> ToaNhaOptions { get; set; } = [];
+    public IReadOnlyList<YeuCauListItemViewModel> TongHop { get; set; } = [];
+    public DateTime NowUtc { get; set; }
 }

@@ -15,10 +15,11 @@ function revealMeterTarget(target) {
 
 document.querySelectorAll('[data-meter-form]').forEach(form => {
     function validate(input) {
-        const previous = input.dataset.previous;
+        const baseline = document.getElementById(input.dataset.baselineId);
+        const previous = input.dataset.previous || baseline?.value;
         const value = input.value;
         let error = '';
-        if (previous == null || previous === '') error = 'Chưa có dữ liệu tham chiếu. Không thể chốt chỉ số.';
+        if (previous == null || previous === '' || (baseline && !baseline.validity.valid)) error = 'Nhập chỉ số đầu kỳ hợp lệ trước khi lưu.';
         else if (!value || !input.validity.valid || !/^\d+(?:\.\d{1,3})?$/.test(value))
             error = 'Nhập chỉ số không âm, tối đa 3 chữ số thập phân.';
         else if (Number(value) < Number(previous)) error = 'Chỉ số mới không được nhỏ hơn chỉ số kỳ trước.';
@@ -30,6 +31,9 @@ document.querySelectorAll('[data-meter-form]').forEach(form => {
     form.querySelectorAll('[data-meter-input]').forEach(input => input.addEventListener('input', () => {
         const wasInvalid = input.getAttribute('aria-invalid') === 'true';
         if (!validate(input) && !wasInvalid) revealMeterTarget(input);
+    }));
+    form.querySelectorAll('[data-meter-baseline]').forEach(input => input.addEventListener('input', () => {
+        form.querySelectorAll('[data-meter-input]').forEach(validate);
     }));
     // Use our field errors for submit too, instead of native validation hiding
     // another room's error above the current viewport. Constraints stay intact.

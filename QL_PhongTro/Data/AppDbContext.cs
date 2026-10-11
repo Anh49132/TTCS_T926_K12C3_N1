@@ -177,6 +177,8 @@ public partial class AppDbContext(DbContextOptions<AppDbContext> options, IHttpC
         room.Property(e => e.SoNguoiToiDa).HasColumnName("so_nguoi_toi_da").IsRequired();
         room.Property(e => e.TrangThai).HasColumnName("trang_thai").IsRequired().HasMaxLength(25).HasDefaultValue("TRONG");
         room.Property(e => e.MoTa).HasColumnName("mo_ta");
+        room.Property(e => e.GhiChuNoiBo).HasColumnName("ghi_chu_noi_bo").HasMaxLength(500);
+        room.Property(e => e.TienNghi).HasColumnName("tien_nghi");
         room.Property(e => e.NgayTao).HasColumnName("ngay_tao").IsRequired();
         room.Property(e => e.PhienBan).HasColumnName("phien_ban").HasDefaultValue(0);
         room.HasIndex(e => new { e.ToaNhaId, e.MaPhong }).HasDatabaseName("ux_phong_tro_toa_nha_ma_phong").IsUnique();

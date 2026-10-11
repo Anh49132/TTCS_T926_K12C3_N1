@@ -13,6 +13,7 @@ rem Explicit environment variables already set in the terminal take precedence.
 if exist ".env.local" (
     for /f "usebackq eol=# tokens=1,* delims==" %%A in (".env.local") do (
         if /I "%%A"=="DatabasePath" if not defined DatabasePath set "DatabasePath=%%B"
+        if /I "%%A"=="LocalAdmin__Phone" if not defined LocalAdmin__Phone set "LocalAdmin__Phone=%%B"
         if /I "%%A"=="RoomImagesPath" if not defined RoomImagesPath set "RoomImagesPath=%%B"
         if /I "%%A"=="DataProtectionKeysPath" if not defined DataProtectionKeysPath set "DataProtectionKeysPath=%%B"
         if /I "%%A"=="PasswordReset__PickupDirectory" if not defined PasswordReset__PickupDirectory set "PasswordReset__PickupDirectory=%%B"
@@ -91,6 +92,15 @@ if /I "%~1"=="--check-only" (
     popd
     exit /b 0
 )
+
+rem Create the requested development admin once; existing accounts are unchanged.
+set "LocalAdmin__Email=admin123@gmail.com"
+set "LocalAdmin__Password=adminne123"
+if not defined LocalAdmin__Phone set "LocalAdmin__Phone=0900000000"
+echo [INFO] Dang tao tai khoan ADMIN local neu chua ton tai...
+dotnet run --project "%PROJECT%" --no-restore --launch-profile http -- --create-local-admin
+if errorlevel 1 goto :failed
+set "LocalAdmin__Password="
 
 echo [INFO] Dang chay web tai http://localhost:5247
 echo [INFO] Nhan Ctrl+C de dung ung dung.

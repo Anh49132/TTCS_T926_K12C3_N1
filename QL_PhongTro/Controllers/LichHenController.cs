@@ -66,6 +66,12 @@ public class LichHenController(
             HienThiNutHuy = yeuCau.TrangThai is LichHenTrangThai.Moi or LichHenTrangThai.DaHenLich,
             LichSu = lichSu
         };
+        if (laChuNha && db is not null)
+        {
+            ViewData["RequestedRoom"] = await db.PhongTros.AsNoTracking().SingleOrDefaultAsync(x => x.Id == yeuCau.PhongId, ct);
+            ViewData["RequestedRoomImage"] = await db.AnhPhongs.AsNoTracking().Where(x => x.PhongId == yeuCau.PhongId).OrderBy(x => x.ThuTu).Select(x => x.DuongDanAnhNho ?? x.DuongDan).FirstOrDefaultAsync(ct);
+            ViewData["RequestedListingId"] = await db.YeuCauThues.Where(x => x.Id == id).Select(x => x.TinDangId).SingleAsync(ct);
+        }
         return View(view);
     }
 

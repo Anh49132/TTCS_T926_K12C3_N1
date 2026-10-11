@@ -1,0 +1,34 @@
+@model QL_PhongTro.ViewModels.DanhSachYeuCauViewModel
+@using QL_PhongTro.Models
+@using QL_PhongTro.Services
+@{
+    var all = Model.TongHop;
+    var today = DateOnly.FromDateTime(Model.NowUtc.AddHours(7));
+    var pending = all.Count(x => TrangThaiYeuCau.ChuaXuLy(x.TrangThai));
+    var overdue = all.Count(x => x.QuaHanChuaXuLy);
+    var approved = all.Count(x => x.LoaiYeuCau == "THUE_NGAY" && x.TrangThai == "DA_DUYET" && !x.DaLapHopDong);
+    var appointments = all.Where(x => x.TrangThai == "DA_HEN_LICH" && x.LichHen.HasValue && DateOnly.FromDateTime(x.LichHen.Value.AddHours(7)) == today).OrderBy(x => x.LichHen).ToList();
+    var monthCount = all.Count(x => x.NgayTao.AddHours(7).Year == today.Year && x.NgayTao.AddHours(7).Month == today.Month);
+}
+<div class="owner-requests">
+<header class="or-heading"><div><p class="or-eyebrow">VẬN HÀNH NHÀ CHO THUÊ</p><h1>Yêu cầu của khách</h1><p>Tiếp nhận yêu cầu thuê và quản lý lịch xem phòng tại một nơi.</p></div><button type="button" class="or-button" id="or-export">↓ Xuất danh sách</button></header>
+<section class="or-stats">
+<article aria-label="@pending yêu cầu chưa xử lý"><span class="or-icon amber">◷</span><div><span>Chờ xử lý</span><strong>@pending</strong><small class="or-tag danger">@overdue yêu cầu quá 24 giờ</small></div></article>
+<article><span class="or-icon blue">▦</span><div><span>Lịch hẹn hôm nay</span><strong>@appointments.Count</strong><small class="or-tag blue">@today.ToString("dd/MM/yyyy")</small></div></article>
+<article><span class="or-icon green">✓</span><div><span>Thuê ngay đã duyệt</span><strong>@approved</strong><small class="or-tag green">Chưa lập hợp đồng</small></div></article>
+<article><span class="or-icon">▤</span><div><span>Tổng yêu cầu tháng này</span><strong>@monthCount</strong></div></article>
+</section>
+<div class="or-layout"><section class="or-card or-list"><h2>Danh sách yêu cầu</h2>
+<nav class="or-tabs" aria-label="Lọc nhanh yêu cầu"><a asp-action="Index" asp-route-toaNhaId="@Model.ToaNhaId" class="@(Model.TrangThai == null ? "active" : "")">Tất cả <span>@all.Count</span></a>@foreach (var state in TrangThaiYeuCau.Labels) { <a asp-action="Index" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-trangThai="@state.Key" class="@(Model.TrangThai == state.Key ? "active" : "")">@state.Value <span>@all.Count(x => x.TrangThai == state.Key)</span></a> }</nav>
+<form method="get" asp-action="Index" class="or-filters"><input id="or-search" type="search" placeholder="Tìm mã yêu cầu, khách hoặc phòng" aria-label="Tìm yêu cầu" /><select name="toaNhaId" aria-label="Tòa nhà"><option value="">Tất cả tòa nhà</option>@foreach (var item in Model.ToaNhaOptions) { <option value="@item.Value" selected="@(Model.ToaNhaId?.ToString() == item.Value)">@item.Text</option> }</select><select id="or-type" aria-label="Loại yêu cầu"><option value="">Tất cả loại yêu cầu</option><option value="XEM_PHONG">Xem phòng</option><option value="THUE_NGAY">Thuê ngay</option></select><select name="trangThai" aria-label="Trạng thái"><option value="">Tất cả trạng thái</option>@foreach (var state in TrangThaiYeuCau.Labels) { <option value="@state.Key" selected="@(Model.TrangThai == state.Key)">@state.Value</option> }</select><button class="or-button">Bộ lọc</button></form>
+<div class="or-scroll"><table id="or-table"><thead><tr><th>Yêu cầu</th><th>Khách thuê</th><th>Phòng / Tòa nhà</th><th>Loại</th><th>Ngày mong muốn</th><th>Trạng thái</th><th>Gửi lúc</th><th>Thao tác</th></tr></thead><tbody>
+@foreach (var item in Model.YeuCaus)
+{
+<tr data-type="@item.LoaiYeuCau" data-overdue="@item.QuaHanChuaXuLy.ToString().ToLowerInvariant()" class="@(item.QuaHanChuaXuLy ? "or-overdue" : "")"><th>@item.MaYeuCau</th><td><strong>@item.TenKhach</strong><small>@item.SoDienThoai</small></td><td>@item.MaPhong<small>@item.TenToaNha</small></td><td>@TrangThaiYeuCau.LoaiLabel(item.LoaiYeuCau)</td><td>@(item.NgayMongMuon?.ToString("dd/MM/yyyy") ?? "—")</td><td><span class="or-tag @(item.TrangThai == "DA_DUYET" ? "green" : item.TrangThai == "DA_HEN_LICH" ? "blue" : "amber")">@TrangThaiYeuCau.Labels.GetValueOrDefault(item.TrangThai, item.TrangThai)</span>@if(item.QuaHanChuaXuLy){<small class="text-danger">Quá 24 giờ, chưa xử lý</small>}</td><td>@item.NgayTao.AddHours(7).ToString("dd/MM/yyyy HH:mm")</td><td><a class="or-button @(TrangThaiYeuCau.ChuaXuLy(item.TrangThai) ? "primary" : "")" asp-controller="LichHen" asp-action="ChiTiet" asp-route-id="@item.Id">@(TrangThaiYeuCau.ChuaXuLy(item.TrangThai) ? "Xử lý" : "Chi tiết")</a></td></tr>
+}
+</tbody></table></div><p id="or-empty" class="or-empty" hidden="@(Model.YeuCaus.Count > 0)">Không có yêu cầu phù hợp. Thử bỏ bộ lọc.</p><footer class="or-pagination"><span id="or-count">@Model.YeuCaus.Count yêu cầu</span><nav id="or-pages" aria-label="Phân trang yêu cầu"></nav></footer>
+</section><aside>
+<section class="or-card"><h2>Lịch hẹn hôm nay</h2><p class="or-muted">@today.ToString("dd/MM/yyyy")</p>@if (appointments.Count == 0) { <p class="or-muted">Chưa có lịch hẹn hôm nay.</p> }@foreach(var item in appointments){<a class="or-appointment" asp-controller="LichHen" asp-action="ChiTiet" asp-route-id="@item.Id"><strong>@item.LichHen!.Value.AddHours(7).ToString("HH:mm")</strong><span>@item.MaPhong · @item.TenToaNha<b>@item.TenKhach</b><small>Đã hẹn lịch</small></span><span>›</span></a>}</section>
+<section class="or-card"><h2>Cần chú ý</h2><div class="or-attention"><span class="or-tag danger">@overdue</span> yêu cầu quá 24 giờ</div><div class="or-attention"><span class="or-tag amber">@all.Count(x => x.TrangThai == "MOI")</span> yêu cầu mới chưa phản hồi</div><div class="or-attention"><span class="or-tag green">@approved</span> thuê ngay đã duyệt chưa lập hợp đồng</div></section>
+<p class="or-notice">Yêu cầu mới nên được phản hồi trong vòng 24 giờ. Phản hồi kịp thời giúp khách sắp xếp lịch xem và thuê phòng.</p>
+</aside></div></div>
