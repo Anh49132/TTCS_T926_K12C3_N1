@@ -30,11 +30,23 @@ public class HopDongCreateViewModel
     public static DateOnly TinhNgayKetThuc(DateOnly start, int months) => start.AddMonths(months).AddDays(-1);
     [BindNever] public List<YeuCauHopDong> YeuCaus { get; set; } = [];
     [BindNever] public YeuCauHopDong? DaChon { get; set; }
+    [BindNever] public List<QL_PhongTro.Services.DonGiaDichVu> PhiDichVus { get; set; } = [];
     public string? Intent { get; set; }
 }
 
 public class YeuCauHopDong
 {
+    public int SoNguoiDuKien { get; set; }
+    public string? SoGiayTo { get; set; }
+    public string? Email { get; set; }
+    public string? QueQuan { get; set; }
+    public bool DuocXemHoSo { get; set; }
+    public int ToaNhaId { get; set; }
+    public string DiaChi { get; set; } = "";
+    public int Tang { get; set; }
+    public decimal DienTich { get; set; }
+    public string? LoaiPhong { get; set; }
+    public string TrangThaiPhong { get; set; } = "";
     public int Id { get; set; }
     public int PhongId { get; set; }
     public int KhachId { get; set; }

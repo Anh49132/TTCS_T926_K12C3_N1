@@ -27,6 +27,17 @@ public class ChuyenDiInput
 public record ChuyenDiRowViewModel(HopDongDetailsViewModel Contract, NguoiOGhepRow Person);
 public class HopDongDetailsViewModel
 {
+    public string DiaChiPhong { get; set; } = "";
+    public string? LoaiPhong { get; set; }
+    public int Tang { get; set; }
+    public decimal DienTich { get; set; }
+    public string ChuNha { get; set; } = "";
+    public string? ChuNhaDienThoai { get; set; }
+    public string? ChuNhaEmail { get; set; }
+    public string? NguoiThueEmail { get; set; }
+    public List<QL_PhongTro.Models.HopDongDichVu> DichVus { get; set; } = [];
+    public List<QL_PhongTro.Models.HoaDon> HoaDons { get; set; } = [];
+    public bool XemTaiChinh { get; set; }
     public string ToaNha { get; set; } = "";
     public KyHopDongThamChieu? Ky { get; set; }
     public HopDongChiSoDauKy? ChiSo { get; set; }

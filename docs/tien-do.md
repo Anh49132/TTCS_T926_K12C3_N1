@@ -2094,3 +2094,116 @@ Cách chạy lại: `dotnet run --project .\QL_PhongTro\QL_PhongTro.csproj --lau
 - 12/10/2026: Đổi mũi tên bảng hợp đồng thành menu ba chấm với Chi tiết hợp đồng và Thêm người ở ghép khi trạng thái/quyền cho phép. Menu nổi ngoài vùng cuộn bảng, đóng khi bấm ngoài/Escape/cuộn.
 
 - 12/10/2026: Bỏ khối xem nhanh chi tiết hợp đồng/thành viên bên dưới danh sách theo yêu cầu; bỏ truy vấn DetailModel phục vụ khối này. Truy cập chi tiết và thêm người qua menu ba chấm.
+
+### 12/10/2026 — Giao diện tạo hợp đồng theo ảnh tham chiếu
+- Chỉnh riêng `HopDong/Create`: thông tin phòng, người thuê, thời hạn và thanh toán thành các thẻ bên trái; tóm tắt tiền thuê, cọc và nút thao tác bên phải. CSS riêng chỉ nạp ở trang tạo hợp đồng; bố cục một cột trên màn hình nhỏ.
+- Giữ nguyên các trường, CSRF, lưu nháp, tính ngày kết thúc, kiểm tra chồng lấn và xử lý backend. Không đổi schema. Chức năng mẫu hợp đồng/tải tài liệu trong ảnh chưa thuộc form hiện có.
+- Xác minh: `dotnet build QL_PhongTro/QL_PhongTro.csproj --no-restore --nologo` thành công (cảnh báo ImageSharp và CS8601 có sẵn); HTTP sau đăng nhập demo trả 200, đủ 9 trường nghiệp vụ và CSRF; yêu cầu khác chủ nhà trả 403. Đã xem trang ở viewport hẹp trong trình duyệt; chưa nghiệm thu thiết bị thật hoặc toàn bộ luồng lưu.
+- Chạy thử trên bản sao DB demo schema 25; DB mặc định schema 16 giữ nguyên. Mở `/HopDong/Create` tại localhost:5247.
+
+### 12/10/2026 — Đồng bộ khoảng cách trang tạo hợp đồng với tổng quan
+- Bỏ giới hạn riêng 1240px/760px và padding lồng của trang tạo hợp đồng; dùng trực tiếp khung `.app-content` chung (tối đa 100rem, lề desktop 1.75rem; mobile 1.25rem 1rem).
+- Đồng bộ khoảng cách cột 1.25rem, khoảng cách thẻ/tiêu đề 1.5rem, đệm thẻ 1.25rem (mobile 1rem), kích thước tiêu đề theo tổng quan. Chỉ chỉnh CSS, giữ nguyên form và nghiệp vụ.
+- Xác minh: CSS được phục vụ HTTP 200, `git diff --check` đạt. Không cần build lại cho thay đổi CSS; chưa đo trực tiếp kích thước bằng trình duyệt trong lần chỉnh này.
+
+- 12/10/2026: bỏ breadcrumb trên HopDong/Create theo yêu cầu; build thành công và khởi động lại bản demo.
+
+- 12/10/2026: thêm liên kết Hợp đồng & người ở ghép vào thanh đầu trang riêng HopDong/Create, giữa biểu tượng tổng quan và tiêu đề trang.
+
+- 12/10/2026: đồng bộ breadcrumb đầu trang tạo hợp đồng với chi tiết phòng: chữ 1rem/600, gap .75rem, icon 21px, màu liên kết #25282D80, dấu phân cách #25282D66; giữ liên kết về danh sách hợp đồng.
+
+- 12/10/2026: chỉnh nút Quay lại danh sách theo ảnh: nút trắng gọn, viền xám nhạt, bo góc 5px, chữ 11px, chiều cao tối thiểu 26px. Chỉ thay CSS.
+
+- 12/10/2026: thẻ thông tin phòng theo ảnh: chọn tòa/phòng cạnh nhau, lọc phòng theo tòa, icon tòa nhà, dải địa chỉ/tầng/diện tích/trạng thái từ dữ liệu thật. Chỉ hiển thị các yêu cầu đã duyệt được phép lập hợp đồng; giữ YeuCauId và kiểm tra quyền hiện có, không đổi schema.
+
+- 12/10/2026: cập nhật nút Quay lại danh sách theo ảnh mới: chữ đậm 600 màu #30343b, đệm 6px 12px, cao tối thiểu 30px; CSS riêng trang tạo hợp đồng.
+
+- 12/10/2026: thẻ người thuê theo mẫu hai cột: họ tên, điện thoại, giấy tờ, email, quê quán toàn chiều rộng và số người dự kiến. Dùng HoSoAccess để kiểm tra quan hệ hợp đồng trước khi lấy hồ sơ, che điện thoại với người chưa có quyền. Giữ luồng lập hợp đồng từ yêu cầu đã duyệt; chưa thêm luồng tạo người thuê mới độc lập. Không đổi schema.
+
+- 12/10/2026: bố cục Thời hạn & thanh toán theo ảnh: ba ô ngày/kỳ hạn, hai ô tiền kèm VND, ba ô chu kỳ/ngày chốt/hình thức ghi nhận thu; icon lịch. Giữ ngày kết thúc tự tính, kỳ hạn 1–120, cọc 0–3 tháng và ngày chốt hóa đơn. Hình thức thanh toán chưa lưu ở hợp đồng, hiển thị Chọn khi ghi nhận thu. Không đổi schema.
+
+- 12/10/2026: thêm thẻ Phí dịch vụ dạng bảng theo ảnh, hiển thị dữ liệu thật qua LayGiaHoaDonAsync theo ngày hiện tại (giá riêng và kỳ ngừng dịch vụ được áp dụng). Dấu chọn biểu thị dịch vụ đang áp dụng; liên kết Quản lý phí dịch vụ mở chỉnh sửa phòng, không thay đổi lựa chọn ngay trong form hợp đồng. Không đổi schema.
+
+- 12/10/2026: thêm thẻ Điều khoản & tài liệu theo bố cục ảnh. Kiểm tra model/schema mapping chưa có lưu điều khoản/tệp/tạo hóa đơn tự động: các điều khiển được vô hiệu hóa và ghi rõ trạng thái, không nhận dữ liệu rồi bỏ mất, không đổi schema hoặc tự thêm cơ chế lưu bên ngoài DB.
+
+- 12/10/2026: menu nổi riêng cho Ngày chốt hóa đơn và Thời hạn hợp đồng: cùng chiều rộng ô, bo góc, bóng nhẹ, cuộn tối đa 240px, lựa chọn hiện tại có dấu tick. Giữ select gốc và dữ liệu POST, phát sự kiện input/change để cập nhật ngày kết thúc và kiểm tra chồng lấn; hỗ trợ phím mũi tên/Home/End/Escape/Tab, đóng khi bấm ngoài, fallback select gốc khi JS tắt.
+
+- 12/10/2026: tóm tắt hợp đồng theo ảnh: phòng/người thuê, thời hạn/ngày thuê, giá thuê, tổng phí CO_DINH đang áp dụng, tổng tháng, cọc và dự kiến kỳ đầu. Tổng server dùng decimal, client dùng BigInt; chỉ ước tính trọn tháng, loại phí theo người/chỉ số, không phát hành hóa đơn. Cập nhật khi sửa giá/cọc/kỳ hạn/ngày chốt; nút xem trước mở hộp thoại tóm tắt, chưa tạo hợp đồng. Build và cú pháp JS kiểm tra thành công.
+
+- 12/10/2026: áp dụng menu nổi đồng bộ cho Tòa nhà và Phòng/căn hộ. Menu phòng dựng lại ngay sau lọc tòa, giữ onchange tải dữ liệu yêu cầu; chữ dài thu gọn ở ô chọn và xuống dòng trong menu, dấu tick không co. Kiểm tra cú pháp JS và diff đạt.
+
+- 12/10/2026: tinh chỉnh menu Thời hạn hợp đồng: giới hạn cuộn 220px, dòng cao 34px, khoảng cách 2px, mục đang chọn có nền champagne và vạch nhấn, viền focus bàn phím rõ. Chỉ thay CSS.
+
+- 12/10/2026: đồng bộ menu Ngày chốt hóa đơn với menu thời hạn: cuộn 220px, dòng 34px, đệm 8px 12px, nền champagne và vạch nhấn ở lựa chọn hiện tại, focus bàn phím. Giữ giá trị ngày 1–31 và dữ liệu lưu.
+
+- 12/10/2026: đổi nhãn liên kết Quản lý phí dịch vụ thành Thêm dịch vụ theo yêu cầu; giữ liên kết đến phần dịch vụ trong chỉnh sửa phòng.
+
+- 12/10/2026: bỏ thẻ Kiểm tra hiệu lực hợp đồng. Giữ kiểm tra chồng lấn bằng JS và backend; chỉ hiện cảnh báo xung đột trong tóm tắt khi có chồng lấn, ngày thuê vẫn ở tóm tắt. Kiểm tra cú pháp JS và diff đạt.
+
+- 12/10/2026: chỉnh thẻ Chỉ số điện nước đầu kỳ: icon công tơ SVG, mô tả bàn giao, hai ô cao 44px có đơn vị kWh/m³ và ví dụ gợi ý, hướng dẫn nền nhẹ. Mobile một cột; giữ giá trị, binder, min 0 và step 0.001.
+
+- 12/10/2026: bỏ cụm nút Hủy/Lưu nháp/Tạo hợp đồng ở cuối cột trái theo yêu cầu; giữ nút ở tóm tắt, chuyển id save-contract sang nút submit liên kết form để giữ kiểm tra chồng lấn và thao tác lưu.
+
+- 12/10/2026: thu gọn tóm tắt hợp đồng: đệm thẻ 16px, dòng thông tin 8px, thẻ phòng 10px 12px, tổng tiền 23px, chú thích 10px và nút cao tối thiểu 34px; CSS chỉ áp dụng trong cột tóm tắt, giữ nguyên dữ liệu/tính tiền.
+
+- 12/10/2026: tóm tắt bám theo cuộn trên desktop bằng sticky, cách dưới header 16px (đo chiều cao header qua ResizeObserver). Giới hạn chiều cao theo viewport, cho cuộn nội dung khi màn hình thấp; bố cục một cột vẫn cuộn theo trang bình thường. Không đổi dữ liệu/nghiệp vụ.
+
+- 12/10/2026: chỉnh trang chi tiết hợp đồng theo ảnh tham chiếu: dải tổng quan bốn mục, thẻ phòng/các bên/thời hạn/dịch vụ/điều khoản/tài liệu bên trái; tài chính/hóa đơn/hoạt động/quản lý bên phải. Cột phải bám theo cuộn trên desktop, bố cục thu về một cột ở màn hình nhỏ. Dùng snapshot dịch vụ của hợp đồng và hóa đơn thật; chỉ truy vấn/hiển thị hóa đơn khi có quyền TAI_CHINH. Giữ thao tác kích hoạt, gia hạn, người ở ghép và chỉ số bàn giao; phần chưa có dữ liệu hiển thị trạng thái trống. Không đổi schema. Build đạt (cảnh báo có sẵn); GET Details/2 và tab people trên DB thử nghiệm đều HTTP 200. Chưa kiểm tra trực quan trong trình duyệt.
+
+- 12/10/2026: đồng bộ khoảng cách trang chi tiết hợp đồng với tổng quan: dùng khung app-content tối đa 100rem, lề chung 1.75rem (mobile 1.25rem/1rem), khoảng cách cột/thẻ 1rem, đệm thẻ 1.375rem, khoảng dưới tiêu đề 1.75rem. Quy tắc đặt trong dashboard-spacing.css nạp cuối để tránh CSS giao diện ghi đè; chỉ áp dụng trang chi tiết cho vai trò quản trị/chủ nhà/quản lý. CSS được phục vụ HTTP 200, diff check đạt; không đổi nghiệp vụ/CSDL.
+
+- 12/10/2026: bỏ liên kết Quay lại danh sách ở đầu trang chi tiết hợp đồng theo yêu cầu; giữ các thao tác hợp đồng còn lại.
+
+- 12/10/2026: chuyển nút Gia hạn hợp đồng vào cụm bên phải, ngay dưới Nhật ký phòng; hai nút cùng chiều rộng, cách nhau 8px. Giữ điều kiện ChoGiaHan và ẩn khi đang ở tab người ở.
+
+- 12/10/2026: thêm nút Tải hợp đồng bên trái Gia hạn hợp đồng, cùng hàng dưới Nhật ký phòng. Nút tải vô hiệu hóa do trang chủ nhà chưa có endpoint xuất PDF; giữ chức năng gia hạn hiện có.
+
+- 12/10/2026: bỏ margin và padding trên/dưới của contract-heading trên trang chi tiết hợp đồng, đồng bộ cả quy tắc desktop/mobile.
+
+- 12/10/2026: gom nhóm thao tác đầu trang chi tiết hợp đồng thành lưới hai cột bên phải: lịch sử/nhật ký ở trên, tải/gia hạn ở dưới; nút cao tối thiểu 36px, cách 8px, trên mobile nhóm chiếm toàn chiều rộng. Giữ quyền và điều kiện hiện có.
+
+- 12/10/2026: bỏ giao diện Thêm khách thuê riêng và lối tắt trên tổng quan. Liên kết Thêm người ở ghép trong danh sách chuyển đến tab người ở của chi tiết hợp đồng; URL cũ chuyển hướng, giữ kiểm tra quyền/sở hữu. Không xóa hồ sơ hoặc nghiệp vụ thêm người ở.
+
+- 12/10/2026: bỏ menu nổi thao tác ở danh sách hợp đồng; dấu ba chấm là liên kết trực tiếp tới chi tiết hợp đồng, hỗ trợ bàn phím và mở tab mới.
+
+- 12/10/2026: thẻ thông tin phòng trên chi tiết hợp đồng theo ảnh: icon tòa nhà SVG, bỏ mô tả phụ, ba cột tòa/phòng/diện tích-tầng; dải địa chỉ có icon vị trí và số người ở thật ở bên phải, responsive mobile.
+
+- 12/10/2026: thẻ Các bên trong hợp đồng theo ảnh: hai cột, nhãn vai trò, avatar chữ cái, điện thoại/email/giấy tờ/địa chỉ. Liên hệ lấy từ tài khoản thật; CCCD và địa chỉ chủ nhà chưa có trường dữ liệu hiển thị Chưa cập nhật. Điện thoại/giấy tờ che ở server với người không phải chủ nhà hoặc admin. Không đổi schema.
+
+- 12/10/2026: thẻ Thời hạn & thanh toán trên chi tiết theo ảnh: icon lịch SVG, ba cột ngày/kỳ hạn, đường phân cách, hai hàng thông tin tiền/chu kỳ; đệm và chữ đồng bộ thẻ phòng. Ngày ký chưa có dữ liệu hiển thị Chưa cập nhật; hình thức thanh toán chọn khi ghi nhận thu, giữ ngày chốt hóa đơn đúng nghiệp vụ. Build đạt, không đổi schema.
+
+- 12/10/2026: thẻ Phí dịch vụ chi tiết theo ảnh: icon SVG, bảng viền bo góc, tiêu đề cột viết hoa, cách tính màu nhạt và đơn giá căn phải. Thêm tổng phí CO_DINH bên dưới, lấy snapshot hợp đồng, giữ cách tính theo người/chỉ số thực tế.
+
+- 12/10/2026: bố cục Điều khoản hợp đồng theo ảnh: icon tài liệu SVG, mẫu hợp đồng, đường phân cách, điều khoản bổ sung và dải xác nhận có icon khiên. Model hiện chưa lưu mẫu/điều khoản/ngày ký: hiển thị chưa ghi nhận, không giả lập nội dung hoặc trạng thái đã ký. Không đổi schema.
+
+- 12/10/2026: chỉnh thẻ Tài liệu hợp đồng theo bố cục ảnh: icon thư mục, số tài liệu bên phải, hàng trạng thái trống dạng tệp và nút thêm viền nét đứt. Chưa có dữ liệu/lưu tệp hợp đồng nên hiển thị 0 tài liệu và vô hiệu hóa nút thêm; không tạo tên tệp hoặc trạng thái đã ký giả.
+
+- 12/10/2026: tóm tắt tài chính theo ảnh: tiêu đề/dòng tiền gọn, tổng tháng nền champagne, phần thanh toán ngăn bằng đường kẻ. Giữ cọc thỏa thuận và ngày chốt đúng dữ liệu, không đổi thành cọc đang giữ hoặc ngày thu tiền. Chưa có tài khoản ngân hàng nên hiển thị chưa cập nhật. Build đạt.
+
+- 12/10/2026: thẻ Thanh toán liên quan theo ảnh: khoản cọc và từng hóa đơn có tiêu đề/trạng thái, mã/số tiền, hạn thanh toán, đường phân cách và nút xem hóa đơn. Chỉ hiển thị với quyền tài chính; cọc là thỏa thuận, trạng thái hóa đơn là nháp/phát hành, không suy đoán đã thanh toán hoặc còn nợ.
+
+- 12/10/2026: Hoạt động gần đây theo ảnh: icon tròn SVG, tiêu đề/mô tả/thời gian gọn; hai lần gia hạn gần nhất xếp mới trước và sự kiện tạo hợp đồng từ dữ liệu thật, không thêm sự kiện ký hoặc nhận cọc giả.
+
+- 12/10/2026: thẻ Quản lý hợp đồng theo ảnh: gửi bản sao/in/chấm dứt với SVG và ghi chú phụ lục. In mở hộp thoại trình duyệt với CSS ẩn điều hướng/cột bên; gửi bản sao và chấm dứt vô hiệu hóa do chưa có chức năng backend, không gửi thông tin ra ngoài. Quản lý người ở vẫn ở tab và lịch sử vẫn ở đầu trang. Build đạt.
+
+- 12/10/2026: breadcrumb trang chi tiết hợp đồng: biểu tượng nhà / Hợp đồng & người ở ghép / Chi tiết hợp đồng. Mục giữa liên kết danh sách, mục cuối aria-current page, có responsive.
+
+- 12/10/2026: đồng bộ breadcrumb chi tiết hợp đồng với rd-breadcrumb chi tiết phòng: chữ 1rem/600, gap .75rem, icon 21px nét 1.6, màu liên kết #25282D80, dấu phân cách #25282D66. Chỉ sửa CSS.
+
+- 12/10/2026: giao diện thêm người ở ghép trong tab people theo bố cục ảnh: form trái gồm phòng/hợp đồng, thông tin người, giấy tờ, cư trú, tài liệu; tóm tắt phải và nút lưu cuối form. Giữ Input.HoTen/SoDienThoai/SoGiayTo/NgayVao/PhienBanPhong, CSRF, validation và backend kiểm tra sức chứa; danh sách/lịch sử người ở giữ phía dưới. Trường chưa lưu không tạo ô nhập giả; không đổi schema.
+
+- 12/10/2026: đổi tiêu đề tab người ở từ Người ở trong hợp đồng thành Người ở ghép theo yêu cầu.
+
+- 12/10/2026: bỏ khối thông tin cũ phía dưới form người ở ghép (sức chứa, người đứng tên, danh sách hiện tại/sắp vào/đã rời, quy định sức chứa) theo ảnh. Giữ form mới và tóm tắt, dữ liệu và kiểm tra backend không đổi.
+
+- 12/10/2026: thẻ phòng/hợp đồng trong form người ở ghép theo ảnh: icon tòa nhà, hai ô readonly có khóa, dải địa chỉ/thời hạn/trạng thái thật, avatar chữ cái người đứng tên, điện thoại/email theo quyền và số người hiện tại. Không giả định đã ký.
+
+- 12/10/2026: thẻ thông tin người ở ghép theo ảnh: icon người SVG, hàng họ tên/điện thoại, hàng ba cột ngày sinh/giới tính/quốc tịch, email/quan hệ, giấy tờ và ngày/nơi cấp. Các trường chưa hỗ trợ lưu được disabled và ghi rõ, giữ trường POST hiện có và responsive.
+
+- 12/10/2026: thẻ Thông tin cư trú theo ảnh: icon nhà SVG, ngày vào/tạm trú hai cột, hướng dẫn thời hạn, địa chỉ toàn hàng và liên hệ khẩn cấp hai cột. Giữ ngày vào binder/validation; trường chưa lưu disabled.
+
+- 12/10/2026: thẻ Tài liệu & ghi chú người ở ghép theo ảnh: icon thư mục, nhãn định dạng/kích thước, vùng tệp trống, nút kéo thả viền nét đứt và textarea sau đường phân cách. Các điều khiển chưa có lưu backend được disabled, không giả lập tệp đã tải.
+
+- 12/10/2026: nút lưu người ở ghép đổi nhãn Lưu thêm người ở ghép, icon SVG thêm người, kiểu nút gọn theo ảnh; giữ submit form hiện có.
+
+- 12/10/2026: tóm tắt bổ sung theo ảnh: trạng thái Chưa lưu, icon/thẻ phòng, người bổ sung avatar/tên/điện thoại/ngày vào cập nhật bằng textContent theo form, số người trước-sau. Tạm trú/tệp giữ trạng thái chưa ghi nhận/0 tệp. Không đổi lưu nghiệp vụ.

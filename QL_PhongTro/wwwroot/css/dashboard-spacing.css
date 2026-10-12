@@ -1,3 +1,46 @@
+/* Chi tiết hợp đồng dùng khung nội dung và nhịp khoảng cách của tổng quan. */
+body.homepage-dashboard-theme:not(.role-tenant) .contract-page.contract-details-reference {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+}
+body.homepage-dashboard-theme:not(.role-tenant) .contract-details-reference .contract-heading {
+    margin-top: 0;
+    margin-bottom: 0;
+    padding-block: 0;
+    gap: 1rem;
+    align-items: flex-start;
+}
+body.homepage-dashboard-theme:not(.role-tenant) .contract-details-reference .cd-workspace {
+    gap: 1rem;
+}
+body.homepage-dashboard-theme:not(.role-tenant) .contract-details-reference .contract-card {
+    padding: 1.375rem;
+    margin-bottom: 1rem;
+}
+body.homepage-dashboard-theme:not(.role-tenant) .contract-details-reference .cd-overview,
+body.homepage-dashboard-theme:not(.role-tenant) .contract-details-reference .lease-detail-tabs {
+    margin-bottom: 1.375rem;
+}
+@media (max-width: 1000px) {
+    body.homepage-dashboard-theme:not(.role-tenant) .contract-details-reference .cd-side {
+        gap: 1rem;
+    }
+    body.homepage-dashboard-theme:not(.role-tenant) .contract-details-reference .cd-side .contract-card {
+        margin-bottom: 0;
+    }
+}
+@media (max-width: 600px) {
+    body.homepage-dashboard-theme:not(.role-tenant) .contract-details-reference .contract-card {
+        padding: 1rem;
+    }
+    body.homepage-dashboard-theme:not(.role-tenant) .contract-details-reference .contract-heading {
+        margin-bottom: 0;
+    }
+}
+
 /* Khoảng đệm chung lấy từ tổng quan chủ nhà. */
 body.homepage-dashboard-theme:not(.role-tenant) {
     --dashboard-content-padding: 1.75rem;

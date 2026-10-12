@@ -1,42 +1,4 @@
 @model QL_PhongTro.ViewModels.HopDongDetailsViewModel
 @inject QL_PhongTro.Authorization.PermissionService Permissions
 @{var total=Model.Nguois.Count+(Model.DungTen==null?0:1);}
-<div class="lease-workspace residents-workspace"><div>
-<section class="contract-card"><h2>Sức chứa phòng</h2><div class="capacity-number">@total / @Model.GioiHan người</div><div class="lease-progress"><span style="width:@Math.Clamp(total*100/Math.Max(1,Model.GioiHan),0,100)%"></span></div><p class="contract-note">Còn @Math.Max(0,Model.GioiHan-total) vị trí hôm nay. Người chuyển đi trong ngày vẫn được tính đến hết ngày.</p></section>
-<section class="contract-card"><h2>Người đứng tên duy nhất</h2>
-@if (Model.DungTen is { } signer) {
-<p><strong>@signer.HoTen</strong></p><p>SĐT: @signer.SoDienThoai · Căn cước: @signer.SoGiayTo</p>
-<p>Người đứng tên chịu trách nhiệm thanh toán và là người nhận lại tiền cọc của hợp đồng.</p>
-} else { <p class="text-danger">Hợp đồng thiếu người đứng tên. Không thể thêm người ở ghép.</p> }
-</section>
-<section class="contract-card"><h2>Người ở ghép hiện tại</h2>
-<p>Tổng số người ngày @Model.HomNay.ToString("dd/MM/yyyy"): <strong>@(Model.Nguois.Count + (Model.DungTen == null ? 0 : 1))/@Model.GioiHan người</strong>, gồm người đứng tên.</p>
-@foreach (var person in Model.Nguois) {
-<partial name="_NguoiOGhep" model="new QL_PhongTro.ViewModels.ChuyenDiRowViewModel(Model, person)" />
-}
-@if (Model.Nguois.Count == 0) { <p>Chưa có người ở ghép đang ở hôm nay.</p> }
-</section>
-<p class="contract-note">Ngày chuyển đi vẫn là ngày còn ở. Người đó chuyển sang danh sách đã rời phòng từ ngày kế tiếp; khoản khoán giảm từ tháng sau. Ngày tương lai là lịch chuyển đi đã ghi nhận.</p>
-@if (Model.SapVao.Count > 0) {
-<section class="contract-card"><h2>Người ở ghép sắp vào</h2>
-@foreach (var person in Model.SapVao) { <partial name="_NguoiOGhep" model="new QL_PhongTro.ViewModels.ChuyenDiRowViewModel(Model, person)" /> }
-</section>
-}
-<section class="contract-card"><h2>Người đã rời phòng</h2>
-@foreach (var person in Model.DaChuyenDi) { <partial name="_NguoiOGhep" model="new QL_PhongTro.ViewModels.ChuyenDiRowViewModel(Model, person)" /> }
-@if (Model.DaChuyenDi.Count == 0) { <p>Chưa có người đã rời phòng.</p> }
-</section>
-</div><aside>
-@if (Model.ChoThem && await Permissions.AllowsAsync("HOP_DONG", true)) {
-<section class="contract-card"><h2>Thêm người ở ghép</h2><p>Giới hạn @Model.GioiHan người, tính cả người đứng tên. Ngày chuyển đi được để trống khi thêm mới.</p>
-<form asp-action="ThemNguoi" asp-route-id="@Model.HopDong.Id" method="post">
-<div asp-validation-summary="All" class="text-danger"></div>
-<input asp-for="Input.PhienBanPhong" type="hidden" />
-<div class="contract-field"><label asp-for="Input.HoTen">Họ tên *</label><div><input asp-for="Input.HoTen" maxlength="100" required /><span asp-validation-for="Input.HoTen" class="text-danger"></span></div></div>
-<div class="contract-field"><label asp-for="Input.SoDienThoai">Số điện thoại *</label><div><input asp-for="Input.SoDienThoai" type="tel" inputmode="numeric" maxlength="10" required /><span asp-validation-for="Input.SoDienThoai" class="text-danger"></span></div></div>
-<div class="contract-field"><label asp-for="Input.SoGiayTo">Số căn cước *</label><div><input asp-for="Input.SoGiayTo" inputmode="numeric" maxlength="12" required /><span asp-validation-for="Input.SoGiayTo" class="text-danger"></span></div></div>
-<div class="contract-field"><label asp-for="Input.NgayVao">Ngày bắt đầu ở cùng *</label><div><input asp-for="Input.NgayVao" type="date" required /><span asp-validation-for="Input.NgayVao" class="text-danger"></span></div></div>
-<button class="btn btn-primary" type="submit">Thêm người ở ghép</button>
-</form></section>
-}
-<section class="contract-card"><h2>Quy định sức chứa</h2><p>✓ Tối đa @Model.GioiHan người, gồm người đứng tên.</p><p>✓ Không thêm vượt sức chứa.</p><p>✓ Ngày chuyển đi tính đến hết ngày.</p><a asp-action="LichSuNguoiO" asp-route-phongId="@Model.HopDong.PhongId">Xem toàn bộ lịch sử người ở →</a></section></aside></div>
+@if (Model.ChoThem && await Permissions.AllowsAsync("HOP_DONG", true)) { <partial name="_ResidentCreate" model="Model" /> }
