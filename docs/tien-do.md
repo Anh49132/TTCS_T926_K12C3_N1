@@ -1984,3 +1984,113 @@ Cách chạy lại: `dotnet run --project .\QL_PhongTro\QL_PhongTro.csproj --lau
 
 ### 12/10/2026 — Bỏ ô ghim ghi chú
 - Bỏ checkbox Ghim ghi chú cho phòng này khỏi biểu mẫu; ghi chú mới mặc định không ghim, giữ dữ liệu cũ.
+
+### 12/10/2026 — Giao diện chi tiết yêu cầu theo hình
+- Chủ nhà: tiêu đề Chi tiết yêu cầu thuê & lịch xem, tiến trình, thông tin khách/phòng, lịch sử bên trái, lịch hẹn/kết quả/xử lý bên phải. Giữ form và backend xác nhận/đổi lịch/duyệt/từ chối/lập hợp đồng/hủy.
+- Dữ liệu thật; thời hạn thuê và chat chưa có backend không giả lập, nút gửi vô hiệu hóa. Luồng khách giữ giao diện cũ. Không đổi schema.
+
+- Kiểm chứng: build demo thành công; HTTP mở toàn bộ yêu cầu demo ở các trạng thái trả 200, có bố cục mới và phần xử lý. Chưa nghiệm thu trực quan trên mobile/trình duyệt.
+
+### 12/10/2026 — Đồng bộ khoảng cách chi tiết yêu cầu với tổng quan
+- Khung request-detail-page dùng app-content chung: tối đa 100rem, đệm 1.75rem, mobile 1.25rem 1rem. Không thêm đệm/margin riêng; căn tiêu đề cùng vị trí tổng quan. Giữ bố cục thông tin và xử lý hai cột.
+- Kiểm tra trang và CSS qua HTTP; chưa nghiệm thu trực quan.
+
+### 12/10/2026 — Nút quay lại danh sách ở chi tiết yêu cầu
+- Nút trắng gọn, viền nhẹ, SVG mũi tên 13px và chữ .625rem theo hình; giữ liên kết về danh sách yêu cầu.
+
+### 12/10/2026 — Thanh tiến trình theo hình
+- Vòng tròn 20px, chữ gọn và đường nối mảnh giữa năm bước; màu hoàn tất tối, bước hiện tại vàng. Giữ trạng thái dữ liệu hiện có và bố cục responsive.
+
+### 12/10/2026 — Thẻ khách và nhu cầu thuê theo hình
+- Avatar/tên/nghề nghiệp, điện thoại gọi điện/email, bốn cột nhu cầu và khung lời nhắn gọn. Nghề/email lấy dữ liệu thực sau kiểm tra quyền; thời hạn/ngân sách chưa có thì hiển thị Chưa cung cấp. Không giả lập nguồn Website An Cư hoặc liên hệ đã xác nhận.
+
+### 12/10/2026 — Thẻ phòng quan tâm theo hình
+- SVG phòng nền xám, tên/địa chỉ, trạng thái tiếng Việt, ba cột diện tích/vị trí, giá và cọc; hàng liên kết phía dưới. Không giả lập tiện nghi chưa có trong model chi tiết yêu cầu.
+
+### 12/10/2026 — Lịch sử trao đổi theo hình
+- Avatar, tên/thời gian và bong bóng nội dung, composer có icon đính kèm/gửi. Dùng lời nhắn thật ban đầu, không thêm tin mẫu; chức năng chat vẫn vô hiệu hóa và ghi rõ chưa hỗ trợ.
+
+### 12/10/2026 — Lịch hẹn xem phòng theo hình
+- Ô tháng/ngày, giờ hẹn, SVG địa điểm/người, trạng thái lịch và nút xác nhận; đổi lịch trong khối mở rộng. Giữ input ngày/giờ 24h và form xử lý cũ. Không giả lập thời lượng hoặc xác nhận riêng của khách chưa có dữ liệu.
+
+### 12/10/2026 — Thẻ kết quả xem phòng theo hình
+- Nhãn nhỏ, SVG clipboard, mô tả và nút ghi nhận kết quả. Nút chuyển tới khối xử lý sẵn có để duyệt/từ chối; không giả lập lưu kết quả xem riêng chưa có backend.
+
+### 12/10/2026 — Thẻ xử lý yêu cầu theo hình
+- Trạng thái/người phụ trách, ghi chú và nút cập nhật theo bố cục hình; trường mới giữ chỉ đọc/vô hiệu hóa do chưa có lưu riêng. Các form nghiệp vụ duyệt, từ chối, lập hợp đồng/hủy giữ trong khối thao tác mở sẵn. Không cho đổi trạng thái bỏ qua service.
+
+### 12/10/2026 — Tiến trình xử lý theo hình
+- Đổi tiêu đề, số mốc cập nhật, đường dọc/chấm vàng, nội dung và người thực hiện bên trái, thời gian bên phải. Giữ lịch sử thực tế và dữ liệu đã lọc.
+
+### 12/10/2026 — Cân đối chữ thẻ khách chi tiết yêu cầu
+- Đệm 1.25rem, tiêu đề/tên .875rem, nội dung .75rem, thông tin phụ .625–.6875rem; avatar 36px và khoảng cách đều. Mobile thu đệm 1rem, giữ bố cục linh hoạt. Chỉ đổi CSS.
+
+### 12/10/2026 — Cân đối thẻ phòng quan tâm
+- Đệm 1.25rem, tiêu đề/tên phòng .875rem, thông số .75rem và chữ phụ .625–.6875rem; biểu tượng 36px, ba cột và liên kết căn đều. Mobile đệm 1rem. Chỉ đổi CSS.
+
+### 12/10/2026 — Cân đối lịch sử trao đổi
+- Đệm thẻ 1.25rem, avatar 30px, tiêu đề .875rem, nội dung .75rem, tên .6875rem; khung soạn gọn và nút cân chiều cao. Giữ chức năng gửi chưa hỗ trợ và trạng thái vô hiệu hóa.
+
+### 12/10/2026 — Cân đối chữ thẻ lịch hẹn
+- Đệm 1.25rem, tiêu đề .875rem, nội dung .75rem, chữ phụ .625rem; ô ngày 46px, SVG 14px, khoảng cách và hàng trạng thái đồng đều. Giữ dữ liệu và xử lý lịch hiện có.
+
+### 12/10/2026 — Cân đối thẻ kết quả xem phòng
+- Đệm 1.25rem, tiêu đề .875rem, mô tả .75rem; biểu tượng 28px, nút cao tối thiểu 2.375rem và chữ .6875rem. Chỉ đổi CSS, giữ liên kết tới khối xử lý.
+
+### 12/10/2026 — Cân đối thẻ xử lý yêu cầu
+- Đệm 1.25rem, tiêu đề .875rem, nhãn .6875rem, nội dung ô .75rem; ô và nút cao 2.375rem, textarea 5rem, khoảng cách đều. Giữ trạng thái trường/nút và nghiệp vụ hiện có.
+
+### 12/10/2026 — Cân đối chữ tiến trình xử lý
+- Đệm 1.25rem, tiêu đề .875rem, nội dung .75rem, chữ phụ .6875rem và thời gian .625rem. Căn thời gian phải, nhịp mốc và chấm/đường dọc đều; mobile chuyển thời gian lên trên. Chỉ đổi CSS.
+
+### 12/10/2026 — Bỏ nút xem tin đăng ở thẻ phòng
+- Bỏ Xem tin đăng, giữ Xem chi tiết phòng căn phải.
+
+### 12/10/2026 — Mũi tên xem chi tiết phòng
+- Thay mũi tên chéo bằng SVG sang phải 12px theo hình, giữ liên kết chi tiết phòng.
+
+### 12/10/2026 — Bỏ thẻ lịch sử trao đổi
+- Bỏ toàn bộ thẻ Lịch sử trao đổi và ô soạn tin khỏi chi tiết yêu cầu; lời nhắn ban đầu vẫn ở phần Mong muốn của khách.
+
+### 12/10/2026 — Sắp lại bố cục chi tiết yêu cầu
+- Cân cột chính và sidebar 21rem (23rem màn hình lớn), khoảng cách thẻ 1rem, đệm 1.125rem và giảm khoảng trống trong từng phần. Màn hình vừa thu sidebar/nhóm thông tin, dưới 800px chuyển một cột. Giữ chức năng và dữ liệu hiện có.
+- Kiểm tra trang và CSS qua HTTP; chưa nghiệm thu trực quan.
+
+### 12/10/2026 — Chuyển thẻ xử lý yêu cầu
+- Chuyển Xử lý yêu cầu thuê sang cột trái ngay trên Tiến trình xử lý. Căn trạng thái/người phụ trách hai cột trong thẻ rộng, giữ forms nghiệp vụ.
+
+### 12/10/2026 — Cân đối khối xử lý ở cột chính
+- Đệm 1.25rem, nhãn .6875rem, nội dung .75rem; đồng bộ ô và nút thao tác 2.5rem, giảm khoảng trống và căn phần từ chối/hủy. Mobile xếp form một cột. Chỉ đổi CSS, giữ trạng thái và hành vi hiện có.
+
+### 12/10/2026 — Sửa checkbox xác nhận thuê
+- Ghi đè chiều rộng input chung cho checkbox: 15px, không padding; nhãn/chữ cùng hàng, căn trên khi chữ dài. Cân khoảng cách và nút duyệt; giữ required và xử lý hiện có.
+
+### 12/10/2026 — Đặt nút hủy cạnh từ chối
+- Bỏ mục Hủy yêu cầu riêng, đặt nút Hủy yêu cầu cạnh Từ chối; dùng formaction Huy cùng CSRF, bỏ validation lý do khi hủy và giữ xác nhận.
+
+
+### 12/10/2026 — Giao diện hợp đồng & người ở ghép
+- Sắp lại trang danh sách theo hình mẫu: 3 thẻ thống kê, bộ lọc riêng, bảng toàn chiều rộng và phần xem nhanh hợp đồng/thành viên cư trú bên dưới. Đồng bộ khoảng cách với tổng quan, CSS chỉ áp dụng trang danh sách.
+- Số người ở ghép lấy từ ngày vào/ra thực tế; chọn hợp đồng chỉ trong tập dữ liệu được phép xem. Giữ các thao tác tạo, chi tiết và thêm người ở ghép hiện có; không đổi schema.
+- Bộ lọc phòng/người ở ghép/hết hạn, phân trang và xuất CSV dùng dữ liệu đã được backend cấp quyền.
+- Kiểm tra: build thành công (cảnh báo ImageSharp/CS8601 có sẵn), node --check, HTTP danh sách và chọn hợp đồng 200, chọn ngoài phạm vi 403. Chưa kiểm tra trực quan bằng trình duyệt hoặc thiết bị 360px.
+
+
+### 12/10/2026 — Đồng bộ khoảng cách trang hợp đồng với tổng quan
+- Áp dụng cùng khung app-content tối đa 100rem, lề 1.75rem (mobile 1.25rem/1rem), loại bỏ khoảng đệm riêng của wrapper hợp đồng. Tiêu đề cùng clamp 1.375–1.8125rem, nhịp giữa các khối 1.5rem, gap thẻ 1rem và padding thẻ theo tổng quan.
+- CSS đặt trong dashboard-spacing.css nạp cuối, chỉ áp dụng danh sách hợp đồng ở giao diện quản trị. Không đổi nghiệp vụ.
+- Kiểm tra HTTP trang/CSS và git diff --check; chưa kiểm tra trực quan trên thiết bị.
+
+- 12/10/2026: Đổi biểu tượng Xuất danh sách sang SVG tải xuống theo mẫu; kiểm tra trang HTTP 200 và SVG đã render.
+
+- 12/10/2026: Thẻ thống kê hợp đồng thu gọn theo mẫu: SVG hồ sơ/lịch/nhóm người, icon 32px, số 1.5rem, nhãn .75rem, mô tả .625rem; giữ dữ liệu thật và responsive.
+
+- 12/10/2026: Cân chỉnh thẻ thống kê hợp đồng: số 1.625rem, nhãn .8125rem, mô tả .6875rem dễ đọc hơn, icon 36px; padding 1.125rem/1.25rem, chiều cao tối thiểu 5.5rem, mobile thu gọn. Kiểm tra CSS được phục vụ HTTP 200 và diff không lỗi khoảng trắng; chưa QA trực quan.
+
+- 12/10/2026: Chỉnh bộ lọc hợp đồng theo mẫu: ô tìm có SVG kính lúp, ngày dữ liệu bên phải, bốn bộ lọc và nút Áp dụng đồng chiều cao; giữ bố cục responsive.
+
+- 12/10/2026: Bốn bộ lọc hợp đồng dùng menu nổi bo góc/đổ bóng, trạng thái chọn màu vàng nhạt, đóng khi bấm ngoài/Escape và điều hướng phím mũi tên. Đồng bộ chiều cao 2.5rem; select gốc vẫn là nguồn giá trị cho bộ lọc.
+
+- 12/10/2026: Đổi mũi tên bảng hợp đồng thành menu ba chấm với Chi tiết hợp đồng và Thêm người ở ghép khi trạng thái/quyền cho phép. Menu nổi ngoài vùng cuộn bảng, đóng khi bấm ngoài/Escape/cuộn.
+
+- 12/10/2026: Bỏ khối xem nhanh chi tiết hợp đồng/thành viên bên dưới danh sách theo yêu cầu; bỏ truy vấn DetailModel phục vụ khối này. Truy cập chi tiết và thêm người qua menu ba chấm.
