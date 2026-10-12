@@ -163,7 +163,7 @@ public class HopDongCuaToiController(AppDbContext db, HopDongPdfService pdfServi
             NgayVao = g.NgayVao,
             NgayChuyenDi = g.NgayRa,
             DangO = IsCurrentlyStaying(contract.TrangThai, contract.NgayTraPhong, periods, today)
-                && g.NgayVao <= today && (g.NgayRa is null || g.NgayRa > today)
+                && g.NgayVao <= today && (g.NgayRa is null || g.NgayRa >= today)
         }));
 
         var appliedServices = await AppliedServicesAsync(contract.Id);

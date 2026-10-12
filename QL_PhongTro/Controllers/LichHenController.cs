@@ -66,6 +66,8 @@ public class LichHenController(
             HienThiNutDuyetSauKhiXem = laChuNha && yeuCau.LoaiYeuCau == LichHenTrangThai.LoaiXemPhong
                 && yeuCau.TrangThai == LichHenTrangThai.DaHenLich && yeuCau.TrangThaiPhong == LichHenTrangThai.PhongTrong,
             HienThiNutHuy = yeuCau.TrangThai is LichHenTrangThai.Moi or LichHenTrangThai.DaHenLich,
+            HienThiFormHuyDaDuyet = laChuNha && User.IsInRole("CHU_NHA")
+                && yeuCau.TrangThai == LichHenTrangThai.DaDuyet,
             LichSu = lichSu
         };
         if (laChuNha && db is not null)
@@ -243,6 +245,31 @@ public class LichHenController(
         catch (Exception ex) when (ex is InvalidOperationException or LichHenConflictException)
         {
             TempData["LichHenError"] = ex.Message;
+        }
+        return RedirectToAction(nameof(ChiTiet), new { id });
+    }
+
+    [HttpPost("/LichHen/HuyDaDuyet"), Authorize(Roles = "CHU_NHA"), ValidateAntiForgeryToken,
+        ModuleAccess("YEU_CAU_THUE", write: true)]
+    public async Task<IActionResult> HuyDaDuyet(int id, HuyYeuCauDaDuyetInput input, CancellationToken ct)
+    {
+        try
+        {
+            if (!ModelState.IsValid) throw new InvalidOperationException("Nhập lý do từ 5 đến 500 ký tự và tải lại trang nếu thiếu thông tin phiên bản.");
+            var changed = await service.HuyDaDuyetAsync(id, AccountId, input, ct);
+            TempData["LichHenOk"] = changed
+                ? "Đã hủy yêu cầu do khách không thuê và chuyển phòng về Trống. Tin nguồn đã tự động đăng lại với hạn 30 ngày."
+                : "Yêu cầu đã được hủy trước đó. Không có thay đổi mới.";
+        }
+        catch (KeyNotFoundException) { return NotFound(); }
+        catch (UnauthorizedAccessException) { return Forbid(); }
+        catch (Exception ex) when (ex is InvalidOperationException or LichHenConflictException)
+        {
+            TempData["LichHenError"] = ex.Message;
+        }
+        catch (Microsoft.Data.Sqlite.SqliteException)
+        {
+            TempData["LichHenError"] = "Không thể hủy giữ chỗ do lỗi ghi dữ liệu. Không có thay đổi nào được lưu; vui lòng tải lại trang và thử lại.";
         }
         return RedirectToAction(nameof(ChiTiet), new { id });
     }

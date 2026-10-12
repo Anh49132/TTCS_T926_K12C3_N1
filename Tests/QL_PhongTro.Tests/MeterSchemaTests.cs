@@ -16,12 +16,14 @@ public sealed partial class MeterReadingListTests
             cmd.CommandText="SELECT * FROM \""+table+"\" ORDER BY rowid";using var reader=cmd.ExecuteReader();
             while(reader.Read()) {var values=new object[reader.FieldCount];reader.GetValues(values);
                 if(excludeNew && table=="app_schema_version" && Convert.ToInt32(values[0])>=17)continue;
+                if(excludeNew && table=="phong_tro") values=values.Where((_, i)=>reader.GetName(i) is not ("ghi_chu_noi_bo" or "tien_nghi")).ToArray();
                 result.Add(table+JsonSerializer.Serialize(values));}
         }
         return string.Join("\n",result);
     }
     [Fact] public void UpgradeV16PreservesRowsAndIsIdempotent()
     {
+        SchemaTestFixture.RemoveRoomExtensions(path);
         Execute("DROP TABLE chi_so_dien_nuoc;DELETE FROM app_schema_version WHERE version>=17;");
         var before=DatabaseSnapshot(true);
         DatabaseUpdates.Update(path,Path.Combine(app,"Data","permissions.seed.json"));
@@ -34,13 +36,16 @@ public sealed partial class MeterReadingListTests
     }
     [Fact] public void UpgradeRefusesUnexpectedTableWithoutChangingData()
     {
+        SchemaTestFixture.RemoveRoomExtensions(path);
         Execute("DROP TABLE chi_so_dien_nuoc;DELETE FROM app_schema_version WHERE version>=17;CREATE TABLE chi_so_dien_nuoc(id INTEGER);");
         var before=DatabaseSnapshot();Assert.Throws<InvalidOperationException>(()=>DatabaseUpdates.Update(path,Path.Combine(app,"Data","permissions.seed.json")));Assert.Equal(before,DatabaseSnapshot());
     }
     [Fact] public void UpgradeRecognizesExactCompletedStepButRejectsMissingProtections()
     {
+        SchemaTestFixture.RemoveRoomExtensions(path);
         Execute("ALTER TABLE chi_so_dien_nuoc DROP COLUMN da_xac_nhan_bat_thuong;DELETE FROM app_schema_version WHERE version>=17;");var before=DatabaseSnapshot(true);
         DatabaseUpdates.Update(path,Path.Combine(app,"Data","permissions.seed.json"));Assert.Equal(before,DatabaseSnapshot(true));
+        SchemaTestFixture.RemoveRoomExtensions(path);
         Execute("ALTER TABLE chi_so_dien_nuoc DROP COLUMN da_xac_nhan_bat_thuong;DELETE FROM app_schema_version WHERE version>=17;DROP TRIGGER meter_locked_update;");
         Assert.Throws<InvalidOperationException>(()=>DatabaseUpdates.Update(path,Path.Combine(app,"Data","permissions.seed.json")));
     }

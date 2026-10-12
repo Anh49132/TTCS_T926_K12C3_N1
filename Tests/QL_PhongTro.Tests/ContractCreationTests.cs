@@ -79,7 +79,7 @@ public sealed partial class ContractCreationTests : IDisposable
         var page=await client.GetStringAsync("/HopDong/Create?yeuCauId=1");
         Assert.Contains("contracts.css",page);Assert.Contains("A203",page);Assert.Contains("Tenant",page);
         var phoneInput = Regex.Match(page, "<input[^>]*id=\"customer-phone\"[^>]*>").Value;
-        Assert.Contains("value=\"0901234567\"", phoneInput);
+        Assert.Contains("value=\"******4567\"", phoneInput);
         Assert.Contains("readonly", phoneInput);
         Assert.DoesNotContain("name=", phoneInput);
         Assert.Matches("id=\"end-date\"[^>]*readonly",page);
@@ -99,6 +99,7 @@ public sealed partial class ContractCreationTests : IDisposable
     [Fact] public async Task UpgradePreservesRowsAndIsIdempotent(){using(var db=Context()){await Controller(db).Create(Valid(),default);}using(var c=Open()){using var cmd=c.CreateCommand();cmd.CommandText="DELETE FROM app_schema_version WHERE version=14";cmd.ExecuteNonQuery();}DatabaseUpdates.Update(path,seed);DatabaseUpdates.Update(path,seed);using var check=Context();Assert.Single(await check.HopDongs.ToListAsync());Assert.Equal(3500000,(await check.KyHopDongs.SingleAsync()).GiaThue);DatabaseUpdates.Check(path);using var connection=Open();using var integrity=connection.CreateCommand();integrity.CommandText="PRAGMA integrity_check";Assert.Equal("ok",integrity.ExecuteScalar());integrity.CommandText="PRAGMA foreign_key_check";using var reader=integrity.ExecuteReader();Assert.False(reader.Read());}
     [Fact] public void UpgradeAddsMissingColumnsWithoutReplacingLegacyContract()
     {
+        SchemaTestFixture.RemoveRoomExtensions(path);
         using(var c=Open()){using var cmd=c.CreateCommand();cmd.CommandText="""
             PRAGMA foreign_keys=OFF;
             DROP TABLE ky_hop_dong; DROP TABLE hop_dong;

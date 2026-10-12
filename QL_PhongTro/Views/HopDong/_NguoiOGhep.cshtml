@@ -6,7 +6,8 @@
 <p>Bắt đầu ở cùng: @person.NgayVao.ToString("dd/MM/yyyy")</p>
 @if (person.NgayRa is { } departure) { <p>Ngày chuyển đi: <strong>@departure.ToString("dd/MM/yyyy")</strong></p> }
 else if (contract.ChoThem && await Permissions.AllowsAsync("HOP_DONG", true)) {
-    var value = contract.ChuyenDiNguoiId == person.Id ? contract.ChuyenDi.NgayRa : contract.HomNay;
+    var value = contract.ChuyenDiNguoiId == person.Id ? contract.ChuyenDi.NgayRa
+        : person.NgayVao > contract.HomNay ? person.NgayVao : contract.HomNay;
     <form asp-action="ChuyenDi" asp-route-id="@contract.HopDong.Id" asp-route-nguoiId="@person.Id" method="post">
         <input type="hidden" name="ChuyenDi.PhienBanPhong" value="@contract.ChuyenDi.PhienBanPhong" />
         <div class="contract-field"><label for="departure-@person.Id">Ngày chuyển đi</label><div>

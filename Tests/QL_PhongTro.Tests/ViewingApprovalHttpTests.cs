@@ -21,7 +21,7 @@ public sealed partial class PermissionTests
         Assert.Equal(HttpStatusCode.Redirect, approved.StatusCode);
         Assert.Equal("DA_DUYET", Scalar("SELECT trang_thai FROM yeu_cau_thue WHERE id=$id", ("$id", id)));
         detail = WebUtility.HtmlDecode(await owner.GetStringAsync($"/LichHen/ChiTiet/{id}"));
-        Assert.Contains("Lập hợp đồng", detail);
+        Assert.Contains("Tạo hợp đồng từ yêu cầu", detail);
         var contract = await owner.GetAsync($"/LichHen/LapHopDong?id={id}");
         Assert.Equal(HttpStatusCode.Redirect, contract.StatusCode);
         Assert.Contains("/HopDong/Create", contract.Headers.Location!.OriginalString);

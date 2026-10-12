@@ -1,4 +1,23 @@
 @model QL_PhongTro.ViewModels.HopDongDetailsViewModel
 @inject QL_PhongTro.Authorization.PermissionService Permissions
 @{var total=Model.Nguois.Count+(Model.DungTen==null?0:1);}
+<section class="contract-card" aria-labelledby="resident-list-title">
+    <h2 id="resident-list-title">Danh sách người ở trong hợp đồng</h2>
+    <p>@total/@Model.GioiHan người · Phòng tối đa @Model.GioiHan người, bao gồm người đứng tên.</p>
+    @if (Model.DungTen is { } signer) {
+        <div class="roommate-person"><strong>@signer.HoTen</strong><p>Người đứng tên duy nhất, chịu trách nhiệm thanh toán và nhận lại tiền cọc.</p></div>
+    }
+    @if (Model.Nguois.Count > 0) {
+        <h3>Người đang ở</h3>
+        @foreach (var person in Model.Nguois) { <partial name="_NguoiOGhep" model="@(new QL_PhongTro.ViewModels.ChuyenDiRowViewModel(Model, person))" /> }
+    } else { <p>Chưa có người ở ghép đang ở.</p> }
+    @if (Model.SapVao.Count > 0) {
+        <h3>Người sắp vào</h3>
+        @foreach (var person in Model.SapVao) { <partial name="_NguoiOGhep" model="@(new QL_PhongTro.ViewModels.ChuyenDiRowViewModel(Model, person))" /> }
+    }
+    @if (Model.DaChuyenDi.Count > 0) {
+        <h3>Người đã rời phòng</h3>
+        @foreach (var person in Model.DaChuyenDi) { <partial name="_NguoiOGhep" model="@(new QL_PhongTro.ViewModels.ChuyenDiRowViewModel(Model, person))" /> }
+    }
+</section>
 @if (Model.ChoThem && await Permissions.AllowsAsync("HOP_DONG", true)) { <partial name="_ResidentCreate" model="Model" /> }

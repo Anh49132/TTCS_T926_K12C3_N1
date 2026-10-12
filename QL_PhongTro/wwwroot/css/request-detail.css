@@ -215,3 +215,8 @@
 .rq-main .rq-business-actions form:has(input[name=daDongYThue]){margin-bottom:1rem!important}
 .rq-main .rq-business-actions form:has(input[name=daDongYThue]) .btn{min-height:2.375rem;padding:.5rem .875rem;font-size:.6875rem;font-weight:600;line-height:1.5}
 .rq-main .rq-business-actions .rq-reject-actions{display:flex;align-items:flex-end;gap:.5rem;flex-wrap:wrap}
+.rq-cancel-approved{border-top:1px solid #E9EAEC;margin-top:1rem;padding-top:1rem;min-width:0}
+.rq-cancel-approved>p{font-size:.75rem;line-height:1.7;color:#737D89}
+.rq-cancel-approved textarea{width:100%;max-width:100%;resize:vertical}
+.rq-cancel-approved form>label{display:block;margin:.5rem 0;font-size:.75rem}
+@media(max-width:600px){.rq-cancel-approved .btn{width:100%;white-space:normal}}

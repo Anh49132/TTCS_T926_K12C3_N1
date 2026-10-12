@@ -45,6 +45,7 @@ public sealed class LichHenChiTietViewModel
 
     /// <summary>Chủ nhà và đúng khách của yêu cầu được hủy khi yêu cầu còn mở.</summary>
     public bool HienThiNutHuy { get; init; }
+    public bool HienThiFormHuyDaDuyet { get; init; }
 
     /// <summary>
     /// AC3: khách xem được lịch sử thay đổi của yêu cầu. LichSuService đã chặn sẵn mọi người
@@ -65,6 +66,16 @@ public sealed class LichHenChiTietViewModel
 
     [StringLength(LichHenService.GhiChuToiDa, ErrorMessage = "Ghi chú không được dài quá 500 ký tự.")]
     public string? GhiChuTuChoi { get; set; }
+}
+
+public sealed class HuyYeuCauDaDuyetInput
+{
+    [Required] public int? PhienBan { get; set; }
+    [Required] public int? PhienBanPhong { get; set; }
+    [Required(ErrorMessage = "Nhập lý do khách không thuê.")]
+    [StringLength(500, MinimumLength = 5, ErrorMessage = "Lý do phải từ 5 đến 500 ký tự.")]
+    public string? LyDo { get; set; }
+    public bool XacNhan { get; set; }
 }
 
 /// <summary>

@@ -21,7 +21,8 @@ public sealed partial class RoomServicesTests
         using (var connection = Open())
         using (var command = connection.CreateCommand())
         {
-            command.CommandText = "DROP TABLE thanh_toan; DELETE FROM app_schema_version WHERE version=23";
+            SchemaTestFixture.RemoveRoomExtensions(path);
+            command.CommandText = "DROP TABLE thanh_toan; DELETE FROM app_schema_version WHERE version>=23";
             command.ExecuteNonQuery();
         }
 

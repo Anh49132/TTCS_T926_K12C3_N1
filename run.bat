@@ -69,21 +69,23 @@ echo [INFO] DatabasePath=%DatabasePath%
 if defined PasswordReset__PickupDirectory echo [INFO] Email pickup local=%PasswordReset__PickupDirectory%
 echo [1/3] Dang khoi phuc goi phu thuoc...
 dotnet restore "%PROJECT%"
-if errorlevel 1 goto :failed
+if not "%ERRORLEVEL%"=="0" goto :failed
 
 if not exist "%DatabasePath%" (
     echo [2/3] Database chua ton tai. Dang khoi tao file moi...
     dotnet run --project "%PROJECT%" --no-restore -- --initialize-database
     if errorlevel 1 goto :failed
+    if not errorlevel 0 goto :failed
 ) else (
     echo [2/3] Giu nguyen database hien co.
 )
 
 echo [3/3] Dang kiem tra schema database...
 dotnet run --project "%PROJECT%" --no-restore -- --check-database
-if errorlevel 1 (
+if not "%ERRORLEVEL%"=="0" (
     echo [ERROR] Database hien co chua san sang. Script khong tu dong nang cap de tranh thay doi du lieu.
     echo [INFO] Hay sao luu database, sau do chay --update-database theo README.md.
+    echo [INFO] Dung cung DatabasePath: "%DatabasePath%"
     goto :failed
 )
 
@@ -99,7 +101,7 @@ set "LocalAdmin__Password=adminne123"
 if not defined LocalAdmin__Phone set "LocalAdmin__Phone=0900000000"
 echo [INFO] Dang tao tai khoan ADMIN local neu chua ton tai...
 dotnet run --project "%PROJECT%" --no-restore --launch-profile http -- --create-local-admin
-if errorlevel 1 goto :failed
+if not "%ERRORLEVEL%"=="0" goto :failed
 set "LocalAdmin__Password="
 
 echo [INFO] Dang chay web tai http://localhost:5247

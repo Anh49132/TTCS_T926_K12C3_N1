@@ -12,8 +12,11 @@ internal sealed class BrowserVerification : IAsyncDisposable
     private int sequence;
     public async Task Start(string folder)
     {
-        var executable = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Google/Chrome/Application/chrome.exe");
-        if (!File.Exists(executable)) throw new FileNotFoundException("Chrome is required for browser verification.", executable);
+        var executable = new[] {
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Google/Chrome/Application/chrome.exe"),
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Google/Chrome/Application/chrome.exe"),
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Microsoft/Edge/Application/msedge.exe")
+        }.FirstOrDefault(File.Exists) ?? throw new FileNotFoundException("Chrome or Edge is required for browser verification.");
         var listener = new TcpListener(IPAddress.Loopback, 0); listener.Start();
         var port = ((IPEndPoint)listener.LocalEndpoint).Port; listener.Stop();
         var start = new ProcessStartInfo(executable) { UseShellExecute = false, CreateNoWindow = true };
@@ -31,8 +34,10 @@ internal sealed class BrowserVerification : IAsyncDisposable
         if (endpoint is null) throw new Exception("Chrome debugging endpoint did not start.");
         await socket.ConnectAsync(new Uri(endpoint), CancellationToken.None);
         await Command("Page.enable", new { });
-        await Command("Emulation.setDeviceMetricsOverride", new { width = 360, height = 800, deviceScaleFactor = 1, mobile = true });
+        await SetViewport(360, 800);
     }
+    public async Task SetViewport(int width, int height) =>
+        await Command("Emulation.setDeviceMetricsOverride", new { width, height, deviceScaleFactor = 1, mobile = width <= 600 });
     private async Task<JsonElement> Command(string method, object parameters)
     {
         var id = ++sequence;

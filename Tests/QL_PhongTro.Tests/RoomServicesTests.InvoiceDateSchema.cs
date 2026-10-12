@@ -13,6 +13,7 @@ public sealed partial class RoomServicesTests
         using var db=Context();var f=await BillingAsync(db);
         await Issue(db,await BillInput(db,f.A,f.Service,new(2026,10,1)));
         var before=JsonSerializer.Serialize(await db.HoaDons.AsNoTracking().Include(x=>x.ChiTiet).ToListAsync());
+        SchemaTestFixture.RemoveRoomExtensions(path);
         // Synthetic test fixture only: emulate the exact pre-v20 optional invoice schema.
         await db.Database.ExecuteSqlRawAsync("""
             DROP TRIGGER khoa_hoa_don_update;

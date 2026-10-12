@@ -188,7 +188,8 @@ public sealed class ContractActivationTests : IDisposable
         using var db2=Context();
         var c1=Controller(db1);
         var c2=Controller(db2);
-        var results=await Task.WhenAll(c1.KichHoat(1, null, default), c2.KichHoat(1, null, default));
+        var results=await Task.WhenAll(Task.Run(() => c1.KichHoat(1, null, default)),
+            Task.Run(() => c2.KichHoat(1, null, default)));
         // Exactly one activation commits; the loser sees the contract already effective.
         Assert.Equal(1, results.Count(r=>r is RedirectToActionResult));
         Assert.Equal(1, results.Count(r=>r is ViewResult));

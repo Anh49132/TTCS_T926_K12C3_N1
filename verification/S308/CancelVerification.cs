@@ -50,9 +50,9 @@ internal static class CancelVerification
         try {using var db=context();await Service(db).TaoNhapThayTheAsync(1,id,(await Input()).PhienBan);throw new Exception("Replacement of issued invoice");}
         catch(InvalidOperationException){check(issuedSnapshot==await Snapshot(),"replacement requires original already cancelled");}
 
-        using(var db=context())await db.Database.ExecuteSqlRawAsync("CREATE TABLE thanh_toan(id INTEGER PRIMARY KEY,hoa_don_id INTEGER,trang_thai TEXT);CREATE TABLE giao_dich_coc(id INTEGER PRIMARY KEY,hoa_don_id INTEGER,trang_thai TEXT)");
+        using(var db=context())await db.Database.ExecuteSqlRawAsync("CREATE TABLE giao_dich_coc(id INTEGER PRIMARY KEY,hoa_don_id INTEGER,trang_thai TEXT)");
         foreach(var status in new[]{"DA_XAC_NHAN","CHO_XAC_NHAN"}) {
-            using(var db=context())await db.Database.ExecuteSqlRawAsync("INSERT INTO thanh_toan(hoa_don_id,trang_thai) VALUES({0},{1})",id,status);
+            using(var db=context())await db.Database.ExecuteSqlRawAsync("INSERT INTO thanh_toan(hoa_don_id,trang_thai,so_tien,ngay_thanh_toan) VALUES({0},{1},1,'2026-10-09')",id,status);
             await Reject(await Input(),"payment "+status);
             using(var db=context())await db.Database.ExecuteSqlRawAsync("UPDATE thanh_toan SET trang_thai='DA_HUY'");
         }
@@ -113,10 +113,11 @@ internal static class CancelVerification
             check(meterSnapshot==JsonSerializer.Serialize(await db.ChiSoDienNuocs.AsNoTracking().OrderBy(x=>x.Id).ToListAsync()),"replacement publication never rewrites source meters");
             check(await db.HoaDons.CountAsync(x=>x.HopDongId==bill.HopDongId && x.Nam==bill.Nam && x.Thang==bill.Thang && x.TrangThai!="DA_HUY")==1,"only one active invoice remains for contract period");
         }
-        using(var db=context())await db.Database.ExecuteSqlRawAsync("DROP TABLE thanh_toan;DROP TABLE giao_dich_coc");
+        using(var db=context())await db.Database.ExecuteSqlRawAsync("DELETE FROM thanh_toan;DROP TABLE giao_dich_coc");
         // Simulate v21 on an isolated copy, restoring the exact old immutable trigger.
         var copy=database+".v21-copy.sqlite";
         using(var source=new SqliteConnection("Data Source="+database)){source.Open();using var target=new SqliteConnection("Data Source="+copy);target.Open();source.BackupDatabase(target);}
+        QL_PhongTro.Verification.LegacySchemaFixture.RemoveRoomExtensions(copy);
         using(var c=new SqliteConnection("Data Source="+copy)){c.Open();using var cmd=c.CreateCommand();cmd.CommandText="DELETE FROM app_schema_version WHERE version>=22;DROP TRIGGER khoa_hoa_don_update;DROP TRIGGER hoa_don_thay_the_insert;DROP TRIGGER hoa_don_thay_the_update;CREATE TRIGGER khoa_hoa_don_update BEFORE UPDATE ON hoa_don WHEN OLD.trang_thai<>'NHAP' BEGIN SELECT RAISE(ABORT,'Issued invoice is immutable'); END";cmd.ExecuteNonQuery();}
         async Task<string> CopySnapshot(){using var db=new AppDbContext(new DbContextOptionsBuilder<AppDbContext>().UseSqlite("Data Source="+copy).Options);return JsonSerializer.Serialize(new {Bills=await db.HoaDons.AsNoTracking().Include(x=>x.ChiTiet).OrderBy(x=>x.Id).ToListAsync(),Notices=await db.ThongBaoHoaDons.AsNoTracking().OrderBy(x=>x.Id).ToListAsync()});}
         var beforeCopy=await CopySnapshot();var seed=Path.Combine(root,"QL_PhongTro/Data/permissions.seed.json");

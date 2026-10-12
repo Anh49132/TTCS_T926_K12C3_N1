@@ -79,7 +79,7 @@ public sealed record LichHenLichSuMuc
     public DateTime ThoiDiem { get; init; }
 }
 
-public class LichHenService(AppDbContext db, ITimeProvider clock)
+public partial class LichHenService(AppDbContext db, ITimeProvider clock)
 {
     /// <summary>Two appointments of the same room closer than this are reported as a clash.</summary>
     public static readonly TimeSpan KhoangTrungLich = TimeSpan.FromMinutes(30);
@@ -139,10 +139,11 @@ public class LichHenService(AppDbContext db, ITimeProvider clock)
         return await cmd.ExecuteScalarAsync(ct) is not null;
     }
 
-    private async Task<LichHenYeuCau?> LoadAsync(int id, CancellationToken ct)
+    private async Task<LichHenYeuCau?> LoadAsync(int id, CancellationToken ct, SqliteTransaction? transaction = null)
     {
         await db.Database.OpenConnectionAsync();
         using var cmd = ((SqliteConnection)db.Database.GetDbConnection()).CreateCommand();
+        cmd.Transaction = transaction;
         cmd.CommandText = DocSql;
         cmd.Parameters.AddWithValue("$id", id);
         cmd.Parameters.AddWithValue("$hanhDongDoiLich", HanhDongYeuCau.DoiLich);

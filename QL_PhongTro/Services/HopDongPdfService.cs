@@ -66,7 +66,8 @@ public sealed class HopDongPdfService
                             });
                             AddHeader(table, "Họ tên", "Vai trò", "Trạng thái");
                             foreach (var person in contract.NguoiO)
-                                AddRow(table, person.HoTen, person.VaiTro, person.DangO ? "Đang ở" : "Đã chuyển đi");
+                                AddRow(table, person.HoTen, person.VaiTro,
+                                    person.DangO ? "Đang ở" : person.NgayChuyenDi.HasValue ? "Đã chuyển đi" : "Chưa ở");
                         });
                     }
 

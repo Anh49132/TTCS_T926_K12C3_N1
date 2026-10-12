@@ -11,11 +11,15 @@ public sealed partial class MeterReadingListTests
     public void ReconcileUi17AndDev18PreservesBusinessRows(bool uiDatabase)
     {
         if (uiDatabase)
+        {
+            SchemaTestFixture.RemoveRoomExtensions(path);
             Execute("DROP TABLE chi_so_dien_nuoc; DELETE FROM app_schema_version WHERE version >= 17; INSERT INTO app_schema_version(version,applied_at) VALUES(17,'2026-10-08');");
+        }
         else
         {
             foreach (var column in new[] { "dien_tich_dat", "thang_may", "bai_do_xe", "camera_an_ninh", "bao_ve_24h", "khu_giat_say", "san_thuong" })
                 Execute($"ALTER TABLE toa_nha DROP COLUMN {column}");
+            SchemaTestFixture.RemoveRoomExtensions(path);
             Execute("DELETE FROM app_schema_version WHERE version >= 18; INSERT INTO app_schema_version(version,applied_at) VALUES(18,'2026-10-08');");
         }
         var roomCount = Count("phong_tro");
@@ -28,7 +32,7 @@ public sealed partial class MeterReadingListTests
         using (var cmd = c.CreateCommand())
         {
             cmd.CommandText = "SELECT MAX(version) FROM app_schema_version";
-            Assert.Equal(23L, cmd.ExecuteScalar());
+            Assert.Equal(25L, cmd.ExecuteScalar());
             cmd.CommandText = "PRAGMA integrity_check";
             Assert.Equal("ok", cmd.ExecuteScalar());
             cmd.CommandText = "PRAGMA foreign_key_check";

@@ -99,6 +99,7 @@ internal static class PublishVerification
         using (var source = new SqliteConnection("Data Source=" + database)) {
             source.Open(); using var target = new SqliteConnection("Data Source=" + copy); target.Open(); source.BackupDatabase(target);
         }
+        QL_PhongTro.Verification.LegacySchemaFixture.RemoveRoomExtensions(copy);
         using (var c = new SqliteConnection("Data Source=" + copy)) {
             c.Open(); using var cmd = c.CreateCommand(); cmd.CommandText = "DROP TABLE thong_bao; DELETE FROM app_schema_version WHERE version>=21"; cmd.ExecuteNonQuery();
         }

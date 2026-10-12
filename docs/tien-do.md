@@ -1,4 +1,10 @@
-﻿## 11/10/2026 — Duyệt thuê sau khi xem phòng
+﻿## 12/10/2026 - Huy yeu cau da duyet
+
+- Chủ nhà có mục **Khách đổi ý, không thuê**, bắt buộc lý do và xác nhận. Yêu cầu chuyển Đã hủy, phòng về Trống, tin nguồn tự đăng lại với hạn mới 30 ngày theo yêu cầu PO. Chặn nếu tòa ngừng hoạt động hoặc đã có tin công khai khác.
+- Chặn hợp đồng đã lập, cọc xác nhận, giữ chỗ khác và phiên bản cũ; gửi trùng không ghi thêm. Trạng thái, nhật ký, lịch sử và thông báo cùng transaction. Không đổi schema/DB thật.
+- [Hướng dẫn và kết quả kiểm thử](huy-yeu-cau-da-duyet.md): 25 test mới và 121 test hồi quy PASS. Chưa nghiệm thu trực quan form mới trên thiết bị thật.
+
+## 11/10/2026 — Duyệt thuê sau khi xem phòng
 
 - Chủ nhà có nút Duyệt thuê sau khi xem cho yêu cầu XEM_PHONG/DA_HEN_LICH khi phòng còn trống. Phải xác nhận khách đồng ý thuê ở form và backend; loại/trạng thái khác bị từ chối. Giữ nguyên loại yêu cầu, lịch hẹn và lịch sử.
 - Dùng cùng transaction giữ phòng như thuê ngay: yêu cầu DA_DUYET, phòng DA_DAT_COC, tin DA_CHO_THUE, lịch sử/nhật ký/thông báo. Kiểm tra sức chứa hiện tại, hợp đồng đang/chờ hiệu lực và yêu cầu đã duyệt khác trong khóa SQLite; lỗi rollback. Lập hợp đồng dùng luồng hiện có từ yêu cầu đã duyệt. Không tự ghi nhận cọc.
@@ -2206,4 +2212,10 @@ Cách chạy lại: `dotnet run --project .\QL_PhongTro\QL_PhongTro.csproj --lau
 
 - 12/10/2026: nút lưu người ở ghép đổi nhãn Lưu thêm người ở ghép, icon SVG thêm người, kiểu nút gọn theo ảnh; giữ submit form hiện có.
 
+- 12/10/2026: sửa `run.bat` bắt cả mã thoát âm của .NET khi restore/khởi tạo/check schema/tạo ADMIN lỗi, dừng trước các bước tiếp theo và hiển thị DatabasePath cần dùng khi nâng cấp. Không tự nâng cấp DB đang dùng. Kiểm chứng `run.bat --check-only` trên bản sao v24: dừng với mã lỗi; updater v24 → v25 tạo backup, giữ toàn bộ dữ liệu 37 bảng cũ, integrity/FK đạt; check-only trên bản sao v25 trả 0. Build đạt, còn cảnh báo license ImageSharp. DB gốc vẫn v24, cần người dùng chạy updater cùng DatabasePath sau khi dừng app; chưa kiểm chứng khởi động web.
+
 - 12/10/2026: tóm tắt bổ sung theo ảnh: trạng thái Chưa lưu, icon/thẻ phòng, người bổ sung avatar/tên/điện thoại/ngày vào cập nhật bằng textContent theo form, số người trước-sau. Tạm trú/tệp giữ trạng thái chưa ghi nhận/0 tệp. Không đổi lưu nghiệp vụ.
+
+- 12/10/2026: rà đủ 44 AC Sprint 3 theo tệp người dùng gửi; báo cáo [kiem-tra-sprint3-20261012.md](kiem-tra-sprint3-20261012.md). xUnit liên quan 370 ca: 319 PASS, 51 FAIL, 0 SKIP; 32 lỗi truy vấn bảng dịch vụ hợp đồng tùy chọn, 12 lỗi fixture schema, 7 lỗi HTTP/HTML/model. Tái hiện trên SQLite tạm: hợp đồng mới không lưu snapshot dịch vụ dù form có dịch vụ; DB v25 hợp lệ chưa cài hóa đơn bị lỗi khi mở Details. Tab người ở hiện thiếu danh sách/nút chuyển đi; cảnh báo tới ngày chốt cần xác minh lại UI. Suite S308 gốc dừng tại fixture nâng cấp cũ; runner core tạm đạt 115 assertions, bỏ kiểm tra migration/browser và không sửa test gốc. Test HTTP 50 hóa đơn đạt ngưỡng <30s. Không sửa mã nghiệp vụ/schema/DB local; metadata DB local cuối lượt là v25. Chưa nghiệm thu trực quan 360px/Safari/PDF hoặc SMTP thật; chính sách giá gia hạn giữa tháng cần làm rõ.
+
+- 12/10/2026: hoàn thiện theo yêu cầu tự sửa: phục hồi danh sách người ở/đang ở/sắp vào/đã rời và form chuyển đi; lưu snapshot dịch vụ/giá phòng khi tạo hoặc sửa Nháp cùng transaction, phục vụ PDF; chặn truy vấn bảng dịch vụ/hóa đơn tùy chọn chưa cài; thêm cảnh báo đến ngày chốt trên dashboard. PDF không ghi người chưa ở là đã chuyển đi; ngày chuyển đi vẫn được tính là đang ở. Cập nhật fixture schema/route/nhãn/masking, sửa bài test concurrent tránh treo synchronization context, bộ S308 dùng thanh toán thật và hỗ trợ Edge. **373/373 xUnit tổng hợp PASS**, sau chỉnh PDF/biên ngày **21/21 PASS** (2 ca mới; tổng **375 ca duy nhất**); **193 assertions S308 đầy đủ PASS**, gồm migration, HTTP, rollback và browser 360px. QA Edge trên DB giả xác nhận người ở ghép/chốt chỉ số/hợp đồng khách không tràn ngang 360px, lưu từng phòng; đã mở và kiểm tra trực quan PDF thật sau chỉnh. Không sửa schema/DB local hay project test csproj, không backfill giá hợp đồng lịch sử. Giữ công thức gia hạn chia ngày và chống trùng hợp đồng/tháng; chưa nghiệm thu Safari/thiết bị thật/SMTP thật hoặc review-hợp nhất. Báo cáo [hoan-thien-sprint3-20261012.md](hoan-thien-sprint3-20261012.md).

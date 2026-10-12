@@ -130,15 +130,41 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
 
     private async Task LoadContractServices(HopDongCreateViewModel vm, CancellationToken ct)
     {
+        vm.PhiDichVus.Clear();
         if (vm.DaChon is not { } chosen) return;
         var ownerId = await db.ToaNhas.Where(x => x.Id == chosen.ToaNhaId).Select(x => x.ChuNhaId).SingleAsync(ct);
         var serviceIds = await db.DichVuPhongs.AsNoTracking().Where(x => x.PhongId == chosen.PhongId)
             .Select(x => x.DichVuToaNha.DichVuId).Distinct().ToListAsync(ct);
         var prices = new DichVuPhongService(db, new DichVuService(db), clock);
         foreach (var serviceId in serviceIds)
-            if (await prices.LayGiaHoaDonAsync(ownerId, chosen.PhongId, serviceId, HomNay) is { } price)
+            if (await prices.LayGiaHoaDonAsync(ownerId, chosen.PhongId, serviceId, vm.NgayBatDau ?? HomNay) is { } price)
                 vm.PhiDichVus.Add(price);
         vm.PhiDichVus = vm.PhiDichVus.OrderBy(x => x.DichVuId).ToList();
+    }
+
+    private Task<bool> CoDichVuHopDongAsync(CancellationToken ct) => db.Database.SqlQueryRaw<int>(
+        "SELECT COUNT(*) AS Value FROM sqlite_master WHERE type='table' AND name='hop_dong_dich_vu'")
+        .AnyAsync(count => count == 1, ct);
+
+    private async Task LuuDichVuHopDongAsync(int contractId, IEnumerable<DonGiaDichVu> prices, DateTime now, CancellationToken ct)
+    {
+        // Optional invoice tables are never installed by a web request.
+        if (!await CoDichVuHopDongAsync(ct)) return;
+        var existing = await db.HopDongDichVus.Where(x => x.HopDongId == contractId).ToListAsync(ct);
+        var selected = prices.ToList();
+        db.HopDongDichVus.RemoveRange(existing.Where(x => selected.All(price => price.DichVuId != x.DichVuId)));
+        foreach (var price in selected)
+        {
+            var snapshot = existing.SingleOrDefault(x => x.DichVuId == price.DichVuId);
+            if (snapshot is null)
+            {
+                snapshot = new HopDongDichVu { HopDongId = contractId, DichVuId = price.DichVuId };
+                db.HopDongDichVus.Add(snapshot);
+            }
+            snapshot.CauHinhDichVuId = price.CauHinhId; snapshot.TenDichVu = price.TenDichVu;
+            snapshot.CachTinh = price.CachTinh; snapshot.DonViTinh = price.DonViTinh;
+            snapshot.DonGia = price.DonGia; snapshot.NgayGhiNhan = now;
+        }
     }
 
     [HttpGet, ModuleAccess("HOP_DONG", write: true)]
@@ -211,6 +237,9 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
         if (period is null) { period = new KyHopDongThamChieu { HopDongId = contract.Id, NguoiLapId = AccountId, NgayTao = now }; db.KyHopDongs.Add(period); }
         period.NgayBatDau = vm.NgayBatDau!.Value; period.NgayKetThuc = vm.NgayKetThuc!.Value;
         period.GiaThue = vm.GiaThue!.Value; period.SoThang = vm.SoThang!.Value;
+        // Only new contracts or editable drafts reach this action. Freeze the actual
+        // assigned room prices with the contract, in the same transaction.
+        await LuuDichVuHopDongAsync(contract.Id, vm.PhiDichVus, now, ct);
         var meter = await db.HopDongChiSoDauKys.SingleOrDefaultAsync(m => m.HopDongId == contract.Id, ct);
         if (meter is null) { meter = new HopDongChiSoDauKy { HopDongId = contract.Id }; db.HopDongChiSoDauKys.Add(meter); }
         meter.NgayBanGiao = vm.NgayBatDau.Value;
@@ -349,8 +378,13 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
             (AccountId == building.ChuNhaId || await IsAdmin(ct) || signerAccountId == AccountId))
             model.NguoiThueEmail = await db.TaiKhoans.AsNoTracking().Where(x => x.Id == signerAccountId)
                 .Select(x => x.Email).SingleOrDefaultAsync(ct);
-        model.DichVus = await db.HopDongDichVus.AsNoTracking().Where(x => x.HopDongId == id).OrderBy(x => x.DichVuId).ToListAsync(ct);
-        model.XemTaiChinh = permissions is not null && await permissions.AllowsAsync("TAI_CHINH");
+        model.DichVus = await CoDichVuHopDongAsync(ct)
+            ? await db.HopDongDichVus.AsNoTracking().Where(x => x.HopDongId == id).OrderBy(x => x.DichVuId).ToListAsync(ct)
+            : [];
+        model.XemTaiChinh = permissions is not null && await permissions.AllowsAsync("TAI_CHINH")
+            && await db.Database.SqlQueryRaw<int>(
+                "SELECT COUNT(*) AS Value FROM sqlite_master WHERE type='table' AND name='hoa_don'")
+                .AnyAsync(count => count == 1, ct);
         if (model.XemTaiChinh)
             model.HoaDons = await db.HoaDons.AsNoTracking().Where(x => x.HopDongId == id && x.TrangThai != "DA_HUY")
                 .OrderByDescending(x => x.Nam).ThenByDescending(x => x.Thang).Take(3).ToListAsync(ct);

@@ -251,9 +251,23 @@ public sealed class HopDongCuaToiTests : IDisposable
         Assert.Equal(expected, model.SapHetHan);
     }
 
-    private HopDongCuaToiController ControllerFor(int accountId)
+    [Theory]
+    [InlineData(0, true)]
+    [InlineData(1, false)]
+    public async Task RoommateRemainsPresentThroughTheirDepartureDate(int offset, bool expected)
     {
-        var controller = new HopDongCuaToiController(db, new HopDongPdfService())
+        var departure = new DateOnly(2026, 10, 12);
+        db.NguoiOGheps.Single().NgayRa = departure;
+        await db.SaveChangesAsync();
+        var time = new MockTimeProvider { UtcNow = departure.AddDays(offset).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc) };
+        var details = Assert.IsType<HopDongChiTietViewModel>(Assert.IsType<ViewResult>(
+            await ControllerFor(ownerAccountId, time).Details(ContractCode)).Model);
+        Assert.Equal(expected, details.NguoiO.Single(x => x.VaiTro == "Người ở cùng").DangO);
+    }
+
+    private HopDongCuaToiController ControllerFor(int accountId, ITimeProvider? time = null)
+    {
+        var controller = new HopDongCuaToiController(db, new HopDongPdfService(), time)
         {
             ControllerContext = new ControllerContext
             {

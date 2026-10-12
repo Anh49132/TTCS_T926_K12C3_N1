@@ -359,7 +359,8 @@ public sealed class S304NghiemThuTests : IDisposable
         using (var db = Context(ChuNhaId))
         {
             var home = new HomeController(new RegistrationSettings(), db,
-                new YeuCauThueService(db, _clock), new TinDangExpirationService(db, _clock));
+                new YeuCauThueService(db, _clock), new TinDangExpirationService(db, _clock))
+            { ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() } };
             var view = Assert.IsType<ViewResult>(await home.Index());
             var model = Assert.IsType<HomeViewModel>(view.Model);
             Assert.Equal(6, model.TinMoiNhat.Count);
@@ -384,7 +385,8 @@ public sealed class S304NghiemThuTests : IDisposable
         using (var db = Context(ChuNhaId))
         {
             var home = new HomeController(new RegistrationSettings(), db,
-                new YeuCauThueService(db, _clock), new TinDangExpirationService(db, _clock));
+                new YeuCauThueService(db, _clock), new TinDangExpirationService(db, _clock))
+            { ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() } };
             var view = Assert.IsType<ViewResult>(await home.Index());
             var model = Assert.IsType<HomeViewModel>(view.Model);
             Assert.Equal(6, model.TinMoiNhat.Count);
@@ -410,7 +412,8 @@ public sealed class S304NghiemThuTests : IDisposable
         using (var db = Context(ChuNhaId))
         {
             var home = new HomeController(new RegistrationSettings(), db,
-                new YeuCauThueService(db, _clock), new TinDangExpirationService(db, _clock));
+                new YeuCauThueService(db, _clock), new TinDangExpirationService(db, _clock))
+            { ControllerContext = new ControllerContext { HttpContext = new DefaultHttpContext() } };
             var view = Assert.IsType<ViewResult>(await home.Index());
             var model = Assert.IsType<HomeViewModel>(view.Model);
             Assert.Equal(6, model.TinMoiNhat.Count);

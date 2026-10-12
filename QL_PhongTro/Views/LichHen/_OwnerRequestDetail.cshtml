@@ -1,4 +1,4 @@
-﻿@model QL_PhongTro.ViewModels.LichHenChiTietViewModel
+@model QL_PhongTro.ViewModels.LichHenChiTietViewModel
 @using System.Globalization
 @using QL_PhongTro.Models
 @using QL_PhongTro.Services
@@ -28,6 +28,7 @@
     <span class="text-muted">Yêu cầu đã duyệt và phòng đã đặt cọc, sẵn sàng lập hợp đồng.</span>
 </div>
 }
+<partial name="_HuyDaDuyet" model="Model" />
 
 @if (Model.HienThiNutDuyetSauKhiXem) {
 <h2>Duyệt thuê sau khi xem phòng</h2>
@@ -147,4 +148,4 @@
 </details>
 }
 
-</section><section class="rq-card rq-viewing-result"><h2>Kết quả xem phòng</h2><span class="rq-result-badge">• @(yeuCau.TrangThai=="DA_DUYET"?"Đã duyệt":yeuCau.TrangThai=="TU_CHOI"?"Đã từ chối":"Chưa ghi nhận")</span><div class="rq-result-description"><span class="rq-result-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2h6v2M8 10h8m-8 4h8m-8 3h5"/></svg></span><p>@(yeuCau.LyDoTuChoi==null?(yeuCau.TrangThai=="DA_DUYET"?"Yêu cầu đã được duyệt thuê.":"Chưa có kết quả cho lịch xem. Ghi nhận sau khi khách đến xem."):LichHenService.LyDoLabel(yeuCau.LyDoTuChoi))</p></div>@if(!string.IsNullOrWhiteSpace(yeuCau.GhiChuTuChoi)){<p class="rq-muted">@yeuCau.GhiChuTuChoi</p>}<a class="rq-result-action" href="#rq-processing"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4H4v16h16v-8M10 14l1-4 8-8 3 3-8 8-4 1Zm7-10 3 3"/></svg>Ghi nhận kết quả xem</a><p class="rq-result-help">Duyệt hoặc từ chối tại phần xử lý bên dưới. Chưa hỗ trợ lưu kết quả xem riêng.</p></section></aside></div></div>
+</section><section class="rq-card rq-viewing-result"><h2>Kết quả xem phòng</h2><span class="rq-result-badge">• @LichHenTrangThai.Label(yeuCau.TrangThai)</span><div class="rq-result-description"><span class="rq-result-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4V2h6v2M8 10h8m-8 4h8m-8 3h5"/></svg></span><p>@(yeuCau.TrangThai=="DA_HUY" ? LichHenTrangThai.Label(yeuCau.TrangThai) : yeuCau.LyDoTuChoi==null?(yeuCau.TrangThai=="DA_DUYET"?"Yêu cầu đã được duyệt thuê.":"Chưa có kết quả cho lịch xem. Ghi nhận sau khi khách đến xem."):LichHenService.LyDoLabel(yeuCau.LyDoTuChoi))</p></div>@if(!string.IsNullOrWhiteSpace(yeuCau.GhiChuTuChoi)){<p class="rq-muted">@yeuCau.GhiChuTuChoi</p>}<a class="rq-result-action" href="#rq-processing"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4H4v16h16v-8M10 14l1-4 8-8 3 3-8 8-4 1Zm7-10 3 3"/></svg>Ghi nhận kết quả xem</a><p class="rq-result-help">Duyệt hoặc từ chối tại phần xử lý bên dưới. Chưa hỗ trợ lưu kết quả xem riêng.</p></section></aside></div></div>

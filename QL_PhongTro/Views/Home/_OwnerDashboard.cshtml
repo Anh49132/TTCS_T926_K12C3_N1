@@ -69,6 +69,14 @@
     </section>
 
     <section class="owner-work" aria-labelledby="owner-work-title">
+        @if (Model.MeterAlerts.Count > 0) {
+            <div class="alert alert-warning" role="alert">
+                <strong>Cần chốt chỉ số</strong>
+                @foreach (var alert in Model.MeterAlerts) {
+                    <p><a href="/TienDoChiSo?toaNhaId=@alert.ToaNhaId&amp;nam=@alert.Nam&amp;thang=@alert.Thang">@alert.TenToaNha · kỳ @alert.Thang.ToString("00")/@alert.Nam</a> — Còn @alert.SoPhongConThieu phòng chưa chốt chỉ số.</p>
+                }
+            </div>
+        }
         <div class="owner-work-heading"><div><h2 id="owner-work-title">Việc cần xử lý <span class="owner-label">@(Model.YeuCauChoXuLy + Model.UnlistedRoomCount + Model.MeterAlerts.Sum(x => x.SoPhongConThieu)) việc</span></h2><p>Chọn một việc để xem chi tiết và xử lý tại trang liên quan.</p></div><span>Ưu tiên việc cần xử lý sớm</span></div>
         <div class="owner-work-grid">
             <article class="owner-work-card owner-pending-card">
