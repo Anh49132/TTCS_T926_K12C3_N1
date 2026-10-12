@@ -9,7 +9,7 @@
 <header class="rc-heading"><div><h1>Chỉnh sửa phòng @Model.MaPhong <span class="re-status">● @(Model.TrangThai.HasValue ? QL_PhongTro.Controllers.PhongTroController.StatusLabel(Model.TrangThai.Value) : "Chưa xác định")</span></h1><p>@building · Cập nhật thông tin phòng, giá thuê và tiện nghi.</p></div><span>* Trường thông tin bắt buộc</span></header>
 <div class="re-warning"><strong>ⓘ Thông tin hợp đồng được giữ riêng</strong><p>Các giá trị trong hợp đồng không tự thay đổi khi sửa thông tin phòng. Ghi chú và tiện nghi được lưu bằng nút Lưu thay đổi; phí dịch vụ được lưu riêng từng dòng.</p></div>
 <form asp-action="Edit" asp-route-id="@ViewData["RoomId"]" method="post" novalidate><div asp-validation-summary="ModelOnly" class="text-danger"></div><div class="rc-layout"><div class="rc-main">
-<section class="rc-card rc-basic-card"><div class="rc-card-heading"><span class="rc-icon">▥</span><div><h2>Thông tin cơ bản</h2><p>Thông tin định danh, diện tích và sức chứa của phòng.</p></div></div><div class="rc-fields">
+<section class="rc-card rc-basic-card"><div class="rc-card-heading"><span class="rc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 3h9v18H8ZM8 3l5 2v14l-5 2M11 12h.01"/></svg></span><div><h2>Thông tin cơ bản</h2><p>Thông tin định danh, diện tích và sức chứa của phòng.</p></div></div><div class="rc-fields">
 <div><label asp-for="ToaNhaId">Cơ sở <em>*</em></label><select asp-for="ToaNhaId" asp-items="Model.ToaNhaOptions" disabled></select><input type="hidden" asp-for="ToaNhaId" id="edit-building-id" /><small>@(locations?.GetValueOrDefault(Model.ToaNhaId?.ToString() ?? ""))</small><span asp-validation-for="ToaNhaId" class="text-danger"></span></div>
 <div><label asp-for="MaPhong">Số / tên phòng <em>*</em></label><input asp-for="MaPhong" autocomplete="off" /><small>Tên phòng phải là duy nhất trong cùng cơ sở.</small><span asp-validation-for="MaPhong" class="text-danger"></span></div>
 <div class="rc-wide rc-three"><div><label asp-for="Tang">Tầng <em>*</em></label><input asp-for="Tang" type="number" /><span asp-validation-for="Tang" class="text-danger"></span></div><div><label asp-for="DienTich">Diện tích <em>*</em></label><div class="rc-unit"><input asp-for="DienTich" type="number" min="0.01" step="0.01" /><span>m²</span></div><span asp-validation-for="DienTich" class="text-danger"></span></div><div><label asp-for="SoNguoiToiDa">Sức chứa tối đa <em>*</em></label><div class="rc-unit"><input asp-for="SoNguoiToiDa" type="number" min="1" step="1" /><span>người</span></div><span asp-validation-for="SoNguoiToiDa" class="text-danger"></span></div></div>
@@ -19,35 +19,34 @@
     <div class="rc-card-heading"><span class="rc-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h14v14H4zM4 8h16v8h-7V8m3 4h1" /></svg></span><div><h2>Giá thuê &amp; tiền cọc</h2><p>Các khoản tiền được tính bằng Việt Nam đồng (đ).</p></div></div>
     <div class="rc-fields">
         <div><label asp-for="GiaThueDisplay">Giá thuê hàng tháng <em>*</em></label><div class="rc-unit"><input asp-for="GiaThueDisplay" inputmode="numeric" autocomplete="off" data-vnd-input placeholder="4.800.000" /><span>đ / tháng</span></div><span asp-validation-for="GiaThue" class="text-danger"></span></div>
-        <div><label for="rc-deposit-preview">Tiền cọc <em>*</em></label><div class="rc-unit"><input id="rc-deposit-preview" placeholder="4.800.000" disabled aria-describedby="rc-pricing-unavailable" /><span>đ</span></div></div>
+        <div><label for="rc-deposit-preview">Tiền cọc <em>*</em></label><div class="rc-unit"><input id="rc-deposit-preview" placeholder="4.800.000" disabled /><span>đ</span></div></div>
     </div>
     <p class="rc-hint">ⓘ Tiền cọc tương đương 1 tháng thuê. Có thể điều chỉnh theo hợp đồng.</p>
     @if (ViewData["RoomServices"] is QL_PhongTro.ViewModels.DichVuPhongViewModel services)
     {
         <partial name="_RoomServices" model="services" />
     }
-    <p id="rc-pricing-unavailable" class="rc-service-unavailable">Tiền cọc được quản lý trong hợp đồng.</p>
 </section>
-<section class="rc-card rc-room-notes"><div class="rc-card-heading"><span class="rc-icon">✎</span><div><h2><label for="GhiChuNoiBo">Ghi chú</label></h2><p>Thông tin nội bộ dành cho việc quản lý phòng.</p></div></div><textarea asp-for="GhiChuNoiBo" rows="4" maxlength="500" placeholder="Thêm thông tin bổ sung cho phòng..."></textarea><span asp-validation-for="GhiChuNoiBo" class="text-danger"></span><div class="rc-room-notes-footer"><span>Không hiển thị trên tin đăng công khai</span><span>Tối đa 500 ký tự</span></div></section>
+<section class="rc-card rc-room-notes"><div class="rc-card-heading"><span class="rc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13 4H5v16h15v-8M10 14l1-4 7-7 3 3-7 7-4 1Z"/></svg></span><div><h2><label for="GhiChuNoiBo">Ghi chú</label></h2><p>Thông tin nội bộ dành cho việc quản lý phòng.</p></div></div><textarea asp-for="GhiChuNoiBo" rows="4" maxlength="500" placeholder="Thêm thông tin bổ sung cho phòng..."></textarea><span asp-validation-for="GhiChuNoiBo" class="text-danger"></span><div class="rc-room-notes-footer"><span>Không hiển thị trên tin đăng công khai</span><span>Tối đa 500 ký tự</span></div></section>
 </div><aside class="rc-aside">
 @if (await Permissions.AllowsAsync("HOP_DONG")) {
-<section class="rc-card"><div class="rc-card-heading"><span class="rc-icon">♙</span><div><h2>Khách thuê &amp; hợp đồng</h2><p>Chỉ để tham khảo · không chỉnh sửa tại đây.</p></div></div><div class="re-tenant"><span>—</span><div><strong>Chưa kết nối khách thuê</strong><small>Không hiển thị dữ liệu cá nhân mẫu.</small></div></div><div class="re-contract"><strong>Hợp đồng: —</strong><dl><div><dt>Ngày bắt đầu</dt><dd>—</dd></div><div><dt>Ngày kết thúc</dt><dd>—</dd></div><div><dt>Chu kỳ thanh toán</dt><dd>—</dd></div><div><dt>Ngày thu tiền</dt><dd>—</dd></div></dl><div class="re-deposit">Tiền cọc đang giữ <strong>— đ</strong></div><button type="button" disabled class="re-full">Xem hợp đồng</button>@if (User.IsInRole("CHU_NHA")) { <a class="re-history" asp-controller="HopDong" asp-action="LichSuNguoiO" asp-route-phongId="@ViewData["RoomId"]">Lịch sử người ở ↗</a> }</div>@if (await Permissions.AllowsAsync("TAI_CHINH")) { <div class="re-balance"><small>Cần thu · kỳ hiện tại</small><strong>— đ</strong><p>Chưa kết nối hóa đơn vào form chỉnh sửa.</p></div> }</section>
+<section class="rc-card"><div class="rc-card-heading"><span class="rc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M16 4a3 3 0 0 1 0 6M18 14a5 5 0 0 1 3 4v2"/></svg></span><div><h2>Khách thuê &amp; hợp đồng</h2><p>Chỉ để tham khảo · không chỉnh sửa tại đây.</p></div></div><div class="re-tenant"><span>—</span><div><strong>Chưa kết nối khách thuê</strong><small>Không hiển thị dữ liệu cá nhân mẫu.</small></div></div><div class="re-contract"><strong>Hợp đồng: —</strong><dl><div><dt>Ngày bắt đầu</dt><dd>—</dd></div><div><dt>Ngày kết thúc</dt><dd>—</dd></div><div><dt>Chu kỳ thanh toán</dt><dd>—</dd></div><div><dt>Ngày thu tiền</dt><dd>—</dd></div></dl><div class="re-deposit">Tiền cọc đang giữ <strong>— đ</strong></div><button type="button" disabled class="re-full">Xem hợp đồng</button></div>@if (await Permissions.AllowsAsync("TAI_CHINH")) { <div class="re-balance"><small>Cần thu · kỳ hiện tại</small><strong>— đ</strong><p>Chưa kết nối hóa đơn vào form chỉnh sửa.</p></div> }</section>
 }
-<section class="rc-card"><div class="rc-card-heading"><span class="rc-icon">▣</span><div><h2>Tiện nghi</h2><p>Chọn tiện nghi có sẵn trong phòng.</p></div></div><div class="re-amenities">@foreach (var amenity in QL_PhongTro.ViewModels.TienNghiPhong.Options) { <label><input type="checkbox" name="TienNghi" value="@amenity.Key" checked="@Model.TienNghi.Contains(amenity.Key)" />@amenity.Value</label> }</div><span asp-validation-for="TienNghi" class="text-danger"></span><p>Tiện nghi được lưu cùng thông tin phòng.</p></section>
+<section class="rc-card"><div class="rc-card-heading"><span class="rc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 10V5h14v5M4 10h16v9H4ZM7 19v2M17 19v2M4 14h16M8 10v4M16 10v4"/></svg></span><div><h2>Tiện nghi</h2><p>Chọn tiện nghi có sẵn trong phòng.</p></div></div><div class="re-amenities">@foreach (var amenity in QL_PhongTro.ViewModels.TienNghiPhong.Options) { <label><input type="checkbox" name="TienNghi" value="@amenity.Key" checked="@Model.TienNghi.Contains(amenity.Key)" />@amenity.Value</label> }</div><span asp-validation-for="TienNghi" class="text-danger"></span><p>Tiện nghi được lưu cùng thông tin phòng.</p></section>
 <section class="rc-card room-image-manager"
              data-upload-url="@Url.Action("UploadImage", new { id = ViewData["RoomId"] })"
              data-reorder-url="@Url.Action("ReorderImages", new { id = ViewData["RoomId"] })"
              data-delete-url-template="@Url.Action("DeleteImage", new { id = ViewData["RoomId"], imageId = "__imageId__" })">
             <div class="room-image-heading">
                 <div>
-                    <h2>Ảnh phòng</h2>
-                    <p>JPG hoặc PNG, tối đa 5 MB mỗi ảnh. Có thể chọn nhiều ảnh cùng lúc.</p>
+                    <h2><span class="rc-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><circle cx="9" cy="9" r="1.5"/><path d="m5 18 5-5 3 3 4-6 3 4"/></svg></span>Ảnh phòng</h2>
+                    <p>Bổ sung ảnh để dễ nhận diện phòng.</p>
                 </div>
                 <strong data-image-count>@Model.Anh.Count/8 ảnh</strong>
             </div>
-            <label for="room-image-files" class="form-label">Chọn ảnh tải lên</label>
-            <input id="room-image-files" class="form-control" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" multiple />
-            <div class="room-image-grid" data-image-grid aria-live="polite">
+            <label for="room-image-files" class="re-photo-drop"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 17H5a4 4 0 0 1-1-8 6 6 0 0 1 12-1 4 4 0 0 1 3 8h-3M12 21V11m-3 3 3-3 3 3"/></svg><strong>Kéo thả ảnh hoặc <span>chọn ảnh</span></strong><small>JPG, PNG · Tối đa 5 MB / ảnh, 8 ảnh</small></label>
+            <input id="room-image-files" class="visually-hidden" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" multiple />
+            <p class="re-photo-caption">Ảnh đầu tiên được dùng làm ảnh đại diện phòng.</p><div class="room-image-grid" data-image-grid aria-live="polite">
                 @foreach (var image in Model.Anh)
                 {
                     <article class="room-image-card" data-image-id="@image.Id">

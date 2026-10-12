@@ -24,7 +24,7 @@
 @if (finance) { <article><small>Đã thu tháng này <span>▧</span></small><strong>— <em>đ</em></strong><p>Chưa có dữ liệu thu tiền</p></article><article><small>Còn phải thu <span>▧</span></small><strong>— <em>đ</em></strong><p>Chưa có dữ liệu thanh toán</p></article> }
 else { <article><small>Đã đặt cọc <span>▧</span></small><strong>@Model.DatCoc <em>phòng</em></strong><p>Phòng đang được giữ chỗ</p></article> }
 </section>
-<div class="bd-attention"><span>ⓘ Cần chú ý</span><strong>@Model.Trong phòng trống · @Model.DatCoc phòng đã đặt cọc</strong><a asp-controller="YeuCau" asp-action="Index">Xem yêu cầu thuê →</a></div>
+<div class="bd-attention"><span>ⓘ Cần chú ý</span><strong>@Model.Trong phòng trống · @Model.DatCoc phòng đã đặt cọc</strong><a asp-controller="YeuCau" asp-action="Index">Xem yêu cầu thuê <svg class="bd-link-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></div>
 <section class="bd-room-panel"><div class="bd-panel-heading"><h2>Danh sách phòng <small>@Model.TongPhong phòng</small></h2><div class="bd-actions">
 @if (write && b.DangHoatDong) { <a asp-action="CreateBulk" asp-route-toaNhaId="@b.Id" class="bd-import-link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M4 16v5h16v-5"/></svg>Nhập danh sách</a> }
 <div class="bd-view-switch" aria-label="Kiểu hiển thị phòng"><button type="button" data-room-view="list" aria-label="Danh sách" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg></button><button type="button" data-room-view="grid" aria-label="Lưới" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><rect x="14" y="14" width="6" height="6"/></svg></button></div></div></div>
@@ -46,7 +46,7 @@ else { <article><small>Đã đặt cọc <span>▧</span></small><strong>@Model.
 </section></div>
 @section Styles { <link rel="stylesheet" href="~/css/building-detail.css" asp-append-version="true" /> }
 
-@section Scripts { <script>
+@section Scripts { <script src="~/js/building-detail-filters.js" asp-append-version="true"></script><script>
 document.querySelectorAll('[data-room-view]').forEach(button => button.addEventListener('click', () => {
     document.querySelector('.bd-room-panel').classList.toggle('bd-grid-view', button.dataset.roomView === 'grid');
     document.querySelectorAll('[data-room-view]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));

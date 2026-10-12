@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 using Microsoft.Data.Sqlite;
@@ -17,8 +17,21 @@ namespace QL_PhongTro.Controllers;
 [Authorize(Roles = "CHU_NHA,QUAN_LY,ADMIN")]
 [ModuleAccess("PHONG_TRO")]
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-public class PhongTroController(AppDbContext db, DichVuPhongService roomServices, RoomImageStore imageStore, RoomImageDeletionService imageDeletion, ITimeProvider? clock = null) : Controller
+public partial class PhongTroController(AppDbContext db, DichVuPhongService roomServices, RoomImageStore imageStore, RoomImageDeletionService imageDeletion, ITimeProvider? clock = null) : Controller
 {
+    [HttpGet, ModuleAccess("PHONG_TRO", write: true)]
+    public async Task<IActionResult> DichVuThemPhong(int toaNhaId)
+    {
+        if (CurrentAccountId() is not { } actor) return Forbid();
+        if (!await VisibleBuildings(actor, activeOnly: true).AnyAsync(x => x.Id == toaNhaId)) return Forbid();
+        var today = DateOnly.FromDateTime((clock ?? new SystemTimeProvider()).UtcNow.AddHours(7));
+        var catalog = await db.DichVuToaNhas.Include(x => x.DichVu).Where(x => x.ToaNhaId == toaNhaId && x.DichVu.DangHoatDong).ToListAsync();
+        var prices = await db.CauHinhDichVus.Where(x => x.ToaNhaId == toaNhaId && x.PhongId == null && x.TuNgay <= today && (x.DenNgay == null || x.DenNgay >= today) && x.DangApDung && x.DaChotGia).ToListAsync();
+        return Json(catalog.Where(c => prices.Count(p => p.DichVuId == c.DichVuId) == 1).Select(c => {
+            var p = prices.Single(p => p.DichVuId == c.DichVuId);
+            return new { id = c.Id, name = c.DichVu.TenDichVu, code = c.DichVu.MaDichVu, selected = c.ApDungMacDinh, price = p.DonGia, method = p.CachTinh, unit = p.DonViTinh };
+        }));
+    }
     [HttpGet]
     public async Task<IActionResult> ChiTietToaNha(int id, string? tuKhoa, int? tang, string? trangThai, int trang = 1, CancellationToken ct = default, string? loaiPhong = null)
     {
@@ -84,7 +97,14 @@ public class PhongTroController(AppDbContext db, DichVuPhongService roomServices
                 DangHoatDong = building.DangHoatDong
             }).ToListAsync();
 
-        return View(new DanhSachToaNhaViewModel { TuKhoa = tuKhoa, ToaNhas = buildings });
+        var buildingIds = buildings.Select(x => x.Id).ToList();
+        var today = DateOnly.FromDateTime((clock ?? new SystemTimeProvider()).UtcNow.AddHours(7));
+        var contractEnds = await (from h in db.HopDongs.AsNoTracking()
+            join p in db.PhongTros on h.PhongId equals p.Id
+            where buildingIds.Contains(p.ToaNhaId) && h.TrangThai == "DANG_HIEU_LUC"
+            select db.KyHopDongs.Where(k => k.HopDongId == h.Id).Max(k => (DateOnly?)k.NgayKetThuc)).ToListAsync();
+        return View(new DanhSachToaNhaViewModel { TuKhoa = tuKhoa, ToaNhas = buildings,
+            HopDongSapHetHan = contractEnds.Count(end => end >= today && end <= today.AddDays(30)) });
     }
 
     public async Task<IActionResult> Index(int? toaNhaId, int? quanLyId, TrangThaiPhong? trangThaiFilter, string? tuKhoa)
@@ -180,6 +200,7 @@ public class PhongTroController(AppDbContext db, DichVuPhongService roomServices
         return View(new TaoPhongViewModel
         {
             ToaNhaId = selectedBuildingId,
+            GiaThueDisplay = "0",
             ToaNhaOptions = options
         });
     }
@@ -214,6 +235,7 @@ public class PhongTroController(AppDbContext db, DichVuPhongService roomServices
     [HttpPost]
     [ModuleAccess("PHONG_TRO", write: true)]
     [ValidateAntiForgeryToken]
+    [RequestSizeLimit(45 * 1024 * 1024)]
     public async Task<IActionResult> Create(TaoPhongViewModel model)
     {
         var ownerId = CurrentAccountId();
@@ -222,6 +244,8 @@ public class PhongTroController(AppDbContext db, DichVuPhongService roomServices
 
         if (model.TrangThai is not null && !Enum.IsDefined(model.TrangThai.Value))
             ModelState.AddModelError(nameof(model.TrangThai), "Trạng thái phòng không hợp lệ.");
+        if (model.TienNghi.Any(x => !TienNghiPhong.Options.ContainsKey(x)))
+            ModelState.AddModelError(nameof(model.TienNghi), "Tiện nghi đã chọn không hợp lệ.");
         BindRentPrice(nameof(model.GiaThue), model.GiaThueDisplay, price => model.GiaThue = price);
 
         var building = model.ToaNhaId is null
@@ -237,6 +261,34 @@ public class PhongTroController(AppDbContext db, DichVuPhongService roomServices
                 .AnyAsync(room => room.ToaNhaId == building.Id && room.MaPhong == roomCode))
             ModelState.AddModelError(nameof(model.MaPhong), "Mã phòng đã được sử dụng trong tòa nhà này.");
 
+        var preparedImages = new List<PreparedRoomImage>();
+        var selectedServices = new List<(DichVuToaNha Catalog, long Price, string Method)>();
+        if (model.DichVuDaChon && building is not null)
+        {
+            var ids = model.DichVuMoi.Select(x => x.CatalogId).ToList();
+            var catalog = await db.DichVuToaNhas.Include(x => x.DichVu).Where(x => x.ToaNhaId == building.Id && x.DichVu.DangHoatDong).ToListAsync();
+            if (ids.Distinct().Count() != ids.Count || ids.Any(id => catalog.All(c => c.Id != id)))
+                ModelState.AddModelError(nameof(model.DichVuMoi), "Danh sách dịch vụ không hợp lệ cho cơ sở này.");
+            foreach (var item in model.DichVuMoi.Where(x => x.ApDung))
+            {
+                var c = catalog.SingleOrDefault(x => x.Id == item.CatalogId);
+                if (c is null) continue;
+                if (!TryParseRentPrice(item.Gia, out var price) || price < 0 || !CachTinhDichVu.HopLe(item.CachTinh)
+                    || ((c.DichVu.MaDichVu is "DIEN" or "NUOC") && price <= 0)
+                    || ((c.DichVu.MaDichVu is "DIEN" or "NUOC") && item.CachTinh == CachTinhDichVu.CoDinh)
+                    || ((c.DichVu.MaDichVu is not ("DIEN" or "NUOC")) && item.CachTinh == CachTinhDichVu.TheoChiSo))
+                    ModelState.AddModelError(nameof(model.DichVuMoi), $"Đơn giá hoặc cách tính {c.DichVu.TenDichVu} không hợp lệ.");
+                else selectedServices.Add((c, price, item.CachTinh));
+            }
+        }
+        if (model.AnhPhongMoi.Count > RoomImageStore.MaxImagesPerRoom)
+            ModelState.AddModelError(nameof(model.AnhPhongMoi), "Mỗi phòng chỉ được tối đa 8 ảnh.");
+        if (ModelState.IsValid)
+            foreach (var file in model.AnhPhongMoi)
+            {
+                try { preparedImages.Add(await imageStore.PrepareAsync(file, HttpContext.RequestAborted)); }
+                catch (InvalidDataException ex) { ModelState.AddModelError(nameof(model.AnhPhongMoi), ex.Message); }
+            }
         if (!ModelState.IsValid)
         {
             model.ToaNhaOptions = await GetBuildingOptions(ownerId.Value);
@@ -252,21 +304,50 @@ public class PhongTroController(AppDbContext db, DichVuPhongService roomServices
             GiaThue = model.GiaThue!.Value,
             SoNguoiToiDa = model.SoNguoiToiDa!.Value,
             TrangThai = model.TrangThai!.Value.ToString(),
+            TienNghi = System.Text.Json.JsonSerializer.Serialize(model.TienNghi.Distinct().Order()),
+            GhiChuNoiBo = string.IsNullOrWhiteSpace(model.GhiChuNoiBo) ? null : model.GhiChuNoiBo.Trim(),
             NgayTao = DateTime.UtcNow
         };
 
+        await using var createTransaction = await db.Database.BeginTransactionAsync();
+        var storedImages = new List<StoredRoomImage>();
         db.PhongTros.Add(room);
-        await roomServices.GanMacDinhChoPhongMoiAsync([room]);
+        if (!model.DichVuDaChon) await roomServices.GanMacDinhChoPhongMoiAsync([room]);
         try
         {
             await db.SaveChangesAsync();
+            foreach (var service in selectedServices)
+            {
+                db.DichVuPhongs.Add(new DichVuPhong { PhongId = room.Id, DichVuToaNhaId = service.Catalog.Id, DonGiaRieng = service.Price });
+                db.CauHinhDichVus.Add(new CauHinhDichVu { ToaNhaId = building.Id, PhongId = room.Id, DichVuId = service.Catalog.DichVuId,
+                    DonGia = service.Price, CachTinh = service.Method,
+                    DonViTinh = service.Method == CachTinhDichVu.TheoNguoi ? "người/tháng" : service.Method == CachTinhDichVu.CoDinh ? "phòng/tháng" : service.Catalog.DichVu.MaDichVu == "DIEN" ? "kWh" : "m³",
+                    TuNgay = DateOnly.FromDateTime((clock ?? new SystemTimeProvider()).UtcNow.AddHours(7)), NguoiTaoId = ownerId.Value, NgayTao = (clock ?? new SystemTimeProvider()).UtcNow });
+            }
+            foreach (var prepared in preparedImages)
+            {
+                var stored = await imageStore.SaveAsync(room.Id, prepared, HttpContext.RequestAborted);
+                storedImages.Add(stored);
+                db.AnhPhongs.Add(new AnhPhong { PhongId = room.Id, DuongDan = stored.OriginalPath,
+                    DuongDanAnhNho = stored.ThumbnailPath, ThuTu = storedImages.Count, NgayTao = DateTime.UtcNow });
+            }
+            if (storedImages.Count > 0 || selectedServices.Count > 0) await db.SaveChangesAsync();
+            await createTransaction.CommitAsync();
         }
         catch (DbUpdateException exception) when (IsRoomCodeConflict(exception))
         {
+            await createTransaction.RollbackAsync();
+            foreach (var stored in storedImages) imageStore.Delete(stored);
             db.Entry(room).State = EntityState.Detached;
             ModelState.AddModelError(nameof(model.MaPhong), "Mã phòng đã được sử dụng trong tòa nhà này.");
             model.ToaNhaOptions = await GetBuildingOptions(ownerId.Value);
             return View(model);
+        }
+        catch
+        {
+            await createTransaction.RollbackAsync();
+            foreach (var stored in storedImages) imageStore.Delete(stored);
+            throw;
         }
 
         TempData["Success"] = "Đã thêm phòng thành công.";
@@ -637,18 +718,34 @@ public class PhongTroController(AppDbContext db, DichVuPhongService roomServices
             denNgay?.Year < 1900 || denNgay?.Year > 9998)
             return BadRequest("Bộ lọc không hợp lệ. Ngày từ phải không sau ngày đến (1900–9998).");
 
+        var journalContract = await db.HopDongs.AsNoTracking().Where(x => x.PhongId == phongId && x.TrangThai == "DANG_HIEU_LUC").OrderByDescending(x => x.Id).FirstOrDefaultAsync();
+        ViewData["JournalContract"] = journalContract;
+        if (journalContract != null)
+        {
+            ViewData["JournalTenantName"] = await db.KhachThues.Where(x => x.Id == journalContract.KhachDungTenId).Select(x => x.HoTen).FirstOrDefaultAsync();
+        }
+        ViewData["JournalAddress"] = building.DiaChi;
+        ViewData["JournalRoom"] = room;
+        ViewData["JournalPhoto"] = await db.AnhPhongs.AsNoTracking().Where(x => x.PhongId == phongId).OrderBy(x => x.ThuTu).Select(x => x.DuongDanAnhNho ?? x.DuongDan).FirstOrDefaultAsync();
         var hopDongIds = await db.HopDongs.AsNoTracking()
             .Where(hopDong => hopDong.PhongId == phongId)
             .Select(hopDong => hopDong.Id)
             .ToListAsync();
         var query = db.NhatKyHoatDongs.AsNoTracking()
             .Where(row => (row.LoaiDoiTuong == "phong_tro" && row.DoiTuongId == phongId)
-                || (row.LoaiDoiTuong == "hop_dong" && hopDongIds.Contains(row.DoiTuongId)));
+                || (row.LoaiDoiTuong == "hop_dong" && hopDongIds.Contains(row.DoiTuongId))
+                || (row.LoaiDoiTuong == "ghi_chu_phong" && db.GhiChuPhongs.Any(note => note.Id == row.DoiTuongId && note.PhongId == phongId)));
         if (tuNgay is { } from)
             query = query.Where(row => row.ThoiDiem >= from.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc).AddHours(-7));
         if (denNgay is { } to)
             query = query.Where(row => row.ThoiDiem < to.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc).AddHours(-7));
 
+        ViewData["RoomNotes"] = await db.GhiChuPhongs.AsNoTracking().Where(x => x.PhongId == phongId
+                && (!tuNgay.HasValue || x.NgayTao >= tuNgay.Value.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc).AddHours(-7))
+                && (!denNgay.HasValue || x.NgayTao < denNgay.Value.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc).AddHours(-7)))
+            .OrderByDescending(x => x.Ghim).ThenByDescending(x => x.NgayTao)
+            .Select(x => new GhiChuPhong { Id=x.Id, PhongId=x.PhongId, TieuDe=x.TieuDe, NoiDung=x.NoiDung, Ghim=x.Ghim, NgayTao=x.NgayTao, TenTep=x.TenTep })
+            .Take(100).ToListAsync();
         var model = new NhatKyPhongViewModel
         {
             PhongId = phongId,

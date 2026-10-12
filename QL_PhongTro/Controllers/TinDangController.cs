@@ -1,4 +1,4 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -157,6 +157,24 @@ public class TinDangController(AppDbContext db, YeuCauThueService requests, Dich
         return model is null ? NotFound() : View(model);
     }
 
+    [Authorize(Roles = "CHU_NHA,QUAN_LY"), ModuleAccess("TIN_DANG", write: true), HttpGet]
+    public async Task<IActionResult> Sua(int id)
+    {
+        var listing = await db.TinDangs.AsNoTracking().SingleOrDefaultAsync(post => post.Id == id);
+        if (listing is null) return NotFound();
+        var room = await db.PhongTros.AsNoTracking().SingleAsync(room => room.Id == listing.PhongId);
+        var building = await db.ToaNhas.AsNoTracking().SingleAsync(building => building.Id == room.ToaNhaId);
+        if (building.ChuNhaId != AccountId && !(User.IsInRole("QUAN_LY") && building.QuanLyId == AccountId)) return Forbid();
+        var model = await TaoModelAsync(listing.PhongId);
+        return model is null ? NotFound() : View("Tao", model with
+        {
+            TinDangId = listing.Id,
+            TrangThaiTin = listing.TrangThai,
+            TieuDe = listing.TieuDe,
+            NoiDung = listing.NoiDung
+        });
+    }
+
     private async Task<List<PhongDangTinOption>> PhongDangTinOptionsAsync(int? currentRoomId = null)
     {
         var isManager = User.IsInRole("QUAN_LY");
@@ -251,6 +269,31 @@ public class TinDangController(AppDbContext db, YeuCauThueService requests, Dich
         return RedirectToAction(nameof(QuanLy));
     }
 
+    [Authorize(Roles = "CHU_NHA,QUAN_LY"), ModuleAccess("TIN_DANG", write: true), HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> DoiTrangThai(int id, string trangThai, string trangThaiDaXem)
+    {
+        if (trangThai is not ("NHAP" or "DANG_HIEN_THI" or "TAM_AN" or "DA_CHO_THUE")) return BadRequest();
+        var listing = await db.TinDangs.SingleOrDefaultAsync(x => x.Id == id);
+        if (listing is null) return NotFound();
+        var room = await db.PhongTros.SingleAsync(x => x.Id == listing.PhongId);
+        var building = await db.ToaNhas.SingleAsync(x => x.Id == room.ToaNhaId);
+        if (building.ChuNhaId != AccountId && !(User.IsInRole("QUAN_LY") && building.QuanLyId == AccountId)) return Forbid();
+        await using var transaction = await db.Database.BeginTransactionAsync();
+        string? error = listing.TrangThai != trangThaiDaXem ? "Tin đã thay đổi. Hãy tải lại danh sách." : null;
+        if (trangThai == "NHAP" && listing.TrangThai == "DANG_HIEN_THI") error = "Hãy tạm ẩn tin công khai trước khi chuyển về bản nháp.";
+        if (trangThai == "DANG_HIEN_THI")
+        {
+            if (room.TrangThai != "TRONG" || !building.DangHoatDong) error = "Chỉ đăng công khai phòng trống trong tòa đang hoạt động.";
+            if (await db.TinDangs.AnyAsync(x => x.PhongId == room.Id && x.Id != id && x.TrangThai == "DANG_HIEN_THI")) error = "Phòng đã có tin công khai khác.";
+        }
+        if (error is not null) { TempData["TinDangError"] = error; return RedirectToAction(nameof(QuanLy)); }
+        if (trangThai == "DANG_HIEN_THI" && listing.TrangThai != trangThai)
+        { listing.NgayDang = DateTime.UtcNow; listing.NgayHetHan = DateTime.UtcNow.AddDays(30); }
+        listing.TrangThai = trangThai;
+        try { await db.SaveChangesAsync(); await transaction.CommitAsync(); TempData["TinDangOk"] = "Đã cập nhật trạng thái tin đăng."; }
+        catch (DbUpdateException) { await transaction.RollbackAsync(); TempData["TinDangError"] = "Không thể cập nhật. Hãy tải lại danh sách."; }
+        return RedirectToAction(nameof(QuanLy));
+    }
     private async Task<TaoTinDangViewModel?> TaoModelAsync(int roomId)
     {
         var isManager = User.IsInRole("QUAN_LY");

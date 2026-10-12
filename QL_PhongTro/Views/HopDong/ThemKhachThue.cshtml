@@ -1,0 +1,34 @@
+@model QL_PhongTro.ViewModels.ThemKhachThueViewModel
+@{ ViewData["Title"] = "Thêm khách thuê"; }
+@section Styles { <link rel="stylesheet" href="~/css/add-tenant.css" asp-append-version="true" /> }
+<section class="add-tenant-page">
+    <header><a href="/">← Về tổng quan</a><h1>Thêm khách thuê</h1><p>Thêm người ở cùng vào hợp đồng của phòng. Người đứng tên tiếp tục chịu trách nhiệm thanh toán.</p></header>
+    <div class="add-tenant-card">
+        <h2>1. Chọn phòng và hợp đồng</h2>
+        @if (Model.HopDongs.Count == 0) {
+            <div class="add-tenant-empty"><p>Chưa có hợp đồng phù hợp để thêm khách thuê.</p><a href="/HopDong/Create">Tạo hợp đồng</a></div>
+        } else {
+            <form method="get" asp-action="ThemKhachThue" class="add-tenant-select">
+                <div><label asp-for="HopDongId">Phòng · Cơ sở · Hợp đồng</label><select asp-for="HopDongId" asp-items="Model.HopDongs" required><option value="">Chọn hợp đồng</option></select></div>
+                <button type="submit">Chọn phòng</button>
+            </form>
+        }
+    </div>
+    @if (Model.Selected is { } contract) {
+        <div class="add-tenant-card">
+            <h2>2. Thông tin khách mới</h2>
+            <p class="add-tenant-room">Phòng @contract.Phong · @contract.ToaNha · Tối đa @contract.GioiHan người</p>
+            <form asp-controller="HopDong" asp-action="ThemNguoi" asp-route-id="@contract.HopDong.Id" method="post">
+                <input type="hidden" name="Input.PhienBanPhong" value="@contract.Input.PhienBanPhong" />
+                <div class="add-tenant-fields">
+                    <div><label for="tenant-name">Họ tên <span>*</span></label><input id="tenant-name" name="Input.HoTen" autocomplete="name" minlength="2" maxlength="100" required placeholder="Nhập họ tên khách thuê" /></div>
+                    <div><label for="tenant-phone">Số điện thoại <span>*</span></label><input id="tenant-phone" name="Input.SoDienThoai" type="tel" inputmode="numeric" autocomplete="tel" pattern="0[0-9]{9}" maxlength="10" required placeholder="10 chữ số, bắt đầu bằng 0" /></div>
+                    <div><label for="tenant-identity">Số căn cước <span>*</span></label><input id="tenant-identity" name="Input.SoGiayTo" inputmode="numeric" autocomplete="off" pattern="([0-9]{9}|[0-9]{12})" maxlength="12" required placeholder="9 hoặc 12 chữ số" /></div>
+                    <div><label for="tenant-start">Ngày bắt đầu ở <span>*</span></label><input id="tenant-start" name="Input.NgayVao" type="date" value="@contract.Input.NgayVao?.ToString("yyyy-MM-dd")" required /><small>Ngày vào ở phải nằm trong kỳ hợp đồng.</small></div>
+                </div>
+                <p class="add-tenant-note">Hồ sơ mới chưa có tài khoản đăng nhập. Thông tin chỉ được lưu khi phòng còn đủ sức chứa và dữ liệu hợp đồng hợp lệ.</p>
+                <footer><a href="/">Hủy</a><button type="submit">＋ Thêm khách thuê</button></footer>
+            </form>
+        </div>
+    }
+</section>

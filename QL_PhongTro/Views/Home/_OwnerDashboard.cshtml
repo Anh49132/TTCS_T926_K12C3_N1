@@ -9,6 +9,7 @@
     var greeting = today.Hour < 12 ? "Chào buổi sáng" : today.Hour < 18 ? "Chào buổi chiều" : "Chào buổi tối";
     string Icon(string key) => key switch {
         "home" => "m3 10 9-7 9 7v11H3Z M9 21v-8h6v8",
+        "door" => "M4 21h16M7 21V5l9-2v18M16 5h3v16M12 12h.01",
         "key" => "M15 14a6 6 0 1 0-5-5L3 16v5h5v-3h3l4-4Z",
         "clock" => "M12 8v5l3 2M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20",
         "wallet" => "M3 5h18v15H3ZM3 9h18M16 13h3",
@@ -17,82 +18,193 @@
 }
 <div class="owner-overview">
     <header class="owner-heading">
-        <div><h1>@greeting, @(User.Identity?.Name ?? "bạn")</h1><p>Đây là tình hình kinh doanh của bạn hôm nay, @today.ToString("dd/MM/yyyy").</p></div>
-        <div class="owner-heading-actions"><a class="owner-button owner-button-light" href="/PhongTro/ToaNha">Tất cả cơ sở ↗</a><a class="owner-button" href="/PhongTro/Create">＋ Thêm phòng</a></div>
+        <div><h1>@greeting, @(User.Identity?.Name ?? "bạn")</h1><p>Chào @(User.Identity?.Name ?? "bạn"), có @(Model.YeuCauChoXuLy + Model.UnlistedRoomCount + Model.MeterAlerts.Sum(x => x.SoPhongConThieu)) việc đang chờ anh xử lý.</p></div>
+        <div class="owner-heading-actions"><a class="owner-button" href="/HoaDonDichVu/Monthly">＋ Tạo hóa đơn</a><span class="owner-updated"><i aria-hidden="true"></i>Cập nhật lúc @today.ToString("HH:mm") · @today.ToString("dd/MM/yyyy")</span></div>
     </header>
 
-    @if (Model.MeterAlerts.Count > 0)
-    {
-        <section class="owner-meter-alerts" aria-label="Cảnh báo chốt chỉ số">
-            <div class="owner-panel-heading"><h2>Cần chốt chỉ số</h2><span class="owner-label">@Model.MeterAlerts.Count cảnh báo</span></div>
-            @foreach (var alert in Model.MeterAlerts)
-            {
-                <a class="owner-meter-alert" href="/TienDoChiSo?toaNhaId=@alert.ToaNhaId&amp;nam=@alert.Nam&amp;thang=@alert.Thang">
-                    <span aria-hidden="true">⚠</span>
-                    <span><strong>@alert.TenToaNha · kỳ @alert.Thang.ToString("00")/@alert.Nam</strong>
-                        <small>Còn @alert.SoPhongConThieu phòng chưa chốt chỉ số</small></span>
-                    <span aria-hidden="true">Xử lý →</span>
-                </a>
-            }
-        </section>
-    }
+    <form class="owner-overview-filters" action="/" method="get" aria-label="Lọc tổng quan">
+        <label><span class="visually-hidden">Cơ sở</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon("building")" /></svg><select name="toaNhaId" aria-label="Cơ sở"><option value="">Tất cả cơ sở</option>@foreach (var building in Model.BuildingOptions) { <option value="@building.Id" selected="@(Model.SelectedBuildingId == building.Id)">@building.Name</option> }</select></label>
+        <input type="hidden" name="ky" value="@Model.SelectedPeriod.ToString("yyyy-MM")" />
+        <details class="owner-filter-dropdown owner-month-dropdown">
+            <summary aria-label="Chọn tháng theo dõi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v16H4ZM8 3v4M16 3v4M4 10h16M8 14h2M14 14h2M8 17h2" /></svg><span>Tháng @Model.SelectedPeriod.ToString("MM/yyyy")</span><svg class="owner-filter-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" /></svg></summary>
+            <nav class="owner-filter-menu" aria-label="Tháng theo dõi">
+                @{ var currentPeriod = new DateOnly(today.Year, today.Month, 1); }
+                @if (Model.SelectedPeriod < currentPeriod.AddMonths(-11) || Model.SelectedPeriod > currentPeriod) {
+                    <a href="/?toaNhaId=@Model.SelectedBuildingId&amp;ky=@Model.SelectedPeriod.ToString("yyyy-MM")" aria-current="page"><span>Tháng @Model.SelectedPeriod.ToString("MM/yyyy")</span><span class="owner-filter-check" aria-hidden="true">✓</span></a>
+                }
+                @for (var i = 0; i < 12; i++) {
+                    var periodOption = currentPeriod.AddMonths(-i);
+                    <a href="/?toaNhaId=@Model.SelectedBuildingId&amp;ky=@periodOption.ToString("yyyy-MM")" aria-current="@(Model.SelectedPeriod == periodOption ? "page" : null)"><span>Tháng @periodOption.ToString("MM/yyyy")</span><span class="owner-filter-check" aria-hidden="true">✓</span></a>
+                }
+            </nav>
+        </details>
+        <noscript><button type="submit" class="owner-button">Áp dụng</button></noscript>
+    </form>
 
-    <section class="owner-stats" aria-label="Số liệu tổng quan">
+    <section class="owner-stats owner-stats-three" aria-label="Số liệu tổng quan">
         @foreach (var stat in new[] {
-            (Label: "Phòng / căn hộ", Value: Model.TongPhong.ToString(), Unit: "phòng", Note: $"{Model.TongToaNha} cơ sở đang quản lý", Url: "/PhongTro", Icon: "home"),
-            (Label: "Đang cho thuê", Value: Model.PhongDangThue.ToString(), Unit: $"/ {Model.TongPhong} phòng", Note: $"Tỷ lệ lấp đầy {rate.ToString("0.#", CultureInfo.GetCultureInfo("vi-VN"))}%", Url: "/PhongTro?trangThaiFilter=DANG_THUE", Icon: "key"),
-            (Label: "Yêu cầu chờ xử lý", Value: Model.YeuCauChoXuLy.ToString(), Unit: "yêu cầu", Note: "Khách đang chờ phản hồi", Url: "/YeuCau", Icon: "clock") })
+            (Label: "Phòng trống", Value: Model.PhongTrong.ToString(), Unit: "phòng", Note: $"{Model.PhongTrong - Model.UnlistedRoomCount} đã đăng tin · {Model.UnlistedRoomCount} chưa đăng tin", Url: "/PhongTro?trangThaiFilter=TRONG", Icon: "door", Link: "Xem phòng trống"),
+            (Label: "Phòng đang thuê", Value: Model.PhongDangThue.ToString(), Unit: $"/ {Model.TongPhong} phòng", Note: $"Tỷ lệ lấp đầy {rate.ToString("0.#", CultureInfo.GetCultureInfo("vi-VN"))}%", Url: "/PhongTro?trangThaiFilter=DANG_THUE", Icon: "key", Link: "Quản lý phòng đang thuê") })
         {
-            <a class="owner-stat" href="@stat.Url"><div class="owner-stat-heading"><span>@stat.Label</span><span class="owner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon(stat.Icon)" /></svg></span></div><div class="owner-stat-value">@stat.Value <small>@stat.Unit</small></div><p>@stat.Note</p></a>
+            <a class="owner-stat owner-summary-card" href="@stat.Url"><div class="owner-stat-heading"><span>@stat.Label</span><span class="owner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon(stat.Icon)" /></svg></span></div><div class="owner-stat-value">@stat.Value <small>@stat.Unit</small></div><p>@stat.Note</p><div class="owner-stat-link">@stat.Link <span class="owner-stat-arrow" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M4 4h8v8" /></svg></span></div></a>
         }
-        <article class="owner-stat"><div class="owner-stat-heading"><span>Đã thu tháng này</span><span class="owner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon("wallet")" /></svg></span></div><div class="owner-stat-value">— <small>đ</small></div><p>Chưa có dữ liệu thanh toán</p></article>
+        <a class="owner-stat owner-summary-card owner-summary-finance" href="/HoaDonDichVu"><div class="owner-stat-heading"><span>Tiền còn phải thu</span><span class="owner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h15V4H6a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h14V7H6a2 2 0 0 1-2-1ZM15 12h6v5h-6Z M17 14.5h.01" /></svg></span></div><div class="owner-stat-value">— <small>đ</small></div><p>Chưa có tổng hợp công nợ</p><div class="owner-stat-link">Xem công nợ tháng này <span class="owner-stat-arrow" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M4 4h8v8" /></svg></span></div></a>
     </section>
-
     <section class="owner-main-grid" aria-label="Tổng quan vận hành">
         <article class="owner-panel owner-revenue">
-            <div class="owner-panel-heading"><h2>Tình hình thu tiền</h2><label class="owner-period-picker"><span class="visually-hidden">Khoảng thời gian thu tiền</span><select aria-label="Khoảng thời gian thu tiền"><option value="6">6 tháng gần nhất</option><option value="3">3 tháng gần nhất</option><option value="12">12 tháng gần nhất</option></select></label></div>
+            <div class="owner-panel-heading"><h2>Tình hình thu tiền</h2><details class="owner-period-picker"><summary aria-label="Chọn khoảng thời gian thu tiền"><span class="owner-period-label">6 tháng gần nhất</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" /></svg></summary><div class="owner-period-menu"><button type="button" data-period="6" aria-pressed="true">6 tháng gần nhất<span aria-hidden="true">✓</span></button><button type="button" data-period="3" aria-pressed="false">3 tháng gần nhất<span aria-hidden="true">✓</span></button><button type="button" data-period="12" aria-pressed="false">12 tháng gần nhất<span aria-hidden="true">✓</span></button></div><select hidden aria-hidden="true" tabindex="-1"><option value="6">6 tháng gần nhất</option><option value="3">3 tháng gần nhất</option><option value="12">12 tháng gần nhất</option></select></details></div>
             <div class="owner-revenue-legend" aria-label="Chú giải biểu đồ"><span><i class="collected"></i>Đã thu</span><span><i class="receivable"></i>Phải thu</span></div>
             <div class="owner-revenue-summary"><strong>— <small>đ</small></strong><span>Chưa có dữ liệu thu tiền</span></div>
             <div class="owner-chart" aria-label="Chưa có dữ liệu để vẽ biểu đồ thu tiền"><div class="owner-chart-grid"></div><p>Biểu đồ sẽ hiển thị khi có dữ liệu thanh toán.</p></div>
             <div class="owner-chart-months" data-current-month="@today.ToString("yyyy-MM")">@for (var i = 5; i >= 0; i--) { <span>@today.AddMonths(-i).ToString("MM/yyyy")</span> }</div>
         </article>
         <article class="owner-panel owner-occupancy">
-            <div class="owner-panel-heading"><h2>Tình trạng phòng</h2><a href="/PhongTro">Chi tiết ↗</a></div>
+            <div class="owner-panel-heading"><h2>Tình trạng phòng</h2><a class="owner-occupancy-link" href="/PhongTro">Chi tiết <span class="owner-stat-arrow" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M4 4h8v8" /></svg></span></a></div>
             <div class="owner-occupancy-body">
                 <div class="owner-donut" style="--occupied-angle: @(occupiedAngle)deg; --reserved-angle: @(reservedAngle)deg" role="img" aria-label="Tỷ lệ phòng đang thuê @rate.ToString("0.#") phần trăm"><div><strong>@rate.ToString("0.#", CultureInfo.GetCultureInfo("vi-VN"))%</strong><span>Lấp đầy</span></div></div>
                 <dl class="owner-room-legend"><div><dt><i class="occupied"></i>Đang thuê</dt><dd>@Model.PhongDangThue</dd></div><div><dt><i class="vacant"></i>Còn trống</dt><dd>@Model.PhongTrong</dd></div><div><dt><i class="reserved"></i>Đã đặt cọc</dt><dd>@Model.PhongDatCoc</dd></div><div><dt><i class="other"></i>Khác</dt><dd>@(Model.TongPhong - Model.PhongDangThue - Model.PhongTrong - Model.PhongDatCoc)</dd></div></dl>
             </div>
-            <a class="owner-occupancy-note" href="/TinDang/QuanLy"><strong>@Model.PhongTrong phòng sẵn sàng đón khách mới</strong><span>Kiểm tra và cập nhật tin đăng ↗</span></a>
-        </article>
-        <article class="owner-panel owner-requests"><partial name="_DashboardRequests" model="Model" /></article>
-        <article class="owner-panel owner-tasks">
-            <div class="owner-panel-heading"><h2>Cần xử lý</h2><span class="owner-label">Vận hành</span></div><p class="owner-panel-description">Những việc cần bạn quan tâm sắp tới.</p>
-            <a class="owner-task" href="/YeuCau"><span class="owner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon("clock")" /></svg></span><div><strong>@Model.YeuCauChoXuLy yêu cầu đang chờ</strong><span>Xác nhận lịch xem và phản hồi khách</span></div><span>›</span></a>
-            <a class="owner-task" href="/PhongTro?trangThaiFilter=TRONG"><span class="owner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon("home")" /></svg></span><div><strong>@Model.PhongTrong phòng còn trống</strong><span>Chuẩn bị phòng và cập nhật tin đăng</span></div><span>›</span></a>
-            <a class="owner-task" href="/HopDong"><span class="owner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon("key")" /></svg></span><div><strong>Theo dõi hợp đồng</strong><span>Xem các hợp đồng đã lập</span></div><span>›</span></a>
-            <a class="owner-task" href="/DichVu"><span class="owner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon("wallet")" /></svg></span><div><strong>Bảng giá và dịch vụ</strong><span>Kiểm tra cấu hình theo từng cơ sở</span></div><span>›</span></a>
+            <a class="owner-occupancy-note" href="/TinDang/QuanLy"><strong>@Model.PhongTrong phòng sẵn sàng đón khách mới</strong><span class="owner-occupancy-link">Kiểm tra và cập nhật tin đăng <span class="owner-stat-arrow" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M4 4h8v8" /></svg></span></span></a>
         </article>
     </section>
 
-    <section class="owner-buildings" aria-label="Cơ sở của bạn">
-        <div class="owner-panel-heading"><h2>Cơ sở của bạn</h2><a href="/PhongTro/ToaNha">Quản lý cơ sở ↗</a></div>
-        <div class="owner-building-grid">
-        @foreach (var building in Model.Buildings)
-        {
-            var buildingRate = building.Rooms == 0 ? 0m : 100m * building.Occupied / building.Rooms;
-            <a class="owner-building-card" href="/PhongTro?toaNhaId=@building.Id"><div class="owner-building-info"><span class="owner-building-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon("building")" /></svg></span><div><h3>@building.Name</h3><p>@building.Address</p></div><span>›</span></div><div class="owner-building-count"><span>@building.Occupied / @building.Rooms phòng đang thuê</span><strong>@buildingRate.ToString("0.#", CultureInfo.GetCultureInfo("vi-VN"))%</strong></div><div class="owner-progress" role="progressbar" aria-label="Tỷ lệ lấp đầy @building.Name" aria-valuenow="@buildingRate.ToString("0.#", CultureInfo.InvariantCulture)" aria-valuemin="0" aria-valuemax="100"><span style="width: @buildingRate.ToString("0.#", CultureInfo.InvariantCulture)%"></span></div></a>
-        }
-        @if (Model.Buildings.Count == 0) { <p class="owner-panel">Chưa có cơ sở. <a href="/PhongTro/ToaNha">Quản lý tòa nhà →</a></p> }
+    <section class="owner-work" aria-labelledby="owner-work-title">
+        <div class="owner-work-heading"><div><h2 id="owner-work-title">Việc cần xử lý <span class="owner-label">@(Model.YeuCauChoXuLy + Model.UnlistedRoomCount + Model.MeterAlerts.Sum(x => x.SoPhongConThieu)) việc</span></h2><p>Chọn một việc để xem chi tiết và xử lý tại trang liên quan.</p></div><span>Ưu tiên việc cần xử lý sớm</span></div>
+        <div class="owner-work-grid">
+            <article class="owner-work-card owner-pending-card">
+                <header><span class="owner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="7" r="3"/><path d="M4 20v-3a6 6 0 0 1 12 0M18 10v6M15 13h6" /></svg></span><h3>Yêu cầu thuê chưa xử lý</h3><span class="owner-label">@Model.YeuCauChoXuLy</span></header>
+                <p class="owner-work-caption">@(Model.OverdueRequestCount > 0 ? $"{Model.OverdueRequestCount} yêu cầu đã chờ hơn 24 giờ · Nên phản hồi sớm" : "Phản hồi sớm để khách yên tâm đặt lịch")</p>
+                <div class="owner-work-rows">
+                @foreach (var request in Model.PendingRequests) {
+                    var overdue = Clock.UtcNow - request.Created > TimeSpan.FromHours(24);
+                    var elapsed = Clock.UtcNow - request.Created;
+                    var waiting = elapsed.TotalDays >= 1 ? $"Chờ {(int)elapsed.TotalDays} ngày" : elapsed.TotalHours >= 1 ? $"{(int)elapsed.TotalHours} giờ trước" : $"{Math.Max(0, (int)elapsed.TotalMinutes)} phút trước";
+                    <a class="owner-work-row" href="/LichHen/ChiTiet/@request.Id"><div><strong>@request.Name</strong><small>P. @request.Room · @QL_PhongTro.Models.LichHenTrangThai.Label(request.Status)</small></div><span class="owner-work-badge @(overdue ? "is-overdue" : "")">@waiting</span><span class="owner-request-chevron" aria-hidden="true">›</span></a>
+                }
+                @if (Model.PendingRequests.Count == 0) { <p class="owner-work-empty">Không có yêu cầu đang chờ xử lý.</p> }
+                </div><footer><span>@Model.YeuCauChoXuLy yêu cầu từ khách quan tâm</span><a href="/YeuCau">Xem yêu cầu <span class="owner-work-arrow" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" /></svg></span></a></footer>
+            </article>
+            <article class="owner-work-card owner-payment-card">
+                <header><span class="owner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon("wallet")" /></svg></span><h3>Thanh toán chờ xác nhận</h3>@if (Model.PaymentsAvailable) { <span class="owner-label">@Model.PendingPaymentCount</span> }</header>
+                <p class="owner-work-caption">Đối chiếu giao dịch trước khi ghi nhận đã thu</p>
+                <div class="owner-work-rows">
+                @foreach (var payment in Model.PendingPayments) {
+                    <a class="owner-work-row" href="/HoaDonDichVu/Details/@payment.InvoiceId"><div><strong>P. @payment.Room · @payment.Name</strong><small>Ngày thanh toán: @payment.Date.ToString("dd/MM/yyyy")</small></div><strong class="owner-payment-amount">@payment.Amount.ToString("N0", CultureInfo.GetCultureInfo("vi-VN")) đ</strong><span class="owner-payment-chevron" aria-hidden="true">›</span></a>
+                }
+                @if (Model.PendingPayments.Count == 0) { <p class="owner-work-empty">@(Model.PaymentsAvailable ? "Không có thanh toán chờ xác nhận trong kỳ này." : "Chưa có dữ liệu thanh toán để hiển thị.")</p> }
+                </div>
+                <footer><span>@(Model.PaymentsAvailable ? $"Tổng chờ xác nhận: {Model.PendingPaymentTotal.ToString("N0", CultureInfo.GetCultureInfo("vi-VN"))} đ" : "Theo dõi thanh toán")</span><a href="/HoaDonDichVu">Xem thanh toán <span class="owner-work-arrow" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" /></svg></span></a></footer>
+            </article>
+            <article class="owner-work-card owner-meter-card">
+                <header><span class="owner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 18a9 9 0 1 1 16 0M12 13l5-5" /><circle cx="12" cy="13" r="1" /></svg></span><h3>Phòng chưa chốt điện nước</h3><span class="owner-label">@Model.MeterRooms.Count</span></header>
+                <p class="owner-work-caption">Kỳ tháng @Model.SelectedPeriod.Month · Kiểm tra chỉ số trước khi phát hành hóa đơn</p>
+                <div class="owner-work-rows">
+                @foreach (var room in Model.MeterRooms.Take(4)) {
+                    var missing = (room.MissingElectricity ? 1 : 0) + (room.MissingWater ? 1 : 0);
+                    var note = room.NeedsConfiguration ? "Cần kiểm tra cấu hình điện nước" : room.MissingElectricity && room.MissingWater ? "Chưa nhập chỉ số điện và nước" : room.MissingElectricity ? "Đã nhập nước · Chưa nhập chỉ số điện" : room.MissingWater ? "Đã nhập điện · Chưa nhập chỉ số nước" : "Đã đủ chỉ số · Cần kiểm tra kỳ";
+                    <a class="owner-work-row" href="/TienDoChiSo/PhongConThieu?toaNhaId=@room.BuildingId&amp;nam=@Model.SelectedPeriod.Year&amp;thang=@Model.SelectedPeriod.Month"><div><strong>P. @room.Code · @room.TenantName</strong><small>@note</small></div><span class="owner-work-badge">@(room.NeedsConfiguration ? "Cần cấu hình" : missing > 0 ? $"Thiếu {missing} chỉ số" : "Chờ chốt")</span><span class="owner-meter-chevron" aria-hidden="true">›</span></a>
+                }
+                @if (Model.MeterRooms.Count == 0) { <p class="owner-work-empty">Không có phòng cần chốt điện nước trong kỳ này.</p> }
+                </div><footer><span>@Model.MeterRooms.Count phòng cần kiểm tra</span><a href="/TienDoChiSo?toaNhaId=@Model.SelectedBuildingId&amp;nam=@Model.SelectedPeriod.Year&amp;thang=@Model.SelectedPeriod.Month">Chốt điện nước <span class="owner-work-arrow" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" /></svg></span></a></footer>
+            </article>
+            <article class="owner-work-card owner-vacant-card">
+                <header><span class="owner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h6l9-3v14l-9-3H4ZM7 16l2 5h3l-2-5M19 10h2v4h-2" /></svg></span><h3>Phòng vừa trống chưa đăng tin</h3><span class="owner-label">@Model.UnlistedRoomCount</span></header>
+                <p class="owner-work-caption">Đăng tin sớm để giảm thời gian phòng trống</p>
+                <div class="owner-work-rows">
+                @foreach (var room in Model.UnlistedRooms) {
+                    <a class="owner-work-row" href="/TinDang/Tao?phongId=@room.Id"><div><strong>P. @room.Code · @room.Building</strong><small>@room.Area.ToString("0.#", CultureInfo.GetCultureInfo("vi-VN")) m² · @room.Rent.ToString("N0", CultureInfo.GetCultureInfo("vi-VN")) đ/tháng</small></div><span class="owner-work-badge">Chưa đăng tin</span><span class="owner-vacant-chevron" aria-hidden="true">›</span></a>
+                }
+                @if (Model.UnlistedRooms.Count == 0) { <p class="owner-work-empty">Các phòng trống đã có tin hiển thị.</p> }
+                @if (Model.UnlistedRoomCount > 0) {
+                    <div class="owner-vacant-hint"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 18h6M10 21h4M8 13a6 6 0 1 1 8 0l-1 2H9Z" /></svg><div><strong>@(Model.InterestedVacantRoomCodes.Count > 0 ? $"Có khách quan tâm {string.Join(" và ", Model.InterestedVacantRoomCodes)}" : "Phòng sẵn sàng đón khách mới")</strong><p>@(Model.InterestedVacantRoomCodes.Count > 0 ? "Phản hồi yêu cầu thuê và cập nhật tin đăng để không bỏ lỡ khách phù hợp." : "Cập nhật ảnh và đăng tin sớm để kết nối với khách phù hợp.")</p></div></div>
+                }
+                </div><footer><span>@Model.UnlistedRoomCount / @Model.PhongTrong phòng trống chưa có tin đăng</span><a href="/TinDang/QuanLy">Quản lý tin đăng <span class="owner-work-arrow" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" /></svg></span></a></footer>
+            </article>
         </div>
+        <div class="owner-shortcuts"><div><strong>Lối tắt quản lý</strong><small>@(Model.SelectedBuildingId.HasValue ? Model.BuildingOptions.FirstOrDefault(x => x.Id == Model.SelectedBuildingId.Value)?.Name : "Tất cả cơ sở") · @Model.TongPhong phòng · Đang hoạt động</small></div><nav aria-label="Lối tắt quản lý"><a href="/HopDong/ThemKhachThue"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="7" r="3"/><path d="M3 20v-3a6 6 0 0 1 12 0M18 10v6M15 13h6"/></svg>Thêm khách thuê</a><a href="/HopDong/Create"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6ZM14 3v5h4M9 12h6M9 16h6"/></svg>Tạo hợp đồng</a><button type="button" disabled title="Báo cáo thu chi chưa được hỗ trợ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V13h3v7M10 20V9h3v11M16 20V5h3v15M3 9l6-4 5 1 6-4"/></svg>Xem báo cáo thu chi</button></nav></div>
     </section>
+
     <footer class="owner-footer"><span>Dữ liệu cập nhật từ hệ thống · @today.ToString("dd/MM/yyyy HH:mm")</span><span>NhàTốt · Sống đúng nơi</span></footer>
 </div>
 <script>
 (() => {
+    const filterForm = document.querySelector('.owner-overview-filters');
+    filterForm?.querySelectorAll('select').forEach(select => {
+        const original = select.closest('label');
+        const dropdown = document.createElement('details');
+        dropdown.className = 'owner-filter-dropdown';
+        const summary = document.createElement('summary');
+        summary.setAttribute('aria-label', select.getAttribute('aria-label'));
+        summary.append(original.querySelector('svg'));
+        const caption = document.createElement('span');
+        caption.textContent = select.selectedOptions[0].textContent;
+        summary.append(caption);
+        const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        arrow.setAttribute('viewBox', '0 0 16 16');
+        arrow.setAttribute('aria-hidden', 'true');
+        arrow.classList.add('owner-filter-chevron');
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', 'm4 6 4 4 4-4');
+        arrow.append(path);
+        summary.append(arrow);
+        const menu = document.createElement('div');
+        menu.className = 'owner-filter-menu';
+        Array.from(select.options).forEach(option => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.setAttribute('aria-pressed', String(option.selected));
+            const text = document.createElement('span');
+            text.textContent = option.textContent;
+            const check = document.createElement('span');
+            check.className = 'owner-filter-check';
+            check.setAttribute('aria-hidden', 'true');
+            check.textContent = '✓';
+            button.append(text, check);
+            button.addEventListener('click', () => {
+                select.value = option.value;
+                dropdown.open = false;
+                filterForm.requestSubmit();
+            });
+            menu.append(button);
+        });
+        original.replaceWith(dropdown);
+        select.hidden = true;
+        select.setAttribute('aria-hidden', 'true');
+        select.tabIndex = -1;
+        dropdown.append(summary, menu, select);
+        dropdown.addEventListener('toggle', () => {
+            if (dropdown.open) filterForm.querySelectorAll('details').forEach(other => { if (other !== dropdown) other.open = false; });
+        });
+        dropdown.addEventListener('keydown', event => {
+            if (event.key === 'Escape') { dropdown.open = false; summary.focus(); }
+        });
+    });
+    document.addEventListener('click', event => {
+        filterForm?.querySelectorAll('details').forEach(dropdown => { if (!dropdown.contains(event.target)) dropdown.open = false; });
+    });
+    filterForm?.querySelector('.owner-month-dropdown')?.addEventListener('keydown', event => {
+        if (event.key === 'Escape') { const dropdown = event.currentTarget; dropdown.open = false; dropdown.querySelector('summary').focus(); }
+    });
     const panel = document.querySelector('.owner-revenue');
     const period = panel?.querySelector('.owner-period-picker select');
     const months = panel?.querySelector('.owner-chart-months');
     if (!period || !months) return;
+    const picker = panel.querySelector('.owner-period-picker');
+    const label = picker.querySelector('.owner-period-label');
+    picker.querySelectorAll('[data-period]').forEach(button => {
+        button.addEventListener('click', () => {
+            period.value = button.dataset.period;
+            label.textContent = period.selectedOptions[0].textContent;
+            picker.querySelectorAll('[data-period]').forEach(option => option.setAttribute('aria-pressed', String(option === button)));
+            period.dispatchEvent(new Event('change'));
+            picker.open = false;
+            picker.querySelector('summary').focus();
+        });
+    });
+    document.addEventListener('click', event => { if (!picker.contains(event.target)) picker.open = false; });
+    picker.addEventListener('keydown', event => {
+        if (event.key === 'Escape') { picker.open = false; picker.querySelector('summary').focus(); }
+    });
     period.addEventListener('change', () => {
         const [year, month] = months.dataset.currentMonth.split('-').map(Number);
         months.replaceChildren();

@@ -1,4 +1,15 @@
 (() => {
+    const createChoice = document.getElementById('rm-create-choice');
+    const addRoom = document.getElementById('rm-add-room');
+    addRoom?.addEventListener('click', () => createChoice.showModal());
+    createChoice?.querySelectorAll('.rm-choice-close, .rm-choice-cancel').forEach(button =>
+        button.addEventListener('click', () => createChoice.close()));
+    createChoice?.addEventListener('click', event => {
+        if (event.target !== createChoice) return;
+        const bounds = createChoice.getBoundingClientRect();
+        if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom) createChoice.close();
+    });
+    createChoice?.addEventListener('close', () => addRoom.focus());
 document.querySelectorAll('.rm-filter-select select').forEach(buildingSelect=>{
 if(buildingSelect){
  const wrapper=buildingSelect.closest('.rm-filter-select');

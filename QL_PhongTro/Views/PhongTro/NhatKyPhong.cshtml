@@ -1,75 +1,31 @@
 @model QL_PhongTro.ViewModels.NhatKyPhongViewModel
 @using QL_PhongTro.ViewModels
-@{
-    ViewData["Title"] = "Nhật ký phòng";
-}
-<nav class="d-flex gap-2 mb-3" aria-label="Quản lý phòng">
-    <a class="btn btn-outline-secondary" asp-action="Index">Danh sách phòng</a>
-</nav>
-<section class="mb-4">
-    <p class="text-uppercase text-secondary small fw-semibold mb-2">Lịch sử phòng</p>
-    <h1 class="h2 mb-1">Nhật ký phòng @Model.MaPhong</h1>
-    <p class="text-secondary mb-0">Tòa nhà: @Model.TenToaNha · Trạng thái hiện tại: @Model.TrangThaiPhong</p>
-</section>
-<form method="get" class="row g-2 align-items-end mb-3">
-    <div class="col-sm-6 col-md-3">
-        <label asp-for="TuNgay" class="form-label">Từ ngày</label>
-        <input asp-for="TuNgay" type="date" class="form-control" />
-    </div>
-    <div class="col-sm-6 col-md-3">
-        <label asp-for="DenNgay" class="form-label">Đến ngày</label>
-        <input asp-for="DenNgay" type="date" class="form-control" />
-    </div>
-    <div class="col-auto d-flex gap-2">
-        <button class="btn btn-primary" type="submit">Lọc nhật ký</button>
-        <a class="btn btn-outline-secondary" asp-action="NhatKyPhong" asp-route-phongId="@Model.PhongId">Xóa bộ lọc</a>
-    </div>
-</form>
-<p>@Model.Total hoạt động · Trang @Model.Page/@Model.Pages</p>
-<div class="table-responsive"><table class="table align-top"><thead><tr><th>STT</th><th>Thời điểm</th><th>Người thực hiện</th><th>Vai trò</th><th>Thao tác</th><th>Thông tin liên quan</th><th>Nội dung thay đổi</th></tr></thead><tbody>
-@{ var stt = (Model.Page - 1) * 20; }
-@foreach (var row in Model.Rows)
-{
-    stt++;
-    var display = AuditDisplay.Describe(row);
-    <tr>
-        <td>@stt</td>
-        <td>@row.ThoiDiem.AddHours(7).ToString("dd/MM/yyyy HH:mm")</td>
-        <td>@(row.TenNguoiThucHien ?? "Chưa ghi nhận tên") @if (row.NguoiThucHienId is not null) { <small class="d-block text-muted">Mã tài khoản: @row.NguoiThucHienId</small> }</td>
-        <td>@AuditDisplay.Role(row.VaiTroLucThucHien)</td>
-        <td>@NhatKyViewModel.ActionName(row.HanhDong)</td>
-        <td>@display.Subject</td>
-        <td>
-            <p class="mb-1">@display.Summary</p>
-            @if (display.Changes.Count > 0)
-            {
-                <table class="table table-sm table-bordered mt-1 mb-0" aria-label="Chi tiết thay đổi">
-                    <thead><tr><th scope="col">Thông tin</th><th scope="col">Trước</th><th scope="col">Sau</th></tr></thead>
-                    <tbody>
-                    @foreach (var change in display.Changes)
-                    {
-                        <tr><th scope="row">@change.Label</th>
-                        <td style="overflow-wrap:anywhere">@change.Before</td>
-                        <td style="overflow-wrap:anywhere">@change.After</td></tr>
-                    }
-                    </tbody>
-                </table>
-            }
-            else if (!display.Unreadable)
-            {
-                <p class="text-secondary mb-0">Không có thông tin chi tiết được lưu cho thao tác này.</p>
-            }
-        </td>
-    </tr>
-}
-@if (Model.Rows.Count == 0) { <tr><td colspan="7">Không có nhật ký phù hợp.</td></tr> }
-</tbody></table></div>
-<nav aria-label="Phân trang nhật ký phòng">
-@foreach (var pageNumber in new[] { Model.Page - 1, Model.Page + 1 }.Where(p => p >= 1 && p <= Model.Pages))
-{
-    <a class="btn btn-outline-primary" asp-action="NhatKyPhong" asp-route-phongId="@Model.PhongId"
-       asp-route-page="@pageNumber"
-       asp-route-tuNgay="@Model.TuNgay?.ToString("yyyy-MM-dd")"
-       asp-route-denNgay="@Model.DenNgay?.ToString("yyyy-MM-dd")">@(pageNumber < Model.Page ? "Trang trước" : "Trang sau")</a>
-}
-</nav>
+@using System.Globalization
+@{ ViewData["Title"]="Nhật ký phòng"; var room=ViewData["JournalRoom"] as QL_PhongTro.Models.PhongTro; var vn=CultureInfo.GetCultureInfo("vi-VN");
+string EventIcon(string action) => action.ToUpperInvariant() switch {
+    "CREATE" or "TAO" => "M6 3h9l4 4v14H6V3Zm9 0v5h4M9 12h7m-7 4h7",
+    "UPDATE" or "SUA" => "m4 20 1-5L16 4a2 2 0 0 1 3 3L8 18l-4 2M14 6l3 3",
+    _ => "M6 4h12v17H6V4Zm3 0V2h6v2M9 10h6m-6 4h6"
+}; }
+<div class="room-journal">
+@if(TempData["RoomNoteOk"] is string noteOk){<p class="text-success" role="status">@noteOk</p>}
+@if(TempData["RoomNoteError"] is string noteError){<p class="text-danger" role="alert">@noteError</p>}
+
+<header class="rj-heading"><div><h1>Nhật ký phòng</h1><p>Theo dõi toàn bộ hoạt động và thay đổi của phòng @Model.MaPhong.</p></div><div class="rj-heading-actions"><button type="button" id="rj-export"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 15v5h14v-5"/></svg><span>Xuất nhật ký</span></button></div></header>
+@{var contract=ViewData["JournalContract"] as QL_PhongTro.Models.HopDongThamChieu;}
+<section class="rj-room-summary"><div class="rj-room-top"><div class="rj-room-identity"><img src="@(ViewData["JournalPhoto"] as string ?? Url.Content("~/room-placeholder.svg"))" alt="Phòng @Model.MaPhong"/><div><h2>@Model.MaPhong <span>@Model.TrangThaiPhong</span></h2><strong>@Model.TenToaNha</strong><p>Tầng @room?.Tang · @room?.DienTich.ToString("0.#",vn) m² · @room?.SoNguoiToiDa người tối đa</p><p>@ViewData["JournalAddress"]</p></div></div><div class="rj-summary-field"><small>KHÁCH THUÊ ĐẠI DIỆN</small><strong>@(ViewData["JournalTenantName"] as string ?? "Chưa có khách thuê")</strong><p>@(contract==null?"Chưa có hợp đồng hiệu lực":"Người đứng tên hợp đồng")</p></div><div class="rj-summary-field"><small>HỢP ĐỒNG ĐANG HIỆU LỰC</small><strong>@(contract?.MaHopDong??"—")</strong><p>@(contract==null?"Chưa ghi nhận":"Đang hiệu lực")</p></div><div class="rj-summary-field"><small>GIÁ THUÊ / THÁNG</small><strong>@room?.GiaThue.ToString("N0",vn) đ</strong><p>Hàng tháng</p></div></div><footer class="rj-room-bottom"><span>ⓘ Trạng thái hiện tại: @Model.TrangThaiPhong</span><a asp-controller="HopDong" asp-action="LichSuNguoiO" asp-route-phongId="@Model.PhongId" class="rj-tenant-link"><span>Xem hồ sơ khách thuê</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a></footer></section>
+
+<nav class="rj-tabs"><a asp-action="Details" asp-route-id="@Model.PhongId">Tổng quan</a><a asp-controller="HopDong" asp-action="LichSuNguoiO" asp-route-phongId="@Model.PhongId">Lịch sử người ở</a><strong>Nhật ký phòng</strong></nav>
+<form method="get" class="rj-filters"><input type="hidden" name="phongId" value="@Model.PhongId"/><div class="rj-filter-row"><div class="rj-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"/><path d="m15 15 5 5"/></svg><input id="rj-search" type="search" placeholder="Tìm nội dung, người thực hiện, mã hợp đồng..." aria-label="Tìm trong trang nhật ký"/></div><select id="rj-kind" aria-label="Loại sự kiện"><option value="">Tất cả loại sự kiện</option><option value="hop_dong">Khách thuê &amp; hợp đồng</option><option value="phong_tro">Thông tin phòng</option><option value="ghi_chu">Ghi chú</option></select><details class="rj-date-picker"><summary><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="16" rx="2"/><path d="M8 3v4m8-4v4M4 10h16"/></svg><span>@(Model.TuNgay?.ToString("dd/MM/yyyy")??"Từ ngày") – @(Model.DenNgay?.ToString("dd/MM/yyyy")??"Đến ngày")</span><span>⌄</span></summary><div class="rj-date-menu"><label asp-for="TuNgay">Từ ngày</label><input asp-for="TuNgay" type="date"/><label asp-for="DenNgay">Đến ngày</label><input asp-for="DenNgay" type="date"/><button type="submit">Áp dụng</button></div></details><a asp-action="NhatKyPhong" asp-route-phongId="@Model.PhongId">Đặt lại</a></div><nav class="rj-event-tabs" aria-label="Nhóm sự kiện"><button type="button" data-kind="" class="active">Tất cả @Model.Rows.Count</button><button type="button" data-kind="hop_dong">Khách thuê &amp; hợp đồng @Model.Rows.Count(x=>x.LoaiDoiTuong=="hop_dong")</button><button type="button" data-kind="phong_tro">Thông tin phòng @Model.Rows.Count(x=>x.LoaiDoiTuong=="phong_tro")</button><button type="button" disabled>Thanh toán</button><button type="button" disabled>Điện nước</button><button type="button" disabled>Bảo trì</button><button type="button" disabled>Bảng giá</button><button type="button" data-kind="ghi_chu">Ghi chú</button></nav></form>
+<div class="rj-layout"><section class="rj-timeline"><header><h2>Lịch sử hoạt động</h2><span class="rj-count-badge">@Model.Total sự kiện</span><small class="rj-sort-label"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v14m-3-3 3 3 3-3M11 5h10M11 9h7M11 13h4"/></svg><span>Mới nhất trước</span></small></header>
+@foreach(var note in (ViewData["RoomNotes"] as List<QL_PhongTro.Models.GhiChuPhong> ?? [])){
+<article class="rj-event rj-saved-note" data-kind="ghi_chu"><time>@note.NgayTao.AddHours(7).ToString("dd/MM/yyyy")<small>@note.NgayTao.AddHours(7).ToString("HH:mm")</small></time><span class="rj-event-icon">▤</span><div class="rj-event-content"><header><h4>@note.TieuDe</h4><span class="rj-event-category">@(note.Ghim?"Ghi chú · Đã ghim":"Ghi chú nội bộ")</span></header><p style="white-space:pre-wrap">@note.NoiDung</p>@if(note.TenTep!=null){<a class="rj-note-download" asp-action="TepGhiChuPhong" asp-route-id="@note.Id">↓ @note.TenTep</a>}</div></article>}
+@foreach(var group in Model.Rows.GroupBy(x=>x.ThoiDiem.AddHours(7).ToString("yyyy-MM"))){
+<h3 class="rj-month">Tháng @int.Parse(group.Key.Split('-')[1]), @group.Key.Split('-')[0] <span>@group.Count() sự kiện</span></h3>
+@foreach(var row in group){var display=AuditDisplay.Describe(row);
+<article class="rj-event" data-kind="@row.LoaiDoiTuong"><time datetime="@row.ThoiDiem.ToString("O")">@row.ThoiDiem.AddHours(7).ToString("dd/MM/yyyy")<small>@row.ThoiDiem.AddHours(7).ToString("HH:mm")</small></time><span class="rj-event-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="@EventIcon(row.HanhDong)"/></svg></span><div class="rj-event-content"><header><h4>@NhatKyViewModel.ActionName(row.HanhDong)</h4><span class="rj-event-category">@(row.LoaiDoiTuong=="hop_dong"?"Hợp đồng":"Thông tin phòng")</span></header><p>@display.Summary</p>@if(display.Changes.Count>0){<dl>@foreach(var change in display.Changes){<div><dt>@change.Label</dt><dd>@change.Before <span>→</span> @change.After</dd></div>}</dl>}<footer><span>@(row.TenNguoiThucHien??"Chưa ghi nhận tên") · @AuditDisplay.Role(row.VaiTroLucThucHien)</span><small>@display.Subject</small></footer></div></article>}}
+@if(Model.Rows.Count==0){<p class="rj-empty">Không có nhật ký phù hợp.</p>}
+<footer class="rj-pagination"><span>Trang @Model.Page / @Model.Pages</span><nav>@foreach(var pageNumber in new[]{Model.Page-1,Model.Page+1}.Where(x=>x>=1&&x<=Model.Pages)){<a asp-action="NhatKyPhong" asp-route-phongId="@Model.PhongId" asp-route-page="@pageNumber" asp-route-tuNgay="@Model.TuNgay?.ToString("yyyy-MM-dd")" asp-route-denNgay="@Model.DenNgay?.ToString("yyyy-MM-dd")">@(pageNumber<Model.Page?"‹ Trang trước":"Trang sau ›")</a>}</nav></footer></section>
+<aside class="rj-aside"><section class="rj-card rj-note-card"><h2>Thêm ghi chú <span>Bản nháp</span></h2><p class="rj-note-private">Nội bộ · Khách thuê không nhìn thấy</p><form method="post" asp-action="LuuGhiChuPhong" enctype="multipart/form-data"><input type="hidden" name="phongId" value="@Model.PhongId"/><input type="hidden" name="khoaChongTrung" value="@Guid.NewGuid()"/><label for="rj-note-title">Tiêu đề</label><input id="rj-note-title" name="tieuDe" maxlength="100" required placeholder="Nhập tiêu đề ghi chú"/><div class="rj-note-label"><label for="rj-note-body">Nội dung ghi chú</label><small>Tối đa 1.000 ký tự</small></div><textarea id="rj-note-body" name="noiDung" rows="5" maxlength="1000" required placeholder="Thông tin cần ghi nhận về phòng..."></textarea><label class="rj-note-file" for="rj-note-file">Đính kèm tài liệu <small>PDF, PNG, JPG · Tối đa 10 MB</small></label><input id="rj-note-file" type="file" name="tep" accept=".pdf,.png,.jpg,.jpeg"/><footer class="rj-note-actions"><button type="reset">Hủy</button><button type="submit" class="rj-primary">✓ Lưu ghi chú</button></footer></form></section><section class="rj-card rj-principles"><h2>Nhật ký chỉ đọc</h2><p>Các hoạt động được ghi lại từ hệ thống. Nhật ký đã lưu không được chỉnh sửa hoặc xóa.</p></section><section class="rj-card rj-documents"><h2>Hồ sơ liên quan</h2><a class="rj-document" asp-action="Details" asp-route-id="@Model.PhongId"><span class="rj-document-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h9l4 4v14H6V3Zm9 0v5h4M9 12h7m-7 4h7"/></svg></span><span class="rj-document-info"><strong>Thông tin phòng @Model.MaPhong</strong><small>@Model.TenToaNha · @Model.TrangThaiPhong</small></span><svg class="rj-document-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a><a class="rj-document" asp-controller="HopDong" asp-action="LichSuNguoiO" asp-route-phongId="@Model.PhongId"><span class="rj-document-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="4" width="12" height="17" rx="2"/><path d="M9 4V2h6v2M9 10h6m-6 4h6"/></svg></span><span class="rj-document-info"><strong>Lịch sử khách thuê</strong><small>@(contract?.MaHopDong??"Chưa có hợp đồng hiệu lực")</small></span><svg class="rj-document-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a><a class="rj-document" asp-action="Index" asp-route-toaNhaId="@room?.ToaNhaId"><span class="rj-document-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8m-8 4h8m-8 4h8"/></svg></span><span class="rj-document-info"><strong>Danh sách phòng</strong><small>@Model.TenToaNha</small></span><svg class="rj-document-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 18 18 6M6 6h12v12"/></svg></a><footer><small>Hợp đồng hiện tại</small><strong>@(contract?.MaHopDong??"Chưa ghi nhận")</strong></footer></section></aside></div><p class="rj-bottom">ⓘ Nhật ký hiển thị dữ liệu đã được ghi nhận trong hệ thống.</p></div>
+@section Styles{<link rel="stylesheet" href="~/css/room-journal.css" asp-append-version="true"/>}
+@section Scripts{<script src="~/js/room-journal.js" asp-append-version="true"></script>}

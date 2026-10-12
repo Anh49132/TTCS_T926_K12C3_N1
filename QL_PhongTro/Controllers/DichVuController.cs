@@ -1,4 +1,4 @@
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -96,7 +96,7 @@ public class DichVuController(AppDbContext db, DichVuService services, DichVuPho
     {
         var buildings = await ToaNhasAsync();
         if (toaNhaId.HasValue && !await services.SoHuuToaNhaAsync(AccountId, toaNhaId.Value)) return Forbid();
-        var selected = toaNhaId ?? (buildings.Count > 0 ? int.Parse(buildings[0].Value) : (int?)null);
+        var selected = toaNhaId;
         var ready = await services.SanSangAsync();
         return View(new DanhSachDichVuViewModel
         {
@@ -143,6 +143,16 @@ public class DichVuController(AppDbContext db, DichVuService services, DichVuPho
         catch (UnauthorizedAccessException) { return Forbid(); }
     }
 
+    [HttpGet]
+    public async Task<IActionResult> ChuyenToaSuaGia(int toaNhaId, int dichVuId)
+    {
+        if (!await services.SoHuuToaNhaAsync(AccountId, toaNhaId)) return Forbid();
+        var ids = await db.CauHinhDichVus.AsNoTracking().Where(x => x.ToaNhaId == toaNhaId && x.PhongId == null)
+            .Select(x => x.DichVuId).Distinct().OrderBy(x => x).ToListAsync();
+        if (ids.Count == 0) return RedirectToAction(nameof(Index), new { toaNhaId });
+        return RedirectToAction(nameof(Manage), new { toaNhaId, dichVuId = ids.Contains(dichVuId) ? dichVuId : ids[0] });
+    }
+
     [HttpPost, ValidateAntiForgeryToken, ModuleAccess("PHONG_TRO", write: true)]
     public async Task<IActionResult> SavePrice(QuanLyDichVuViewModel model, bool initial = false)
     {
@@ -164,7 +174,18 @@ public class DichVuController(AppDbContext db, DichVuService services, DichVuPho
 
     private async Task FillManageAsync(QuanLyDichVuViewModel model)
     {
+        ViewData["PriceBuildingOptions"] = await ToaNhasAsync();
+        var priceRows = await db.CauHinhDichVus.AsNoTracking().Include(x => x.DichVu)
+            .Where(x => x.ToaNhaId == model.ToaNhaId && x.PhongId == null)
+            .OrderBy(x => x.TuNgay).ToListAsync();
+        ViewData["BuildingPriceRows"] = priceRows.GroupBy(x => x.DichVuId).Select(group => group.LastOrDefault(x => x.TuNgay <= DichVuService.HomNay() && (x.DenNgay == null || x.DenNgay >= DichVuService.HomNay())) ?? group.Last()).ToList();
+        ViewData["PriceServiceRoomCounts"] = await db.DichVuPhongs.AsNoTracking()
+            .Where(x => x.DichVuToaNha.ToaNhaId == model.ToaNhaId)
+            .GroupBy(x => x.DichVuToaNha.DichVuId).Select(group => new { Id = group.Key, Count = group.Count() })
+            .ToDictionaryAsync(x => x.Id, x => x.Count);
         model.TenToaNha = await db.ToaNhas.Where(x => x.Id == model.ToaNhaId).Select(x => x.TenToaNha).SingleAsync();
+        ViewData["PriceBuildingAddress"] = await db.ToaNhas.Where(x => x.Id == model.ToaNhaId).Select(x => x.DiaChi).SingleAsync();
+        ViewData["PriceBuildingRooms"] = await db.PhongTros.CountAsync(x => x.ToaNhaId == model.ToaNhaId);
         model.ApDungMacDinh = await db.DichVuToaNhas.AnyAsync(x => x.ToaNhaId == model.ToaNhaId && x.DichVuId == model.DichVuId && x.ApDungMacDinh);
         var today = DichVuService.HomNay();
         var selections = db.DichVuPhongs.AsNoTracking().Where(x => x.DichVuToaNha.ToaNhaId == model.ToaNhaId && x.DichVuToaNha.DichVuId == model.DichVuId
@@ -207,7 +228,8 @@ public class DichVuController(AppDbContext db, DichVuService services, DichVuPho
         if (!await services.SanSangAsync()) return RedirectToAction(nameof(Index));
         if (toaNhaId.HasValue && !await services.SoHuuToaNhaAsync(AccountId, toaNhaId.Value)) return Forbid();
         var buildings = await ToaNhasAsync();
-        return View(new TaoDichVuViewModel { ToaNhaId = toaNhaId ?? (buildings.Count > 0 ? int.Parse(buildings[0].Value) : (int?)null), ToaNhas = buildings });
+        var availableBuildingIds = buildings.Select(x => int.Parse(x.Value)).ToList();
+        return View(new TaoDichVuViewModel { DonGia = 0, ToaNhaIds = toaNhaId.HasValue ? [toaNhaId.Value] : [], ToaNhaId = toaNhaId ?? (buildings.Count > 0 ? int.Parse(buildings[0].Value) : (int?)null), ToaNhas = buildings, Phongs = await db.PhongTros.AsNoTracking().Where(x => availableBuildingIds.Contains(x.ToaNhaId)).OrderBy(x => x.MaPhong).ToListAsync() });
     }
 
     [HttpPost, ValidateAntiForgeryToken, ModuleAccess("PHONG_TRO", write: true)]
@@ -218,11 +240,13 @@ public class DichVuController(AppDbContext db, DichVuService services, DichVuPho
         if (!ModelState.IsValid)
         {
             model.ToaNhas = await ToaNhasAsync();
+            var allowedIds = model.ToaNhas.Select(x => int.Parse(x.Value)).ToList();
+            model.Phongs = await db.PhongTros.AsNoTracking().Where(x => allowedIds.Contains(x.ToaNhaId)).OrderBy(x => x.MaPhong).ToListAsync();
             return View(model);
         }
         try { await services.ThemAsync(AccountId, model); }
         catch (UnauthorizedAccessException) { return Forbid(); }
         TempData["Success"] = "Đã tạo dịch vụ và đơn giá thành công.";
-        return RedirectToAction(nameof(Index), new { toaNhaId = model.ToaNhaId });
+        return RedirectToAction(nameof(Index), new { toaNhaId = model.ToaNhaIds.FirstOrDefault() > 0 ? model.ToaNhaIds.First() : model.ToaNhaId });
     }
 }

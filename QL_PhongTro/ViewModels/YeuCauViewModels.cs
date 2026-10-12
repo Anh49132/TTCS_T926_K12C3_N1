@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
 namespace QL_PhongTro.ViewModels;
 public class YeuCauListItemViewModel
 {
@@ -6,6 +6,12 @@ public class YeuCauListItemViewModel
     public string MaYeuCau { get; set; } = ""; public string TenKhach { get; set; } = ""; public string SoDienThoai { get; set; } = "";
     public string MaPhong { get; set; } = ""; public string LoaiYeuCau { get; set; } = ""; public DateOnly? NgayMongMuon { get; set; }
     public string TrangThai { get; set; } = ""; public DateTime NgayTao { get; set; }
+    public string? Email { get; set; }
+    public string? NgheNghiep { get; set; }
+    public string? AnhPhong { get; set; }
+    public decimal DienTich { get; set; }
+    public long GiaThue { get; set; }
+    public int SoNguoiDuKien { get; set; }
     public string? LoiNhan { get; set; }
     public bool QuaHanChuaXuLy { get; set; }
     public string TenToaNha { get; set; } = "";

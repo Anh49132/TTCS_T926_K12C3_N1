@@ -42,3 +42,5 @@
   select.addEventListener('change',sync);page.querySelectorAll('[data-lm-tab],[data-lm-create]').forEach(button=>button.addEventListener('click',sync));sync();setOpen(false);
  });
 })();
+
+(() => {const menus=[...document.querySelectorAll('.lm-action-menu')];menus.forEach(menu=>menu.addEventListener('toggle',()=>{if(menu.open)menus.forEach(other=>{if(other!==menu)other.open=false;});}));document.addEventListener('click',event=>menus.forEach(menu=>{if(!menu.contains(event.target))menu.open=false;}));document.addEventListener('keydown',event=>{if(event.key==='Escape')menus.forEach(menu=>{if(menu.open){menu.open=false;menu.querySelector('summary').focus();}});});})();

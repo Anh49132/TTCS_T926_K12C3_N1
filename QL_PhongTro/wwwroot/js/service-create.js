@@ -11,13 +11,14 @@
             CO_DINH: ['Cố định', 'Thành tiền = số phòng đăng ký × đơn giá tháng.', 'Áp dụng theo số phòng đăng ký; không phụ thuộc chỉ số công tơ.']
         };
         const mode = modes[type];
+        set('status', get('sc-status')?.selectedOptions[0]?.textContent || 'Đang áp dụng');
         set('name', get('TenDichVu')?.value.trim() || 'Chưa nhập tên dịch vụ');
         set('type', mode?.[0] || 'Chưa chọn cách tính');
         const raw = get('DonGia')?.value || '';
         set('price', /^\d+$/.test(raw) ? BigInt(raw).toLocaleString('vi-VN') + ' đ' : '— đ');
         set('unit', get('DonViTinh')?.value.trim() || '—');
-        const building = get('ToaNhaId');
-        set('building', building?.value ? building.selectedOptions[0].textContent : '—');
+        const building = get('ToaNhaIds');
+        set('building', building?.selectedOptions.length ? [...building.selectedOptions].map(option => option.textContent).join(', ') : '—');
         set('scope', get('ApDungMacDinh')?.checked ? 'Mặc định cho phòng mới' : 'Chưa gán mặc định');
         set('formula', mode?.[1] || 'Chọn cách tính để xem công thức.');
         set('explanation', mode?.[2] || 'Chọn cách tính phí để xem giải thích tương ứng.');
@@ -160,4 +161,37 @@
     select.addEventListener('focus', () => trigger.focus());
     sync();
     open(false);
+})();
+
+(() => {
+ const select=document.querySelector('[data-building-multiple]'); if(!select)return;
+ const wrap=document.createElement('details');wrap.className='sc-building-multiple';
+ const title=document.createElement('summary');title.textContent='Chọn tòa nhà';
+ const menu=document.createElement('div');menu.className='sc-building-menu';
+ select.before(wrap);wrap.append(title,menu,select);select.hidden=true;
+ const sync=()=>{title.textContent=[...select.selectedOptions].map(o=>o.textContent).join(', ')||'Chọn tòa nhà';};
+ [...select.options].forEach(option=>{const label=document.createElement('label');const check=document.createElement('input');check.type='checkbox';check.checked=option.selected;label.append(check,document.createTextNode(option.textContent));menu.append(label);check.addEventListener('change',()=>{option.selected=check.checked;sync();select.dispatchEvent(new Event('change',{bubbles:true}));});});
+ document.addEventListener('click',event=>{if(!wrap.contains(event.target))wrap.open=false;});wrap.addEventListener('keydown',event=>{if(event.key==='Escape'){wrap.open=false;title.focus();}});sync();
+})();
+
+(() => {
+ const select=document.getElementById('ToaNhaIds'), mode=document.getElementById('ChonPhongCuThe'), panel=document.querySelector('[data-room-selection]');if(!select||!mode||!panel)return;
+ const defaults=document.getElementById('ApDungMacDinh');
+ const update=()=>{const ids=new Set([...select.selectedOptions].map(x=>x.value));panel.hidden=!mode.checked;let count=0;panel.querySelectorAll('[data-room-building]').forEach(label=>{const allowed=ids.has(label.dataset.roomBuilding);label.hidden=!allowed;const input=label.querySelector('input');input.disabled=!allowed||!mode.checked;if(!allowed)input.checked=false;if(allowed)count++;});panel.querySelector('[data-room-empty]').hidden=count>0;if(defaults){defaults.disabled=mode.checked;}const summary=document.querySelector('[data-sc-scope]');if(summary&&mode.checked)summary.textContent='Đã chọn '+panel.querySelectorAll('input:checked:not(:disabled)').length+' phòng';};
+ document.querySelector('.service-create-page').addEventListener('change',update);update();
+})();
+
+(() => {
+ const select=document.getElementById('sc-status');if(!select||select.disabled)return;
+ const wrap=document.createElement('div');wrap.className='sc-status-picker';
+ const trigger=document.createElement('button');trigger.type='button';trigger.className='sc-status-trigger';trigger.id='sc-status-trigger';trigger.setAttribute('aria-label','Trạng thái');trigger.setAttribute('aria-haspopup','listbox');trigger.setAttribute('aria-expanded','false');
+ const menu=document.createElement('div');menu.className='sc-status-menu';menu.id='sc-status-menu';menu.setAttribute('role','listbox');menu.setAttribute('aria-label','Trạng thái');menu.hidden=true;trigger.setAttribute('aria-controls',menu.id);
+ select.before(wrap);wrap.append(select,trigger,menu);select.hidden=true;document.querySelector('label[for="sc-status"]')?.setAttribute('for',trigger.id);
+ const close=()=>{menu.hidden=true;trigger.setAttribute('aria-expanded','false');};
+ const buttons=[...select.options].map(option=>{const button=document.createElement('button');button.type='button';button.setAttribute('role','option');button.textContent=option.textContent;button.dataset.value=option.value;button.addEventListener('click',()=>{select.value=option.value;sync();close();trigger.focus();select.dispatchEvent(new Event('change',{bubbles:true}));});menu.append(button);return button;});
+ const sync=()=>{trigger.textContent=select.selectedOptions[0]?.textContent;buttons.forEach(button=>button.setAttribute('aria-selected',String(button.dataset.value===select.value)));};
+ const open=()=>{menu.hidden=false;trigger.setAttribute('aria-expanded','true');(buttons.find(button=>button.dataset.value===select.value)||buttons[0]).focus();};
+ trigger.addEventListener('click',()=>menu.hidden?open():close());
+ wrap.addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();close();trigger.focus();}else if(['ArrowDown','ArrowUp','Home','End'].includes(event.key)){event.preventDefault();if(menu.hidden){open();return;}const index=buttons.indexOf(document.activeElement);buttons[event.key==='Home'?0:event.key==='End'?buttons.length-1:(index+(event.key==='ArrowDown'?1:-1)+buttons.length)%buttons.length].focus();}});
+ wrap.addEventListener('focusout',event=>{if(!wrap.contains(event.relatedTarget))close();});document.addEventListener('click',event=>{if(!wrap.contains(event.target))close();});select.addEventListener('change',sync);sync();
 })();

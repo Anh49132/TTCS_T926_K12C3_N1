@@ -38,10 +38,10 @@
  --badge-inactive-border: var(--color-border);
  --color-overlay: #25282D80;
  --color-shadow: #25282D1A;
- --sidebar-width: 240px;
- --header-height: 48px;
+ --sidebar-width: 15rem;
+ --header-height: 3rem;
  --bs-body-font-family: var(--font-sans);
- --bs-body-font-size: 14px;
+ --bs-body-font-size: 0.875rem;
  --bs-body-color: var(--color-text);
  --bs-body-bg: var(--color-bg-muted);
  --bs-primary: var(--color-primary);
@@ -52,3 +52,6 @@
  --bs-link-hover-color: var(--color-primary-hover);
  --bs-border-color: var(--color-border);
 }
+
+/* Respect browser font preferences; rem scales from the root size. */
+html { font-size: 100%; }
