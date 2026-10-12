@@ -1,4 +1,4 @@
-﻿## 12/10/2026 - Huy yeu cau da duyet
+## 12/10/2026 - Huy yeu cau da duyet
 
 - Chủ nhà có mục **Khách đổi ý, không thuê**, bắt buộc lý do và xác nhận. Yêu cầu chuyển Đã hủy, phòng về Trống, tin nguồn tự đăng lại với hạn mới 30 ngày theo yêu cầu PO. Chặn nếu tòa ngừng hoạt động hoặc đã có tin công khai khác.
 - Chặn hợp đồng đã lập, cọc xác nhận, giữ chỗ khác và phiên bản cũ; gửi trùng không ghi thêm. Trạng thái, nhật ký, lịch sử và thông báo cùng transaction. Không đổi schema/DB thật.
@@ -2219,3 +2219,91 @@ Cách chạy lại: `dotnet run --project .\QL_PhongTro\QL_PhongTro.csproj --lau
 - 12/10/2026: rà đủ 44 AC Sprint 3 theo tệp người dùng gửi; báo cáo [kiem-tra-sprint3-20261012.md](kiem-tra-sprint3-20261012.md). xUnit liên quan 370 ca: 319 PASS, 51 FAIL, 0 SKIP; 32 lỗi truy vấn bảng dịch vụ hợp đồng tùy chọn, 12 lỗi fixture schema, 7 lỗi HTTP/HTML/model. Tái hiện trên SQLite tạm: hợp đồng mới không lưu snapshot dịch vụ dù form có dịch vụ; DB v25 hợp lệ chưa cài hóa đơn bị lỗi khi mở Details. Tab người ở hiện thiếu danh sách/nút chuyển đi; cảnh báo tới ngày chốt cần xác minh lại UI. Suite S308 gốc dừng tại fixture nâng cấp cũ; runner core tạm đạt 115 assertions, bỏ kiểm tra migration/browser và không sửa test gốc. Test HTTP 50 hóa đơn đạt ngưỡng <30s. Không sửa mã nghiệp vụ/schema/DB local; metadata DB local cuối lượt là v25. Chưa nghiệm thu trực quan 360px/Safari/PDF hoặc SMTP thật; chính sách giá gia hạn giữa tháng cần làm rõ.
 
 - 12/10/2026: hoàn thiện theo yêu cầu tự sửa: phục hồi danh sách người ở/đang ở/sắp vào/đã rời và form chuyển đi; lưu snapshot dịch vụ/giá phòng khi tạo hoặc sửa Nháp cùng transaction, phục vụ PDF; chặn truy vấn bảng dịch vụ/hóa đơn tùy chọn chưa cài; thêm cảnh báo đến ngày chốt trên dashboard. PDF không ghi người chưa ở là đã chuyển đi; ngày chuyển đi vẫn được tính là đang ở. Cập nhật fixture schema/route/nhãn/masking, sửa bài test concurrent tránh treo synchronization context, bộ S308 dùng thanh toán thật và hỗ trợ Edge. **373/373 xUnit tổng hợp PASS**, sau chỉnh PDF/biên ngày **21/21 PASS** (2 ca mới; tổng **375 ca duy nhất**); **193 assertions S308 đầy đủ PASS**, gồm migration, HTTP, rollback và browser 360px. QA Edge trên DB giả xác nhận người ở ghép/chốt chỉ số/hợp đồng khách không tràn ngang 360px, lưu từng phòng; đã mở và kiểm tra trực quan PDF thật sau chỉnh. Không sửa schema/DB local hay project test csproj, không backfill giá hợp đồng lịch sử. Giữ công thức gia hạn chia ngày và chống trùng hợp đồng/tháng; chưa nghiệm thu Safari/thiết bị thật/SMTP thật hoặc review-hợp nhất. Báo cáo [hoan-thien-sprint3-20261012.md](hoan-thien-sprint3-20261012.md).
+
+- 12/10/2026: thu gọn thẻ tóm tắt bổ sung: đệm 16px, dòng 6px, thẻ phòng 10px, tổng người 22px, ghi chú 10px; nhãn/giá trị căn hai phía, chữ dài xuống dòng. Chỉ CSS, giữ dữ liệu và cập nhật form.
+
+- 12/10/2026: giao diện chỉ số điện nước theo bố cục tham chiếu: tiêu đề, ba thẻ tiến độ/điện/nước từ dữ liệu thật, bảng toàn chiều rộng với chín cột desktop; màu trung tính/champagne, mobile giữ thẻ nhập hiện có. Giữ filter, POST từng phòng, CSRF, cảnh báo bất thường và khóa kỳ. Chưa mở chọn kỳ lịch sử hoặc xuất bảng kê.
+
+- 12/10/2026: đồng bộ khung và khoảng cách chỉ số điện nước với tổng quan: dùng app-content 100rem, lề chung 1.75rem/mobile 1.25rem 1rem; heading 1.75rem, gap thẻ 1rem, đệm thẻ/bảng 1.375rem (mobile 1rem). Quy tắc trong dashboard-spacing.css nạp cuối, không đổi nghiệp vụ.
+
+- 12/10/2026: đầu trang chỉ số theo ảnh: tiêu đề/nút xuất-nhập hàng trên, tòa/tháng/kỳ hiện tại/trạng thái kỳ hàng dưới. Xuất CSV từ chỉ số đã hiển thị (chặn công thức CSV), Nhập chuyển đến phòng chưa ghi. Tháng hiện tại chỉ hiển thị, chưa mở chọn kỳ lịch sử.
+
+- 12/10/2026: ba thẻ chỉ số theo ảnh: đệm 16px, số liệu 23px, chú thích 9px, thanh tiến độ 4px champagne và icon điện/nước SVG nền xám. Chú thích số phòng ghi theo từng dịch vụ từ dữ liệu thật.
+
+- 12/10/2026: hai ô nhà/khu và tháng chỉ số theo ảnh: cao 34px, nhãn 10px, icon SVG 14px, viền nhạt/bo 5px. Chọn tòa tự submit GET khi có JS, nút Xem fallback khi JS tắt. Tháng vẫn hiển thị kỳ hiện tại.
+
+- 12/10/2026: nhãn trạng thái kỳ theo ảnh: SVG khóa mở/đóng theo KyDaKhoa, nền champagne nhạt, chữ 10px và đệm gọn.
+
+- 12/10/2026: icon nút Xuất bảng kê đổi sang SVG tải xuống theo ảnh, giữ chức năng CSV.
+
+- 12/10/2026: menu nổi nhà/khu tùy biến đồng bộ ô chọn: cùng chiều rộng, viền/bo/bóng nhẹ, cuộn 220px, tick lựa chọn, đóng khi bấm ngoài; hỗ trợ bàn phím mũi tên/Home/End/Escape và select fallback khi JS tắt. Giữ onchange GET, tháng chỉ hiển thị kỳ hiện tại.
+
+- 12/10/2026: thay ký tự mũi tên ô nhà/tháng bằng chevron CSS nét 1.5px căn giữa; xoay lên khi menu nhà/khu mở. Chỉ CSS.
+
+- 12/10/2026: sửa ô tháng hoạt động bằng input month và GET ky=yyyy-MM; chọn tháng tải dữ liệu kỳ tương ứng, giữ tháng khi đổi tòa, validate 2000–2100. Kỳ ngoài hiện tại chỉ xem, giữ service lưu hiện tại để không sửa lịch sử. Không đổi schema.
+
+- 12/10/2026: bảng chỉ số theo phòng theo ảnh: kỳ trước/kỳ này góc phải, filter trạng thái select, nhóm cột điện/nước, phòng và tầng cùng dòng, hàng gọn và tổng tiêu thụ cuối bảng. Giữ biểu mẫu nhập/lưu riêng, cảnh báo, CSRF và lọc tầng. Chưa hiển thị tên khách trong model, dùng hợp đồng thật.
+
+- 12/10/2026: cân kích thước bảng chỉ số: tiêu đề 15px, lọc/ô nhập 12px cao 32–34px, cột và nhãn 11px, mã phòng 12px/650, nút lưu 32px; giảm nhãn kỳ trước trùng trên desktop, giữ hướng dẫn khi thiếu chỉ số đầu và validation. Chỉ CSS.
+
+- 12/10/2026: thay input month dùng lịch tiếng Anh của trình duyệt bằng select tiếng Việt Tháng N / YYYY; giữ query ky và tự tải theo lựa chọn.
+
+- 12/10/2026: ô chọn tháng tiếng Việt theo ảnh: icon lịch SVG trái, chevron SVG phải, chữ 11px/500, đệm hai bên 30px, giữ select và onchange tải kỳ. Chỉ CSS.
+
+- 12/10/2026: menu tháng tùy biến cùng kiểu menu nhà/khu: bo góc, bóng nhẹ, cuộn 238px, tick tháng hiện tại, icon lịch/chevron; focus lựa chọn khi mở, hỗ trợ mũi tên/Home/End/Escape, đóng khi bấm ngoài. Giữ select gốc/onchange và fallback khi JS tắt. Cú pháp JS đạt.
+
+- 12/10/2026: menu nổi bộ lọc tầng/trạng thái đồng bộ tháng/nhà: cùng chiều rộng ô, bo góc, bóng nhẹ, tick lựa chọn, cuộn 220px và hỗ trợ bàn phím. Giữ select và change filter, JS tắt vẫn dùng select gốc. Cú pháp JS đạt.
+
+- 12/10/2026: cân bộ lọc bảng chỉ số: ba ô cao 36px, chữ 12px, tìm kiếm rộng 280px, tầng 125px/trạng thái 150px, gap 8px; mobile tìm kiếm toàn hàng và hai ô chọn co giãn. Chỉ CSS.
+
+- 12/10/2026: đầu bảng điện nước theo ảnh: hai hàng nhóm Điện/Nước icon SVG, cột phụ Kỳ trước/Kỳ này/Tiêu thụ; phòng/trạng thái/thao tác trải hai hàng, nền xám rất nhạt và chữ nhỏ. Giữ cột dữ liệu và biểu mẫu.
+
+- 12/10/2026: sửa cột điện/nước trống khi phòng không có dịch vụ theo chỉ số: hiển thị Không theo chỉ số và dấu —; dịch vụ có áp dụng nhưng chưa đủ chỉ số hiển thị — ở tiêu thụ. Không tự gán dịch vụ hoặc giả số liệu.
+
+### 12/10/2026 – Sửa menu chọn tháng chỉ số điện nước
+- Tách CSS ô chọn tháng khỏi popup: danh sách xếp dọc, mỗi tháng một dòng, chỉ cuộn dọc; giữ thao tác chọn tháng và bàn phím hiện có.
+- Kiểm tra selector CSS và cú pháp JavaScript; chưa kiểm chứng trực quan trên trình duyệt.
+
+### 12/10/2026 – Cấu hình nước theo chỉ số trên bản demo đang chạy
+- Theo yêu cầu chủ nhà: lưu bằng POST có CSRF qua chức năng Điện & nước của Demo Tòa Alpha, đơn giá 18.000 đ/m³, hiệu lực 01/11/2026.
+- Xác minh SQLite: kỳ cũ giữ THEO_NGUOI 80.000 đến 31/10; kỳ mới THEO_CHI_SO 18.000 từ 01/11. Chỉ thao tác bản thử run-trial, không sửa DB mặc định hoặc schema.
+
+### 12/10/2026 – Căn hàng phòng đã ghi chỉ số
+- Cố định các ô chỉ số/tiêu thụ/trạng thái/thao tác cùng hàng desktop, tránh tự xuống hàng khi thiếu nước theo chỉ số; căn giữa dữ liệu và làm gọn nút Sửa.
+- Kiểm tra git diff --check; chưa kiểm chứng trực quan trên trình duyệt. Không đổi nghiệp vụ hoặc dữ liệu.
+
+### 12/10/2026 – Đồng bộ kích thước bảng chỉ số
+- Chung lưới chín cột cho tiêu đề, hàng phòng và tổng; tổng điện/nước nằm dưới cột tiêu thụ tương ứng. Thống nhất chữ dữ liệu 12px, chú thích 10px, hàng tối thiểu 68px và nút 32px.
+- git diff --check đạt; chưa kiểm chứng trực quan trình duyệt. Chỉ sửa CSS, giữ giao diện di động và nghiệp vụ.
+
+### 12/10/2026 – Liên kết tiến độ chốt chỉ số
+- Thay nút Nhập chỉ số trên đầu trang bằng liên kết Tiến độ chốt chỉ số đến /TienDoChiSo, giữ tòa nhà và tháng/năm đang chọn. Hiển thị cho chủ nhà theo quyền hiện hành; gỡ handler nút cũ.
+- Kiểm tra cú pháp JavaScript và build.
+
+### 12/10/2026 – Bỏ mục tiến độ khỏi sidebar
+- Bỏ mục Tiến độ chốt chỉ số ở menu bên trái theo ảnh; liên kết từ trang Chỉ số điện nước vẫn giữ.
+- Kiểm tra git diff --check.
+
+- Cập nhật ứng dụng chạy ngày 12/10: build thành công, khởi động lại localhost:5247 trên cùng bản thử; HTTP trang chỉ số 200, mục sidebar đã bỏ và liên kết tiến độ ở đầu trang vẫn có.
+
+### 12/10/2026 – Bỏ nút lưu nháp hợp đồng
+- Bỏ nút Lưu nháp khỏi giao diện tạo hợp đồng, giữ nút Tạo hợp đồng và nghiệp vụ hiện có.
+- Kiểm tra diff và build.
+
+### 12/10/2026 – Dữ liệu thử tạo hợp đồng
+- Duyệt yêu cầu demo YC-202610-0002 qua chức năng lịch hẹn (POST có CSRF), để phòng A102-DEMO có thể chọn tạo hợp đồng. Chỉ tác động bản thử run-trial đang chạy.
+- GET /HopDong/Create?yeuCauId=2 trả 200, có phòng và tòa nhà. Chưa tạo hợp đồng để người dùng tự test.
+
+### 12/10/2026 – Triển khai điều khoản và tài liệu khi tạo hợp đồng
+- Lưu mẫu tiêu chuẩn, điều khoản bổ sung tối đa 5.000 ký tự, tối đa 5 tệp PDF/JPG/PNG, mỗi tệp 10 MB; kiểm tra chữ ký định dạng và kích thước phía server. Có danh sách tên tệp và xem trước điều khoản.
+- Lưu riêng tư bên cạnh DatabasePath trong <tên-DB>.contract-documents/, không nằm trong wwwroot và đã ignore Git. Khi sao lưu/phục hồi hoặc chuyển DB phải mang theo thư mục này. Không thay schema. Ghi tệp trước commit; lỗi lưu tệp rollback hợp đồng/phòng/nhật ký, lỗi commit dọn tệp vừa tạo. Khi tiến trình bị dừng đột ngột trước commit có thể còn thư mục mồ côi, không có hợp đồng để truy cập.
+- Trang chi tiết hiển thị điều khoản/tài liệu, tải qua action kiểm tra chủ nhà sở hữu hợp đồng và module, trả no-store/nosniff. Giữ mẫu duy nhất hiện có, chưa thêm trình quản lý mẫu hoặc ký điện tử.
+- Tùy chọn tạo hóa đơn nháp kỳ đầu gọi luồng tính tiền hiện có cho đúng hợp đồng, cần quyền ghi TAI_CHINH; chỉ tạo nếu đủ dữ liệu. Thiếu chỉ số cuối kỳ hoặc cấu hình giá báo trên trang chi tiết, không phát hành hoặc giả định tiêu thụ 0. Hóa đơn là bước riêng sau khi hợp đồng đã commit; lỗi hóa đơn không hủy hợp đồng đã tạo.
+- Bộ kiểm thử rộng trước sửa guard tương thích: 83/109 đạt, 26 lỗi liên quan dữ liệu cũ thiếu hop_dong_dich_vu và các kỳ vọng giao diện cũ. Đã thêm guard cho bảng dịch vụ tùy chọn. Test HTTP cũ vẫn kỳ vọng SĐT rõ khi chưa có quyền xem hồ sơ; giữ che SĐT theo chính sách.
+
+- Kiểm tra cuối: build đạt, 8/8 test tập trung đạt, JavaScript/diff đạt; app đã khởi động lại. HTTP Create?yeuCauId=2 trả 200 và có multipart, điều khoản, tải tệp, tùy chọn hóa đơn. Chưa kiểm chứng trực quan mobile 360px.
+
+### 13/10/2026 – Đồng bộ và push feature/fix/UI
+- Đồng bộ nhánh UI từ dev 2132d6b, giữ thay đổi local về chỉ số, điều khoản và tài liệu hợp đồng; giải quyết xung đột bằng guard bảng tùy chọn mới và giữ cả ghi chú tiến độ.
+- Build đạt. Kiểm thử tập trung: 8/9 đạt; ResavedDraftRefreshesServicesWithoutDuplicatingThem chưa đạt vì ContractDocumentStore từ chối thư mục tài liệu đã tồn tại khi lưu lại Nháp. Chưa sửa lỗi này trong phạm vi đồng bộ.
+- Chạy thử trang chủ, đăng nhập và tìm tin trả HTTP 200 trên DB thử v25. Không nâng cấp DB thật, không đưa DB/tài liệu riêng tư/project test csproj vào commit.

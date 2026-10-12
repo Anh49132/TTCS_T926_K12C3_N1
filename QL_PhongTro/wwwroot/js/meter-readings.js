@@ -65,6 +65,102 @@ document.querySelectorAll('[data-warning-dialog]').forEach(dialog => {
 
 const meterPage = document.querySelector('.meter-page');
 if (meterPage) {
+    const monthSelect = meterPage.querySelector('#meter-month');
+    if (monthSelect) {
+        const host = monthSelect.parentElement;
+        const trigger = document.createElement('button');
+        trigger.type = 'button'; trigger.className = 'meter-month-trigger';
+        trigger.textContent = monthSelect.selectedOptions[0]?.textContent || 'Chọn tháng';
+        trigger.setAttribute('aria-haspopup', 'listbox'); trigger.setAttribute('aria-expanded', 'false');
+        const menu = document.createElement('div');
+        menu.className = 'meter-building-menu meter-month-menu'; menu.id = 'meter-month-options'; menu.hidden = true;
+        menu.setAttribute('role', 'listbox'); menu.setAttribute('aria-label', 'Tháng ghi chỉ số');
+        trigger.setAttribute('aria-controls', menu.id);
+        const close = () => { menu.hidden = true; trigger.setAttribute('aria-expanded', 'false'); };
+        [...monthSelect.options].forEach(option => {
+            const item = document.createElement('button'); item.type = 'button';
+            item.textContent = option.textContent; item.setAttribute('role', 'option');
+            item.setAttribute('aria-selected', String(option.selected));
+            item.addEventListener('click', () => {
+                monthSelect.value = option.value; trigger.textContent = option.textContent;
+                close(); monthSelect.dispatchEvent(new Event('change', {bubbles:true}));
+            });
+            menu.append(item);
+        });
+        const open = () => {
+            menu.hidden = false; trigger.setAttribute('aria-expanded', 'true');
+            const selected = menu.querySelector('[aria-selected="true"]');
+            selected?.focus(); selected?.scrollIntoView({block:'nearest'});
+        };
+        trigger.addEventListener('click', () => menu.hidden ? open() : close());
+        trigger.addEventListener('keydown', event => {
+            if (['ArrowDown','ArrowUp'].includes(event.key)) {event.preventDefault(); open();}
+        });
+        menu.addEventListener('keydown', event => {
+            const items = [...menu.querySelectorAll('button')];
+            const position = items.indexOf(document.activeElement);
+            if (event.key === 'Escape') {event.preventDefault(); close(); trigger.focus();}
+            else if (['ArrowDown','ArrowUp','Home','End'].includes(event.key)) {
+                event.preventDefault();
+                const next = event.key === 'Home' ? 0 : event.key === 'End' ? items.length-1
+                    : (position + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
+                items[next]?.focus();
+            }
+        });
+        monthSelect.hidden = true; host.append(trigger, menu);
+        document.addEventListener('click', event => {if (!host.contains(event.target)) close();});
+        host.addEventListener('focusout', () => setTimeout(() => {if (!host.contains(document.activeElement)) close();}, 0));
+    }
+    const buildingSelect = meterPage.querySelector('#toaNhaId');
+    if (buildingSelect) {
+        buildingSelect.addEventListener('change', () => buildingSelect.form.requestSubmit());
+        const submit = buildingSelect.form.querySelector('.meter-building-submit');
+        if (submit) submit.hidden = true;
+        const wrapper = buildingSelect.closest('.meter-building');
+        const trigger = document.createElement('button');
+        trigger.type = 'button'; trigger.className = 'meter-building-trigger';
+        trigger.setAttribute('aria-haspopup', 'listbox'); trigger.setAttribute('aria-expanded', 'false');
+        trigger.setAttribute('aria-label', 'Chọn nhà / khu');
+        trigger.textContent = buildingSelect.selectedOptions[0]?.textContent || 'Chọn nhà / khu';
+        const list = document.createElement('div');
+        list.className = 'meter-building-menu'; list.id = 'meter-building-options'; list.hidden = true;
+        list.setAttribute('role', 'listbox'); list.setAttribute('aria-label', 'Nhà / khu');
+        trigger.setAttribute('aria-controls', list.id);
+        const close = () => { list.hidden = true; trigger.setAttribute('aria-expanded', 'false'); };
+        [...buildingSelect.options].forEach(option => {
+            const item = document.createElement('button');
+            item.type = 'button'; item.textContent = option.textContent; item.disabled = option.disabled;
+            item.setAttribute('role', 'option'); item.setAttribute('aria-selected', String(option.selected));
+            item.addEventListener('click', () => {
+                buildingSelect.value = option.value; trigger.textContent = option.textContent;
+                close(); buildingSelect.dispatchEvent(new Event('change', {bubbles:true}));
+            });
+            list.append(item);
+        });
+        buildingSelect.hidden = true;
+        wrapper.append(trigger, list);
+        const open = () => {
+            list.hidden = false; trigger.setAttribute('aria-expanded', 'true');
+            (list.querySelector('[aria-selected="true"]') || list.querySelector('button:not(:disabled)'))?.focus();
+        };
+        trigger.addEventListener('click', () => list.hidden ? open() : close());
+        trigger.addEventListener('keydown', event => {
+            if (event.key === 'ArrowDown' || event.key === 'ArrowUp') { event.preventDefault(); open(); }
+        });
+        list.addEventListener('keydown', event => {
+            const items = [...list.querySelectorAll('button:not(:disabled)')];
+            const position = items.indexOf(document.activeElement);
+            if (event.key === 'Escape') { event.preventDefault(); close(); trigger.focus(); }
+            else if (['ArrowDown','ArrowUp','Home','End'].includes(event.key)) {
+                event.preventDefault();
+                const next = event.key === 'Home' ? 0 : event.key === 'End' ? items.length-1
+                    : (position + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
+                items[next]?.focus();
+            }
+        });
+        document.addEventListener('click', event => { if (!wrapper.contains(event.target)) close(); });
+        wrapper.addEventListener('focusout', () => setTimeout(() => { if (!wrapper.contains(document.activeElement)) close(); }, 0));
+    }
     const rooms = [...meterPage.querySelectorAll('[data-meter-room]')];
     rooms.forEach(room => {
         const edit = room.querySelector('[data-edit-room]');
@@ -79,6 +175,7 @@ if (meterPage) {
     });
     const search = meterPage.querySelector('[data-room-search]');
     const floorFilter = meterPage.querySelector('[data-floor-filter]');
+    const stateSelect = meterPage.querySelector('[data-state-select]');
     const tabs = [...meterPage.querySelectorAll('[data-state-filter]')];
     let state = 'all';
     function filterRooms() {
@@ -102,6 +199,56 @@ if (meterPage) {
     tabs.forEach(tab => tab.addEventListener('click', () => { state = tab.dataset.stateFilter; filterRooms(); }));
     search?.addEventListener('input', filterRooms);
     floorFilter?.addEventListener('change', filterRooms);
+    stateSelect?.addEventListener('change', () => { state = stateSelect.value; filterRooms(); });
+    [floorFilter, stateSelect].filter(Boolean).forEach(select => {
+        const host = select.parentElement;
+        host.classList.add('meter-filter-dropdown');
+        const trigger = document.createElement('button');
+        trigger.type = 'button'; trigger.className = 'meter-filter-trigger';
+        trigger.textContent = select.selectedOptions[0]?.textContent;
+        trigger.setAttribute('aria-haspopup', 'listbox'); trigger.setAttribute('aria-expanded', 'false');
+        trigger.setAttribute('aria-label', select === floorFilter ? 'Lọc tầng' : 'Lọc trạng thái');
+        const menu = document.createElement('div');
+        menu.className = 'meter-building-menu meter-filter-menu'; menu.hidden = true;
+        menu.id = select === floorFilter ? 'meter-floor-options' : 'meter-state-options';
+        menu.setAttribute('role', 'listbox'); menu.setAttribute('aria-label', trigger.getAttribute('aria-label'));
+        trigger.setAttribute('aria-controls', menu.id);
+        const close = () => { menu.hidden = true; trigger.setAttribute('aria-expanded', 'false'); };
+        [...select.options].forEach(option => {
+            const item = document.createElement('button'); item.type = 'button';
+            item.textContent = option.textContent; item.setAttribute('role', 'option');
+            item.setAttribute('aria-selected', String(option.selected));
+            item.addEventListener('click', () => {
+                select.value = option.value;
+                trigger.textContent = option.textContent;
+                menu.querySelectorAll('button').forEach(button => button.setAttribute('aria-selected', String(button === item)));
+                close(); trigger.focus(); select.dispatchEvent(new Event('change', {bubbles:true}));
+            });
+            menu.append(item);
+        });
+        const open = () => {
+            menu.hidden = false; trigger.setAttribute('aria-expanded', 'true');
+            menu.querySelector('[aria-selected="true"]')?.focus();
+        };
+        trigger.addEventListener('click', () => menu.hidden ? open() : close());
+        trigger.addEventListener('keydown', event => {
+            if (['ArrowDown','ArrowUp'].includes(event.key)) {event.preventDefault(); open();}
+        });
+        menu.addEventListener('keydown', event => {
+            const items = [...menu.querySelectorAll('button')];
+            const position = items.indexOf(document.activeElement);
+            if (event.key === 'Escape') {event.preventDefault(); close(); trigger.focus();}
+            else if (['ArrowDown','ArrowUp','Home','End'].includes(event.key)) {
+                event.preventDefault();
+                const next = event.key === 'Home' ? 0 : event.key === 'End' ? items.length-1
+                    : (position + (event.key === 'ArrowDown' ? 1 : -1) + items.length) % items.length;
+                items[next]?.focus();
+            }
+        });
+        select.hidden = true; host.append(trigger, menu);
+        document.addEventListener('click', event => {if (!host.contains(event.target)) close();});
+        host.addEventListener('focusout', () => setTimeout(() => {if (!host.contains(document.activeElement)) close();}, 0));
+    });
     meterPage.querySelectorAll('[data-floor-toggle]').forEach(button => button.addEventListener('click', () => {
         const expanded = button.getAttribute('aria-expanded') === 'true';
         document.getElementById(button.getAttribute('aria-controls')).hidden = expanded;
@@ -132,6 +279,21 @@ if (meterPage) {
 }
 
 const activeRoom = document.querySelector('[data-meter-room][data-meter-active="true"]');
+document.querySelector('[data-meter-export]')?.addEventListener('click', () => {
+    const quote = value => {
+        const text = String(value);
+        return '"' + (/^[\s]*[=+@-]/.test(text) ? "'" : '') + text.replace(/"/g, '""') + '"';
+    };
+    const rows = [['Phòng', 'Trạng thái', 'Chỉ số đã lưu / kỳ trước']];
+    document.querySelectorAll('[data-meter-room]').forEach(room => {
+        rows.push([room.dataset.roomCode, room.querySelector('.meter-status-badge')?.textContent.trim() || '',
+            [...room.querySelectorAll('.meter-previous,.meter-saved-reading')].map(item => item.textContent.trim().replace(/\s+/g, ' ')).join(' | ')]);
+    });
+    const url = URL.createObjectURL(new Blob(['\uFEFF' + rows.map(row => row.map(quote).join(';')).join('\r\n')], {type:'text/csv;charset=utf-8'}));
+    const link = document.createElement('a');
+    link.href = url; link.download = 'bang-ke-chi-so.csv'; link.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+});
 if (activeRoom) {
     revealMeterTarget(activeRoom.querySelector('[data-meter-input][aria-invalid="true"]')
         || activeRoom.querySelector('[data-room-error]')

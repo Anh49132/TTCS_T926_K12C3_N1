@@ -68,3 +68,6 @@ obj/
 *.bak
 *.update.lock
 /data/
+
+# Private contract clauses and attachments (stored beside the selected database)
+*.contract-documents/

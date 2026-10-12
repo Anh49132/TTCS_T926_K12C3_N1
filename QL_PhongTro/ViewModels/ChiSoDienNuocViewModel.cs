@@ -39,6 +39,7 @@ public sealed class ChiSoDienNuocViewModel
     public int? ToaNhaId { get; set; }
     public DateOnly DauKy { get; set; }
     public bool KyDaKhoa { get; set; }
+    public bool KyLichSu { get; set; }
     public List<PhongGhiChiSo> Phongs { get; set; } = [];
     public int TongPhongCanChot => Phongs.Count(x => x.DichVu.Count > 0);
     public int SoPhongDaChot => Phongs.Count(x => x.DichVu.Count > 0 && x.DaChot);

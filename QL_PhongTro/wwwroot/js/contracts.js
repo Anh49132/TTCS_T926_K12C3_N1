@@ -205,6 +205,12 @@
             copy.querySelectorAll('[id]').forEach(node => node.removeAttribute('id'));
             content.append(copy);
         }
+        const terms = document.createElement('p');
+        terms.style.whiteSpace = 'pre-wrap';
+        terms.textContent = 'Điều khoản bổ sung: ' + (document.getElementById('contract-extra-terms')?.value || 'Không có');
+        content.append(terms);
+        const files = document.getElementById('contract-file-list');
+        if (files?.children.length) content.append(files.cloneNode(true));
         previewDialog.showModal();
     });
     document.getElementById('close-contract-preview')?.addEventListener('click', () => previewDialog.close());
@@ -247,3 +253,18 @@
     start.addEventListener('input', scheduleCheck); months.addEventListener('input', scheduleCheck);
     if (request) checkOverlap();
 })();
+
+const contractFiles = document.querySelector('#TaiLieus');
+if (contractFiles) {
+    contractFiles.addEventListener('change', () => {
+        const list = document.getElementById('contract-file-list');
+        list.replaceChildren();
+        for (const file of contractFiles.files) {
+            const item = document.createElement('li');
+            item.textContent = `${file.name} · ${(file.size / 1024).toLocaleString('vi-VN', {maximumFractionDigits:0})} KB`;
+            list.append(item);
+        }
+        contractFiles.setCustomValidity(contractFiles.files.length > 5 ? 'Chỉ đính kèm tối đa 5 tệp.'
+            : [...contractFiles.files].some(file => file.size === 0 || file.size > 10 * 1024 * 1024) ? 'Mỗi tệp phải lớn hơn 0 và không quá 10 MB.' : '');
+    });
+}

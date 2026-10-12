@@ -16,6 +16,17 @@ namespace QL_PhongTro.Controllers;
 public class HopDongController(AppDbContext db, ITimeProvider? clock = null, PermissionService? permissions = null) : Controller
 {
     private int AccountId => int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : 0;
+    private ContractDocumentStore Documents => new(db.Database.GetDbConnection().DataSource);
+
+    [HttpGet]
+    public async Task<IActionResult> TaiLieu(int id, string fileId, CancellationToken ct)
+    {
+        if (!await OwnContract(id, ct)) return Forbid();
+        var document = (await Documents.ReadAsync(id, ct)).Files.SingleOrDefault(x => x.Id == fileId);
+        if (document is null || !System.IO.File.Exists(Documents.FilePath(id, document.Id))) return NotFound();
+        Response.Headers["X-Content-Type-Options"] = "nosniff";
+        return PhysicalFile(Documents.FilePath(id, document.Id), document.ContentType, document.Name);
+    }
     private DateOnly HomNay => DateOnly.FromDateTime((clock ?? new SystemTimeProvider()).UtcNow.AddHours(7));
     private async Task<bool> IsAdmin(CancellationToken ct) => await db.TaiKhoans.AnyAsync(x => x.Id == AccountId && x.VaiTro == "ADMIN" && x.DangHoatDong && !x.IsDeleted, ct);
     private async Task<bool> ForeignRequest(int id, CancellationToken ct) => !await IsAdmin(ct) && await
@@ -177,7 +188,7 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
         return Json(conflicts.Select(x => new { x.Ma, TuNgay = x.NgayBatDau.ToString("dd/MM/yyyy"), DenNgay = x.NgayKetThuc.ToString("dd/MM/yyyy") }));
     }
 
-    [HttpPost, ValidateAntiForgeryToken, ModuleAccess("HOP_DONG", write: true)]
+    [HttpPost, ValidateAntiForgeryToken, RequestSizeLimit(55 * 1024 * 1024), ModuleAccess("HOP_DONG", write: true)]
     public async Task<IActionResult> Create(HopDongCreateViewModel vm, CancellationToken ct)
     {
         bool luuNhap = vm.Intent == "NHAP";
@@ -189,6 +200,10 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
         vm.DaChon = vm.YeuCaus.SingleOrDefault(x => x.Id == vm.YeuCauId);
         vm.HomNay = HomNay;
         await LoadContractServices(vm, ct);
+        var fileError = await ContractDocumentStore.ValidateAsync(vm.TaiLieus, ct);
+        if (fileError.Length > 0) ModelState.AddModelError(nameof(vm.TaiLieus), fileError);
+        if (vm.TaoHoaDonKyDau && (permissions is null || !await permissions.AllowsAsync("TAI_CHINH", write: true) || !User.IsInRole("CHU_NHA")))
+            ModelState.AddModelError(nameof(vm.TaoHoaDonKyDau), "Bạn không có quyền lập hóa đơn.");
         if (vm.DaChon is null && vm.YeuCauId.HasValue && await ForeignRequest(vm.YeuCauId.Value, ct)) return Forbid();
         if (vm.DaChon is null) ModelState.AddModelError(nameof(vm.YeuCauId), "Yêu cầu không được duyệt, không thuộc quyền quản lý hoặc đã lập hợp đồng.");
         // Revalidate independently of the browser and never bind a submitted end date.
@@ -222,6 +237,7 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
         string code;
         try { code = await new HopDongService(db).SinhMaAsync(now.AddHours(7).Year, ct); }
         catch (ArgumentException ex) { ModelState.AddModelError("", ex.Message); return View(vm); }
+        int? storedContractId = null;
         try
         {
         var contract = await db.HopDongs.SingleOrDefaultAsync(h => h.YeuCauThueId == y.Id && h.TrangThai == "NHAP", ct);
@@ -255,18 +271,35 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
             await db.Database.ExecuteSqlInterpolatedAsync($"UPDATE tin_dang SET trang_thai='DA_CHO_THUE' WHERE phong_id={room.Id} AND trang_thai<>'DA_CHO_THUE'", ct);
         }
         await db.SaveChangesAsync(ct);
+        await Documents.WriteAsync(contract.Id, vm.DieuKhoanBoSung ?? "", vm.TaiLieus, ct);
+        storedContractId = contract.Id;
         await sqliteTransaction.CommitAsync(ct);
+        await transaction!.DisposeAsync();
+        if (vm.TaoHoaDonKyDau && !luuNhap)
+        {
+            try
+            {
+                var invoices = HttpContext.RequestServices.GetRequiredService<HoaDonDichVuService>();
+                var result = await invoices.PhatHanhDanhSachAsync(AccountId, y.ToaNhaId, vm.NgayBatDau.Value.Year,
+                    vm.NgayBatDau.Value.Month, [contract.Id], taoNhap: true);
+                TempData["ContractWarning"] = result.SoNhap > 0 ? "Đã tạo hóa đơn kỳ đầu ở trạng thái nháp. Kiểm tra và phát hành tại mục Hóa đơn."
+                    : "Hợp đồng đã lưu. Chưa tạo được hóa đơn kỳ đầu vì chưa đủ dữ liệu (ví dụ chỉ số cuối kỳ). Bổ sung và lập hóa đơn tại mục Hóa đơn.";
+            }
+            catch (Exception ex) when (ex is InvalidOperationException or DbUpdateException or SqliteException or UnauthorizedAccessException)
+            { TempData["ContractWarning"] = "Hợp đồng đã lưu. Chưa tạo được hóa đơn kỳ đầu; hãy kiểm tra tại mục Hóa đơn."; }
+        }
         if (luuNhap)
         {
             TempData["ContractSuccess"] = $"Đã lưu hợp đồng {code} ở trạng thái nháp. Mở chi tiết hợp đồng và bấm Kích hoạt khi sẵn sàng cho thuê.";
             return RedirectToAction(nameof(Details), new { id = contract.Id });
         }
         TempData["ContractSuccess"] = $"Đã tạo hợp đồng {code}, ghi chỉ số điện nước đầu kỳ. Phòng {y.Phong} — {y.ToaNha}: Đang thuê.";
-        return RedirectToAction(nameof(Index));
+        return RedirectToAction(nameof(Details), new { id = contract.Id });
         }
-        catch (Exception ex) when (ex is DbUpdateException or SqliteException)
+        catch (Exception ex) when (ex is DbUpdateException or SqliteException or IOException or UnauthorizedAccessException)
         {
             await sqliteTransaction.RollbackAsync(ct);
+            if (storedContractId.HasValue) Documents.Delete(storedContractId.Value);
             db.ChangeTracker.Clear();
             ModelState.AddModelError("", "Không thể lưu hợp đồng. Không có thay đổi nào được ghi nhận. Vui lòng tải lại trang và thử lại.");
             return View(vm);
@@ -486,6 +519,7 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
     {
         if (!await db.HopDongs.AnyAsync(x => x.Id == id, ct)) return NotFound();
         if (!await OwnContract(id, ct)) return Forbid();
+        ViewData["ContractDocuments"] = await Documents.ReadAsync(id, ct);
         return View(await DetailModel(id, null, ct));
     }
 

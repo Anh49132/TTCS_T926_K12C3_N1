@@ -12,14 +12,16 @@ public sealed partial class ChiSoDienNuocService(AppDbContext db, ITimeProvider 
     private sealed record Reading(int HopDongId, int Id, DateOnly TuNgay, DateOnly DenNgay,
         string MaDichVu, decimal? ChiSoCuoi, int LineId);
 
-    public async Task<ChiSoDienNuocViewModel> DanhSachAsync(int accountId, int? toaNhaId, CancellationToken ct = default)
+    public async Task<ChiSoDienNuocViewModel> DanhSachAsync(int accountId, int? toaNhaId, CancellationToken ct = default, DateOnly? ky = null)
     {
         var role = await db.TaiKhoans.AsNoTracking()
             .Where(x => x.Id == accountId && x.DangHoatDong && !x.IsDeleted)
             .Select(x => x.VaiTro).SingleOrDefaultAsync(ct);
         if (role is not ("CHU_NHA" or "QUAN_LY")) throw new UnauthorizedAccessException();
         var today = DateOnly.FromDateTime(clock.UtcNow.AddHours(7));
-        var model = new ChiSoDienNuocViewModel { DauKy = new(today.Year, today.Month, 1) };
+        var current = new DateOnly(today.Year, today.Month, 1);
+        var selected = ky.HasValue ? new DateOnly(ky.Value.Year, ky.Value.Month, 1) : current;
+        var model = new ChiSoDienNuocViewModel { DauKy = selected, KyLichSu = selected != current };
         model.ToaNhas = await db.ToaNhas.AsNoTracking()
             .Where(x => x.DangHoatDong && (role == "CHU_NHA" ? x.ChuNhaId == accountId : x.QuanLyId == accountId)).OrderBy(x => x.TenToaNha).ThenBy(x => x.Id)
             .Select(x => new ToaNhaGhiChiSo(x.Id, x.TenToaNha)).ToListAsync(ct);
@@ -27,7 +29,7 @@ public sealed partial class ChiSoDienNuocService(AppDbContext db, ITimeProvider 
         model.ToaNhaId = toaNhaId ?? model.ToaNhas.FirstOrDefault()?.Id;
         if (model.ToaNhaId is null) return model;
         model.KyDaKhoa = (await KyChiSoLockService.LayToaNhaDaKhoaAsync(
-            db, [model.ToaNhaId.Value], today.Year, today.Month, ct)).Contains(model.ToaNhaId.Value);
+            db, [model.ToaNhaId.Value], selected.Year, selected.Month, ct)).Contains(model.ToaNhaId.Value) || model.KyLichSu;
         model.Phongs = await LayPhongAsync(model.ToaNhaId.Value, model.DauKy, ct);
         return model;
     }

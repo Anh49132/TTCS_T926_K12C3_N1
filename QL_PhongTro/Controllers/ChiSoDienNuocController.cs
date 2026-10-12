@@ -14,11 +14,18 @@ namespace QL_PhongTro.Controllers;
 public sealed class ChiSoDienNuocController(ChiSoDienNuocService readings) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> Index(int? toaNhaId, CancellationToken ct)
+    public async Task<IActionResult> Index(int? toaNhaId, CancellationToken ct, string? ky = null)
     {
         if (!ModelState.IsValid) return BadRequest();
         if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var accountId)) return Forbid();
-        try { return View(await readings.DanhSachAsync(accountId, toaNhaId, ct)); }
+        DateOnly? selected = null;
+        if (!string.IsNullOrWhiteSpace(ky))
+        {
+            if (!DateOnly.TryParseExact(ky + "-01", "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture,
+                System.Globalization.DateTimeStyles.None, out var date) || date.Year < 2000 || date.Year > 2100) return BadRequest();
+            selected = date;
+        }
+        try { return View(await readings.DanhSachAsync(accountId, toaNhaId, ct, selected)); }
         catch (UnauthorizedAccessException) { return Forbid(); }
     }
 

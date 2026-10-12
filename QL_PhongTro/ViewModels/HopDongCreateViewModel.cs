@@ -5,6 +5,10 @@ namespace QL_PhongTro.ViewModels;
 
 public class HopDongCreateViewModel
 {
+    [StringLength(5000, ErrorMessage = "Điều khoản bổ sung tối đa 5.000 ký tự.")]
+    public string? DieuKhoanBoSung { get; set; }
+    public List<IFormFile> TaiLieus { get; set; } = [];
+    public bool TaoHoaDonKyDau { get; set; }
     [Required(ErrorMessage = "Vui lòng chọn yêu cầu đã duyệt.")]
     public int? YeuCauId { get; set; }
     [Required(ErrorMessage = "Vui lòng nhập giá thuê chốt."), Range(500000, long.MaxValue, ErrorMessage = "Giá thuê chốt tối thiểu 500.000 đ.")]

@@ -13,7 +13,7 @@
 </form>
 <div class="create-room-location"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 1 1 14 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>@if(y is not null){<span>@y.DiaChi · Tầng @y.Tang · @y.DienTich.ToString("0.##", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")) m²</span><span class="create-room-status">@(y.TrangThaiPhong switch { "TRONG" => "Đang trống", "DA_DAT_COC" => "Đã đặt cọc", "DANG_THUE" => "Đang thuê", _ => "Ngừng cho thuê" })</span>}else{<span>Chọn phòng có yêu cầu thuê đã duyệt để xem thông tin.</span>}</div>
 </section>
-<form asp-action="Create" method="post" id="contract-form">
+<form asp-action="Create" method="post" enctype="multipart/form-data" id="contract-form">
 <input asp-for="YeuCauId" type="hidden" />
 <input asp-for="PhienBanPhong" type="hidden" />
 <div asp-validation-summary="All" class="text-danger"></div>
@@ -52,13 +52,13 @@
 <div class="create-services-footer">@if(y is not null){<a asp-controller="PhongTro" asp-action="Edit" asp-route-id="@y.PhongId" asp-fragment="room-services">＋ Thêm dịch vụ</a>}<span>Điện, nước tính theo cách tính được cấu hình.</span></div>
 </section><section class="contract-card create-documents">
 <div class="contract-card-title"><span class="contract-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14 3H5v18h14v-7M14 3v5h5M10 15l1-4 7-7 3 3-7 7-4 1Z"/></svg></span><div><h2>Điều khoản &amp; tài liệu</h2><small>Chọn mẫu hợp đồng và đính kèm tài liệu liên quan.</small></div></div>
-<div class="contract-field"><label for="contract-template">Mẫu hợp đồng</label><select id="contract-template" disabled><option>Mẫu hợp đồng tiêu chuẩn của hệ thống</option></select></div>
-<div class="contract-field"><label for="contract-extra-terms">Điều khoản bổ sung</label><textarea id="contract-extra-terms" rows="3" disabled placeholder="Chưa hỗ trợ lưu điều khoản bổ sung trên trang này."></textarea></div>
+<div class="contract-field"><label for="contract-template">Mẫu hợp đồng</label><select id="contract-template"><option>Mẫu hợp đồng tiêu chuẩn của hệ thống</option></select></div>
+<div class="contract-field"><label for="contract-extra-terms">Điều khoản bổ sung</label><textarea asp-for="DieuKhoanBoSung" id="contract-extra-terms" rows="3" maxlength="5000" placeholder="Nhập thỏa thuận bổ sung giữa chủ nhà và người thuê."></textarea><span asp-validation-for="DieuKhoanBoSung" class="text-danger"></span></div>
 <div class="create-document-divider"></div>
-<div class="create-document-label"><label for="contract-documents">Tài liệu đính kèm</label><span>PDF, JPG, PNG · Tối đa 10 MB / tệp (mẫu giao diện)</span></div>
-<div id="contract-documents" class="create-document-dropzone" aria-disabled="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4m-4 4 4-4 4 4M4 14v6h16v-6"/></svg><span>Chưa hỗ trợ tải và lưu tệp đính kèm hợp đồng.</span></div>
-<label class="create-document-invoice"><input type="checkbox" disabled /> Tạo hóa đơn kỳ đầu sau khi hợp đồng được ký.</label>
-<p class="contract-note">Điều khoản bổ sung, tài liệu đính kèm và tạo hóa đơn tự động chưa được hỗ trợ. Các mục này hiện chỉ hiển thị để xem bố cục.</p>
+<div class="create-document-label"><label for="contract-documents">Tài liệu đính kèm</label><span>PDF, JPG, PNG · Tối đa 10 MB / tệp · Tối đa 5 tệp</span></div>
+<div id="contract-documents" class="create-document-dropzone"><input asp-for="TaiLieus" type="file" multiple accept=".pdf,.jpg,.jpeg,.png" aria-label="Chọn tài liệu hợp đồng" /><small>Chọn hoặc kéo thả tài liệu vào ô này.</small></div><span asp-validation-for="TaiLieus" class="text-danger"></span><ul id="contract-file-list" aria-live="polite"></ul>
+@if(User.IsInRole("CHU_NHA")){<label class="create-document-invoice"><input asp-for="TaoHoaDonKyDau" /> Tạo hóa đơn nháp kỳ đầu khi đủ dữ liệu.</label><span asp-validation-for="TaoHoaDonKyDau" class="text-danger"></span>}
+<p class="contract-note">Điều khoản và tài liệu được lưu cùng hợp đồng. Hóa đơn nháp cần đủ chỉ số cuối kỳ và cấu hình giá; bạn kiểm tra trước khi phát hành.</p>
 </section><aside class="contract-side">
 <section class="contract-card create-meters-card">
 <div class="contract-card-title"><span class="contract-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M7 13a5 5 0 0 1 10 0M12 13l3-3M8 17h8"/><circle cx="12" cy="13" r="1"/></svg></span><div><h2>Chỉ số điện nước đầu kỳ</h2><small>Ghi nhận chỉ số công tơ tại thời điểm bàn giao phòng.</small></div></div>
@@ -92,7 +92,7 @@
 @if(Model.ChongLans.Count > 0){<strong>Không thể lưu — có hợp đồng chồng lấn:</strong><ul>@foreach(var conflict in Model.ChongLans){<li>@conflict.Ma: @conflict.NgayBatDau.ToString("dd/MM/yyyy") – @conflict.NgayKetThuc.ToString("dd/MM/yyyy")</li>}</ul>}
 </div>
 <button class="btn btn-outline-primary create-preview-button" type="button" id="preview-contract" disabled="@(y is null)">◎ &nbsp; Xem trước hợp đồng</button>
-<div class="create-summary-actions"><button class="btn btn-outline-primary" type="submit" form="contract-form" name="intent" value="NHAP" disabled="@(y is null)">Lưu nháp</button><button id="save-contract" class="btn btn-primary" type="submit" form="contract-form" disabled="@(y is null)">✓ Tạo hợp đồng</button></div>
+<div class="create-summary-actions"><button id="save-contract" class="btn btn-primary" type="submit" form="contract-form" disabled="@(y is null)">✓ Tạo hợp đồng</button></div>
 </section></aside></div></div>
 <dialog id="contract-preview-dialog" class="create-preview-dialog"><div><h2>Xem trước thông tin hợp đồng</h2><button type="button" id="close-contract-preview" aria-label="Đóng bản xem trước">×</button></div><p>Thông tin dự kiến từ biểu mẫu; hợp đồng chưa được tạo.</p><div id="contract-preview-content"></div></dialog>
 @section Scripts { <script src="~/js/contracts.js" asp-append-version="true"></script> }
