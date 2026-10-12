@@ -1,4 +1,4 @@
-using Microsoft.Data.Sqlite;
+﻿using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -7,7 +7,7 @@ namespace QL_PhongTro.Data;
 // Append new versions; never rewrite an update already shared with the team.
 public static class DatabaseUpdates
 {
-    internal const int CurrentVersion = 24;
+    internal const int CurrentVersion = 25;
     private static SqliteConnection Open(string path, bool readOnly)
     {
         var c = new SqliteConnection(new SqliteConnectionStringBuilder
@@ -70,6 +70,7 @@ public static class DatabaseUpdates
         foreach (var entity in db.Model.GetEntityTypes())
         {
             var table = entity.GetTableName()!;
+            if (table == "ghi_chu_phong" && schemaVersion < 25) continue;
             if (table == "thong_bao" && schemaVersion < 21) continue;
             if (table == "thanh_toan" && schemaVersion < 23 && !HasTable(c, table)) continue;
             if (table == "chi_so_dien_nuoc" && schemaVersion < 19 && !HasTable(c, table)) continue;
@@ -450,6 +451,7 @@ public static class DatabaseUpdates
         if (version < 22) InvoiceCancellationSchema.Upgrade(c);
         if (version < 23) InvoicePaymentSchema.Upgrade(c);
         if (version < 24) RoomDetailsSchema.Upgrade(c);
+        if (version < 25) RoomNotesSchema.Upgrade(c);
         Check(path);
         Console.WriteLine($"Database updated to version {CurrentVersion}. Existing business rows preserved.");
     }

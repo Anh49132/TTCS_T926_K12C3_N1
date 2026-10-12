@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 using Microsoft.Data.Sqlite;
@@ -17,7 +17,7 @@ namespace QL_PhongTro.Controllers;
 [Authorize(Roles = "CHU_NHA,QUAN_LY,ADMIN")]
 [ModuleAccess("PHONG_TRO")]
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-public class PhongTroController(AppDbContext db, DichVuPhongService roomServices, RoomImageStore imageStore, RoomImageDeletionService imageDeletion, ITimeProvider? clock = null) : Controller
+public partial class PhongTroController(AppDbContext db, DichVuPhongService roomServices, RoomImageStore imageStore, RoomImageDeletionService imageDeletion, ITimeProvider? clock = null) : Controller
 {
     [HttpGet, ModuleAccess("PHONG_TRO", write: true)]
     public async Task<IActionResult> DichVuThemPhong(int toaNhaId)
@@ -718,18 +718,34 @@ public class PhongTroController(AppDbContext db, DichVuPhongService roomServices
             denNgay?.Year < 1900 || denNgay?.Year > 9998)
             return BadRequest("Bộ lọc không hợp lệ. Ngày từ phải không sau ngày đến (1900–9998).");
 
+        var journalContract = await db.HopDongs.AsNoTracking().Where(x => x.PhongId == phongId && x.TrangThai == "DANG_HIEU_LUC").OrderByDescending(x => x.Id).FirstOrDefaultAsync();
+        ViewData["JournalContract"] = journalContract;
+        if (journalContract != null)
+        {
+            ViewData["JournalTenantName"] = await db.KhachThues.Where(x => x.Id == journalContract.KhachDungTenId).Select(x => x.HoTen).FirstOrDefaultAsync();
+        }
+        ViewData["JournalAddress"] = building.DiaChi;
+        ViewData["JournalRoom"] = room;
+        ViewData["JournalPhoto"] = await db.AnhPhongs.AsNoTracking().Where(x => x.PhongId == phongId).OrderBy(x => x.ThuTu).Select(x => x.DuongDanAnhNho ?? x.DuongDan).FirstOrDefaultAsync();
         var hopDongIds = await db.HopDongs.AsNoTracking()
             .Where(hopDong => hopDong.PhongId == phongId)
             .Select(hopDong => hopDong.Id)
             .ToListAsync();
         var query = db.NhatKyHoatDongs.AsNoTracking()
             .Where(row => (row.LoaiDoiTuong == "phong_tro" && row.DoiTuongId == phongId)
-                || (row.LoaiDoiTuong == "hop_dong" && hopDongIds.Contains(row.DoiTuongId)));
+                || (row.LoaiDoiTuong == "hop_dong" && hopDongIds.Contains(row.DoiTuongId))
+                || (row.LoaiDoiTuong == "ghi_chu_phong" && db.GhiChuPhongs.Any(note => note.Id == row.DoiTuongId && note.PhongId == phongId)));
         if (tuNgay is { } from)
             query = query.Where(row => row.ThoiDiem >= from.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc).AddHours(-7));
         if (denNgay is { } to)
             query = query.Where(row => row.ThoiDiem < to.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc).AddHours(-7));
 
+        ViewData["RoomNotes"] = await db.GhiChuPhongs.AsNoTracking().Where(x => x.PhongId == phongId
+                && (!tuNgay.HasValue || x.NgayTao >= tuNgay.Value.ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc).AddHours(-7))
+                && (!denNgay.HasValue || x.NgayTao < denNgay.Value.AddDays(1).ToDateTime(TimeOnly.MinValue, DateTimeKind.Utc).AddHours(-7)))
+            .OrderByDescending(x => x.Ghim).ThenByDescending(x => x.NgayTao)
+            .Select(x => new GhiChuPhong { Id=x.Id, PhongId=x.PhongId, TieuDe=x.TieuDe, NoiDung=x.NoiDung, Ghim=x.Ghim, NgayTao=x.NgayTao, TenTep=x.TenTep })
+            .Take(100).ToListAsync();
         var model = new NhatKyPhongViewModel
         {
             PhongId = phongId,

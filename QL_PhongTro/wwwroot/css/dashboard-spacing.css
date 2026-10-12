@@ -18,3 +18,71 @@ body.homepage-dashboard-theme:not(.role-tenant) .app-content > h1:first-child {
         padding: 1.25rem 1rem;
     }
 }
+
+/* Trang tạo/chỉnh sửa tin đăng dùng cùng khung nội dung với tổng quan. */
+body.homepage-dashboard-theme:not(.role-tenant) .listing-create-page {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+}
+body.homepage-dashboard-theme:not(.role-tenant) .listing-create-page > .lc-heading {
+    margin-top: 0;
+    padding-top: 0;
+    align-items: flex-start;
+}
+
+/* Danh sách yêu cầu thuê dùng khung và khoảng cách của tổng quan. */
+body.homepage-dashboard-theme:not(.role-tenant) .owner-requests.or-reference {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+}
+body.homepage-dashboard-theme:not(.role-tenant) .or-reference > .or-heading {
+    margin-top: 0;
+    padding-top: 0;
+    align-items: flex-start;
+}
+
+/* Trang sửa đơn giá dùng khung nội dung chung với tổng quan. */
+body.homepage-dashboard-theme:not(.role-tenant) .service-price-page {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+}
+body.homepage-dashboard-theme:not(.role-tenant) .service-price-page > .sp-heading {
+    margin-top: 0;
+    padding-top: 0;
+    align-items: flex-start;
+}
+body.homepage-dashboard-theme:not(.role-tenant) .service-price-page > .sp-edit-layout {
+    width: 100%;
+    min-width: 0;
+    margin-left: 0;
+    margin-right: 0;
+}
+
+/* Nhật ký phòng dùng khung và khoảng cách của trang tổng quan. */
+body.homepage-dashboard-theme:not(.role-tenant) .room-journal {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+}
+body.homepage-dashboard-theme:not(.role-tenant) .room-journal > .rj-heading {
+    margin-top: 0;
+    padding-top: 0;
+    align-items: flex-start;
+}
+body.homepage-dashboard-theme:not(.role-tenant) .room-journal > .rj-layout {
+    width: 100%;
+    min-width: 0;
+    margin-left: 0;
+    margin-right: 0;
+}

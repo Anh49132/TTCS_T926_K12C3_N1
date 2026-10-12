@@ -20,3 +20,63 @@
 .uc-aside .uc-example{padding:1.125rem 0.9375rem;border-radius:10px}.uc-example h2{font-size:0.8125rem;margin-bottom:0.4375rem}.uc-example .uc-example-caption{font-size:0.625rem;color:#A0A5AD;line-height:1.5;margin:0 0 0.25rem}.uc-example .uc-example-item{padding:1rem 0;border-top:1px solid #E9EBED}.uc-example .uc-example-item:first-of-type{border-top:0}.uc-example-item h3{display:flex;align-items:center;gap:0.4375rem;font-size:0.75rem!important;margin:0 0 0.6875rem!important}.uc-example-item h3 svg{width:15px;height:15px;fill:none;stroke:#454A52;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.uc-meter-example{display:grid;grid-template-columns:1fr 16px 1fr;gap:0.5625rem;align-items:center;background:#F8F8F7;padding:0.75rem 0.625rem;border-radius:5px}.uc-meter-example[hidden]{display:none}.uc-meter-example small{font-size:0.5rem;color:#979EA7;line-height:1.4}.uc-meter-example b{display:block;font-size:0.875rem;color:#454A52;font-weight:600;margin-top:0.1875rem}.uc-meter-example>span{color:#8B929C;font-size:0.9375rem;text-align:center}.uc-example-item>p{font-size:0.625rem!important;margin:0.625rem 0 0.1875rem;color:#959CA5;line-height:1.5}.uc-example .uc-example-item>strong{font-size:1.0625rem;font-weight:650;color:#30343B}.uc-example .uc-example-total{margin-top:0;border-radius:7px;background:#F4EFE4;padding:0.875rem 0.75rem!important}.uc-example-total small{font-size:0.6875rem;color:#62656B}.uc-example .uc-example-total strong{font-size:1.5625rem!important;font-weight:650;line-height:1.25;margin-top:0.375rem}
 /* Ghi chú ghi điện nước theo mẫu. */
 .uc-aside .uc-note{padding:0.9375rem 0.875rem;background:#F4EFE4;border-radius:9px}.uc-note .uc-note-heading{display:flex;align-items:center;gap:0.4375rem;color:#454A52;font-size:0.6875rem;font-weight:600;line-height:1.5}.uc-note-heading svg{width:15px;height:15px;flex-shrink:0;fill:none;stroke:#555C65;stroke-width:1.6;stroke-linecap:round}.uc-note p{font-size:0.6875rem;line-height:1.55;color:#969CA5;margin:0.5rem 0 0.5625rem}.uc-note a{display:inline-flex;align-items:center;gap:0.25rem;font-size:0.6875rem;font-weight:600;color:#454A52;text-decoration:none;line-height:1.5}.uc-note a svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:1.4;stroke-linecap:round;stroke-linejoin:round}.uc-note a:hover{color:#90784D}
+/* Dùng khung và khoảng đệm chung của Tổng quan. */
+.utility-config-page{width:100%;max-width:none;min-width:0;margin:0;padding:0}
+.utility-config-page>.uc-heading{margin-top:0;padding-top:0;align-items:flex-start}
+/* Cân đối thẻ phạm vi áp dụng. */
+.utility-config-page .uc-scope{padding:1.25rem;border-radius:9px}
+.uc-scope .uc-title{gap:.75rem;align-items:center;margin-bottom:1.25rem}
+.uc-scope .uc-icon{width:30px;height:30px;flex:0 0 30px;border-radius:7px}
+.uc-scope .uc-title h2{font-size:.875rem;line-height:1.5;margin:0 0 .375rem}
+.uc-scope .uc-title p{font-size:.6875rem;line-height:1.6;margin:0}
+.uc-scope .uc-two{grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;align-items:start}
+.utility-config-page .uc-scope label:not(.uc-scope-option){font-size:.75rem;line-height:1.5;margin-bottom:.4375rem}
+.utility-config-page .uc-scope select{height:2.25rem;box-sizing:border-box;padding:0 .875rem;font-size:.6875rem}
+.uc-scope .uc-scope-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.5rem}
+.utility-config-page .uc-scope-options .uc-scope-option{box-sizing:border-box;min-width:0;min-height:2.25rem;height:auto;margin:0;padding:.5rem .625rem;font-size:.6875rem;line-height:1.4}
+.uc-scope .uc-strip{min-height:2.125rem;box-sizing:border-box;gap:.625rem;margin-top:1.125rem;padding:.5625rem .75rem;font-size:.625rem;line-height:1.6}
+.uc-scope .uc-scope-hint{margin:.625rem 0 0;font-size:.625rem;line-height:1.6}
+@media(max-width:750px){.uc-scope .uc-two{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:480px){.utility-config-page .uc-scope{padding:1rem}.uc-scope .uc-scope-options{grid-template-columns:minmax(0,1fr)}.uc-scope .uc-strip{flex-wrap:wrap}.uc-scope .uc-strip a{margin-left:auto}}
+/* Đồng bộ kích thước thẻ tiền điện với phạm vi áp dụng. */
+.uc-electric .uc-service-heading{display:flex;align-items:center;gap:.75rem;margin-bottom:1.125rem}
+.uc-electric .uc-service-icon{width:30px;height:30px;flex:0 0 30px;border-radius:7px}
+.uc-electric .uc-service-heading strong{font-size:.9375rem;line-height:1.5}
+.uc-electric .uc-service-heading small{font-size:.6875rem;line-height:1.6;margin-top:.375rem}
+.uc-electric .uc-enabled{font-size:.625rem;line-height:1.4;padding:.3125rem .5625rem;white-space:nowrap}
+.uc-electric .uc-history{margin:0 0 1.125rem;font-size:.625rem;line-height:1.6}
+.utility-config-page .uc-electric label{font-size:.75rem;line-height:1.5;margin-bottom:.4375rem}
+.uc-electric .uc-electric-options{gap:.625rem;margin-bottom:1.25rem}
+.uc-electric .uc-method-options label{box-sizing:border-box;min-height:2.5rem;height:auto;padding:.625rem .75rem;font-size:.6875rem;line-height:1.5;border-radius:6px}
+.uc-electric .uc-electric-price-row{gap:1rem;align-items:start}
+.utility-config-page .uc-electric input:not([type=radio]),.uc-electric .uc-reading-unit{box-sizing:border-box;min-height:2.5rem;height:2.5rem;font-size:.6875rem;border-radius:6px}
+.uc-electric .uc-electric-formula{margin-top:1rem;padding-top:.875rem;font-size:.625rem;line-height:1.6}
+@media(max-width:600px){.uc-electric .uc-service-heading{flex-wrap:wrap}.uc-electric .uc-electric-price-row{grid-template-columns:minmax(0,1fr)}.uc-electric .uc-method-options{grid-template-columns:minmax(0,1fr)}}
+/* Đồng bộ thẻ tiền nước với thẻ tiền điện. */
+.uc-water .uc-service-heading{display:flex;align-items:center;gap:.75rem;margin-bottom:1.125rem}
+.uc-water .uc-service-icon{width:30px;height:30px;flex:0 0 30px;border-radius:7px}
+.uc-water .uc-service-heading strong{font-size:.9375rem;line-height:1.5}
+.uc-water .uc-service-heading small{font-size:.6875rem;line-height:1.6;margin-top:.375rem}
+.uc-water .uc-enabled{font-size:.625rem;line-height:1.4;padding:.3125rem .5625rem;white-space:nowrap}
+.uc-water .uc-history{margin:0 0 1.125rem;font-size:.625rem;line-height:1.6}
+.utility-config-page .uc-water label{font-size:.75rem;line-height:1.5;margin-bottom:.4375rem}
+.uc-water .uc-water-options{gap:.625rem;margin-bottom:1.25rem}
+.uc-water .uc-method-options label{box-sizing:border-box;min-height:2.5rem;height:auto;padding:.625rem .75rem;font-size:.6875rem;line-height:1.5;border-radius:6px}
+.uc-water .uc-water-price-row{gap:1rem;align-items:start}
+.utility-config-page .uc-water input:not([type=radio]),.uc-water .uc-reading-unit{box-sizing:border-box;min-height:2.5rem;height:2.5rem;font-size:.6875rem;border-radius:6px}
+.uc-water .uc-electric-formula{margin-top:1rem;padding-top:.875rem;font-size:.625rem;line-height:1.6}
+@media(max-width:600px){.uc-water .uc-service-heading{flex-wrap:wrap}.uc-water .uc-water-price-row{grid-template-columns:minmax(0,1fr)}.uc-water .uc-method-options{grid-template-columns:minmax(0,1fr)}}
+/* Cân đối thẻ thời điểm hiệu lực. */
+.utility-config-page .uc-effective{padding:1.25rem;border-radius:9px}
+.uc-effective .uc-title{align-items:center;gap:.75rem;margin-bottom:1.25rem}
+.uc-effective .uc-icon{width:30px;height:30px;flex:0 0 30px;border-radius:7px}
+.uc-effective .uc-title h2{font-size:.875rem;line-height:1.5;margin:0 0 .375rem}
+.uc-effective .uc-title p{font-size:.6875rem;line-height:1.6;margin:0}
+.uc-effective .uc-two{grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;align-items:start}
+.uc-effective .uc-two>div{min-width:0}
+.utility-config-page .uc-effective label{font-size:.75rem;line-height:1.5;margin-bottom:.4375rem}
+.utility-config-page .uc-effective input,.utility-config-page .uc-effective select{height:2.25rem;box-sizing:border-box;font-size:.6875rem;padding:0 .875rem;border-radius:6px}
+.uc-effective .uc-effective-date input{padding-right:2.5rem}
+.uc-effective .uc-notice{display:flex;align-items:flex-start;gap:.625rem;padding:.75rem .875rem;margin:1rem 0 0;font-size:.6875rem;line-height:1.6;border-radius:7px}
+.uc-effective .uc-notice>svg{width:14px;height:14px;flex:0 0 14px;margin-top:.125rem}
+@media(max-width:600px){.utility-config-page .uc-effective{padding:1rem}.uc-effective .uc-two{grid-template-columns:minmax(0,1fr)}}

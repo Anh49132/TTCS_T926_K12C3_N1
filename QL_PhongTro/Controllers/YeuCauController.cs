@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization; using Microsoft.AspNetCore.Mvc; using Microsoft.AspNetCore.Mvc.Rendering; using Microsoft.EntityFrameworkCore; using QL_PhongTro.Authorization; using QL_PhongTro.Data; using QL_PhongTro.Models; using QL_PhongTro.Services; using QL_PhongTro.ViewModels;
+﻿using Microsoft.AspNetCore.Authorization; using Microsoft.AspNetCore.Mvc; using Microsoft.AspNetCore.Mvc.Rendering; using Microsoft.EntityFrameworkCore; using QL_PhongTro.Authorization; using QL_PhongTro.Data; using QL_PhongTro.Models; using QL_PhongTro.Services; using QL_PhongTro.ViewModels;
 namespace QL_PhongTro.Controllers;
 [Authorize(Roles = "CHU_NHA,QUAN_LY,ADMIN,KHACH_THUE")][ModuleAccess("YEU_CAU_THUE")][ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public class YeuCauController(AppDbContext db, ITimeProvider clock, YeuCauThueService requests, LichHenService appointments) : Controller
@@ -77,6 +77,12 @@ public class YeuCauController(AppDbContext db, ITimeProvider clock, YeuCauThueSe
                         MaYeuCau = request.MaYeuCau,
                         TenKhach = tenant.HoTen,
                         SoDienThoai = tenant.SoDienThoai ?? (account == null ? "" : account.SoDienThoai),
+                        Email = account == null ? null : account.Email,
+                        NgheNghiep = tenant.NgheNghiep,
+                        DienTich = room.DienTich,
+                        GiaThue = room.GiaThue,
+                        SoNguoiDuKien = request.SoNguoiDuKien,
+                        AnhPhong = db.AnhPhongs.Where(photo => photo.PhongId == room.Id).OrderBy(photo => photo.ThuTu).Select(photo => photo.DuongDanAnhNho ?? photo.DuongDan).FirstOrDefault(),
                         MaPhong = room.MaPhong,
                         TenToaNha = db.ToaNhas.Where(b => b.Id == room.ToaNhaId).Select(b => b.TenToaNha).FirstOrDefault() ?? "",
                         LichHen = request.LichHen,
@@ -95,6 +101,32 @@ public class YeuCauController(AppDbContext db, ITimeProvider clock, YeuCauThueSe
             item.QuaHanChuaXuLy = TrangThaiYeuCau.ChuaXuLy(item.TrangThai) && nowUtc - createdUtc >= TimeSpan.FromHours(24);
         }
         return View(new DanhSachYeuCauViewModel { YeuCaus = items.Where(x => validStatus == null || x.TrangThai == validStatus).ToList(), TongHop = items, NowUtc = nowUtc, LaKhachThue = laKhachThue, TrangThai = validStatus, ToaNhaId = validBuilding, ToaNhaOptions = buildings });
+    }
+
+    [HttpPost, Authorize(Roles = "CHU_NHA"), ModuleAccess("YEU_CAU_THUE", write: true), ValidateAntiForgeryToken]
+    public async Task<IActionResult> XuLyNhanh(int id, string thaoTac, bool sauKhiXem, bool daDongYThue, string? lyDo, string? ghiChu, CancellationToken ct)
+    {
+        var accountId = int.TryParse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out var parsed) ? parsed : 0;
+        if (accountId == 0) return Forbid();
+        try
+        {
+            if (thaoTac == "TU_CHOI") await appointments.TuChoiAsync(id, accountId, lyDo ?? "", ghiChu, ct);
+            else if (thaoTac == "DUYET")
+            {
+                if (sauKhiXem)
+                {
+                    if (!daDongYThue) throw new InvalidOperationException("Hãy xác nhận khách đã đồng ý thuê sau khi xem phòng.");
+                    await appointments.DuyetSauKhiXemAsync(id, accountId, ct);
+                }
+                else await appointments.DuyetThueNgayAsync(id, accountId, ct);
+            }
+            else return BadRequest();
+            TempData["YeuCauOk"] = thaoTac == "DUYET" ? "Đã duyệt yêu cầu." : "Đã từ chối yêu cầu.";
+        }
+        catch (KeyNotFoundException) { return NotFound(); }
+        catch (UnauthorizedAccessException) { return Forbid(); }
+        catch (Exception ex) when (ex is InvalidOperationException or LichHenConflictException) { TempData["YeuCauError"] = ex.Message; }
+        return RedirectToAction(nameof(Index));
     }
 
     [HttpGet("/YeuCau/MoTinDang/{id:int}"), Authorize(Roles = "KHACH_THUE")]

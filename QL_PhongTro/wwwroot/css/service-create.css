@@ -51,3 +51,185 @@
 .service-create-page .sc-scope input{appearance:none;width:15px;height:15px;border:1px solid #D9DDE2;border-radius:50%;background:#FFF;margin:0;flex-shrink:0}
 .service-create-page .sc-scope input:checked{border:2px solid #BFA77A;background:radial-gradient(circle,#BFA77A 0 3px,#FFF 3.5px)}
 .service-create-page .sc-scope input:focus-visible{outline:2px solid #BFA77A;outline-offset:2px}
+.dashboard-header .sc-header-breadcrumb{line-height:1.5;gap:.75rem;font-size:1rem}.sc-header-breadcrumb strong{font-size:inherit}
+/* Khung nội dung dùng khoảng đệm chung của Tổng quan. */
+.service-create-page{width:100%;max-width:none;min-width:0;margin:0;padding:0}
+.service-create-page>.sc-heading{margin-top:0;padding-top:0;align-items:flex-start}
+.sc-service-info .sc-card-heading{gap:.625rem;margin-bottom:1rem;align-items:center}
+.sc-service-info .sc-icon{width:28px;height:28px;flex:0 0 28px;border-radius:6px}
+.sc-service-info .sc-icon svg{display:block;width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round}
+.sc-service-info h2{font-size:.875rem;line-height:1.5;margin:0 0 .1875rem}
+.sc-service-info .sc-card-heading p{font-size:.625rem;line-height:1.5}
+.sc-service-info .sc-name-fields{grid-template-columns:minmax(0,2.15fr) minmax(0,1fr);gap:.875rem;align-items:start}
+.sc-service-info .sc-name-fields>div{min-width:0}
+.sc-service-info label{font-size:.6875rem;line-height:1.5;margin-bottom:.4375rem}
+.sc-card.sc-service-info input:not([type=radio]):not([type=checkbox]){height:2.25rem;padding:.5rem .625rem;font-size:.6875rem;border-radius:6px}
+.sc-service-info small{display:block;margin-top:.4375rem;font-size:.625rem;line-height:1.5;color:#92969D}
+@media(max-width:600px){.sc-service-info .sc-name-fields{grid-template-columns:minmax(0,1fr)}}
+.sc-pricing-card .sc-card-heading{gap:.625rem;margin-bottom:1rem}
+.sc-pricing-card .sc-icon{width:28px;height:28px;flex:0 0 28px}
+.sc-pricing-card .sc-icon svg{display:block;width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.sc-pricing-card .sc-methods{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.625rem;margin-bottom:1rem}
+.sc-pricing-card .sc-methods>label{display:flex;align-items:flex-start;gap:.5rem;min-width:0;min-height:4.25rem;padding:.75rem;border:1px solid #E9EAEC;border-radius:7px;background:#FFF;box-sizing:border-box;cursor:pointer;margin:0}
+.sc-pricing-card .sc-methods>label:last-child{grid-column:1/-1;min-height:3.25rem}
+.sc-pricing-card .sc-methods>label:has(input:checked){border-color:#BFA77A;background:#FCFAF6}
+.sc-pricing-card .sc-methods input{width:14px;height:14px;flex:0 0 14px;margin:.125rem 0 0;accent-color:#BFA77A}
+.sc-pricing-card .sc-methods strong{display:block;font-size:.75rem;line-height:1.5;font-weight:600}
+.sc-pricing-card .sc-methods small{display:block;margin-top:.1875rem;font-size:.625rem;line-height:1.5;color:#92969D}
+.sc-pricing-card .sc-method-icon{margin-left:auto;width:15px;height:15px;flex:0 0 15px}
+.sc-pricing-card .sc-fields{gap:.875rem;align-items:start}
+.sc-card.sc-pricing-card input:not([type=radio]){height:2.25rem;font-size:.6875rem}
+.sc-pricing-card .sc-formula{margin:.875rem 0 0;padding:.625rem .75rem;border-radius:6px;background:#F8F8F7;font-size:.625rem;line-height:1.6;color:#92969D}
+@media(max-width:600px){.sc-pricing-card .sc-methods{grid-template-columns:minmax(0,1fr)}}
+.sc-scope-card .sc-card-heading{gap:.625rem;margin-bottom:1rem;align-items:center}
+.sc-scope-card .sc-icon{width:28px;height:28px;flex:0 0 28px}
+.sc-scope-card .sc-icon svg{display:block;width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.sc-scope-card h2{font-size:.875rem;line-height:1.5;margin:0 0 .1875rem}
+.sc-scope-card .sc-card-heading p{font-size:.625rem;line-height:1.5}
+.sc-card.sc-scope-card select{height:2.25rem;padding:.5rem .625rem;font-size:.6875rem;border-radius:6px}
+.sc-scope-card>small{display:block;margin-top:.4375rem;font-size:.625rem;line-height:1.6;color:#92969D}
+.sc-scope-card .sc-scope-heading{margin:1rem 0 .5rem;font-size:.6875rem}
+.sc-scope-card .sc-scope{display:flex;align-items:center;flex-wrap:wrap;gap:.75rem 1.25rem}
+.sc-scope-card .sc-scope label{display:inline-flex;align-items:center;gap:.5rem;margin:0;font-size:.6875rem;line-height:1.5}
+.sc-scope-card .sc-scope input{width:14px;height:14px;flex:0 0 14px;margin:0;accent-color:#BFA77A}
+@media(max-width:600px){.sc-scope-card .sc-scope{align-items:flex-start;flex-direction:column;gap:.75rem}}
+.sc-effective-card .sc-card-heading{gap:.625rem;margin-bottom:1rem;align-items:center}
+.sc-effective-card .sc-icon{width:28px;height:28px;flex:0 0 28px}
+.sc-effective-card .sc-icon svg{display:block;width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.sc-effective-card h2{font-size:.875rem;line-height:1.5;margin:0 0 .1875rem}
+.sc-effective-card .sc-card-heading p{font-size:.625rem;line-height:1.5}
+.sc-effective-card .sc-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:.875rem;align-items:start}
+.sc-effective-card .sc-fields>div{min-width:0}
+.sc-effective-card label{font-size:.6875rem;line-height:1.5;margin-bottom:.4375rem}
+.sc-card.sc-effective-card input,.sc-card.sc-effective-card select{height:2.25rem;padding:.5rem .625rem;font-size:.6875rem}
+.sc-effective-card .sc-notice{display:block;margin:.75rem 0 1rem;font-size:.625rem;line-height:1.6;color:#A18B63}
+.sc-card.sc-effective-card textarea{min-height:4.5rem;padding:.625rem .75rem;font-size:.6875rem;line-height:1.6;border-radius:6px}
+.sc-effective-card>small:last-child{display:block;margin-top:.4375rem;font-size:.625rem;line-height:1.5;color:#92969D}
+@media(max-width:600px){.sc-effective-card .sc-fields{grid-template-columns:minmax(0,1fr)}}
+.sc-aside .sc-summary{padding:0;overflow:hidden;border-radius:9px}
+.sc-summary .sc-summary-heading{display:flex;align-items:center;gap:.5rem;padding:.875rem 1rem;margin:0;border-bottom:1px solid #EFF0F2;font-size:.8125rem;line-height:1.5}
+.sc-summary-heading svg,.sc-summary-footer svg{width:14px;height:14px;flex:0 0 14px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.sc-summary .sc-summary-name{padding:1rem 1rem .875rem;gap:.625rem;align-items:center}
+.sc-summary-name .sc-icon{width:32px;height:32px;flex:0 0 32px}
+.sc-summary-name .sc-icon svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.sc-summary-name strong{font-size:.8125rem;line-height:1.5}
+.sc-summary-name small{display:block;font-size:.625rem;color:#92969D;line-height:1.5;margin-top:.1875rem}
+.sc-summary .sc-summary-price{margin:0 1rem;padding:.875rem;border-radius:6px;background:#F8F8F7}
+.sc-summary-price strong{font-size:1.5rem;line-height:1.3;margin:.25rem 0;font-weight:650}
+.sc-summary-price small{font-size:.625rem;line-height:1.5;color:#92969D}
+.sc-summary dl{margin:.625rem 1rem .875rem}
+.sc-summary dl>div{grid-template-columns:4.75rem minmax(0,1fr);gap:.625rem;padding:.625rem 0;border-bottom:0}
+.sc-summary dl>div:nth-child(3){border-top:1px solid #EFF0F2;margin-top:.375rem;padding-top:.875rem}
+.sc-summary dt{font-size:.625rem;line-height:1.5}
+.sc-summary dd{font-size:.6875rem;line-height:1.5}
+.sc-summary .sc-summary-footer{display:flex;align-items:center;gap:.4375rem;margin:0;padding:.625rem 1rem;border-top:1px solid #EFF0F2;font-size:.625rem;line-height:1.5}
+/* Cân kích thước thông tin dịch vụ với các thẻ trong form. */
+.sc-card.sc-service-info{padding:1.25rem;border-radius:9px}
+.sc-service-info .sc-card-heading{gap:.75rem;margin-bottom:1.125rem}
+.sc-service-info h2{font-size:.875rem;font-weight:600;line-height:1.5;margin-bottom:.25rem}
+.sc-service-info .sc-card-heading p{font-size:.6875rem;line-height:1.6}
+.sc-service-info .sc-name-fields{grid-template-columns:minmax(0,2.15fr) minmax(0,1fr);gap:1rem}
+.sc-service-info label{font-size:.75rem;line-height:1.5;margin-bottom:.4375rem}
+.sc-card.sc-service-info input:not([type=radio]):not([type=checkbox]){height:2.375rem;padding:.5625rem .75rem;font-size:.6875rem;line-height:1.5}
+.sc-service-info small{margin-top:.5rem;font-size:.625rem;line-height:1.6}
+@media(max-width:600px){.sc-card.sc-service-info{padding:1rem}.sc-service-info .sc-name-fields{grid-template-columns:minmax(0,1fr);gap:.875rem}}
+/* Cân lựa chọn cách tính và ô đơn giá. */
+.sc-card.sc-pricing-card{padding:1.25rem;border-radius:9px}
+.sc-pricing-card .sc-card-heading{gap:.75rem;align-items:center;margin-bottom:1.125rem}
+.sc-pricing-card .sc-card-heading h2{font-size:.875rem;line-height:1.5;margin-bottom:.25rem}
+.sc-pricing-card .sc-card-heading p{font-size:.6875rem;line-height:1.6}
+.sc-pricing-card .sc-methods{gap:.875rem;margin-bottom:1.25rem}
+.sc-pricing-card .sc-methods>label,.sc-pricing-card .sc-methods>label:last-child{display:flex;flex-direction:row;align-items:flex-start;gap:.625rem;min-height:4.5rem;padding:.875rem;margin:0}
+.sc-pricing-card .sc-methods>label>span{flex:1;min-width:0}
+.sc-pricing-card .sc-methods strong{font-size:.75rem;line-height:1.5}
+.sc-pricing-card .sc-methods small{font-size:.6875rem;line-height:1.6;margin-top:.25rem}
+.sc-pricing-card .sc-method-icon{align-self:flex-start;margin:.125rem 0 0 auto}
+.sc-pricing-card .sc-fields{grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem}
+.sc-pricing-card .sc-fields>div{min-width:0}
+.sc-pricing-card .sc-fields label{font-size:.75rem;line-height:1.5;margin-bottom:.4375rem}
+.sc-card.sc-pricing-card input:not([type=radio]){height:2.375rem;padding:.5625rem .75rem;font-size:.6875rem}
+.sc-pricing-card .sc-formula{margin-top:.875rem;padding:.75rem;font-size:.6875rem;line-height:1.6}
+.sc-pricing-card .sc-muted{display:block;margin-top:.5rem;font-size:.625rem;line-height:1.6}
+@media(max-width:600px){.sc-card.sc-pricing-card{padding:1rem}.sc-pricing-card .sc-fields{grid-template-columns:minmax(0,1fr)}}
+/* Đồng bộ kích thước phạm vi áp dụng với các thẻ nhập dịch vụ. */
+.sc-card.sc-scope-card{padding:1.25rem;border-radius:9px}
+.sc-scope-card .sc-card-heading{gap:.75rem;margin-bottom:1.125rem}
+.sc-scope-card .sc-card-heading h2{font-size:.875rem;font-weight:600;line-height:1.5;margin-bottom:.25rem}
+.sc-scope-card .sc-card-heading p{font-size:.6875rem;line-height:1.6}
+.sc-scope-card>label{font-size:.75rem;line-height:1.5;margin-bottom:.4375rem}
+.sc-card.sc-scope-card select{height:2.375rem;padding:.5625rem .75rem;font-size:.6875rem}
+.sc-scope-card>small{margin-top:.5rem;font-size:.625rem;line-height:1.6}
+.sc-scope-card .sc-scope-heading{margin:1.25rem 0 .625rem;font-size:.75rem;line-height:1.5}
+.sc-scope-card .sc-scope{gap:.75rem 1.25rem;align-items:center}
+.sc-scope-card .sc-scope label{min-height:1.5rem;font-size:.6875rem;line-height:1.5;gap:.5rem}
+.sc-scope-card .sc-scope+small{margin-top:.625rem}
+@media(max-width:600px){.sc-card.sc-scope-card{padding:1rem}.sc-scope-card .sc-scope{align-items:flex-start;gap:.625rem}}
+/* Đồng bộ kích thước thẻ hiệu lực và ghi chú. */
+.sc-card.sc-effective-card{padding:1.25rem;border-radius:9px}
+.sc-effective-card .sc-card-heading{gap:.75rem;margin-bottom:1.125rem}
+.sc-effective-card .sc-card-heading h2{font-size:.875rem;font-weight:600;line-height:1.5;margin-bottom:.25rem}
+.sc-effective-card .sc-card-heading p{font-size:.6875rem;line-height:1.6}
+.sc-effective-card .sc-fields{gap:1rem}
+.sc-effective-card label{font-size:.75rem;line-height:1.5;margin-bottom:.4375rem}
+.sc-card.sc-effective-card input,.sc-card.sc-effective-card select{height:2.375rem;padding:.5625rem .75rem;font-size:.6875rem}
+.sc-effective-card .sc-notice{margin:.75rem 0 1.125rem;font-size:.625rem;line-height:1.6}
+.sc-card.sc-effective-card textarea{min-height:5rem;padding:.75rem;font-size:.6875rem;line-height:1.6}
+.sc-effective-card>small:last-child{margin-top:.5rem;font-size:.625rem;line-height:1.6}
+@media(max-width:600px){.sc-card.sc-effective-card{padding:1rem}}
+/* Cân kích thước thẻ tóm tắt theo form dịch vụ. */
+.sc-summary .sc-summary-heading{padding:1rem;font-size:.875rem;line-height:1.5;gap:.625rem}
+.sc-summary .sc-summary-name{padding:1rem;gap:.75rem;align-items:center}
+.sc-summary-name>div{min-width:0}
+.sc-summary-name strong{display:block;font-size:.8125rem;line-height:1.5;overflow-wrap:anywhere}
+.sc-summary-name small{font-size:.6875rem;line-height:1.5;margin-top:.25rem}
+.sc-summary .sc-summary-price{margin:0 1rem;padding:1rem;border-radius:7px}
+.sc-summary-price strong{font-size:1.625rem;line-height:1.3;margin:.375rem 0;font-weight:650}
+.sc-summary-price small{font-size:.6875rem;line-height:1.5}
+.sc-summary dl{margin:.75rem 1rem 1rem}
+.sc-summary dl>div{grid-template-columns:4.75rem minmax(0,1fr);gap:.75rem;padding:.625rem 0}
+.sc-summary dt{font-size:.6875rem;line-height:1.6}
+.sc-summary dd{font-size:.75rem;line-height:1.6;overflow-wrap:anywhere}
+.sc-summary dl>div:nth-child(3){margin-top:.375rem;padding-top:.875rem}
+.sc-summary .sc-status{display:inline-block;font-size:.625rem;line-height:1.5;padding:.1875rem .375rem;border-radius:4px}
+.sc-summary .sc-summary-footer{padding:.75rem 1rem;font-size:.625rem;line-height:1.6}
+/* Ba cách tính cùng hàng trên màn hình đủ rộng. */
+.sc-pricing-card .sc-methods{grid-template-columns:repeat(3,minmax(0,1fr))}
+.sc-pricing-card .sc-methods>label:last-child{grid-column:auto}
+@media(max-width:600px){.sc-pricing-card .sc-methods{grid-template-columns:minmax(0,1fr)}}
+/* Cùng bố cục nút chọn / nội dung / biểu tượng cho cả ba ô. */
+.service-create-page .sc-pricing-card .sc-methods>label{display:flex;flex-direction:row;align-items:flex-start;justify-content:flex-start;gap:.625rem}
+.service-create-page .sc-pricing-card .sc-methods>label>input[type=radio]{position:static;display:block;flex:0 0 14px;width:14px;height:14px;margin:.125rem 0 0;align-self:flex-start}
+.service-create-page .sc-pricing-card .sc-methods>label>span{display:block;flex:1 1 0;min-width:0;margin:0}
+.service-create-page .sc-pricing-card .sc-methods>label>.sc-method-icon{position:static;display:block;flex:0 0 15px;width:15px;height:15px;margin:.125rem 0 0;align-self:flex-start}
+/* Ba ô cách tính cân đối cùng chiều cao. */
+.service-create-page .sc-pricing-card .sc-methods{gap:.875rem;align-items:stretch}
+.service-create-page .sc-pricing-card .sc-methods>label{min-height:4.5rem;height:100%;box-sizing:border-box;padding:.875rem;gap:.625rem;border-radius:8px}
+.service-create-page .sc-pricing-card .sc-methods>label>input[type=radio]{margin:.125rem 0 0}
+.service-create-page .sc-pricing-card .sc-methods strong{font-size:.75rem;font-weight:600;line-height:1.5}
+.service-create-page .sc-pricing-card .sc-methods small{font-size:.6875rem;line-height:1.5;margin-top:.25rem}
+.service-create-page .sc-pricing-card .sc-methods>label>.sc-method-icon{width:14px;height:14px;flex-basis:14px;margin-top:.125rem}
+@media(max-width:600px){.service-create-page .sc-pricing-card .sc-methods{gap:.625rem}.service-create-page .sc-pricing-card .sc-methods>label{min-height:4rem;padding:.75rem}}
+.sc-building-multiple{position:relative}.sc-building-multiple summary{padding:.625rem .75rem;min-height:2.375rem;border:1px solid #DEE0E4;border-radius:6px;font-size:.6875rem;color:#535860;cursor:pointer;box-sizing:border-box}.sc-building-menu{position:absolute;top:calc(100% + .375rem);left:0;right:0;z-index:40;background:#FFF;border:1px solid #E9EAEC;border-radius:8px;padding:.5rem;box-shadow:0 8px 24px #30343B1A;max-height:16rem;overflow:auto}.sc-card .sc-building-menu label{display:flex;align-items:center;gap:.625rem;padding:.625rem;margin:0;cursor:pointer}.sc-building-menu input[type=checkbox]{width:14px;height:14px;accent-color:#BFA77A}.sc-building-menu label:hover{background:#F5F0E6}
+/* Căn menu chọn nhiều tòa nhà. */
+.sc-building-multiple summary{display:flex;align-items:center;justify-content:space-between;gap:.75rem;list-style:none;min-height:2.375rem;padding:.5625rem .75rem;font-size:.6875rem;line-height:1.5;border-radius:6px;overflow-wrap:anywhere}
+.sc-building-multiple summary::-webkit-details-marker{display:none}
+.sc-building-multiple summary::after{content:'';width:6px;height:6px;flex:0 0 6px;border-right:1.5px solid #92969D;border-bottom:1.5px solid #92969D;transform:rotate(45deg);margin-top:-.25rem}
+.sc-building-multiple[open] summary::after{transform:rotate(225deg);margin-top:.125rem}
+.sc-building-multiple summary:focus-visible{outline:2px solid #BFA77A;outline-offset:2px}
+.sc-building-multiple[open] summary{border-color:#BFA77A}
+.sc-building-multiple .sc-building-menu{padding:.375rem;max-height:14rem;border-radius:8px}
+.sc-card .sc-building-multiple .sc-building-menu label{display:flex;align-items:center;gap:.625rem;min-height:2.25rem;box-sizing:border-box;padding:.5rem .625rem;margin:0;border-radius:5px;font-size:.6875rem;font-weight:400;line-height:1.5}
+.sc-card .sc-building-multiple .sc-building-menu label:has(input:checked){background:#F5F0E6;color:#8D7953}
+.sc-card .sc-building-multiple .sc-building-menu input[type=checkbox]{display:block;position:static;width:14px;height:14px;flex:0 0 14px;margin:0;padding:0;align-self:center;accent-color:#BFA77A}
+.sc-room-selection[hidden],.sc-room-grid label[hidden]{display:none}.sc-room-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.625rem}.sc-room-grid label{display:flex;align-items:center;flex-wrap:wrap;gap:.5rem;padding:.625rem;border:1px solid #E9EAEC;border-radius:6px;margin:0}.sc-room-grid input[type=checkbox]{width:14px;height:14px;accent-color:#BFA77A}.sc-room-grid small{font-size:.625rem;color:#92969D}.sc-room-grid label:has(input:checked){background:#F5F0E6;border-color:#BFA77A}@media(max-width:600px){.sc-room-grid{grid-template-columns:1fr}}
+.sc-status-picker{position:relative;min-width:0}
+.sc-status-trigger{display:flex;align-items:center;justify-content:space-between;gap:.625rem;width:100%;height:2.375rem;padding:.5625rem .75rem;border:1px solid #DEE0E4;border-radius:6px;background:#FFF;color:#30343B;font:inherit;font-size:.6875rem;text-align:left;cursor:pointer}
+.sc-status-trigger::after{content:'';width:6px;height:6px;flex:0 0 6px;border-right:1.5px solid #92969D;border-bottom:1.5px solid #92969D;transform:rotate(45deg);margin-top:-.25rem}
+.sc-status-trigger[aria-expanded=true]::after{transform:rotate(225deg);margin-top:.125rem}
+.sc-status-trigger:hover{border-color:#BFA77A}
+.sc-status-trigger:focus-visible,.sc-status-trigger[aria-expanded=true]{outline:2px solid #BFA77A;outline-offset:1px}
+.sc-status-menu{position:absolute;top:calc(100% + .375rem);left:0;right:0;z-index:40;padding:.375rem;border:1px solid #E9EAEC;border-radius:8px;background:#FFF;box-shadow:0 8px 24px #30343B1A}
+.sc-status-menu[hidden]{display:none}
+.sc-status-menu button{display:block;width:100%;padding:.625rem .5rem;border:0;border-radius:5px;background:transparent;color:#535860;font:inherit;font-size:.6875rem;line-height:1.5;text-align:left;cursor:pointer}
+.sc-status-menu button:hover,.sc-status-menu button:focus-visible{background:#F5F5F4;outline:none}
+.sc-status-menu button[aria-selected=true]{background:#F5F0E6;color:#8D7953;font-weight:600}

@@ -1,4 +1,4 @@
-## 11/10/2026 — Duyệt thuê sau khi xem phòng
+﻿## 11/10/2026 — Duyệt thuê sau khi xem phòng
 
 - Chủ nhà có nút Duyệt thuê sau khi xem cho yêu cầu XEM_PHONG/DA_HEN_LICH khi phòng còn trống. Phải xác nhận khách đồng ý thuê ở form và backend; loại/trạng thái khác bị từ chối. Giữ nguyên loại yêu cầu, lịch hẹn và lịch sử.
 - Dùng cùng transaction giữ phòng như thuê ngay: yêu cầu DA_DUYET, phòng DA_DAT_COC, tin DA_CHO_THUE, lịch sử/nhật ký/thông báo. Kiểm tra sức chứa hiện tại, hợp đồng đang/chờ hiệu lực và yêu cầu đã duyệt khác trong khóa SQLite; lỗi rollback. Lập hợp đồng dùng luồng hiện có từ yêu cầu đã duyệt. Không tự ghi nhận cọc.
@@ -1617,3 +1617,370 @@ Cách chạy lại: `dotnet run --project .\QL_PhongTro\QL_PhongTro.csproj --lau
 
 ### 12/10/2026 — Đồng bộ cỡ chữ breadcrumb lịch sử
 - Dùng cùng cỡ chữ 1rem, đậm 600, chiều cao dòng 1.5 và biểu tượng 21px như các trang tạo/sửa/chi tiết phòng. Mobile giữ cỡ chữ, thu khoảng cách và cho xuống dòng. Kiểm tra CSS và HTTP demo đạt; chưa kiểm chứng trực quan thiết bị.
+
+### 12/10/2026 — Khoảng cách Dịch vụ & đơn giá theo Tổng quan
+- Bỏ giới hạn chiều rộng riêng 84.375rem và căn giữa của trang dịch vụ; nội dung dùng hết khung chung với Tổng quan, không thêm đệm trong wrapper. Khoảng ngoài 1.75rem desktop, 1.25rem dọc/1rem ngang ở mobile, tối đa 100rem theo dashboard-spacing.css. Tiêu đề căn đầu hàng, không đệm trên. Chỉ CSS, giữ chức năng dịch vụ. Chưa kiểm chứng trực quan thiết bị.
+
+### 12/10/2026 — Biểu tượng thống kê dịch vụ
+- Đổi bốn ký tự thành SVG danh sách/đồng hồ đo/hóa đơn/tòa nhà nét mảnh 16px theo ảnh, giữ nền xám bo góc và số liệu thật. Chưa kiểm chứng trực quan thiết bị.
+
+### 12/10/2026 — Kích thước thẻ thống kê dịch vụ
+- Căn đều bốn thẻ với đệm 1rem, khoảng cách 1rem; số liệu 1.75rem/600, nhãn 0.75rem, nền biểu tượng 24px/SVG 14px. Mobile giữ hai cột, đệm 0.875rem, số 1.5rem. Kiểm tra CSS và HTTP demo đạt; chưa kiểm chứng trực quan thiết bị.
+
+### 12/10/2026 — Bỏ nút cấu hình điện nước
+- Bỏ nút Cấu hình điện nước trong hàng thao tác trang Dịch vụ & đơn giá theo yêu cầu; giữ action và nghiệp vụ hiện có.
+
+### 12/10/2026 — Khôi phục nút cấu hình điện nước
+- Người dùng hủy yêu cầu bỏ nút; khôi phục Cấu hình điện nước ở hàng thao tác với điều kiện hiển thị và liên kết cũ.
+
+### 12/10/2026 — Bật sắp xếp mã dịch vụ
+- Bỏ disabled ở nút sắp xếp, dùng mã thật để sắp toàn bộ dòng tăng/giảm khi nhấn; mặc định tăng dần. Cập nhật mô tả các chức năng chưa hỗ trợ. Kiểm tra cú pháp JavaScript đạt; chưa kiểm chứng thao tác trực quan.
+
+### 12/10/2026 — Kính lúp tìm dịch vụ
+- Thay ký tự kính lúp trong placeholder bằng SVG nét mảnh 14px bên trái ô tìm, đệm chữ 2rem tránh chồng. Giữ trạng thái tìm kiếm chưa hỗ trợ hiện có; chưa kiểm chứng trực quan thiết bị.
+
+### 12/10/2026 — Bật lọc cách tính dịch vụ
+- Bỏ disabled, thêm lựa chọn tất cả/theo tiêu thụ/theo người/cố định, lọc theo CachTinh thật trên các dòng đã tải. Cập nhật số dòng và thông báo rỗng; giữ sắp xếp hiện có. Kiểm tra cú pháp JS đạt; chưa kiểm chứng thao tác trực quan.
+
+### 12/10/2026 — Bỏ nút Xem dịch vụ
+- Bỏ nút Xem dịch vụ theo yêu cầu; chọn tòa nhà tự gửi form GET để giữ khả năng đổi danh sách. Bộ lọc cách tính và sắp xếp giữ nguyên.
+
+### 12/10/2026 — Biểu tượng danh sách dịch vụ
+- Đổi ký tự sang SVG nét mảnh cho điện, nước, internet, vệ sinh, xe máy, xe đạp, quản lý, giặt sấy và rác, chọn theo tên/mã dịch vụ thật. Giữ nền vàng/xám của loại dịch vụ và dữ liệu hiện có. Chưa kiểm chứng trực quan thiết bị.
+
+### 12/10/2026 — Thẻ giải thích cách tính theo ảnh
+- Căn hai thẻ theo tiêu thụ/phí cố định hai cột đều nhau, đệm 0.875rem, biểu tượng SVG đồng hồ đo/hóa đơn 15px trên nền xám 26px; tiêu đề 0.75rem, mô tả 0.625rem. Mobile một cột. Giữ nội dung công thức hiện có; chưa kiểm chứng trực quan thiết bị.
+
+### 12/10/2026 — Menu nổi tòa nhà và cách tính
+- Thay hai select bộ lọc bằng menu trắng bo góc, bóng nhẹ, mục chọn vàng nhạt và viền focus đồng bộ. Giữ select gốc/form GET, sự kiện change để đổi tòa/lọc cách tính; hỗ trợ bàn phím, Escape, đóng khi ra ngoài. Kiểm tra cú pháp JS/CSS và HTTP đạt; chưa kiểm chứng trực quan/thao tác thiết bị.
+
+### 12/10/2026 — Phân trang dịch vụ theo ảnh
+- Căn mũi tên và ô trang nền charcoal 24px theo ảnh; bật chuyển trang 10/20/50 dòng, cập nhật khoảng dòng và khóa mũi tên ở đầu/cuối. Bộ lọc/sắp xếp đưa về trang đầu và giữ dữ liệu thật. Kiểm tra cú pháp JS đạt; chưa kiểm chứng thao tác trực quan.
+
+### 12/10/2026 — Biểu tượng sửa đơn giá
+- Thay ký tự bút ở menu thao tác bằng SVG bút trong ô vuông nét mảnh 14px theo ảnh; giữ menu và hành động hiện có. Chưa kiểm chứng trực quan thiết bị.
+
+### 12/10/2026 — Mặc định Chọn tòa nhà
+- Trang dịch vụ không tự chọn tòa đầu tiên khi thiếu toaNhaId; thêm lựa chọn rỗng Chọn tòa nhà và lời nhắc chọn tòa để xem dữ liệu. Truy cập có toaNhaId tiếp tục giữ lựa chọn và kiểm tra sở hữu hiện có.
+
+### 12/10/2026 — Bỏ nút lập và xem hóa đơn
+- Bỏ nút Lập và xem hóa đơn cùng khung chứa khỏi trang Dịch vụ & đơn giá theo yêu cầu. Giữ module hóa đơn hiện có.
+
+### 12/10/2026 — Nút Thêm dịch vụ theo ảnh
+- Nút nền charcoal, dấu cộng SVG 14px, chữ 0.6875rem/600, cao tối thiểu 2.125rem. Hiển thị cho người có quyền ngay cả khi chưa chọn tòa; trang Create hỗ trợ toaNhaId nullable để chọn tòa tại form. Giữ kiểm tra quyền backend; chưa kiểm chứng trực quan thiết bị.
+
+### 12/10/2026 — Nút cấu hình điện nước ở giữa
+- Hiển thị Cấu hình điện nước giữa Xuất danh sách và Thêm dịch vụ cho người có quyền. Nếu chưa chọn tòa, bấm mở ô chọn tòa; đã chọn thì dẫn tới cấu hình tòa tương ứng. Kiểm tra cú pháp JS; chưa kiểm chứng thao tác trực quan.
+
+### 12/10/2026 — Khoảng cách cấu hình điện nước theo Tổng quan
+- Bỏ giới hạn riêng 80rem và margin auto của trang cấu hình; wrapper rộng 100%, không thêm padding, tiêu đề không đệm trên. Dùng dashboard-spacing.css chung: ngoài 1.75rem desktop, 1.25rem dọc/1rem ngang trên mobile, khung tối đa 100rem. Kiểm tra CSS và HTTP trang cấu hình đạt; chưa kiểm chứng trực quan thiết bị. Giữ nguyên form và nghiệp vụ.
+
+### 12/10/2026 — Căn kích thước phạm vi áp dụng
+- Thẻ đệm 1.25rem, hai cột đều nhau, ô tòa/lựa chọn phòng cao 2.25rem; thống nhất chữ và khoảng cách tiêu đề, nhãn, thanh giải thích. Dưới 750px chuyển một cột, dưới 480px xếp lựa chọn phòng dọc. CSS/HTTP đạt; chưa kiểm chứng trực quan thiết bị. Không đổi phạm vi áp dụng nghiệp vụ.
+
+### 12/10/2026 — Căn kích thước thẻ tiền điện
+- Căn tiêu đề, biểu tượng 30px, nhãn trạng thái, khoảng cách cách tính/đơn giá; lựa chọn và ô giá/đơn vị cao 2.5rem. Mobile xếp dọc tránh tràn. Giữ hai cách tính đang hỗ trợ và quy tắc giá hiện có. CSS/HTTP đạt; chưa kiểm chứng trực quan thiết bị.
+
+### 12/10/2026 — Căn kích thước thẻ tiền nước
+- Đồng bộ tiền nước với tiền điện: tiêu đề 0.9375rem, biểu tượng 30px, mô tả 0.6875rem, ô giá/đơn vị và lựa chọn cao 2.5rem; khoảng cách đều, mobile xếp dọc. Không đổi cách tính hay lưu giá. CSS/HTTP đạt; chưa kiểm chứng trực quan thiết bị.
+
+### 12/10/2026 — Căn kích thước thời điểm hiệu lực
+- Đồng bộ đệm thẻ 1.25rem, biểu tượng 30px, tiêu đề 0.875rem, hai ô ngày/kỳ thu cao 2.25rem và khoảng cách 1rem. Thanh thông báo căn biểu tượng/chữ gọn; mobile một cột. CSS/HTTP đạt; chưa kiểm chứng trực quan thiết bị. Giữ ngày/kỳ áp dụng nghiệp vụ.
+
+### 12/10/2026 — Bỏ liên kết hướng dẫn ghi điện nước
+- Bỏ liên kết Hướng dẫn ghi điện nước trong thẻ ghi chú theo yêu cầu, giữ nội dung ghi chú.
+
+### 12/10/2026 — Bỏ thông báo khung giao diện dịch vụ
+- Bỏ dòng Chưa hoạt động… ở cuối trang Dịch vụ & đơn giá theo yêu cầu; giữ chức năng và trạng thái các nút hiện có.
+
+### 12/10/2026 — Điều hướng Thêm dịch vụ theo Chi tiết phòng
+- Bỏ chữ Không gian quản lý, giữ biểu tượng nhà có nhãn truy cập; dùng dấu /, chữ 1rem/600, khoảng cách 0.75rem và line-height 1.5 như Chi tiết phòng. Giữ liên kết điều hướng.
+
+### 12/10/2026 — Khoảng cách Thêm dịch vụ theo Tổng quan
+- Bỏ giới hạn chiều rộng riêng 78.125rem và margin auto; wrapper rộng 100%, không thêm padding, tiêu đề căn đầu hàng. Dùng khoảng ngoài chung 1.75rem desktop, 1.25rem dọc/1rem ngang mobile và khung tối đa 100rem. CSS/HTTP đạt; chưa kiểm chứng trực quan thiết bị. Giữ nguyên form thêm dịch vụ.
+
+### 12/10/2026 — Thông tin dịch vụ theo ảnh
+- Biểu tượng danh sách SVG 16px trên nền 28px, tiêu đề/mô tả gọn, hai cột tên/mã tỷ lệ 2.15:1, ô cao 2.25rem; mobile một cột. Giữ mã tự sinh khi lưu, không đưa mã mẫu DV-009 vào form. Chưa kiểm chứng trực quan thiết bị.
+
+### 12/10/2026 — Thẻ cách tính và đơn giá theo ảnh
+- Thay biểu tượng hóa đơn SVG; căn lựa chọn cách tính hai cột, viền vàng/nền nhạt mục chọn, ô giá/đơn vị cao 2.25rem, thanh công thức gọn. Giữ lựa chọn Theo đầu người hiện có ở hàng riêng và đơn vị tùy nhập để bảo toàn nghiệp vụ. Chưa kiểm chứng trực quan thiết bị.
+
+### 12/10/2026 — Phạm vi thêm dịch vụ theo ảnh
+- Thay biểu tượng tòa nhà SVG; căn tiêu đề, ô chọn cao 2.25rem, mô tả và lựa chọn phòng gọn theo ảnh. Giữ một tòa mỗi lần tạo và checkbox mặc định cho phòng mới theo backend hiện có; không mô phỏng chọn nhiều tòa hay áp dụng mọi phòng. Chưa kiểm chứng trực quan thiết bị.
+
+### 12/10/2026 — Hiệu lực và ghi chú theo ảnh
+- Thêm SVG lịch 15px trên nền 28px; căn hai ô ngày/trạng thái cao 2.25rem, thanh chú thích và textarea cao tối thiểu 4.5rem; mobile một cột. Giữ các trường chưa hỗ trợ bị vô hiệu hóa và thông báo thật, không giả lập lưu ghi chú/hẹn hiệu lực. Chưa kiểm chứng trực quan thiết bị.
+
+### 12/10/2026 — Tóm tắt dịch vụ theo ảnh
+- Thêm biểu tượng SVG tiêu đề/tên/thông báo chưa lưu, khối giá nổi bật nền xám nhạt, căn dòng thông tin và đường phân cách theo ảnh. Giữ tóm tắt theo dữ liệu nhập, một tòa, ngày/trạng thái thật; không dùng dữ liệu mẫu. Chưa kiểm chứng trực quan thiết bị.
+
+### 12/10/2026 — Cân kích thước thông tin dịch vụ
+- Thẻ đệm 1.25rem, nhãn 0.75rem, mô tả 0.6875rem, hai ô cao 2.375rem và cách nhau 1rem; giữ tỷ lệ tên/mã 2.15:1, mobile một cột. Kiểm tra CSS/HTTP đạt; chưa kiểm chứng trực quan thiết bị. Giữ mã tự sinh và nhập liệu hiện có.
+
+### 12/10/2026 — Cân kích thước cách tính và đơn giá
+- Căn lựa chọn bằng hàng ngang nút chọn/chữ/biểu tượng, đệm 0.875rem, cao tối thiểu 4.5rem; nhãn 0.75rem, mô tả 0.6875rem. Ô giá/đơn vị hai cột cao 2.375rem; mobile một cột. CSS/HTTP đạt; chưa kiểm chứng trực quan thiết bị. Giữ ba cách tính hiện có.
+
+### 12/10/2026 — Cân kích thước phạm vi thêm dịch vụ
+- Đồng bộ đệm 1.25rem, nhãn 0.75rem, mô tả 0.6875rem, ô tòa cao 2.375rem; tách rõ nhóm chọn tòa và nhóm áp dụng phòng, căn checkbox/chữ. CSS/HTTP đạt; chưa kiểm chứng trực quan thiết bị. Giữ phạm vi và khả năng backend hiện có.
+
+### 12/10/2026 — Cân kích thước hiệu lực và ghi chú
+- Đồng bộ đệm 1.25rem, nhãn 0.75rem, mô tả 0.6875rem; hai ô cao 2.375rem, textarea tối thiểu 5rem, khoảng thông báo đều. Mobile đệm 1rem. CSS/HTTP đạt; chưa kiểm chứng trực quan thiết bị. Giữ trạng thái trường và chức năng hiện có.
+
+### 12/10/2026 — Cân kích thước tóm tắt dịch vụ
+- Căn đệm 1rem cho tiêu đề/tên/khối giá, giá 1.625rem, mô tả 0.6875rem và thông tin 0.75rem; căn cột nhãn/giá trị và trạng thái gọn. CSS/HTTP đạt; chưa kiểm chứng trực quan thiết bị. Giữ cập nhật tóm tắt theo form.
+
+### 12/10/2026 — Ba cách tính cùng hàng
+- Xếp ba lựa chọn Theo tiêu thụ/Cố định/Theo đầu người thành ba cột đều nhau, bỏ span toàn hàng của lựa chọn cuối. Dưới 600px xếp dọc để dễ đọc. Kiểm tra CSS/HTTP đạt; chưa kiểm chứng trực quan thiết bị.
+
+### 12/10/2026 — Đồng bộ bố cục ba lựa chọn cách tính
+- Cố định cả ba lựa chọn cùng flex hàng ngang: radio bên trái, nội dung giữa, SVG bên phải trên cùng dòng; bỏ ảnh hưởng position/margin cũ. Giữ ba cột desktop và lựa chọn nghiệp vụ. CSS/HTTP đạt; chưa kiểm chứng trực quan thiết bị.
+
+### 12/10/2026 — Đơn giá mặc định 0
+- GET Thêm dịch vụ khởi tạo DonGia bằng 0 và placeholder 0; giữ giá nhập khi POST có lỗi và quy tắc kiểm tra giá hiện có.
+
+### 12/10/2026 — Cân ba ô cách tính
+- Căn ba ô cùng chiều cao tối thiểu 4.5rem, đệm 0.875rem, gap 0.875rem; chữ và biểu tượng 14px thẳng hàng với radio. Mobile đệm 0.75rem. CSS/HTTP đạt; chưa kiểm chứng trực quan thiết bị.
+
+### 12/10/2026 — Chọn nhiều tòa khi tạo dịch vụ
+- Thêm menu checkbox chọn nhiều tòa và tóm tắt các tòa đã chọn. Backend kiểm tra sở hữu tất cả tòa trước khi ghi, tạo chung một danh mục dịch vụ và giá/gán mặc định mỗi tòa trong cùng transaction; loại ID trùng, giữ tương thích ToaNhaId đơn.
+- Test MultipleBuildingsShareServiceAndRejectForeignBuildingAtomically đạt 1/1 trên SQLite giả: hai tòa cùng dịch vụ/giá và từ chối tòa khác không ghi một phần. Build/JS syntax đạt; chưa kiểm chứng thao tác trực quan thiết bị. Không đổi schema.
+
+### 12/10/2026 — Căn menu chọn nhiều tòa
+- Ô chọn cao tối thiểu 2.375rem, mũi tên nét mảnh bên phải; các dòng menu cao tối thiểu 2.25rem với checkbox 14px căn giữa, chữ 0.6875rem và nền nhạt mục chọn. Giữ chọn nhiều tòa và dữ liệu form. CSS/HTTP đạt; chưa kiểm chứng trực quan thiết bị.
+
+### 12/10/2026 — Bật chọn phòng cụ thể
+- Cho chọn phòng hiện có theo các tòa đã tích; thay đổi tòa loại lựa chọn phòng không thuộc phạm vi. Backend xác minh ID/phạm vi phòng trước khi tạo, gán dịch vụ đúng phòng trong transaction tạo dịch vụ, không gán mặc định phòng mới khi chọn cụ thể. Giữ CSRF/quyền hiện có, không đổi schema.
+- Hai test SQLite giả về nhiều tòa và gán phòng/phạm vi đạt; build/JS syntax đạt. Chưa kiểm chứng thao tác trực quan thiết bị.
+
+### 12/10/2026 — Bật trạng thái và ghi chú thêm dịch vụ
+- Bật Đang áp dụng/Tạm ngừng, lưu dang_ap_dung cho giá tại mỗi tòa; ghi chú tối đa 500 ký tự lưu vào dich_vu.mo_ta hiện có, trim/chuỗi rỗng thành null. Tóm tắt cập nhật trạng thái theo form, giữ dữ liệu khi validation lỗi. Đã kiểm tra schema SQLite đọc-only, không đổi schema.
+- Test ServiceCreationPersistsStatusAndNotesAndRejectsInvalidStatus trên DB giả đạt: lưu trạng thái/ghi chú và từ chối trạng thái giả. JS syntax/build đạt; chưa kiểm chứng thao tác trực quan thiết bị.
+
+### 12/10/2026 — Menu trạng thái thêm dịch vụ
+- Menu trạng thái bo góc/bóng nhẹ, ô cao 2.375rem, chữ 0.6875rem; nền vàng nhạt mục chọn. Giữ select gốc và change để lưu/tóm tắt; hỗ trợ phím điều hướng, Escape và đóng ngoài. JS syntax đạt; chưa kiểm chứng thao tác trực quan thiết bị.
+
+### 12/10/2026 — Giao diện báo hỏng và bảo trì theo mẫu
+- Dựng trang module BAO_HONG theo ảnh: bốn thống kê, bộ lọc, bảng sáu yêu cầu, phân trang minh họa, lịch bảo trì và khung chi tiết/timeline. Chỉ giao diện với dữ liệu minh họa có nhãn; nút và bộ lọc vô hiệu hóa theo yêu cầu, không thêm nghiệp vụ/DB. Responsive một cột dưới 1050px, bảng cuộn trong khung. Chưa kiểm chứng trực quan thiết bị.
+
+### 12/10/2026 — Nút bút sửa dịch vụ theo ảnh
+- Đổi SVG thành bút chéo nét mảnh trong ô trắng 28px, viền xám và bo 6px theo ảnh. Giữ menu thao tác hiện có. Chưa kiểm chứng trực quan thiết bị.
+
+### 12/10/2026 — Menu thao tác dịch vụ nổi
+- Menu absolute bên dưới nút bút, căn phải, bo 8px/bóng nhẹ; không giãn dòng bảng. Chừa vùng cuộn cho menu cuối bảng; đóng khi bấm ngoài/Escape, chỉ mở một menu. Giữ action/CSRF hiện có. JS syntax đạt; chưa kiểm chứng trực quan thiết bị.
+
+### 12/10/2026 — Khoảng cách Tin đăng cho thuê theo Tổng quan
+- Bỏ giới hạn riêng 93.75rem và margin auto; wrapper rộng 100%, không thêm đệm, tiêu đề căn đầu hàng. Dùng dashboard-spacing.css chung: ngoài 1.75rem desktop, 1.25rem dọc/1rem ngang mobile, khung tối đa 100rem. HTTP trang đạt; chưa kiểm chứng trực quan thiết bị. Giữ chức năng tin đăng.
+
+### 12/10/2026 — Cột thao tác tin đăng chỉ nút bút
+- Bỏ Xem tin/menu trạng thái/nhãn cũ khỏi cột thao tác, thay nút bút trong ô trắng 28px dẫn tới Tao theo phòng. Giữ điều kiện phòng có thể sửa/đăng, nút khóa khi chưa đủ điều kiện; backend giữ nguyên.
+
+### 12/10/2026 — Menu đổi trạng thái tin đăng
+- Nút bút mở menu công khai/nháp/tạm ẩn/đã kết thúc/chưa đăng. POST CSRF kiểm tra quyền chủ nhà/quản lý, sở hữu, trạng thái đã xem, phòng trống/tòa hoạt động và tin công khai trùng. Giữ quy tắc công khai phải tạm ẩn trước về nháp. Chưa đăng không phải trạng thái lưu, không xóa tin/historic; phòng chưa có tin dẫn form tạo. Build/JS syntax đạt; chưa kiểm chứng thao tác trực quan thiết bị.
+
+### 12/10/2026 — Tách nút bút và ba chấm tin đăng
+- Nút bút trở lại liên kết chỉnh sửa, thêm ba chấm bên phải để mở menu trạng thái hiện có. Giữ điều kiện sửa tin và các POST trạng thái. Chưa kiểm chứng trực quan thiết bị.
+
+### 12/10/2026 — Liên kết nút bút tới chỉnh sửa tin đăng
+- Nút bút mở /TinDang/Sua theo ID tin của dòng; trang dùng lại biểu mẫu hiện có và nạp đúng nội dung tin. Phòng chưa có tin hiển thị nút vô hiệu hóa.
+- GET kiểm tra quyền ghi và sở hữu tòa ở backend. Không đổi schema hoặc dữ liệu.
+- Build demo thành công; kiểm tra HTTP đăng nhập, lấy liên kết bút và mở trang chỉnh sửa trả 200 có ID tin. Chưa kiểm tra trực quan trên thiết bị thật.
+
+### 12/10/2026 — Bỏ mục Chưa đăng trong menu tin đăng
+- Xóa mục Chưa đăng khỏi menu ba chấm; giữ bốn trạng thái còn lại. Đã kiểm tra nguồn Razor, không đổi nghiệp vụ hoặc schema.
+
+### 12/10/2026 — Nhãn trạng thái Công khai
+- Đổi Đang đăng thành Công khai trong bộ lọc, thẻ thống kê và nhãn trạng thái danh sách tin đăng. Giữ nguyên mã DANG_HIEN_THI và hành vi lọc. Đã kiểm tra nguồn Razor.
+
+### 12/10/2026 — Đồng bộ khung trang tạo tin đăng với tổng quan
+- Bỏ giới hạn chiều rộng và khoảng đệm riêng của trang tạo/chỉnh sửa tin đăng; dùng khung app-content chung (tối đa 100rem, đệm 1.75rem; màn hình nhỏ 1.25rem 1rem). Tiêu đề bắt đầu cùng vị trí trang tổng quan.
+- Chỉ thay CSS phạm vi trang tin đăng, không đổi nghiệp vụ. Kiểm tra HTTP và stylesheet; chưa nghiệm thu trực quan ở 360px.
+
+### 12/10/2026 — Xác minh khung trang chỉnh sửa tin đăng
+- Trang Sua dùng chung biểu mẫu và class listing-create-page nên đã nhận chiều rộng, đệm hai bên và khoảng cách tiêu đề theo tổng quan từ dashboard-spacing.css.
+- Kiểm tra HTTP mở trang Sua từ nút bút: trả 200, nạp đúng class và stylesheet chung. Không cần thêm CSS trùng lặp; chưa kiểm tra trực quan trên thiết bị thật.
+
+### 12/10/2026 — Điều hướng trang chỉnh sửa tin đăng
+- Áp dụng breadcrumb hiện có cho action Sua: Trang chủ / Tin đăng cho thuê / Chỉnh sửa tin đăng. Mục ở giữa liên kết về QuanLy.
+
+### 12/10/2026 — Giao diện yêu cầu thuê theo hình tham chiếu
+- Thẻ thống kê gọn, bảng danh sách và khung chi tiết bên phải; chọn dòng hoặc Enter để xem dữ liệu thật, có nút đóng. Avatar chữ cái và SVG theo theme. Responsive chuyển một cột ở màn hình nhỏ.
+- Giữ bộ lọc, xuất CSV, phân trang và liên kết xử lý hiện có. Không thêm dữ liệu mẫu hoặc đổi schema. Các thông tin chưa có trong model danh sách không được giả lập.
+- Build demo và HTTP /YeuCau thành công, Node --check JS đạt; chưa nghiệm thu trực quan trên trình duyệt/360px.
+
+### 12/10/2026 — Đổi tên trang yêu cầu
+- Đồng bộ tiêu đề, tên trang và breadcrumb thành Yêu cầu thuê & lịch xem. Giữ tên Yêu cầu của tôi cho khách thuê; không đổi chức năng.
+
+### 12/10/2026 — Breadcrumb yêu cầu đồng bộ chi tiết phòng
+- Thay biểu tượng ký tự bằng SVG nhà giống chi tiết phòng; cỡ chữ 1rem, độ đậm 600, khoảng cách .75rem và biểu tượng 21px theo room-overview.css. Không đổi liên kết hoặc nghiệp vụ.
+
+### 12/10/2026 — Nút xuất yêu cầu theo hình
+- Nút Xuất danh sách gọn, nền #30343B, chữ trắng và SVG tải xuống 14px; giữ chức năng xuất CSV. Kiểm tra nguồn và cú pháp JS hiện có, chưa kiểm tra trực quan.
+
+### 12/10/2026 — Đồng bộ khoảng cách trang yêu cầu thuê với tổng quan
+- Khung owner-requests.or-reference dùng 100% app-content, không thêm đệm/margin riêng; tiêu đề bắt đầu cùng vị trí tổng quan. Dùng đệm chung 1.75rem, màn hình nhỏ 1.25rem 1rem và chiều rộng tối đa 100rem.
+- Chỉ áp dụng danh sách chủ nhà/quản lý, giữ bố cục bảng và khung chi tiết; không đổi luồng khách thuê hoặc nghiệp vụ.
+
+### 12/10/2026 — Cân đối bốn thẻ thống kê yêu cầu
+- Thẻ cao tối thiểu 7rem, đệm 1.25rem; nhãn .75rem, số liệu 1.75rem, mô tả .6875rem. Biểu tượng 36px, khoảng cách đều; màn hình nhỏ thu gọn và tránh tràn chữ.
+- Kiểm tra HTTP và CSS được phục vụ; chưa kiểm tra trực quan trên thiết bị thật.
+
+### 12/10/2026 — Biểu tượng tìm kiếm yêu cầu
+- Thêm SVG kính lúp trước chữ trong ô tìm kiếm, căn giữa theo chiều cao và chừa khoảng đệm cho nội dung. Giữ ID và chức năng lọc hiện có.
+
+### 12/10/2026 — Menu nổi bộ lọc yêu cầu
+- Ba select được nâng thành menu trắng bo góc, bóng nhẹ, màu chọn vàng nhạt và dấu kiểm; hỗ trợ bàn phím, Escape và bấm ngoài để đóng. Giữ select gốc và change event để bảo toàn lọc/submit hiện có.
+- Node --check đạt; chưa kiểm tra tương tác trực quan trên trình duyệt.
+
+### 12/10/2026 — Bảng yêu cầu theo hình tham chiếu
+- Thanh lọc gồm tìm kiếm, tòa nhà và tháng; bảng năm cột với avatar, phòng, ngày/giờ gửi, trạng thái và liên kết chi tiết. Sắp mới nhất trước, dòng chọn nền vàng nhạt; phân trang có nút trước/sau.
+- Bộ lọc tháng chạy trên dữ liệu danh sách, giữ lọc trạng thái qua tab và tòa qua server. Xuất CSV cập nhật theo bốn cột dữ liệu. Không đổi schema.
+- Node --check đạt; build/HTTP demo xác minh; chưa nghiệm thu trực quan.
+
+### 12/10/2026 — Cân đối cỡ chữ danh sách yêu cầu
+- Tab/bộ lọc .75rem, tên người thuê và phòng .8125rem, thông tin phụ .6875rem, nhãn trạng thái .625rem. Đồng bộ chiều cao bộ lọc 2.5rem, khoảng đệm dòng và phân trang; thu gọn ở màn hình nhỏ.
+- Kiểm tra trang và stylesheet qua HTTP, chưa nghiệm thu trực quan.
+
+### 12/10/2026 — Thanh tìm kiếm theo hình
+- Ba ô cùng hàng theo tỷ lệ 3:1:.95, cao 2.25rem; kính lúp bên phải, ô tòa nhà và tháng gọn, viền/bo góc đồng bộ. Màn hình nhỏ đưa tìm kiếm lên hàng riêng.
+- Kiểm tra stylesheet được phục vụ; không đổi chức năng lọc.
+
+### 12/10/2026 — Căn mép thanh lọc với bảng
+- Thanh lọc và bảng cùng chiều rộng 100%, bỏ đệm ngang và giới hạn chiều rộng tối thiểu của ô; dùng border-box để hai mép thẳng nhau. Giữ bố cục responsive và chức năng hiện có.
+
+### 12/10/2026 — Ô chọn tháng theo hình
+- Hiển thị nhãn Tháng M, YYYY cùng SVG lịch bên phải, giữ input month và sự kiện lọc. Nhãn cập nhật khi chọn; khi chưa lọc hiển thị tháng hiện tại Việt Nam. Node --check đạt; chưa kiểm tra trực quan.
+
+### 12/10/2026 — Phân trang yêu cầu theo hình
+- Trang hiện tại nền tối bo góc 6px; số còn lại nền trong suốt màu xám, mũi tên gọn hai đầu. Giữ điều hướng và trạng thái vô hiệu hóa ở đầu/cuối.
+
+### 12/10/2026 — Căn lại ô tháng
+- Dùng grid hai cột cho nhãn tháng và SVG lịch, ghi đè kiểu label chung khiến biểu tượng xuống dòng; giữ chiều cao 2.25rem và lịch căn phải. Kiểm tra stylesheet qua HTTP, chưa kiểm tra trực quan.
+
+### 12/10/2026 — Bảng chọn tháng tiếng Việt
+- Thay picker native bằng menu Tháng 1–12, Năm, Năm trước/sau và Xóa bộ lọc. Giữ input month và change event của bộ lọc. Node --check đạt; chưa kiểm tra tương tác trực quan.
+
+### 12/10/2026 — Khung chi tiết yêu cầu theo hình
+- Bổ sung thông tin phòng/ảnh/giá/diện tích, email, nghề nghiệp và số người từ dữ liệu hiện có; giao diện liên hệ, phòng, lời nhắn và ba nút điều hướng theo hình. Thời hạn thuê chưa lưu trong yêu cầu nên hiển thị Chưa cung cấp; không giả lập xác thực số điện thoại.
+- Giữ luồng xử lý qua LichHen/ChiTiet và phạm vi truy vấn hiện có; không đổi schema. Build demo/HTTP đạt; chưa kiểm tra trực quan.
+
+### 12/10/2026 — Hai nút xử lý yêu cầu
+- Bỏ Hẹn xem phòng trong khung chi tiết danh sách; giữ Duyệt yêu cầu và đổi nhãn Từ chối yêu cầu. Hai nút dẫn đến trang xử lý hiện có.
+
+### 12/10/2026 — Ba chấm mở chi tiết yêu cầu
+- Thay dấu đóng bằng SVG ba chấm ở góc khung chi tiết. Liên kết cập nhật theo dòng được chọn tới LichHen/ChiTiet, ẩn khi không có yêu cầu. Node --check đạt.
+
+### 12/10/2026 — Xử lý yêu cầu tại danh sách
+- Hai nút đổi thành POST trực tiếp, CSRF, chỉ chủ nhà và quyền ghi; tái sử dụng LichHenService kiểm tra sở hữu, trạng thái và transaction. Từ chối mở lý do/ghi chú tại khung; duyệt xem phòng yêu cầu xác nhận khách đồng ý và đã hẹn lịch. Thành công/lỗi quay lại danh sách.
+- Build và HTTP đạt: form render, yêu cầu/lý do không hợp lệ được xử lý, thiếu CSRF 400. Chưa kiểm tra luồng thành công thay đổi dữ liệu hoặc UI trực quan.
+
+### 12/10/2026 — Cân đối khung chi tiết yêu cầu
+- Đồng bộ đệm 1rem, nhịp khoảng cách, cỡ tên khách .875rem, nội dung .75rem và thông tin phụ .625–.6875rem; tên phòng dài tự xuống dòng. Hai nút cao tối thiểu 2.375rem, chữ .75rem.
+- Chỉ đổi CSS, giữ xử lý trực tiếp; kiểm tra stylesheet được phục vụ, chưa kiểm tra trực quan.
+
+### 12/10/2026 — Menu lý do từ chối
+- Menu trắng bo góc, bóng nhẹ, chọn vàng nhạt và dấu kiểm; hỗ trợ bàn phím, bấm ngoài, giữ select gốc và validation bắt buộc. Tự khởi tạo lại khi chọn dòng yêu cầu. Node --check đạt; chưa kiểm tra tương tác trực quan.
+
+### 12/10/2026 — Bỏ checkbox xác nhận khách đồng ý thuê
+- Bỏ checkbox theo yêu cầu; bấm Duyệt yêu cầu gửi xác nhận cho luồng sau xem phòng. Giữ kiểm tra loại yêu cầu, lịch hẹn, sở hữu và trạng thái trong service. Kiểm tra nguồn Razor.
+
+### 12/10/2026 — Khôi phục ba nút trong chi tiết yêu cầu
+- Duyệt ở trên, Hẹn xem phòng có SVG lịch và Từ chối ở hàng dưới. Hẹn xem mở trang xử lý lịch hiện có; duyệt/từ chối vẫn POST từ danh sách, lý do từ chối mở ngay dưới. Giữ điều kiện duyệt sau hẹn lịch.
+
+### 12/10/2026 — Hộp thoại từ chối yêu cầu
+- Thay biểu mẫu nổi bằng dialog giữa màn hình có nền phủ, tiêu đề, lý do/ghi chú, Hủy và Xác nhận. Giữ POST, CSRF và menu lý do tiếng Việt; đóng bằng nút hoặc Escape. Node --check đạt.
+
+### 12/10/2026 — Xác nhận duyệt yêu cầu
+- Nút duyệt mở dialog xác nhận tên khách/phòng, Hủy và Xác nhận duyệt; chỉ POST sau xác nhận. Giữ điều kiện duyệt, CSRF và xử lý hiện có. Node --check đạt.
+
+### 12/10/2026 — Trang sửa đơn giá theo hình
+- Bố cục bảng mức giá hiện tại bên trái, thẻ tòa nhà/nguyên tắc; biểu mẫu cập nhật bên phải, tóm tắt giá và thông báo giữ hóa đơn cũ. Chọn dịch vụ trong bảng mở đúng Manage; lưu qua SavePrice hiện có.
+- Giữ lịch sử, mặc định/trạng thái trong phần bổ sung; không thêm lựa chọn nhiều phòng hoặc ghi chú chưa có backend. Không đổi schema. Chưa kiểm tra trực quan.
+
+### 12/10/2026 — Nút quay lại đơn giá
+- Nút trắng gọn, viền nhẹ, SVG mũi tên và chữ .625rem theo hình; giữ liên kết về danh sách đơn giá của tòa.
+
+### 12/10/2026 — Đồng bộ khoảng cách sửa đơn giá với tổng quan
+- Trang service-price-page dùng khung app-content chung: tối đa 100rem, đệm 1.75rem; màn hình nhỏ 1.25rem 1rem. Bỏ khoảng đệm riêng và căn tiêu đề cùng vị trí tổng quan.
+- Giữ bảng giá và biểu mẫu hai cột, không đổi nghiệp vụ; kiểm tra trang và CSS qua HTTP.
+
+### 12/10/2026 — Breadcrumb sửa đơn giá đồng bộ chi tiết phòng
+- SVG nhà 21px, chữ 1rem/600, khoảng cách .75rem và màu theo room-overview.css; giữ liên kết và nhãn Sửa đơn giá.
+
+### 12/10/2026 — Tiêu đề Điện
+- Đổi tiêu đề h1 trang sửa đơn giá từ Sửa đơn giá thành Điện theo yêu cầu.
+
+### 12/10/2026 — Tiêu đề động theo dịch vụ
+- Tiêu đề h1 lấy latest.DichVu.TenDichVu thay chữ Điện cố định, hiển thị đúng dịch vụ đang chỉnh sửa.
+
+### 12/10/2026 — Thẻ tòa nhà sửa giá theo hình
+- SVG tòa nhà, nhãn Khu nhà đang quản lý, tên, địa chỉ và tổng phòng từ DB; mũi tên bên phải liên kết về dịch vụ tòa. Không đổi schema.
+
+### 12/10/2026 — Bảng mức giá theo hình
+- Biểu tượng dịch vụ, số loại giá, cột phạm vi đếm phòng đã gán dịch vụ, dòng chân bảng và highlight dịch vụ đang sửa. Dữ liệu thật, không giả lập giá thuê phòng hoặc phạm vi toàn tòa; giữ liên kết Manage.
+
+### 12/10/2026 — Thẻ nguyên tắc đơn giá theo hình
+- SVG thông tin, nội dung gọn, đường phân cách và SVG đồng hồ bên dưới. Hiển thị ngày hiệu lực phiên bản gần nhất từ dữ liệu thật, không giả lập tên người/thời điểm cập nhật chưa có trong model.
+
+### 12/10/2026 — Biểu mẫu chỉnh giá theo hình
+- Icon/tiêu đề gọn, mức giá hiện tại/mới, khối phạm vi giá chung, tòa nhà, kỳ áp dụng cập nhật theo ngày, tóm tắt và nút Hủy/Lưu. Chỉ hiển thị khả năng hiện có: giá riêng qua hồ sơ phòng, không thêm chọn phòng hoặc ghi chú giả.
+
+### 12/10/2026 — Bỏ nút lưu giá ban đầu
+- Bỏ nút Lưu giá ban đầu và dòng hướng dẫn liên quan khỏi Manage; giữ Hủy và Lưu thay đổi theo phiên bản giá.
+
+### 12/10/2026 — Đổi tòa tại trang sửa giá
+- Mũi tên mở danh sách tòa có quyền. Chọn tòa giữ dịch vụ nếu có, nếu không mở dịch vụ đầu tiên; tòa chưa có giá về danh sách. GET kiểm tra sở hữu, không thay đổi dữ liệu.
+
+### 12/10/2026 — Giao diện nhật ký phòng theo hình
+- Thông tin phòng thật, tabs điều hướng, lọc ngày và tìm trong trang, dòng thời gian theo tháng, hồ sơ liên quan. Xuất CSV trang hiện tại. Nhật ký giữ chỉ đọc; ghi chú chưa có backend hiển thị vô hiệu hóa, không fake lưu.
+- Không đổi schema/quyền; giữ phân trang và dữ liệu AuditDisplay đã lọc. Node --check đạt; chưa kiểm tra trực quan.
+
+### 12/10/2026 — Bỏ liên kết tòa trên nhật ký phòng
+- Bỏ dòng quay lại tên tòa phía trên tiêu đề theo yêu cầu; giữ liên kết chi tiết phòng trong thẻ thông tin.
+
+### 12/10/2026 — Breadcrumb nhật ký phòng
+- Trang chủ / Phòng cho thuê / Nhật ký phòng, liên kết giữa về danh sách phòng; kiểu chữ và SVG theo chi tiết phòng.
+
+### 12/10/2026 — Biểu tượng xuất nhật ký
+- SVG tải xuống 15px trong nút trắng bo góc nhẹ, giữ chức năng xuất CSV.
+
+### 12/10/2026 — Thẻ tóm tắt nhật ký phòng theo hình
+- Bốn cột ảnh/phòng, khách đứng tên, hợp đồng hiệu lực, giá thuê và dải thông tin dưới. Dùng dữ liệu thật; không giả lập thanh toán/công nợ. Responsive hai rồi một cột.
+
+### 12/10/2026 — Thanh lọc nhật ký theo hình
+- Tìm kiếm có SVG, chọn nhóm sự kiện, khoảng ngày trong popup, tab nhóm phía dưới. Lọc tìm/nhóm trên trang hiện tại; ngày lọc server. Nhóm chưa được truy vấn hiển thị vô hiệu hóa, không tạo sự kiện giả. Node --check đạt.
+
+### 12/10/2026 — Đồng bộ khoảng cách nhật ký phòng với tổng quan
+- Khung room-journal dùng app-content chung: tối đa 100rem, đệm 1.75rem, mobile 1.25rem 1rem. Bỏ margin/đệm riêng, căn tiêu đề cùng vị trí tổng quan. Giữ bố cục timeline và sidebar.
+- Kiểm tra trang và stylesheet qua HTTP; chưa nghiệm thu trực quan.
+
+### 12/10/2026 — Bỏ nút thêm ghi chú trên đầu trang
+- Bỏ nút Thêm ghi chú cạnh Xuất nhật ký theo yêu cầu.
+
+### 12/10/2026 — Thẻ thêm ghi chú theo hình
+- Bố cục bản nháp, nội bộ, tiêu đề/nội dung, giới hạn ký tự, ghim, đính kèm và Hủy/Lưu. Giữ vô hiệu hóa do chưa có backend, không giả lập lưu/đính kèm.
+
+### 12/10/2026 — Thẻ hồ sơ liên quan theo hình
+- Icon nền xám, hai dòng thông tin, mũi tên chéo và chân thẻ. Giữ liên kết thật thông tin phòng/lịch sử khách/danh sách phòng, không giả lập biên bản/hóa đơn chưa được nối.
+
+### 12/10/2026 — Liên kết khách thuê cuối thẻ phòng
+- Chữ Xem hồ sơ khách thuê gọn, mũi tên chéo SVG; giữ đích LichSuNguoiO hiện có.
+
+### 12/10/2026 — Dòng thời gian nhật ký theo hình
+- Số sự kiện/nhãn sắp mới nhất, nhóm tháng có số sự kiện và đường phân cách; SVG theo thao tác, nhãn loại, nội dung/thay đổi và người thực hiện theo dữ liệu thật. Giữ nhật ký chỉ đọc và phân trang.
+
+### 12/10/2026 — Ghi chú phòng hoạt động
+- Lưu tiêu đề/nội dung, ghim và một tệp PDF/PNG/JPG <=10 MB; tệp riêng tư qua endpoint quyền và no-store. Chống gửi trùng UUID, audit metadata allowlist cùng giao dịch, không lưu nội dung/tiêu đề/tên tệp trong audit.
+- Thêm schema v25 RoomNotesSchema; updater giữ v24, tạo backup. Chỉ nâng bản sao mới data/room-notes-demo-v25; DB gốc không thay đổi. Kiểm tra nâng lặp, bảo toàn số bản ghi cũ, integrity/FK và khởi tạo CSDL rỗng v25 đạt. Demo mặc định trỏ bản sao.
+- Build đạt; verification/verify_room_notes.py đạt lưu/ghim/tệp, tải quyền, gửi trùng, tệp giả, CSRF, sở hữu chéo và rollback khi audit thất bại. Chưa kiểm tra trực quan mobile. Hướng dẫn nâng cấp/phục hồi: docs/room-notes-v25.md.
+
+### 12/10/2026 — Nhãn sắp xếp nhật ký
+- SVG sắp xếp 11px cạnh Mới nhất trước, màu xám/cỡ chữ gọn theo hình; giữ thứ tự truy vấn hiện có.
+
+### 12/10/2026 — Cân đối bộ lọc nhật ký
+- Ô lọc cao 2.375rem, chữ .75rem; tab nhóm .625rem với chiều cao 1.75rem, khoảng cách đều. Nhãn ngày căn trái, biểu tượng 14px. Giữ responsive và hành vi lọc.
+
+### 12/10/2026 — Menu nổi loại sự kiện
+- Select loại sự kiện đổi thành menu trắng, bo góc/bóng nhẹ, chọn vàng nhạt và dấu kiểm. Giữ select/change cho bộ lọc; tab nhóm đồng bộ nhãn. Hỗ trợ bàn phím/Escape/bấm ngoài. Node --check đạt.
+
+### 12/10/2026 — Bỏ ô ghim ghi chú
+- Bỏ checkbox Ghim ghi chú cho phòng này khỏi biểu mẫu; ghi chú mới mặc định không ghim, giữ dữ liệu cũ.

@@ -42,24 +42,34 @@ public sealed partial class DichVuService(AppDbContext db, IOptions<DichVuMacDin
     {
         Validator.ValidateObject(input, new ValidationContext(input), validateAllProperties: true);
         await using var transaction = await db.Database.BeginTransactionAsync();
-        if (!await SoHuuToaNhaAsync(accountId, input.ToaNhaId!.Value))
-            throw new UnauthorizedAccessException("Tòa nhà không thuộc chủ nhà hiện tại hoặc đã ngừng hoạt động.");
-        var price = new CauHinhDichVu
+        var buildingIds = (input.ToaNhaIds.Count > 0 ? input.ToaNhaIds : new List<int> { input.ToaNhaId!.Value }).Distinct().ToList();
+        foreach (var buildingId in buildingIds)
+            if (!await SoHuuToaNhaAsync(accountId, buildingId))
+                throw new UnauthorizedAccessException("Tòa nhà không thuộc chủ nhà hiện tại hoặc đã ngừng hoạt động.");
+        var selectedRoomIds = input.ChonPhongCuThe ? input.PhongIds.Distinct().ToList() : new List<int>();
+        var selectedRooms = await db.PhongTros.Where(x => selectedRoomIds.Contains(x.Id)).ToListAsync();
+        if (selectedRooms.Count != selectedRoomIds.Count || selectedRooms.Any(x => !buildingIds.Contains(x.ToaNhaId)))
+            throw new UnauthorizedAccessException("Phòng không thuộc các tòa nhà đã chọn.");
+        var service = new DichVu { MaDichVu = "DV" + Guid.NewGuid().ToString("N")[..18], TenDichVu = input.TenDichVu!.Trim(), MoTa = string.IsNullOrWhiteSpace(input.GhiChu) ? null : input.GhiChu.Trim() };
+        CauHinhDichVu? price = null;
+        foreach (var buildingId in buildingIds)
         {
-            ToaNhaId = input.ToaNhaId.Value,
-            DichVu = new DichVu
+            var buildingPrice = new CauHinhDichVu
             {
-                MaDichVu = "DV" + Guid.NewGuid().ToString("N")[..18],
-                TenDichVu = input.TenDichVu!.Trim()
-            },
-            CachTinh = input.CachTinh!, DonViTinh = input.DonViTinh!.Trim(), DonGia = input.DonGia!.Value,
-            TuNgay = HomNay(), NguoiTaoId = accountId, NgayTao = DateTime.UtcNow
-        };
-        db.CauHinhDichVus.Add(price);
-        db.DichVuToaNhas.Add(new DichVuToaNha { ToaNhaId = price.ToaNhaId, DichVu = price.DichVu, ApDungMacDinh = input.ApDungMacDinh });
+                ToaNhaId = buildingId, DichVu = service, DangApDung = input.TrangThai == "DANG_AP_DUNG",
+                CachTinh = input.CachTinh!, DonViTinh = input.DonViTinh!.Trim(), DonGia = input.DonGia!.Value,
+                TuNgay = HomNay(), NguoiTaoId = accountId, NgayTao = DateTime.UtcNow
+            };
+            price ??= buildingPrice;
+            db.CauHinhDichVus.Add(buildingPrice);
+            var catalog = new DichVuToaNha { ToaNhaId = buildingId, DichVu = service, ApDungMacDinh = !input.ChonPhongCuThe && input.ApDungMacDinh };
+            db.DichVuToaNhas.Add(catalog);
+            foreach (var room in selectedRooms.Where(x => x.ToaNhaId == buildingId))
+                db.DichVuPhongs.Add(new DichVuPhong { PhongId = room.Id, DichVuToaNha = catalog });
+        }
         await db.SaveChangesAsync();
         await transaction.CommitAsync();
-        return price.Id;
+        return price!.Id;
     }
 
     public async Task<List<CauHinhDichVu>> DanhSachAsync(int accountId, int buildingId)
