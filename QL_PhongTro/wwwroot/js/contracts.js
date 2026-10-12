@@ -161,6 +161,8 @@
         if (summaryEnd) summaryEnd.textContent = display(end.value);
         const term = document.getElementById('term-preview');
         if (term) term.textContent = months.value ? months.value + ' tháng' : '—';
+        const validityTerm = document.getElementById('validity-term');
+        if (validityTerm) validityTerm.textContent = term?.textContent || '—';
     }
     start.addEventListener('input', update); months.addEventListener('input', update);
     const rent = document.getElementById('GiaThue');
@@ -186,6 +188,36 @@
     }
     deposit.addEventListener('input', () => { depositEdited = true; updateDeposit(); });
     rent.addEventListener('input', updateDeposit);
+    const depositMonths = document.getElementById('deposit-months');
+    depositMonths?.addEventListener('change', () => {
+        if (depositMonths.value !== '' && /^\d+$/.test(rent.value)) {
+            deposit.value = (BigInt(rent.value) * BigInt(depositMonths.value)).toString();
+            deposit.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    });
+    rent.addEventListener('input', () => {
+        if (depositMonths?.value && /^\d+$/.test(rent.value)) {
+            deposit.value = (BigInt(rent.value) * BigInt(depositMonths.value)).toString();
+            deposit.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    });
+    deposit.addEventListener('input', () => {
+        if (!depositMonths) return;
+        const option = Array.from(depositMonths.options).find(o => o.value !== '' && /^\d+$/.test(rent.value) && /^\d+$/.test(deposit.value) && BigInt(rent.value) * BigInt(o.value) === BigInt(deposit.value));
+        depositMonths.value = option?.value ?? '';
+    });
+    const form = document.getElementById('contract-form');
+    const completion = document.getElementById('completion-status');
+    function updateCompletion() {
+        if (!form || !completion) return;
+        const fields = Array.from(form.querySelectorAll('[required]'));
+        const count = fields.filter(field => field.value !== '' && field.validity.valid).length;
+        const selected = !!document.getElementById('YeuCauId').value;
+        completion.textContent = `Đã hoàn tất ${count + Number(selected)}/${fields.length + 1} trường bắt buộc`;
+    }
+    form?.addEventListener('input', updateCompletion);
+    form?.addEventListener('change', updateCompletion);
+    updateCompletion();
     // Preserve values of existing drafts and failed submissions on initial load.
     depositEdited = true; updateDeposit(); depositEdited = deposit.value !== rent.value;
     update();
@@ -213,6 +245,7 @@
     let timer, abort;
     async function checkOverlap() {
         if (abort) abort.abort();
+        status.classList.add('is-pending');
         if (!request || !start.value || !start.validity.valid || !months.validity.valid || !end.value) {
             save.disabled = true;
             status.textContent = 'Vui lòng chọn ngày bắt đầu từ hôm nay và kỳ hạn hợp lệ.';
@@ -227,6 +260,7 @@
             if (!response.ok) throw new Error('Không thể kiểm tra');
             const conflicts = await response.json();
             status.replaceChildren();
+            status.classList.remove('is-pending');
             status.classList.toggle('has-conflict', conflicts.length > 0);
             const title = document.createElement('strong');
             title.textContent = conflicts.length ? 'Không thể lưu — có hợp đồng chồng lấn:' : 'Không có hợp đồng hiệu lực chồng lấn trong khoảng thời gian đã chọn.';

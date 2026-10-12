@@ -2,7 +2,7 @@
 @using System.Globalization
 @inject QL_PhongTro.Authorization.PermissionService Permissions
 @{
-    ViewData["Title"] = $"Kiểm tra hóa đơn tháng {Model.Thang:00}/{Model.Nam}";
+    ViewData["Title"] = $"Kết quả kiểm tra kỳ {Model.Thang:00}/{Model.Nam}";
     var vn = CultureInfo.GetCultureInfo("vi-VN");
     var write = await Permissions.AllowsAsync("TAI_CHINH", true);
     var rent = Model.DuKien.Sum(x => (decimal)x.HoaDon.ChiTiet.Where(d => d.LoaiKhoan == "TIEN_PHONG").Sum(d => d.ThanhTien));
@@ -11,11 +11,11 @@
     var total = Model.DuKien.Sum(x => (decimal)x.HoaDon.TongTien);
     var existing = Model.BoQua.Where(x=>x.TrangThai=="DA_CO_HOA_DON").ToList();
 }
-@section Styles { <link rel="stylesheet" href="~/css/monthly-invoices.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/invoice-review.css" asp-append-version="true" /> }
+@section Styles { <link rel="stylesheet" href="~/css/invoice-flow.css" asp-append-version="true" /> <link rel="stylesheet" href="~/css/monthly-invoices.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/invoice-review.css" asp-append-version="true" /> }
 @section Scripts { <script src="~/js/invoice-review.js" asp-append-version="true"></script> }
 <div class="monthly-invoices invoice-review">
 <nav class="mi-breadcrumb" aria-label="Đường dẫn"><a asp-controller="Home" asp-action="Index">Tổng quan</a> / Hóa đơn, thanh toán / Tạo hóa đơn Nháp</nav>
-<header class="mi-heading"><div><h1>Kiểm tra hóa đơn tháng @Model.Thang.ToString("00")/@Model.Nam</h1><p>Kiểm tra số tiền, ngày thanh toán và các phòng bị bỏ qua trước khi xác nhận.</p></div><a href="#invoice-history" class="btn btn-outline-secondary">◷ Lịch sử tạo nháp</a></header>
+<a asp-action="Setup" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-nam="@Model.Nam" asp-route-thang="@Model.Thang">← Thay đổi thông tin kỳ</a><header class="mi-heading"><div><h1>Kết quả kiểm tra kỳ @Model.Thang.ToString("00")/@Model.Nam</h1><p>Kiểm tra số tiền, ngày thanh toán và các phòng bị bỏ qua trước khi xác nhận.</p></div><a href="#invoice-history" class="btn btn-outline-secondary">◷ Lịch sử tạo nháp</a></header>
 <div asp-validation-summary="All" class="text-danger" role="alert"></div>
 @if (TempData["MonthlyMessage"] is string message) { <div class="alert alert-success" role="status">@message</div> }
 @if (TempData["MonthlyError"] is string error) { <div class="alert alert-danger" role="alert">@error</div> }
@@ -87,11 +87,17 @@ var otherLines = row.HoaDon.ChiTiet.Where(d => d.LoaiKhoan != "TIEN_PHONG" && !d
 <div><label for="batch-due">Hạn thanh toán</label><input id="batch-due" type="date" name="hanThanhToan" value="@Model.HanThanhToan.ToString("yyyy-MM-dd")" min="@Model.NgayPhatHanh.ToString("yyyy-MM-dd")" required class="form-control" /></div></div>
 <div class="table-responsive"><table class="table"><thead><tr><th>Chọn</th><th>Phòng</th><th>Mã hóa đơn</th><th>Tổng tiền</th><th>Kiểm tra</th></tr></thead><tbody>
 @foreach(var row in Model.DaPhatHanh.Where(x=>x.HoaDon.TrangThai=="NHAP")){
-<tr><td><input type="checkbox" name="selectedInvoiceIds" value="@row.HoaDon.Id" aria-label="Phát hành hóa đơn phòng @row.MaPhong" /><input type="hidden" name="versions[@row.HoaDon.Id]" value="@row.HoaDon.PhienBan" /></td><th>@row.MaPhong</th><td>@row.HoaDon.MaHoaDon</td><td>@row.HoaDon.TongTien.ToString("N0",vn) đ</td><td><a asp-action="Details" asp-route-id="@row.HoaDon.Id">Xem chi tiết</a></td></tr>
+<tr><td><input type="checkbox" name="selectedInvoiceIds" value="@row.HoaDon.Id" data-amount="@row.HoaDon.TongTien" aria-label="Phát hành hóa đơn phòng @row.MaPhong" /><input type="hidden" name="versions[@row.HoaDon.Id]" value="@row.HoaDon.PhienBan" /></td><th>@row.MaPhong</th><td>@row.HoaDon.MaHoaDon</td><td>@row.HoaDon.TongTien.ToString("N0",vn) đ</td><td><a asp-action="Details" asp-route-id="@row.HoaDon.Id">Xem chi tiết</a></td></tr>
 }
 </tbody></table></div>
-<label><input type="checkbox" name="xacNhan" value="true" required /> Tôi đã kiểm tra nội dung, số tiền và hạn thanh toán của các hóa đơn được chọn.</label>
-<p><button type="submit" class="btn btn-dark">Phát hành các hóa đơn đã chọn</button></p>
+<button type="button" class="btn btn-dark" data-batch-open>Phát hành các hóa đơn đã chọn</button>
+<dialog id="batch-confirmation" class="flow-confirm" aria-labelledby="batch-title">
+<h2 id="batch-title">Xác nhận phát hành hàng loạt</h2><p>Hệ thống tạo thông báo cho khách sau khi phát hành. Hóa đơn đã phát hành không thể chỉnh sửa.</p>
+<dl><dt>Số hóa đơn</dt><dd data-batch-count></dd><dt>Tổng tiền</dt><dd data-batch-total></dd><dt>Kỳ áp dụng</dt><dd>@Model.Thang.ToString("00")/@Model.Nam</dd><dt>Ngày phát hành</dt><dd data-batch-date></dd><dt>Hạn thanh toán</dt><dd data-batch-due></dd></dl>
+<div class="alert alert-warning">@Model.BoQua.Count phòng bị bỏ qua không nằm trong danh sách phát hành. Nếu một hóa đơn không hợp lệ, toàn bộ đợt sẽ được hoàn tác.</div>
+<label><input type="checkbox" name="xacNhan" value="true" required /> Tôi đã kiểm tra số tiền và đồng ý phát hành.</label>
+<div class="flow-actions"><button type="button" data-batch-close class="btn btn-outline-secondary">Quay lại kiểm tra</button><button type="submit" class="btn btn-dark">Xác nhận phát hành</button></div>
+</dialog>
 </form>
 }
 @if(Model.DaPhatHanh.Count==0){<p>Chưa có hóa đơn trong kỳ này.</p>}else{<div class="table-responsive"><table class="table mr-table" data-page-size="15"><thead><tr><th>Phòng</th><th>Trạng thái</th><th>Ngày phát hành</th><th>Hạn thanh toán</th><th>Tổng tiền</th><th></th></tr></thead><tbody>@foreach(var row in Model.DaPhatHanh){<tr><th>@row.MaPhong</th><td>@(row.HoaDon.TrangThai == "NHAP" ? "Nháp" : row.HoaDon.TrangThai == "DA_HUY" ? "Đã hủy" : "Đã phát hành")</td><td>@(row.HoaDon.NgayPhatHanhNghiepVu?.ToString("dd/MM/yyyy") ?? row.HoaDon.NgayPhatHanh?.AddHours(7).ToString("dd/MM/yyyy"))</td><td>@row.HoaDon.HanThanhToan.ToString("dd/MM/yyyy")</td><td>@row.HoaDon.TongTien.ToString("N0",vn) đ</td><td><a asp-action="Details" asp-route-id="@row.HoaDon.Id">Xem chi tiết</a></td></tr>}</tbody></table></div>}
@@ -100,7 +106,7 @@ var otherLines = row.HoaDon.ChiTiet.Where(d => d.LoaiKhoan != "TIEN_PHONG" && !d
 <form asp-action="IssueMonthly" method="post" id="issue-monthly-form">
 <input type="hidden" name="toaNhaId" value="@Model.ToaNhaId" /><input type="hidden" name="nam" value="@Model.Nam" /><input type="hidden" name="thang" value="@Model.Thang" /><input type="hidden" name="ngayPhatHanh" value="@Model.NgayPhatHanh.ToString("yyyy-MM-dd")" /><input type="hidden" name="hanThanhToan" value="@Model.HanThanhToan.ToString("yyyy-MM-dd")" /><input type="hidden" name="reviewToken" value="@Model.ReviewToken" />
 <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Quay lại</a>
-<button type="button" data-review-open data-can-write="@write.ToString().ToLowerInvariant()" class="btn btn-dark" disabled="@(!write || !Model.SanSang || string.IsNullOrEmpty(Model.ReviewToken))">@(Model.DuKien.Count==0 ? "Chạy lại và xem kết quả" : "Tiếp tục tạo nháp →")</button>
+<button type="button" data-review-open data-can-write="@write.ToString().ToLowerInvariant()" class="btn btn-dark" disabled="@(!write || !Model.SanSang || string.IsNullOrEmpty(Model.ReviewToken))">@(Model.DuKien.Count==0 ? "Chạy lại và xem kết quả" : "Tạo hóa đơn nháp")</button>
 <partial name="_IssueConfirmation" model="Model" />
 </form></footer>
 </div>

@@ -1,23 +1,23 @@
 @model QL_PhongTro.ViewModels.HopDongDetailsViewModel
 @inject QL_PhongTro.Authorization.PermissionService Permissions
-@{var total=Model.Nguois.Count+(Model.DungTen==null?0:1);}
-<section class="contract-card" aria-labelledby="resident-list-title">
-    <h2 id="resident-list-title">Danh sách người ở trong hợp đồng</h2>
-    <p>@total/@Model.GioiHan người · Phòng tối đa @Model.GioiHan người, bao gồm người đứng tên.</p>
-    @if (Model.DungTen is { } signer) {
-        <div class="roommate-person"><strong>@signer.HoTen</strong><p>Người đứng tên duy nhất, chịu trách nhiệm thanh toán và nhận lại tiền cọc.</p></div>
-    }
-    @if (Model.Nguois.Count > 0) {
-        <h3>Người đang ở</h3>
+@{
+    var total = Model.Nguois.Count + (Model.DungTen is null ? 0 : 1);
+    var vi = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+    var canAdd = Model.ChoThem && await Permissions.AllowsAsync("HOP_DONG", true);
+    var state = Model.HopDong.TrangThai switch { "DANG_HIEU_LUC" => "Đang hiệu lực", "CHO_HIEU_LUC" => "Chờ hiệu lực", "NHAP" => "Nháp", "DA_KET_THUC" => "Đã kết thúc", _ => "Đã hủy" };
+}
+<div class="ref-workspace ref-residents"><div class="ref-main">
+    <section class="contract-card ref-card" aria-labelledby="resident-list-title">
+        <div class="ref-card-title"><span class="ref-icon neutral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="7" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3M16 4a3 3 0 0 1 0 6M18 13a5 5 0 0 1 3 5v3"/></svg></span><h2 id="resident-list-title">Người đang ở</h2></div>
+        <div class="ref-capacity ref-capacity-large"><strong>@total / @Model.GioiHan <small>người</small></strong><progress value="@total" max="@Math.Max(1, Model.GioiHan)" aria-label="Số người đang ở trên sức chứa tối đa"></progress><span>Còn @Math.Max(0, Model.GioiHan - total) vị trí</span></div>
+        @if (Model.DungTen is {} signer) { <div class="ref-person ref-resident-row"><span class="ref-avatar">@signer.HoTen.FirstOrDefault()</span><strong>@signer.HoTen</strong><span class="ref-person-badge">Người đứng tên</span><span>☎ @signer.SoDienThoai</span><span>▣ @signer.SoGiayTo</span><span class="ref-person-state">● Người đứng tên</span></div> }
         @foreach (var person in Model.Nguois) { <partial name="_NguoiOGhep" model="@(new QL_PhongTro.ViewModels.ChuyenDiRowViewModel(Model, person))" /> }
-    } else { <p>Chưa có người ở ghép đang ở.</p> }
-    @if (Model.SapVao.Count > 0) {
-        <h3>Người sắp vào</h3>
-        @foreach (var person in Model.SapVao) { <partial name="_NguoiOGhep" model="@(new QL_PhongTro.ViewModels.ChuyenDiRowViewModel(Model, person))" /> }
-    }
-    @if (Model.DaChuyenDi.Count > 0) {
-        <h3>Người đã rời phòng</h3>
-        @foreach (var person in Model.DaChuyenDi) { <partial name="_NguoiOGhep" model="@(new QL_PhongTro.ViewModels.ChuyenDiRowViewModel(Model, person))" /> }
-    }
-</section>
-@if (Model.ChoThem && await Permissions.AllowsAsync("HOP_DONG", true)) { <partial name="_ResidentCreate" model="Model" /> }
+        @if (Model.Nguois.Count == 0) { <div class="ref-empty">♙ &nbsp; Chưa có người ở ghép.</div> }
+    </section>
+    @if (Model.SapVao.Count > 0) { <section class="contract-card ref-card"><div class="ref-card-title"><span class="ref-icon neutral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="7" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3M16 4a3 3 0 0 1 0 6M18 13a5 5 0 0 1 3 5v3"/></svg></span><h2>Người sắp vào</h2></div>@foreach (var person in Model.SapVao) { <partial name="_NguoiOGhep" model="@(new QL_PhongTro.ViewModels.ChuyenDiRowViewModel(Model, person))" /> }</section> }
+    @if (canAdd) { <partial name="_ResidentCreate" model="Model" /> }
+</div><aside class="ref-side">
+    <section class="contract-card ref-card"><div class="ref-card-title"><span class="ref-icon neutral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h8l4 4v14H6Z"/><path d="M14 3v5h4M9 12h6M9 16h6"/></svg></span><h2>Thông tin phòng &amp; hợp đồng</h2></div><div class="ref-room"><span class="ref-icon neutral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3Z"/><path d="M9 20v-7h6v7"/></svg></span><div><strong>Phòng @Model.Phong</strong><small>@Model.ToaNha</small><small>@Model.DiaChiPhong · @Model.DienTich.ToString("0.##", vi) m² · Tầng @Model.Tang</small></div></div><dl class="ref-facts"><div><dt>Mã hợp đồng</dt><dd>@Model.HopDong.MaHopDong</dd></div><div><dt>Thời hạn thuê</dt><dd>@Model.Ky?.NgayBatDau.ToString("dd/MM/yyyy") – @Model.Ky?.NgayKetThuc.ToString("dd/MM/yyyy")</dd></div><div><dt>Sức chứa tối đa</dt><dd>@Model.GioiHan người</dd></div><div><dt>Trạng thái</dt><dd><span class="ref-state state-@Model.HopDong.TrangThai">● @state</span></dd></div></dl></section>
+    @if (canAdd) { <section class="contract-card ref-card"><div class="ref-card-title"><span class="ref-icon neutral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h8l4 4v14H6Z"/><path d="M14 3v5h4M9 12h6M9 16h6"/></svg></span><h2>Sau khi thêm</h2></div><ul class="ref-checklist"><li>Thêm người vào hợp đồng hiện tại</li><li>Ghi vào lịch sử người ở</li><li>Không thay đổi người đứng tên</li></ul><p class="ref-notice">Người đứng tên duy nhất tiếp tục chịu trách nhiệm thanh toán và nhận lại tiền cọc. Người ở ghép không thay thế người đứng tên.</p><small class="contract-note">Sức chứa được kiểm tra lại tại ngày bắt đầu và mọi mốc người sắp vào khi lưu.</small></section> }
+    <section class="contract-card ref-card"><div class="ref-card-title"><span class="ref-icon neutral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="7" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3M16 4a3 3 0 0 1 0 6M18 13a5 5 0 0 1 3 5v3"/></svg></span><h2>Người đã rời phòng</h2><a asp-action="LichSuNguoiO" asp-route-phongId="@Model.HopDong.PhongId">Xem toàn bộ lịch sử</a></div>@if (Model.DaChuyenDi.Count == 0) { <div class="ref-empty ref-empty-history">♙<span>Chưa có người rời phòng.</span></div> }@foreach (var person in Model.DaChuyenDi) { <partial name="_NguoiOGhep" model="@(new QL_PhongTro.ViewModels.ChuyenDiRowViewModel(Model, person))" /> }</section>
+</aside></div>

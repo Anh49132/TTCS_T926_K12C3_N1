@@ -24,7 +24,7 @@
             <a class="@Active("TinDang")" asp-controller="TinDang" asp-action="Index">▤ <span>Tin đăng cho thuê</span></a>
             <a class="@Active("HopDongCuaToi")" asp-controller="HopDongCuaToi" asp-action="Index">▧ <span>Hợp đồng của tôi</span></a>
             <a class="@Active("YeuCau")" asp-controller="YeuCau" asp-action="Index">▧ <span>Yêu cầu thuê</span></a>
-            <a class="@Active("HoSo")" asp-controller="HoSo" asp-action="Index">○ <span>Hồ sơ cá nhân</span></a>
+            <a class="@Active("HoSo")" asp-controller="HoSo" asp-action="Xem">○ <span>Hồ sơ của tôi</span></a>
             @if (showNotifications) { <a asp-controller="ThongBao" asp-action="DanhSach">Hóa đơn của tôi</a> }
             @if (showNotifications) { <a asp-controller="ThongBao" asp-action="Index">Thông báo hóa đơn (@unread)</a> }
         </nav>
@@ -45,7 +45,7 @@
     <details class="tenant-account">
         <summary aria-label="Tài khoản @name"><span class="tenant-avatar" aria-hidden="true">@(string.IsNullOrWhiteSpace(name) ? "K" : System.Globalization.StringInfo.GetNextTextElement(name).ToUpperInvariant())</span><span class="tenant-account-name">@name</span><svg class="tenant-account-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 9 5 5 5-5" /></svg></summary>
         <div class="tenant-account-panel">
-            <a asp-controller="HoSo" asp-action="Xem">Xem hồ sơ</a>
+            <a asp-controller="HoSo" asp-action="Xem">Hồ sơ của tôi</a>
             <a asp-controller="Account" asp-action="ChangePassword">Đổi mật khẩu</a>
             <form asp-controller="Account" asp-action="Logout" method="post"><button type="submit">Đăng xuất</button></form>
         </div>

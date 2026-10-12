@@ -280,14 +280,37 @@ public partial class HoaDonDichVuController(AppDbContext db, DichVuService servi
         DateOnly hanThanhToan, bool xacNhan)
     {
         if (!ModelState.IsValid || selectedInvoiceIds is null || versions is null) return BadRequest();
-        if (selectedInvoiceIds.Count != selectedInvoiceIds.Distinct().Count() ||
+        if (selectedInvoiceIds.Count is < 1 or > 50 || selectedInvoiceIds.Count != selectedInvoiceIds.Distinct().Count() ||
             selectedInvoiceIds.Any(id => !versions.ContainsKey(id))) return BadRequest();
         try
         {
-            var count = await invoices.PhatHanhNhieuNhapAsync(AccountId, toaNhaId, nam, thang,
-                selectedInvoiceIds.ToDictionary(id => id, id => versions[id]), ngayPhatHanh, hanThanhToan, xacNhan);
-            TempData["MonthlyMessage"] = count == 0 ? "Các hóa đơn đã được phát hành trước đó. Không tạo thông báo trùng."
-                : $"Đã phát hành {count} hóa đơn và tạo thông báo cho khách.";
+            var start = Clock.UtcNow;
+            var watch = System.Diagnostics.Stopwatch.StartNew();
+            var rows = await (from bill in db.HoaDons.AsNoTracking()
+                join c in db.HopDongs on bill.HopDongId equals c.Id
+                join r in db.PhongTros on c.PhongId equals r.Id
+                join b in db.ToaNhas on r.ToaNhaId equals b.Id
+                join tenant in db.KhachThues on c.KhachDungTenId equals tenant.Id
+                where selectedInvoiceIds.Contains(bill.Id) && b.ChuNhaId == AccountId && b.Id == toaNhaId && bill.Nam == nam && bill.Thang == thang
+                select new { Bill = bill, r.MaPhong, tenant.HoTen, b.TenToaNha }).ToListAsync();
+            if (rows.Count != selectedInvoiceIds.Count) return Forbid();
+            string? failure = null;
+            var published = new List<int>();
+            try { await invoices.PhatHanhNhieuNhapAsync(AccountId, toaNhaId, nam, thang,
+                selectedInvoiceIds.ToDictionary(id => id, id => versions[id]), ngayPhatHanh, hanThanhToan, xacNhan, published); }
+            catch (InvalidOperationException ex) { failure = ex.Message; }
+            catch (Exception ex) when(ex is DbUpdateException or Microsoft.Data.Sqlite.SqliteException or OverflowException)
+            { failure = "Toàn bộ đợt phát hành đã được hoàn tác. Hãy kiểm tra lại dữ liệu."; }
+            watch.Stop();
+            var run = new KetQuaPhatHanhThang(rows.Select(r => new KetQuaPhongHoaDon(r.Bill.HopDongId,r.MaPhong,
+                published.Contains(r.Bill.Id) ? "DA_PHAT_HANH" : failure != null && r.Bill.TrangThai != "DA_PHAT_HANH" ? "THAT_BAI" : "DA_CO_HOA_DON",
+                published.Contains(r.Bill.Id) ? "Đã tạo thông báo cho khách." : failure ?? "Đã phát hành trước đó; giữ nguyên.",r.Bill.Id)
+                { MaHoaDon=r.Bill.MaHoaDon,TenKhach=r.HoTen,TongTien=r.Bill.TongTien }).ToList())
+                { LaPhatHanh=true,NguoiThucHienId=AccountId,NguoiThucHien=User.Identity?.Name ?? "",
+                  ToaNhaId=toaNhaId,TenToaNha=rows[0].TenToaNha,Nam=nam,Thang=thang,NgayPhatHanh=ngayPhatHanh,
+                  HanThanhToan=hanThanhToan,BatDauUtc=start,HoanTatUtc=Clock.UtcNow,SoGiay=watch.Elapsed.TotalSeconds };
+            HttpContext.RequestServices.GetRequiredService<IMemoryCache>().Set("InvoiceRun:"+run.MaLanChay,run,TimeSpan.FromHours(24));
+            return RedirectToAction(nameof(Results),new {runId=run.MaLanChay});
         }
         catch (UnauthorizedAccessException) { return Forbid(); }
         catch (InvalidOperationException ex) { TempData["MonthlyError"] = "Chưa phát hành hóa đơn nào trong lần này. " + ex.Message; }

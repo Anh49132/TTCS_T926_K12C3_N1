@@ -49,17 +49,27 @@ else
     }
     else if (isTenant)
     {
-        <section class="tenant-welcome-card latte-tenant-room">
-            <div><span class="stat-icon">⌂</span><p>Phòng của tôi</p><h2>Chưa có thông tin phòng đang thuê</h2><span>Bạn có thể tìm phòng và theo dõi lịch xem phòng ngay tại đây.</span></div>
-            <a class="btn btn-primary" asp-controller="TimTin" asp-action="Index">Tìm phòng ngay →</a>
-        </section>
+        @if (dashboard.TenantContracts.Count > 0) {
+            @foreach (var contract in dashboard.TenantContracts.Take(3)) {
+                <section class="tenant-welcome-card latte-tenant-room tenant-contract-card">
+                    <div><span class="stat-icon">⌂</span><p>Phòng của tôi · @contract.Label</p><h2>Phòng @contract.Room · @contract.Building</h2><span>@contract.Code · @contract.Role · @(contract.Start?.ToString("dd/MM/yyyy") ?? "—") đến @(contract.End?.ToString("dd/MM/yyyy") ?? "—")</span>@if(contract.Rent > 0){<small>@contract.Rent.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")) đ/tháng</small>}</div>
+                    <a class="btn btn-primary" asp-controller="HopDongCuaToi" asp-action="Details" asp-route-maHopDong="@contract.Code">Xem hợp đồng →</a>
+                </section>
+            }
+            <p><a asp-controller="HopDongCuaToi" asp-action="Index">Xem tất cả hợp đồng của tôi (@dashboard.TenantContracts.Count) →</a></p>
+        } else {
+            <section class="tenant-welcome-card latte-tenant-room">
+                <div><span class="stat-icon">⌂</span><p>Phòng của tôi</p><h2>@(dashboard.TenantContractMessage ?? "Chưa có thông tin phòng đang thuê")</h2><span>Bạn có thể tìm phòng hoặc kiểm tra hợp đồng của mình.</span></div>
+                <a class="btn btn-primary" asp-controller="HopDongCuaToi" asp-action="Index">Hợp đồng của tôi →</a>
+            </section>
+        }
         <section class="dashboard-stat-grid tenant-stat-grid" aria-label="Tổng quan yêu cầu">
-            <div class="dashboard-stat"><span class="stat-icon">▧</span><small>Hóa đơn cần thanh toán</small><strong>—</strong><span>Chưa có thông tin hóa đơn</span></div>
-            <div class="dashboard-stat"><span class="stat-icon">＄</span><small>Tổng cần trả</small><strong>—</strong><span>Chưa có thông tin thanh toán</span></div>
+            <div class="dashboard-stat"><span class="stat-icon">▧</span><small>Hóa đơn cần thanh toán</small><strong>@(dashboard.TenantInvoicesReady ? dashboard.TenantUnpaidInvoices.ToString() : "—")</strong><span>@if(dashboard.TenantInvoicesReady){<a asp-controller="ThongBao" asp-action="DanhSach">Xem hóa đơn →</a>}else{<text>@dashboard.TenantInvoiceMessage</text>}</span></div>
+            <div class="dashboard-stat"><span class="stat-icon">＄</span><small>Tổng cần trả</small><strong>@(dashboard.TenantInvoicesReady ? dashboard.TenantAmountDue.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")) + " đ" : "—")</strong><span>Chỉ trừ khoản thanh toán đã xác nhận</span></div>
             <a asp-controller="YeuCau" asp-action="Index" class="dashboard-stat"><span class="stat-icon">▧</span><small>Yêu cầu của tôi</small><strong>@dashboard.YeuCauCuaToi</strong><span>Xem tất cả →</span></a>
             <div class="dashboard-stat"><span class="stat-icon">⚒</span><small>Báo hỏng</small><strong>—</strong><span>Chưa có thông tin báo hỏng</span></div>
         </section>
-        <section class="dashboard-panel-grid latte-bottom-grid"><article class="dashboard-panel"><div class="panel-heading"><h2>Hóa đơn mới nhất</h2></div><div class="latte-empty-state"><span class="stat-icon">▧</span><h3>Chưa có hóa đơn</h3><p>Hóa đơn của bạn sẽ xuất hiện khi có thông tin thuê phòng.</p></div></article><article class="dashboard-panel"><partial name="_DashboardRequests" model="dashboard" /></article></section>
+        <section class="dashboard-panel-grid latte-bottom-grid"><article class="dashboard-panel tenant-home-invoices"><div class="panel-heading"><h2>Hóa đơn mới nhất</h2>@if(dashboard.TenantInvoicesReady){<a asp-controller="ThongBao" asp-action="DanhSach">Xem tất cả →</a>}</div>@if(dashboard.TenantInvoices.Count > 0){<div class="tenant-home-invoice-list">@foreach(var bill in dashboard.TenantInvoices){<a asp-controller="ThongBao" asp-action="ChiTiet" asp-route-maHoaDon="@bill.Code" class="tenant-home-invoice"><div><strong>@bill.Code</strong><small>Phòng @bill.Room · Kỳ @bill.Month.ToString("00")/@bill.Year</small><small>Hạn @bill.Due.ToString("dd/MM/yyyy") · @bill.Status</small></div><div><strong>@bill.Remaining.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")) đ</strong><small>Còn phải trả</small><small>Tổng @bill.Total.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")) đ</small></div></a>}</div>}else{<div class="latte-empty-state"><span class="stat-icon">▧</span><h3>@(dashboard.TenantInvoicesReady ? "Chưa có hóa đơn đã phát hành" : dashboard.TenantInvoiceMessage ?? "Dữ liệu hóa đơn chưa sẵn sàng")</h3><p>Hóa đơn được hiển thị cho người đứng tên hợp đồng.</p></div>}</article><article class="dashboard-panel"><partial name="_DashboardRequests" model="dashboard" /></article></section>
         <section class="dashboard-panel">
             <div class="panel-heading"><div><h2>Phòng trọ gợi ý cho bạn</h2><p>Các tin đăng mới nhất đang còn hiển thị</p></div><a asp-controller="TimTin" asp-action="Index">Xem tất cả →</a></div>
             <div class="tenant-listing-grid">

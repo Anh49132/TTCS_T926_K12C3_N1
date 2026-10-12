@@ -68,8 +68,24 @@ public sealed partial class HoaDonDichVuService
             line.SoLuong = reading.ChiSoCuoi - reading.ChiSoDau;
             line.ThanhTien = ThanhTien(line.SoLuong, line.DonGia);
         }
-        var order = invoice.ChiTiet.Max(x => x.SoThuTu);
-        foreach (var item in additions) invoice.ChiTiet.Add(new ChiTietHoaDon {
+        var adjustments = invoice.ChiTiet.Where(x => x.LoaiKhoan is "PHAT_SINH" or "GIAM_TRU").ToDictionary(x => x.Id);
+        var editIds = additions.Where(x => x.Id.HasValue).Select(x => x.Id!.Value).ToList();
+        if (editIds.Distinct().Count() != editIds.Count || editIds.Any(x => !adjustments.ContainsKey(x))
+            || input.XoaKhoanIds.Any(x => !adjustments.ContainsKey(x)) || editIds.Intersect(input.XoaKhoanIds).Any())
+            throw new InvalidOperationException("Danh sách khoản điều chỉnh không hợp lệ.");
+        foreach (var id in input.XoaKhoanIds.Distinct()) { db.ChiTietHoaDons.Remove(adjustments[id]); invoice.ChiTiet.Remove(adjustments[id]); }
+        foreach (var item in additions.Where(x => x.Id.HasValue)) {
+            var line = adjustments[item.Id!.Value];
+            line.LoaiKhoan=item.LoaiKhoan; line.TenKhoan=item.TenKhoan!.Trim(); line.GhiChu=item.GhiChu!.Trim();
+            line.SoLuong=1;line.DonGia=item.SoTien!.Value;line.ThanhTien=item.SoTien.Value;
+        }
+        if(input.HanThanhToan.HasValue) {
+            if(input.HanThanhToan.Value.Year < 1900 || input.HanThanhToan.Value.Year > 9998)
+                throw new InvalidOperationException("Hạn thanh toán không hợp lệ.");
+            invoice.HanThanhToan=input.HanThanhToan.Value;
+        }
+        var order = invoice.ChiTiet.Select(x=>x.SoThuTu).DefaultIfEmpty().Max();
+        foreach (var item in additions.Where(x=>!x.Id.HasValue)) invoice.ChiTiet.Add(new ChiTietHoaDon {
             SoThuTu = ++order, LoaiKhoan = item.LoaiKhoan, TenKhoan = item.TenKhoan!.Trim(),
             GhiChu = item.GhiChu!.Trim(), SoLuong = 1, DonGia = item.SoTien!.Value, ThanhTien = item.SoTien.Value, DonViTinh = "khoản" });
         invoice.TongTien = TongCong(invoice.ChiTiet);

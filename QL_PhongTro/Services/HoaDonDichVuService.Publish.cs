@@ -17,7 +17,7 @@ public sealed partial class HoaDonDichVuService
 
     // A whole batch shares one transaction, including meter locks, audit and notifications.
     public async Task<int> PhatHanhNhieuNhapAsync(int actor, int building, int year, int month,
-        IReadOnlyDictionary<int, int> versions, DateOnly issue, DateOnly due, bool confirmed)
+        IReadOnlyDictionary<int, int> versions, DateOnly issue, DateOnly due, bool confirmed, ICollection<int>? publishedIds = null)
     {
         if (!confirmed || versions.Count is < 1 or > 50)
             throw new InvalidOperationException("Hãy xác nhận từ 1 đến 50 hóa đơn Nháp mỗi lần.");
@@ -33,6 +33,7 @@ public sealed partial class HoaDonDichVuService
             select new { bill.Id, bill.TrangThai }).ToListAsync();
         if (bills.Count != ids.Count) throw new UnauthorizedAccessException();
         var count = 0;
+        var completed = new List<int>();
         foreach (var bill in bills.OrderBy(x => x.Id))
         {
             // Repeated submissions do not create another notification or change published amounts.
@@ -40,8 +41,10 @@ public sealed partial class HoaDonDichVuService
             await PhatHanhNhapCoreAsync(actor, new() { Id = bill.Id, PhienBan = versions[bill.Id],
                 XacNhan = true, NgayPhatHanh = issue, HanThanhToan = due });
             count++;
+            completed.Add(bill.Id);
         }
         await sqlite.CommitAsync();
+        if (publishedIds is not null) foreach(var id in completed) publishedIds.Add(id);
         return count;
     }
 

@@ -104,3 +104,10 @@ body.homepage-dashboard-theme {
 @media(max-width:1200px){.latte-admin-grid{grid-template-columns:1fr 1.6fr}.latte-admin-grid>article:last-child{grid-column:1/-1}.latte-room-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:850px){.latte-admin-grid,.latte-bottom-grid{grid-template-columns:1fr}.latte-admin-grid>article:last-child{grid-column:auto}.room-legend{font-size:0.625rem}}
 @media(max-width:560px){.homepage-dashboard-theme .app-content{padding:1.25rem 0.875rem}.role-home-heading h1{font-size:1.5625rem}.latte-room-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboard-panel{padding:1rem}.latte-task{flex-wrap:wrap}.latte-task>a{margin-left:3.75rem}.tenant-stat-grid .dashboard-stat{grid-template-columns:46px 1fr}.latte-tenant-room{padding:1.25rem}.panel-heading{flex-wrap:wrap}}
+
+.role-home .tenant-contract-card>div{min-width:0;grid-template-columns:auto minmax(0,1fr)}
+.role-home .tenant-contract-card h2,.role-home .tenant-contract-card div>span{overflow-wrap:anywhere}
+.role-home .tenant-contract-card div>small{grid-column:2;color:#fff;margin-top:5px}
+@media(max-width:600px){.role-home .tenant-contract-card{flex-direction:column;align-items:stretch}.role-home .tenant-contract-card .btn{align-self:flex-start}}
+
+.tenant-home-invoice{display:flex;justify-content:space-between;gap:14px;padding:14px 0;border-bottom:1px solid #e9eaec;text-decoration:none;color:#25282d}.tenant-home-invoice>div{min-width:0}.tenant-home-invoice>div:last-child{text-align:right}.tenant-home-invoice strong{display:block;overflow-wrap:anywhere;font-size:14px}.tenant-home-invoice small{display:block;color:#7b8491;font-size:12px;margin-top:5px}.tenant-home-invoice:hover strong{text-decoration:underline}.tenant-home-invoice-list{min-width:0}@media(max-width:600px){.tenant-home-invoice{gap:10px}.tenant-home-invoice strong{font-size:13px}}

@@ -1,0 +1,37 @@
+using Microsoft.EntityFrameworkCore;
+using QL_PhongTro.Data;
+using QL_PhongTro.Services;
+using System.Diagnostics;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
+var path=Path.GetFullPath(args[0]);
+if(!path.EndsWith("probe.sqlite",StringComparison.OrdinalIgnoreCase) || !path.Contains("sprint3-report-")) throw new InvalidOperationException("Only the probe database may be tested.");
+var options=new DbContextOptionsBuilder<AppDbContext>().UseSqlite("Data Source="+path).Options;
+await using var db=new AppDbContext(options,new HttpContextAccessor { HttpContext = new DefaultHttpContext { User = new ClaimsPrincipal(new ClaimsIdentity(new[]{new Claim(ClaimTypes.NameIdentifier,"1"),new Claim(ClaimTypes.Role,"CHU_NHA")},"verification")) } });
+var service=new HoaDonDichVuService(db,new DichVuService(db));
+if(args.Contains("--fresh")) {
+ var review=await service.XemThangAsync(1,6,2026,10,new(2026,10,13),new(2026,10,20));
+ Console.WriteLine($"Fresh October: {review.DuKien.Count} eligible, {review.BoQua.Count(x=>x.ThieuChiSo)} missing, {review.DaPhatHanh.Count} existing.");
+ if(review.DuKien.Count!=38 || review.BoQua.Count(x=>x.ThieuChiSo)!=4)throw new InvalidOperationException("Fresh scenarios mismatch.");
+ var selected=review.DaPhatHanh.Where(x=>x.HoaDon.TrangThai=="NHAP").ToDictionary(x=>x.HoaDon.Id,x=>x.HoaDon.PhienBan);
+ if(selected.Count!=3)throw new InvalidOperationException("Expected three drafts.");
+ if(await service.PhatHanhNhieuNhapAsync(1,6,2026,10,selected,new(2026,10,13),new(2026,10,20),true)!=3)throw new InvalidOperationException("Fresh publication failed.");
+ if(await service.PhatHanhNhieuNhapAsync(1,6,2026,10,selected,new(2026,10,13),new(2026,10,20),true)!=0)throw new InvalidOperationException("Fresh duplicate publication.");
+ foreach(var row in review.BoQua.Where(x=>!x.ThieuChiSo && x.TrangThai!="DA_CO_HOA_DON"))Console.WriteLine(row.MaPhong+": "+row.LyDo);
+ Console.WriteLine("Fresh publication/notifications/retry verified on probe.");
+ return;
+}
+var november=await service.XemThangAsync(1,6,2026,11,new DateOnly(2026,11,13),new DateOnly(2026,11,20));
+if(november.DuKien.Count!=43 || november.BoQua.Count(x=>x.ThieuChiSo)!=4 || november.BoQua.Count(x=>x.TrangThai=="DA_CO_HOA_DON")!=3) throw new InvalidOperationException("November scenario counts mismatch.");
+Console.WriteLine("November: 43 eligible, 4 missing readings, 3 existing invoices.");
+var october=await service.XemThangAsync(1,6,2026,10,new DateOnly(2026,10,13),new DateOnly(2026,10,20));
+var versions=october.DaPhatHanh.Where(x=>x.HoaDon.TrangThai=="NHAP").ToDictionary(x=>x.HoaDon.Id,x=>x.HoaDon.PhienBan);
+if(versions.Count!=50)throw new InvalidOperationException("Expected 50 October drafts.");
+var watch=Stopwatch.StartNew();
+var count=await service.PhatHanhNhieuNhapAsync(1,6,2026,10,versions,new(2026,10,13),new(2026,10,20),true);
+watch.Stop();
+if(count!=50 || watch.Elapsed.TotalSeconds>=30)throw new InvalidOperationException("Bulk publication failed or too slow.");
+var notifications=await db.ThongBaoHoaDons.CountAsync(x=>versions.Keys.Contains(x.HoaDonId));
+if(notifications!=50)throw new InvalidOperationException("Missing notifications.");
+if(await service.PhatHanhNhieuNhapAsync(1,6,2026,10,versions,new(2026,10,13),new(2026,10,20),true)!=0)throw new InvalidOperationException("Retry created duplicates.");
+Console.WriteLine($"October: published 50 invoices in {watch.Elapsed.TotalSeconds:F3}s; created 50 notifications; retry creates none. Probe only.");

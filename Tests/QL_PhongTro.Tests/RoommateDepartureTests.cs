@@ -43,7 +43,7 @@ public sealed partial class ContractCreationTests
     [Fact] public async Task DepartureFreesCapacityOnlyStartingNextDay()
     {
         DepartureStay();using(var db=Context())await Controller(db).ChuyenDi(8,1,Departure(new(2026,10,6)),default);
-        using(var db=Context()){var input=Roommate("987654321");input.PhienBanPhong=1;input.NgayVao=new(2026,10,6);Assert.IsType<ViewResult>(await Controller(db).ThemNguoi(8,input,default));}
+        using(var db=Context()){var input=Roommate("987654321");input.PhienBanPhong=1;input.NgayVao=new(2026,10,6);Assert.IsType<ViewResult>(await RoommateControllerAt(db,new(2026,10,6)).ThemNguoi(8,input,default));}
         using var next=Context();var allowed=Roommate("987654321");allowed.PhienBanPhong=1;allowed.NgayVao=new(2026,10,7);Assert.IsType<RedirectToActionResult>(await Controller(next).ThemNguoi(8,allowed,default));Assert.Equal(2,await next.NguoiOGheps.CountAsync());
     }
     [Fact] public async Task DepartureAuditFailureRollsBackDateAndRoomVersion()

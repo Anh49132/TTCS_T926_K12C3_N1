@@ -6,12 +6,13 @@ using QL_PhongTro.Data;
 using QL_PhongTro.Models;
 using QL_PhongTro.ViewModels;
 using QL_PhongTro.Services;
+using QL_PhongTro.Authorization;
 
 namespace QL_PhongTro.Controllers;
 
 [Authorize]
 [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-public class HoSoController(AppDbContext db, GiayToImageStore images, HoSoAccess access) : Controller
+public class HoSoController(AppDbContext db, GiayToImageStore images, HoSoAccess access, PermissionService permissions, ITimeProvider? clock = null) : Controller
 {
     private async Task<TaiKhoan?> CurrentViewerAsync()
     {
@@ -77,6 +78,7 @@ public class HoSoController(AppDbContext db, GiayToImageStore images, HoSoAccess
             db.KhachThues.Add(profile);
         }
         profile.HoTen = model.HoTen.Trim();
+        profile.SoDienThoai = tenant.SoDienThoai;
         profile.NgaySinh = model.NgaySinh;
         if (!string.IsNullOrEmpty(model.SoCanCuoc)) profile.SoGiayTo = model.SoCanCuoc;
         profile.QueQuan = model.QueQuan.Trim();
@@ -149,7 +151,7 @@ public class HoSoController(AppDbContext db, GiayToImageStore images, HoSoAccess
             ? await db.KhachThues.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id.Value)
             : await db.KhachThues.AsNoTracking().SingleOrDefaultAsync(x => x.TaiKhoanId == viewer.Id);
         if (profile is null) return NotFound();
-        if (!(viewer.VaiTro == "KHACH_THUE" && profile.TaiKhoanId == viewer.Id) && !await access.CanReadFullAsync(viewer, profile.Id)) return NotFound();
+        if (!(viewer.VaiTro == "KHACH_THUE" && profile.TaiKhoanId == viewer.Id) && (!await permissions.AllowsAsync("HOP_DONG") || !await access.CanReadFullAsync(viewer, profile.Id))) return NotFound();
         var path = images.GetPath(mat == "truoc" ? profile?.AnhGiayToTruoc : profile?.AnhGiayToSau);
         if (path is null || !System.IO.File.Exists(path)) return NotFound();
         Response.Headers["X-Content-Type-Options"] = "nosniff";
@@ -165,15 +167,87 @@ public class HoSoController(AppDbContext db, GiayToImageStore images, HoSoAccess
     }
 
     [HttpGet]
-    public async Task<IActionResult> DanhSach()
+    public async Task<IActionResult> CuaToi()
+    {
+        var viewer = await CurrentViewerAsync();
+        if (viewer is null) return Forbid();
+        if (viewer.VaiTro == "KHACH_THUE") return RedirectToAction(nameof(Xem));
+        var role = viewer.VaiTro switch { "CHU_NHA" => "Chủ nhà", "QUAN_LY" => "Quản lý tòa nhà", "ADMIN" => "Quản trị hệ thống", _ => "Tài khoản" };
+        return View(new HoSoCaNhanViewModel(viewer.Id, viewer.HoTen, role, viewer.SoDienThoai, viewer.Email, viewer.EmailConfirmed, viewer.NgayTao, viewer.LastLogin));
+    }
+
+    private async Task<List<(int ProfileId, HoSoHopDongRow Row)>> QuanHeHoSoAsync(TaiKhoan viewer)
+    {
+        var contracts = await (from h in db.HopDongs.AsNoTracking()
+            join p in db.PhongTros on h.PhongId equals p.Id join b in db.ToaNhas on p.ToaNhaId equals b.Id
+            where (viewer.VaiTro == "ADMIN" || b.ChuNhaId == viewer.Id)
+                && (h.TrangThai == "CHO_HIEU_LUC" || h.TrangThai == "DANG_HIEU_LUC" || h.TrangThai == "DA_KET_THUC")
+            select new { h.Id, h.MaHopDong, h.KhachDungTenId, h.TrangThai, BuildingId = b.Id, b.TenToaNha, p.MaPhong, p.SoNguoiToiDa }).ToListAsync();
+        var ids = contracts.Select(h => h.Id).ToList();
+        var periods = await db.KyHopDongs.AsNoTracking().Where(k => ids.Contains(k.HopDongId)).ToListAsync();
+        var stays = await db.NguoiOGheps.AsNoTracking().Where(g => ids.Contains(g.HopDongId)).ToListAsync();
+        var today = DateOnly.FromDateTime((clock ?? new SystemTimeProvider()).UtcNow.AddHours(7));
+        var result = new List<(int, HoSoHopDongRow)>();
+        foreach (var h in contracts)
+        {
+            var terms = periods.Where(k => k.HopDongId == h.Id).ToList();
+            DateOnly? start = terms.Count == 0 ? null : terms.Min(k => k.NgayBatDau);
+            DateOnly? end = terms.Count == 0 ? null : terms.Max(k => k.NgayKetThuc);
+            var active = h.TrangThai == "DANG_HIEU_LUC" && terms.Any(k => k.NgayBatDau <= today && k.NgayKetThuc >= today);
+            var members = stays.Where(g => g.HopDongId == h.Id).ToList();
+            var count = members.Count(g => g.NgayVao <= today && (g.NgayRa == null || g.NgayRa >= today)) + (h.KhachDungTenId is null ? 0 : 1);
+            HoSoHopDongRow Row(string role, DateOnly? from, DateOnly? to, bool here) => new(h.Id, h.MaHopDong, h.BuildingId, h.TenToaNha, h.MaPhong, role, h.TrangThai, from, to, here, h.SoNguoiToiDa, count);
+            if (h.KhachDungTenId is {} signer) result.Add((signer, Row("Người đứng tên", start, end, active)));
+            foreach (var member in members)
+                result.Add((member.KhachThueId, Row("Người ở ghép", member.NgayVao, member.NgayRa ?? end,
+                    active && member.NgayVao <= today && (member.NgayRa == null || member.NgayRa >= today))));
+        }
+        return result;
+    }
+
+    [HttpPost, ValidateAntiForgeryToken, ModuleAccess("HOP_DONG")]
+    public async Task<IActionResult> LocDanhSach(string? timKiem, int? toaNhaId, string? trangThai)
     {
         var viewer = await CurrentViewerAsync();
         if (viewer?.VaiTro is not ("CHU_NHA" or "ADMIN")) return Forbid();
-        var ids = viewer.VaiTro == "ADMIN"
-            ? await db.KhachThues.AsNoTracking().Select(x => x.Id).ToListAsync()
-            : await access.RelatedProfileIdsAsync(viewer.Id);
-        return View(await db.KhachThues.AsNoTracking().Where(x => ids.Contains(x.Id))
-            .OrderBy(x => x.HoTen).ThenBy(x => x.Id).ToListAsync());
+        if (timKiem?.Length > 100) return BadRequest("Từ khóa tìm kiếm tối đa 100 ký tự.");
+        if (toaNhaId.HasValue && !await db.ToaNhas.AnyAsync(b => b.Id == toaNhaId && (viewer.VaiTro == "ADMIN" || b.ChuNhaId == viewer.Id))) return Forbid();
+        // CookieTempData is encrypted by Data Protection. Do not put phone/identity search terms in URLs.
+        TempData["OwnerProfileSearch"] = viewer.Id + ":" + (timKiem?.Trim() ?? "");
+        return RedirectToAction(nameof(DanhSach), new { toaNhaId, trangThai });
+    }
+
+    [HttpGet, ModuleAccess("HOP_DONG")]
+    public async Task<IActionResult> DanhSach(int? toaNhaId, string? trangThai, int trang = 1)
+    {
+        var viewer = await CurrentViewerAsync();
+        if (viewer?.VaiTro is not ("CHU_NHA" or "ADMIN")) return Forbid();
+        if (toaNhaId.HasValue && !await db.ToaNhas.AnyAsync(b => b.Id == toaNhaId && (viewer.VaiTro == "ADMIN" || b.ChuNhaId == viewer.Id))) return Forbid();
+        var savedSearch = TempData.Peek("OwnerProfileSearch") as string;
+        var prefix = viewer.Id + ":";
+        var timKiem = savedSearch?.StartsWith(prefix, StringComparison.Ordinal) == true ? savedSearch[prefix.Length..] : null;
+        var relations = await QuanHeHoSoAsync(viewer);
+        var ids = viewer.VaiTro == "ADMIN" ? await db.KhachThues.Select(k => k.Id).ToListAsync() : relations.Select(r => r.ProfileId).Distinct().ToList();
+        var profiles = await db.KhachThues.AsNoTracking().Where(k => ids.Contains(k.Id)).ToListAsync();
+        var grouped = relations.GroupBy(r => r.ProfileId).ToDictionary(g => g.Key, g => g.Select(r => r.Row).ToList());
+        List<HoSoHopDongRow> Rows(int id) => grouped.GetValueOrDefault(id) ?? [];
+        string State(List<HoSoHopDongRow> rows) => rows.Count == 0 ? "CHUA_CO_HOP_DONG" : rows.Any(r => r.DangO) ? "DANG_THUE" : rows.Any(r => r.TrangThai == "CHO_HIEU_LUC") ? "CHO_HIEU_LUC" : "DA_KET_THUC";
+        bool Complete(KhachThue k) => !string.IsNullOrWhiteSpace(k.HoTen) && !string.IsNullOrWhiteSpace(k.SoDienThoai) && !string.IsNullOrWhiteSpace(k.SoGiayTo);
+        var model = new HoSoChuNhaDanhSachViewModel { TimKiem = timKiem?.Trim(), ToaNhaId = toaNhaId, TrangThai = trangThai,
+            TongKhach = profiles.Count, DangThue = profiles.Count(k => State(Rows(k.Id)) == "DANG_THUE"),
+            DaKetThuc = profiles.Count(k => State(Rows(k.Id)) == "DA_KET_THUC"), ThieuHoSo = profiles.Count(k => !Complete(k)) };
+        model.ToaNhas = (await db.ToaNhas.AsNoTracking().Where(b => viewer.VaiTro == "ADMIN" || b.ChuNhaId == viewer.Id).OrderBy(b => b.TenToaNha).Select(b => new { b.Id, b.TenToaNha }).ToListAsync()).Select(b => (b.Id, b.TenToaNha)).ToList();
+        var filtered = profiles.Where(k => (!toaNhaId.HasValue || Rows(k.Id).Any(r => r.ToaNhaId == toaNhaId))
+            && (string.IsNullOrEmpty(trangThai) || State(Rows(k.Id).Where(r => !toaNhaId.HasValue || r.ToaNhaId == toaNhaId).ToList()) == trangThai)
+            && (string.IsNullOrEmpty(model.TimKiem) || k.HoTen.Contains(model.TimKiem, StringComparison.OrdinalIgnoreCase)
+                || (k.SoDienThoai?.Contains(model.TimKiem) ?? false) || (k.SoGiayTo?.Contains(model.TimKiem) ?? false))).OrderBy(k => k.HoTen).ThenBy(k => k.Id).ToList();
+        model.TongKetQua = filtered.Count; model.TongTrang = Math.Max(1, (filtered.Count + 9) / 10); model.Trang = Math.Clamp(trang, 1, model.TongTrang);
+        model.Khachs = filtered.Skip((model.Trang - 1) * 10).Take(10).Select(k => {
+            var rows = Rows(k.Id).Where(r => !toaNhaId.HasValue || r.ToaNhaId == toaNhaId).ToList(); var row = rows.OrderByDescending(r => r.DangO).ThenByDescending(r => r.BatDau).FirstOrDefault();
+            return new HoSoChuNhaRow(k.Id, k.HoTen, HoSoAccess.Mask(k.SoDienThoai), HoSoAccess.Mask(k.SoGiayTo), k.NgaySinh,
+                row?.Phong ?? "—", row?.ToaNha ?? "—", row?.VaiTro ?? "—", State(rows), Complete(k));
+        }).ToList();
+        return View(model);
     }
 
     [HttpGet]
@@ -186,11 +260,18 @@ public class HoSoController(AppDbContext db, GiayToImageStore images, HoSoAccess
         var profile = id.HasValue
             ? await db.KhachThues.AsNoTracking().SingleOrDefaultAsync(x => x.Id == id.Value)
             : await db.KhachThues.AsNoTracking().SingleOrDefaultAsync(x => x.TaiKhoanId == viewer.Id);
-        if (profile is null) return id.HasValue ? NotFound() : View(new XemHoSoViewModel());
+        if (profile is null)
+        {
+            if (id.HasValue) return NotFound();
+            if (viewer.VaiTro != "KHACH_THUE") return View(new XemHoSoViewModel());
+            return View(new XemHoSoViewModel { LaChuHoSo = true, HoTen = viewer.HoTen, TaiKhoanId = viewer.Id,
+                SoDienThoai = viewer.SoDienThoai, Email = viewer.Email, EmailDaXacThuc = viewer.EmailConfirmed,
+                NgayTaoTaiKhoan = viewer.NgayTao, DangNhapGanNhat = viewer.LastLogin });
+        }
         var own = viewer.VaiTro == "KHACH_THUE" && profile.TaiKhoanId == viewer.Id;
         var full = await access.CanReadFullAsync(viewer, profile.Id);
-        if (!own && !full) return Forbid();
-        return View(new XemHoSoViewModel
+        if (!own && (!full || !await permissions.AllowsAsync("HOP_DONG"))) return Forbid();
+        var model = new XemHoSoViewModel
         {
             Id = profile.Id, HoTen = profile.HoTen,
             CanCuocHienThi = full ? profile.SoGiayTo ?? string.Empty : HoSoAccess.Mask(profile.SoGiayTo),
@@ -200,6 +281,32 @@ public class HoSoController(AppDbContext db, GiayToImageStore images, HoSoAccess
             NgheNghiep = full || own ? profile.NgheNghiep : null,
             CoAnhMatTruoc = (full || own) && profile.AnhGiayToTruoc is not null,
             CoAnhMatSau = (full || own) && profile.AnhGiayToSau is not null
-        });
+        };
+        if (own)
+        {
+            model.TaiKhoanId = viewer.Id;
+            model.SoDienThoai = viewer.SoDienThoai;
+            model.Email = viewer.Email;
+            model.EmailDaXacThuc = viewer.EmailConfirmed;
+            model.NgayTaoTaiKhoan = viewer.NgayTao;
+            model.DangNhapGanNhat = viewer.LastLogin;
+            var today = DateOnly.FromDateTime((clock ?? new SystemTimeProvider()).UtcNow.AddHours(7));
+            var eligible = db.HopDongs.AsNoTracking().Where(h => (h.TrangThai == "DANG_HIEU_LUC" || h.TrangThai == "CHO_HIEU_LUC")
+                && db.KyHopDongs.Any(k => k.HopDongId == h.Id && k.NgayKetThuc >= today));
+            var signer = await eligible.Where(h => h.KhachDungTenId == profile.Id).Select(h => h.Id).ToListAsync();
+            var roommate = await (from h in eligible join g in db.NguoiOGheps on h.Id equals g.HopDongId
+                where g.KhachThueId == profile.Id && g.NgayVao <= today && (g.NgayRa == null || g.NgayRa >= today)
+                select h.Id).Distinct().ToListAsync();
+            model.SoHopDong = signer.Concat(roommate).Distinct().Count();
+            model.VaiTroThue = signer.Count > 0 && roommate.Count > 0 ? "Người đứng tên và người ở ghép"
+                : signer.Count > 0 ? "Người đứng tên" : roommate.Count > 0 ? "Người ở ghép" : "Chưa tham gia hợp đồng";
+        }
+        if (!own)
+        {
+            model.SoDienThoai = profile.SoDienThoai;
+            model.HoSoDayDu = !string.IsNullOrWhiteSpace(profile.HoTen) && !string.IsNullOrWhiteSpace(profile.SoDienThoai) && !string.IsNullOrWhiteSpace(profile.SoGiayTo);
+            model.HopDongsLienQuan = (await QuanHeHoSoAsync(viewer)).Where(r => r.ProfileId == profile.Id).Select(r => r.Row).OrderByDescending(r => r.DangO).ThenByDescending(r => r.BatDau).ToList();
+        }
+        return View(model);
     }
 }

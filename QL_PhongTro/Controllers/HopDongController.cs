@@ -486,7 +486,9 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
     {
         if (!await db.HopDongs.AnyAsync(x => x.Id == id, ct)) return NotFound();
         if (!await OwnContract(id, ct)) return Forbid();
-        return View(await DetailModel(id, null, ct));
+        var model = await DetailModel(id, null, ct);
+        model.Input.CachThem = Request.Query["mode"] == "manual" ? "CHUA_CO_TAI_KHOAN" : "CO_TAI_KHOAN";
+        return View(model);
     }
 
     [HttpGet, ModuleAccess("HOP_DONG", write: true)]
@@ -653,18 +655,63 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
         }
     }
 
+    private static bool HoSoOGhepDayDu(TaiKhoan account, KhachThue? profile) =>
+        !string.IsNullOrWhiteSpace(account.HoTen) && profile is not null && profile.HoTen.Trim().Length is >= 2 and <= 100
+        && System.Text.RegularExpressions.Regex.IsMatch(account.SoDienThoai ?? "", "^0[0-9]{9}$")
+        && System.Text.RegularExpressions.Regex.IsMatch(profile.SoDienThoai ?? "", "^0[0-9]{9}$")
+        && System.Text.RegularExpressions.Regex.IsMatch(profile.SoGiayTo ?? "", "^([0-9]{9}|[0-9]{12})$");
+
+    private async Task<TaiKhoanOGhepXacNhan?> XacNhanTaiKhoanOGhep(int accountId, CancellationToken ct)
+    {
+        var account = await db.TaiKhoans.AsNoTracking().SingleOrDefaultAsync(a => a.Id == accountId && a.VaiTro == "KHACH_THUE" && a.DangHoatDong && !a.IsDeleted, ct);
+        if (account is null) return null;
+        var profile = await db.KhachThues.AsNoTracking().SingleOrDefaultAsync(k => k.TaiKhoanId == accountId, ct);
+        return new(account.Id, profile?.HoTen ?? account.HoTen, HoSoAccess.Mask(profile?.SoDienThoai ?? account.SoDienThoai),
+            HoSoAccess.Mask(profile?.SoGiayTo), account.EmailConfirmed, HoSoOGhepDayDu(account, profile));
+    }
+
+    [HttpPost, ValidateAntiForgeryToken, ModuleAccess("HOP_DONG", write: true)]
+    public async Task<IActionResult> TimNguoiOGhep(int id, int? taiKhoanId, CancellationToken ct)
+    {
+        if (!await db.HopDongs.AnyAsync(h => h.Id == id, ct)) return NotFound();
+        if (!await OwnContract(id, ct)) return Forbid();
+        var model = await DetailModel(id, null, ct);
+        if (!model.ChoThem) return BadRequest("Chỉ thêm người vào hợp đồng đã chốt.");
+        model.Input.CachThem = "CO_TAI_KHOAN";
+        model.Input.TaiKhoanId = taiKhoanId;
+        // A search form does not carry the manual resident fields.
+        ModelState.Clear();
+        if (taiKhoanId is null or <= 0) ModelState.AddModelError("Input.TaiKhoanId", "Nhập chính xác ID người dùng.");
+        else model.TaiKhoanXacNhan = await XacNhanTaiKhoanOGhep(taiKhoanId.Value, ct);
+        if (taiKhoanId > 0 && model.TaiKhoanXacNhan is null)
+            ModelState.AddModelError("Input.TaiKhoanId", "Không tìm thấy tài khoản khách thuê đang hoạt động theo ID này.");
+        if (model.TaiKhoanXacNhan is { DuThongTin: false })
+            ModelState.AddModelError("", "Tài khoản chưa đủ họ tên, số điện thoại hoặc CCCD. Khách thuê cần cập nhật hồ sơ trước khi thêm.");
+        ViewData["ResidentPeopleTab"] = true;
+        return View("Details", model);
+    }
+
     [HttpPost, ValidateAntiForgeryToken, ModuleAccess("HOP_DONG", write: true)]
     public async Task<IActionResult> ThemNguoi(int id, [Bind(Prefix = "Input")] NguoiOGhepInput input, CancellationToken ct)
     {
         if (!await db.HopDongs.AnyAsync(x => x.Id == id, ct)) return NotFound();
         if (!await OwnContract(id, ct)) return Forbid();
+        input.NgayVao = HomNay;
+        ModelState.Remove("Input.NgayVao");
         input.HoTen = input.HoTen?.Trim() ?? "";
         input.SoDienThoai = input.SoDienThoai?.Trim() ?? "";
         input.SoGiayTo = input.SoGiayTo?.Trim() ?? "";
         var errors = new List<System.ComponentModel.DataAnnotations.ValidationResult>();
         System.ComponentModel.DataAnnotations.Validator.TryValidateObject(input, new(input), errors, true);
         foreach (var error in errors) ModelState.AddModelError("Input." + error.MemberNames.FirstOrDefault(), error.ErrorMessage!);
-        async Task<IActionResult> Invalid() => View("Details", await DetailModel(id, input, ct));
+        async Task<IActionResult> Invalid()
+        {
+            var model = await DetailModel(id, input, ct);
+            if (input.CachThem == "CO_TAI_KHOAN" && input.TaiKhoanId is > 0)
+                model.TaiKhoanXacNhan = await XacNhanTaiKhoanOGhep(input.TaiKhoanId.Value, ct);
+            ViewData["ResidentPeopleTab"] = true;
+            return View("Details", model);
+        }
         if (!ModelState.IsValid) return await Invalid();
         try
         {
@@ -679,26 +726,68 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
                 ModelState.AddModelError("", "Chỉ thêm người vào hợp đồng đã chốt có một người đứng tên.");
             if (room.PhienBan != input.PhienBanPhong)
                 ModelState.AddModelError("", "Dữ liệu phòng đã thay đổi. Vui lòng tải lại trang trước khi lưu.");
-            var day = input.NgayVao!.Value;
+            var day = HomNay;
             if (!await db.KyHopDongs.AnyAsync(k => k.HopDongId == id && k.NgayBatDau <= day && k.NgayKetThuc >= day, ct))
-                ModelState.AddModelError("Input.NgayVao", "Ngày bắt đầu ở cùng phải nằm trong kỳ hợp đồng.");
-            // New stay has no end date: check every future arrival as well as the requested start.
+                ModelState.AddModelError("", "Hôm nay phải nằm trong kỳ hợp đồng để thêm người ở ghép.");
             var stays = await db.NguoiOGheps.Where(g => g.HopDongId == id && (g.NgayRa == null || g.NgayRa >= day)).ToListAsync(ct);
             var peak = stays.Select(g => g.NgayVao).Where(d => d >= day).Append(day)
                 .Max(d => 1 + stays.Count(g => g.NgayVao <= d && (g.NgayRa == null || g.NgayRa >= d)));
             if (peak + 1 > room.SoNguoiToiDa)
                 ModelState.AddModelError("", $"Phòng {room.MaPhong} tối đa {room.SoNguoiToiDa} người (bao gồm người đứng tên). Không thể thêm người ở ghép.");
-            if (signer?.SoGiayTo == input.SoGiayTo || await
-                (from g in db.NguoiOGheps join k in db.KhachThues on g.KhachThueId equals k.Id
-                 where g.HopDongId == id && k.SoGiayTo == input.SoGiayTo && (g.NgayRa == null || g.NgayRa >= day)
-                 select g.Id).AnyAsync(ct))
-                ModelState.AddModelError("Input.SoGiayTo", "Căn cước trùng người đứng tên hoặc người ở ghép có khoảng ở chồng lấn.");
+
+            KhachThue? profile = null;
+            if (input.CachThem == "CO_TAI_KHOAN")
+            {
+                var account = await db.TaiKhoans.AsNoTracking().SingleOrDefaultAsync(a => a.Id == input.TaiKhoanId && a.VaiTro == "KHACH_THUE" && a.DangHoatDong && !a.IsDeleted, ct);
+                if (account is not null) profile = await db.KhachThues.SingleOrDefaultAsync(k => k.TaiKhoanId == account.Id, ct);
+                if (account is null || !HoSoOGhepDayDu(account, profile))
+                    ModelState.AddModelError("", "Tài khoản không khả dụng hoặc chưa đủ họ tên, số điện thoại và CCCD. Vui lòng kiểm tra lại.");
+            }
+            else
+            {
+                if (await db.TaiKhoans.AnyAsync(a => !a.IsDeleted && a.SoDienThoai == input.SoDienThoai, ct))
+                    ModelState.AddModelError("Input.SoDienThoai", "Số điện thoại đã có tài khoản. Vui lòng chuyển sang Có tài khoản và nhập ID người dùng.");
+                var profiles = await db.KhachThues.Where(k => k.SoGiayTo == input.SoGiayTo).ToListAsync(ct);
+                if (profiles.Any(k => k.TaiKhoanId != null))
+                    ModelState.AddModelError("Input.SoGiayTo", "CCCD đã liên kết tài khoản. Vui lòng dùng Có tài khoản.");
+                else if (profiles.Count > 1 || profiles.Any(k => k.HoTen != input.HoTen || k.SoDienThoai != input.SoDienThoai))
+                    ModelState.AddModelError("Input.SoGiayTo", "Hồ sơ CCCD đã tồn tại với thông tin khác. Vui lòng kiểm tra lại để tránh tạo trùng.");
+                else profile = profiles.SingleOrDefault();
+            }
             if (!ModelState.IsValid) return await Invalid();
-            // Do not link or modify a sensitive profile owned by an unrelated account.
-            var profile = new KhachThue { HoTen = input.HoTen, SoDienThoai = input.SoDienThoai,
-                SoGiayTo = input.SoGiayTo, NgayTao = (clock ?? new SystemTimeProvider()).UtcNow };
-            db.KhachThues.Add(profile);
-            await db.SaveChangesAsync(ct);
+            var identity = input.CachThem == "CO_TAI_KHOAN" ? profile?.SoGiayTo : input.SoGiayTo;
+            var accountId = profile?.TaiKhoanId;
+            var profileId = profile?.Id ?? 0;
+            var matchingProfiles = db.KhachThues.Where(k => k.SoGiayTo == identity || (profileId > 0 && k.Id == profileId) || (accountId != null && k.TaiKhoanId == accountId)).Select(k => k.Id);
+            if ((signer != null && (signer.SoGiayTo == identity || signer.Id == profileId || (accountId != null && signer.TaiKhoanId == accountId)))
+                || await db.NguoiOGheps.AnyAsync(g => g.HopDongId == id && matchingProfiles.Contains(g.KhachThueId) && (g.NgayRa == null || g.NgayRa >= day), ct))
+                ModelState.AddModelError("", "Người này đã có trong hợp đồng hoặc trùng căn cước người đứng tên.");
+            var targetEnd = await db.KyHopDongs.Where(k => k.HopDongId == id).Select(k => (DateOnly?)k.NgayKetThuc).MaxAsync(ct) ?? day;
+            var otherSigner = await (from other in db.HopDongs
+                join period in db.KyHopDongs on other.Id equals period.HopDongId
+                where other.Id != id && (other.TrangThai == "DANG_HIEU_LUC" || other.TrangThai == "CHO_HIEU_LUC")
+                    && period.NgayKetThuc >= day && period.NgayBatDau <= targetEnd
+                    && other.KhachDungTenId != null && matchingProfiles.Contains(other.KhachDungTenId.Value)
+                select other.Id).AnyAsync(ct);
+            var otherResident = await (from other in db.HopDongs
+                join period in db.KyHopDongs on other.Id equals period.HopDongId
+                join stay in db.NguoiOGheps on other.Id equals stay.HopDongId
+                where other.Id != id && (other.TrangThai == "DANG_HIEU_LUC" || other.TrangThai == "CHO_HIEU_LUC")
+                    && period.NgayKetThuc >= day && period.NgayBatDau <= targetEnd
+                    && stay.NgayVao <= targetEnd && stay.NgayVao <= period.NgayKetThuc
+                    && (stay.NgayRa == null || (stay.NgayRa >= day && stay.NgayRa >= period.NgayBatDau))
+                    && matchingProfiles.Contains(stay.KhachThueId)
+                select stay.Id).AnyAsync(ct);
+            if (otherSigner || otherResident)
+                ModelState.AddModelError("", "CCCD hoặc tài khoản đang thuộc hợp đồng còn hiệu lực khác. Không thể thêm vào hợp đồng này.");
+            if (!ModelState.IsValid) return await Invalid();
+            if (profile is null)
+            {
+                profile = new KhachThue { HoTen = input.HoTen, SoDienThoai = input.SoDienThoai, SoGiayTo = input.SoGiayTo,
+                    NgayTao = (clock ?? new SystemTimeProvider()).UtcNow };
+                db.KhachThues.Add(profile);
+                await db.SaveChangesAsync(ct);
+            }
             db.NguoiOGheps.Add(new() { HopDongId = id, KhachThueId = profile.Id, NgayVao = day });
             room.PhienBan++;
             await db.SaveChangesAsync(ct);
