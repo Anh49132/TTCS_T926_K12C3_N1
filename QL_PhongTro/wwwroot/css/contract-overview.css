@@ -32,7 +32,7 @@
 .lease-select-menu button.is-selected::after{content:'✓';float:right;margin-left:.5rem}
 .lease-overview .lease-filter-card #lease-apply{min-height:2.5rem}
 
-.lease-row-menu-trigger{display:grid;place-items:center;width:30px;height:30px;border:0;border-radius:6px;background:transparent;color:#9c8150;font-size:1.375rem;line-height:1}
+.lease-row-menu-trigger{display:grid;place-items:center;width:30px;height:30px;border:0;border-radius:6px;background:transparent;color:#9c8150;font-size:1.375rem;line-height:1;text-decoration:none}
 .lease-row-menu-trigger:hover,.lease-row-menu-trigger[aria-expanded=true]{background:#f5efe4}
 .lease-row-menu{position:fixed;z-index:1000;min-width:11rem;padding:.375rem;background:#fff;border:1px solid #e9eaec;border-radius:8px;box-shadow:0 8px 24px #30343b1a}
 .lease-row-menu[hidden]{display:none}

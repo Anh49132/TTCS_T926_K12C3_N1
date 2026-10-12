@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -26,7 +26,7 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
     private async Task<List<YeuCauHopDong>> Approved(CancellationToken ct)
     {
         var admin = await IsAdmin(ct);
-        return await (from y in db.YeuCauThues.AsNoTracking()
+        var rows = await (from y in db.YeuCauThues.AsNoTracking()
                       join t in db.TinDangs on y.TinDangId equals t.Id
                       join p in db.PhongTros on t.PhongId equals p.Id
                       join b in db.ToaNhas on p.ToaNhaId equals b.Id
@@ -35,9 +35,30 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
                           && !db.HopDongs.Any(h => h.YeuCauThueId == y.Id && h.TrangThai != "NHAP")
                       orderby y.NgayTao descending
                       select new YeuCauHopDong { Id = y.Id, Ma = y.MaYeuCau, KhachId = k.Id,
+                          ToaNhaId = b.Id, DiaChi = b.DiaChi, Tang = p.Tang, DienTich = p.DienTich,
+                          LoaiPhong = p.LoaiPhong, TrangThaiPhong = p.TrangThai,
+                          SoNguoiDuKien = y.SoNguoiDuKien,
                           Khach = k.HoTen, DienThoai = k.SoDienThoai, PhongId = p.Id,
                           Phong = p.MaPhong, ToaNha = b.TenToaNha, NgayMongMuon = y.NgayMongMuon,
                           GiaThue = p.GiaThue, TienCoc = p.GiaThue, NgayChot = b.NgayChotHangThang, PhienBanPhong = p.PhienBan }).ToListAsync(ct);
+        var permittedIds = admin ? rows.Select(x => x.KhachId).ToList()
+            : await new HoSoAccess(db).RelatedProfileIdsAsync(AccountId);
+        var ids = rows.Select(x => x.KhachId).Where(permittedIds.Contains).Distinct().ToList();
+        var profiles = await db.KhachThues.AsNoTracking().Where(x => ids.Contains(x.Id)).ToDictionaryAsync(x => x.Id, ct);
+        var accountIds = profiles.Values.Where(x => x.TaiKhoanId.HasValue).Select(x => x.TaiKhoanId!.Value).ToList();
+        var emails = await db.TaiKhoans.AsNoTracking().Where(x => accountIds.Contains(x.Id)).ToDictionaryAsync(x => x.Id, x => x.Email, ct);
+        foreach (var row in rows)
+        {
+            if (profiles.TryGetValue(row.KhachId, out var profile))
+            {
+                row.DuocXemHoSo = true;
+                row.SoGiayTo = profile.SoGiayTo;
+                row.QueQuan = profile.QueQuan;
+                row.Email = profile.TaiKhoanId is { } accountId ? emails.GetValueOrDefault(accountId) : null;
+            }
+            else row.DienThoai = HoSoAccess.Mask(row.DienThoai);
+        }
+        return rows;
     }
 
     [HttpGet, Authorize(Roles = "CHU_NHA"), ModuleAccess("HOP_DONG", write: true)]
@@ -50,21 +71,9 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
             if (!await db.HopDongs.AnyAsync(x => x.Id == hopDongId.Value, ct)) return NotFound();
             if (!await OwnContract(hopDongId.Value, ct)) return Forbid();
         }
-        var options = await (from contract in db.HopDongs.AsNoTracking()
-            join room in db.PhongTros.AsNoTracking() on contract.PhongId equals room.Id
-            join building in db.ToaNhas.AsNoTracking() on room.ToaNhaId equals building.Id
-            where building.ChuNhaId == AccountId && building.DangHoatDong && contract.KhachDungTenId != null &&
-                (contract.TrangThai == "CHO_HIEU_LUC" || contract.TrangThai == "DANG_HIEU_LUC")
-            orderby building.TenToaNha, room.MaPhong
-            select new { contract.Id, contract.MaHopDong, room.MaPhong, building.TenToaNha }).ToListAsync(ct);
-        if (hopDongId.HasValue && !options.Any(x => x.Id == hopDongId.Value))
-            return BadRequest("Chỉ thêm khách vào hợp đồng chờ hiệu lực hoặc đang hiệu lực tại cơ sở đang hoạt động.");
-        return View(new ThemKhachThueViewModel {
-            HopDongId = hopDongId,
-            HopDongs = options.Select(x => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem(
-                $"{x.MaPhong} · {x.TenToaNha} · {x.MaHopDong}", x.Id.ToString())).ToList(),
-            Selected = hopDongId.HasValue ? await DetailModel(hopDongId.Value, null, ct) : null
-        });
+        return hopDongId.HasValue
+            ? RedirectToAction(nameof(Details), new { id = hopDongId.Value, tab = "people" })
+            : RedirectToAction(nameof(Index));
     }
 
     public async Task<IActionResult> Index(CancellationToken ct)
@@ -115,7 +124,21 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
         }
         if (vm.DaChon is not null && vm.NgayBatDau is { } start && vm.NgayKetThuc is { } end)
             vm.ChongLans = await new HopDongService(db).ChongLanAsync(vm.DaChon.PhongId, start, end, ct);
+        await LoadContractServices(vm, ct);
         return View(vm);
+    }
+
+    private async Task LoadContractServices(HopDongCreateViewModel vm, CancellationToken ct)
+    {
+        if (vm.DaChon is not { } chosen) return;
+        var ownerId = await db.ToaNhas.Where(x => x.Id == chosen.ToaNhaId).Select(x => x.ChuNhaId).SingleAsync(ct);
+        var serviceIds = await db.DichVuPhongs.AsNoTracking().Where(x => x.PhongId == chosen.PhongId)
+            .Select(x => x.DichVuToaNha.DichVuId).Distinct().ToListAsync(ct);
+        var prices = new DichVuPhongService(db, new DichVuService(db), clock);
+        foreach (var serviceId in serviceIds)
+            if (await prices.LayGiaHoaDonAsync(ownerId, chosen.PhongId, serviceId, HomNay) is { } price)
+                vm.PhiDichVus.Add(price);
+        vm.PhiDichVus = vm.PhiDichVus.OrderBy(x => x.DichVuId).ToList();
     }
 
     [HttpGet, ModuleAccess("HOP_DONG", write: true)]
@@ -139,6 +162,7 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
         vm.YeuCaus = await Approved(ct);
         vm.DaChon = vm.YeuCaus.SingleOrDefault(x => x.Id == vm.YeuCauId);
         vm.HomNay = HomNay;
+        await LoadContractServices(vm, ct);
         if (vm.DaChon is null && vm.YeuCauId.HasValue && await ForeignRequest(vm.YeuCauId.Value, ct)) return Forbid();
         if (vm.DaChon is null) ModelState.AddModelError(nameof(vm.YeuCauId), "Yêu cầu không được duyệt, không thuộc quyền quản lý hoặc đã lập hợp đồng.");
         // Revalidate independently of the browser and never bind a submitted end date.
@@ -312,6 +336,24 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
             Input = input ?? new() { NgayVao = HomNay, PhienBanPhong = p.PhienBan },
             ChuyenDi = new() { NgayRa = HomNay, PhienBanPhong = p.PhienBan } };
         model.ToaNha = await db.ToaNhas.Where(x => x.Id == p.ToaNhaId).Select(x => x.TenToaNha).SingleAsync(ct);
+        var building = await db.ToaNhas.AsNoTracking().SingleAsync(x => x.Id == p.ToaNhaId, ct);
+        model.DiaChiPhong = building.DiaChi;
+        model.LoaiPhong = p.LoaiPhong; model.Tang = p.Tang; model.DienTich = p.DienTich;
+        model.ChuNha = await db.TaiKhoans.Where(x => x.Id == building.ChuNhaId).Select(x => x.HoTen).SingleAsync(ct);
+        var ownerContact = await db.TaiKhoans.AsNoTracking().Where(x => x.Id == building.ChuNhaId)
+            .Select(x => new { x.SoDienThoai, x.Email }).SingleAsync(ct);
+        model.ChuNhaDienThoai = AccountId == building.ChuNhaId || await IsAdmin(ct)
+            ? ownerContact.SoDienThoai : HoSoAccess.Mask(ownerContact.SoDienThoai);
+        model.ChuNhaEmail = ownerContact.Email;
+        if (signer?.TaiKhoanId is { } signerAccountId &&
+            (AccountId == building.ChuNhaId || await IsAdmin(ct) || signerAccountId == AccountId))
+            model.NguoiThueEmail = await db.TaiKhoans.AsNoTracking().Where(x => x.Id == signerAccountId)
+                .Select(x => x.Email).SingleOrDefaultAsync(ct);
+        model.DichVus = await db.HopDongDichVus.AsNoTracking().Where(x => x.HopDongId == id).OrderBy(x => x.DichVuId).ToListAsync(ct);
+        model.XemTaiChinh = permissions is not null && await permissions.AllowsAsync("TAI_CHINH");
+        if (model.XemTaiChinh)
+            model.HoaDons = await db.HoaDons.AsNoTracking().Where(x => x.HopDongId == id && x.TrangThai != "DA_HUY")
+                .OrderByDescending(x => x.Nam).ThenByDescending(x => x.Thang).Take(3).ToListAsync(ct);
         var periods = await db.KyHopDongs.AsNoTracking().Where(x => x.HopDongId == id)
             .OrderByDescending(x => x.NgayBatDau).ThenByDescending(x => x.Id).ToListAsync(ct);
         model.Ky = periods.FirstOrDefault();
@@ -345,7 +387,7 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
         var people = await (from g in db.NguoiOGheps.AsNoTracking() join k in db.KhachThues on g.KhachThueId equals k.Id
             where g.HopDongId == id orderby g.NgayVao, g.Id
             select new NguoiOGhepRow(k.HoTen, k.SoDienThoai, k.SoGiayTo, g.NgayVao) { Id = g.Id, NgayRa = g.NgayRa }).ToListAsync(ct);
-        if (h.TrangThai != "DANG_HIEU_LUC" || !await db.KyHopDongs.AnyAsync(k => k.HopDongId == id && k.NgayBatDau <= HomNay && k.NgayKetThuc >= HomNay, ct))
+        if ((AccountId != building.ChuNhaId && !await IsAdmin(ct)) || h.TrangThai != "DANG_HIEU_LUC" || !await db.KyHopDongs.AnyAsync(k => k.HopDongId == id && k.NgayBatDau <= HomNay && k.NgayKetThuc >= HomNay, ct))
         {
             static string? Mask(string? value) => value == null ? null : new string('*', Math.Max(0, value.Length - 4)) + value[^Math.Min(4, value.Length)..];
             if (signer != null) { signer.SoDienThoai = Mask(signer.SoDienThoai); signer.SoGiayTo = Mask(signer.SoGiayTo); }
