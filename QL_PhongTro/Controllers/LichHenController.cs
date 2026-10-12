@@ -1,4 +1,4 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -70,6 +70,8 @@ public class LichHenController(
         };
         if (laChuNha && db is not null)
         {
+            ViewData["RequestedOccupation"] = await db.KhachThues.AsNoTracking().Where(x => x.Id == yeuCau.KhachThueId).Select(x => x.NgheNghiep).FirstOrDefaultAsync(ct);
+            ViewData["RequestedEmail"] = await db.TaiKhoans.AsNoTracking().Where(x => x.Id == yeuCau.TaiKhoanKhachId).Select(x => x.Email).FirstOrDefaultAsync(ct);
             ViewData["RequestedRoom"] = await db.PhongTros.AsNoTracking().SingleOrDefaultAsync(x => x.Id == yeuCau.PhongId, ct);
             ViewData["RequestedRoomImage"] = await db.AnhPhongs.AsNoTracking().Where(x => x.PhongId == yeuCau.PhongId).OrderBy(x => x.ThuTu).Select(x => x.DuongDanAnhNho ?? x.DuongDan).FirstOrDefaultAsync(ct);
             ViewData["RequestedListingId"] = await db.YeuCauThues.Where(x => x.Id == id).Select(x => x.TinDangId).SingleAsync(ct);

@@ -1,4 +1,4 @@
-using System.Security.Claims;
+﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -82,6 +82,10 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
                           select new HopDongDanhSach(h, p.MaPhong, b.TenToaNha, k == null ? null : k.HoTen)).ToListAsync(ct);
         var ids = rows.Select(x => x.HopDong.Id).ToList();
         var periods = await db.KyHopDongs.AsNoTracking().Where(x => ids.Contains(x.HopDongId)).OrderByDescending(x => x.NgayBatDau).ToListAsync(ct);
+        var occupants = await db.NguoiOGheps.AsNoTracking()
+            .Where(x => ids.Contains(x.HopDongId) && x.NgayVao <= HomNay && (x.NgayRa == null || x.NgayRa >= HomNay))
+            .GroupBy(x => x.HopDongId).Select(x => new { Id = x.Key, Count = x.Count() }).ToDictionaryAsync(x => x.Id, x => x.Count, ct);
+        ViewData["Occupants"] = occupants;
         ViewData["HomNay"] = HomNay;
         return View(rows.Select(x => x with { Ky = periods.FirstOrDefault(k => k.HopDongId == x.HopDong.Id) }).ToList());
     }
