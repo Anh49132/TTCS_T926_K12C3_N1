@@ -1,32 +1,12 @@
 @model QL_PhongTro.ViewModels.XemHoSoViewModel
-@{ ViewData["Title"] = "Xem hồ sơ"; }
-<h1>Xem hồ sơ</h1>
-@if (User.IsInRole("CHU_NHA"))
-{
-    <p><a asp-action="DanhSach">Danh sách hồ sơ khách thuê</a></p>
-    <p class="text-muted">Bạn chỉ có quyền xem hồ sơ khách thuê đã có hợp đồng với mình.</p>
+@{ ViewData["Title"] = Model.LaChuHoSo ? "Hồ sơ của tôi" : "Hồ sơ khách thuê"; }
+@if (Model.LaChuHoSo) { <partial name="_MyAccount" model="Model" /> }
+else if (Model.Id > 0) { <partial name="_OwnerProfile" model="Model" /> }
+else { <h1>Hồ sơ khách thuê</h1><p>Chưa có hồ sơ để hiển thị.</p> }
+@section Styles {
+    @if (Model.LaChuHoSo) { <link rel="stylesheet" href="~/css/tenant-account.css" asp-append-version="true" /> }
+    else { <link rel="stylesheet" href="~/css/owner-profiles.css" asp-append-version="true" /> }
 }
-@if (Model.Id > 0)
-{
-    <p>Mã hồ sơ: @Model.Id</p>
-    <dl>
-        <dt>Họ tên</dt><dd>@Model.HoTen</dd>
-        <dt>Số căn cước</dt><dd id="can-cuoc-hien-thi">@Model.CanCuocHienThi</dd>
-        @if (Model.LaChuHoSo || Model.XemDayDu)
-        {
-            <dt>Ngày sinh</dt><dd>@Model.NgaySinh?.ToString("dd/MM/yyyy")</dd>
-            <dt>Quê quán</dt><dd>@Model.QueQuan</dd>
-            <dt>Nghề nghiệp</dt><dd>@Model.NgheNghiep</dd>
-        }
-    </dl>
-    @if (!Model.XemDayDu) { <p class="text-muted">Số căn cước chỉ hiển thị 4 chữ số cuối theo quyền của bạn.</p> }
-    @if (Model.CoAnhMatTruoc)
-    {
-        <img src="@Url.Action("Anh", new { id = Model.Id, mat = "truoc" })" alt="Ảnh giấy tờ mặt trước" class="img-fluid mb-3" style="max-height:280px" />
-    }
-    @if (Model.CoAnhMatSau)
-    {
-        <img src="@Url.Action("Anh", new { id = Model.Id, mat = "sau" })" alt="Ảnh giấy tờ mặt sau" class="img-fluid mb-3" style="max-height:280px" />
-    }
-    @if (Model.LaChuHoSo) { <p><a asp-action="Index">Chỉnh sửa hồ sơ của tôi</a></p> }
+@section Scripts {
+    @if (Model.LaChuHoSo) { <script src="~/js/tenant-account.js" asp-append-version="true"></script> }
 }

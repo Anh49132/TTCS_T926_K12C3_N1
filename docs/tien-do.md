@@ -1,3 +1,104 @@
+## Cập nhật 13/10/2026 — Thêm 10 phòng trống
+
+- Bổ sung B051–B060 tại tòa Sprint 3 (ID 6), trạng thái TRONG, giá 3.500.000 đ/tháng, 25 m², tối đa 3 người.
+- Gán dịch vụ mặc định tại thời điểm tạo, mỗi phòng hai ảnh mẫu và thumbnail. Tổng CSDL hiện tại 60 phòng.
+- Sao lưu trước khi thêm; giữ nguyên bản ghi cũ, ghi nhật ký cùng giao dịch, kiểm tra integrity/FK và tệp ảnh đạt.
+
+## Cập nhật 13/10/2026 — Tạo lại CSDL theo yêu cầu
+
+- Thay CSDL đang dùng bằng bản mới, giữ nguyên 59 tài khoản, ID/email/SĐT/vai trò và hash mật khẩu; phiên đăng nhập cũ bị thu hồi.
+- Bộ mới có 50 phòng, 100 ảnh, 46 hợp đồng; có phòng trống/yêu cầu đã duyệt, người ở ghép, lịch sử gia hạn và hợp đồng sắp hết hạn.
+- Kỳ tháng 10: 38 đủ điều kiện, 4 thiếu chỉ số, 3 nháp và 1 hợp đồng không bao phủ trọn kỳ. Tháng 9 gồm trả đủ/trả một phần/quá hạn.
+- Schema dựng theo SQLite thực tế hiện hành; kiểm tra --check-database, integrity/FK đạt. Thử nghiệp vụ trên bản sao, đối chiếu toàn bộ mật khẩu cũ và xác minh BCrypt 50 mật khẩu demo đạt.
+- Backup trước khi thay; report/access/activation ở data/sprint3-fresh-20261013 (ignored). Không gửi SMTP thật; chưa nghiệm thu UI trực quan.
+- Script tạo bản mới: verification/rebuild_sprint3_database.py. Việc thay file chỉ thực hiện sau khi kiểm chứng, không chạy tự động khi khởi động app.
+
+## Cập nhật 13/10/2026 — Dữ liệu báo cáo kiểm thử Sprint 3
+
+- Hoàn thiện bộ 50 phòng có sẵn tại tòa Sprint 3, giữ các phòng và dữ liệu cũ. Liên kết 50 tài khoản giả lập với hồ sơ người đứng tên; không đổi tài khoản/mật khẩu cũ.
+- Gắn 108 ảnh phòng và thumbnail cho 54 phòng demo; 53 hồ sơ có hai ảnh CCCD mẫu private.
+- Giữ nguyên 50 nháp tháng 10; thêm bộ tháng 11 gồm 43 đủ điều kiện, 4 thiếu chỉ số, 3 có nháp; thêm ba hóa đơn tháng 9 minh họa trả đủ/trả một phần/quá hạn.
+- Sao lưu và thử trên bản sao trước khi sửa. Nghiệp vụ tháng 11 đúng 43/4/3; phát hành 50 nháp trên bản sao khoảng 1,16 giây, gửi lại không trùng. Không phát hành hàng loạt trong DB thật.
+- integrity/FK đạt; schema và bản ghi tài khoản/phòng/hợp đồng/kỳ/hóa đơn/chi tiết cũ giữ nguyên; ảnh đọc được. Có nhật ký nhập demo cùng giao dịch.
+- Report, access và backup trong data/sprint3-report-20261013/live-report (ignored), không đưa vào Git. Chưa kiểm tra UI trực quan đầy đủ hoặc gửi SMTP thật.
+- Script: verification/prepare_sprint3_report.py; kiểm chứng bản sao: verification/Sprint3ReportCheck.
+
+## Cập nhật 13/10/2026 — Luồng hóa đơn tháng
+
+- Bổ sung trang quản lý tổng: bộ lọc tòa/kỳ/trạng thái/từ khóa, phân trang, số liệu nháp/chờ thanh toán/quá hạn và khoản thu đã xác nhận trong tháng. Menu tài chính dẫn tới trang này.
+- Tách trang chọn kỳ và ngày phát hành/hạn thanh toán khỏi kết quả kiểm tra; giữ token kiểm tra dữ liệu và lựa chọn hợp đồng để tạo nháp.
+- Chọn nháp để phát hành từ trang quản lý hoặc kết quả kỳ; hộp xác nhận hiển thị số lượng, tổng tiền, kỳ, ngày và cảnh báo. Chặn chọn khác tòa/kỳ, tối đa 50 bản.
+- Nháp hiển thị bảng khoản thu và chỉ số có thể sửa, thêm nhiều phát sinh/giảm trừ, sửa/xóa khoản điều chỉnh, sửa hạn thanh toán. Giữ đơn giá nguồn; kiểm tra phiên bản và ghi lịch sử trong cùng giao dịch.
+- Kết quả phát hành phân biệt thành công/bỏ qua/thất bại, thời gian xử lý, tổng tiền và xuất CSV. Đợt lỗi hoàn tác toàn bộ; gửi lại không tạo thông báo trùng. Báo cáo lưu trong bộ nhớ 24 giờ, hóa đơn và nhật ký lưu trong SQLite.
+- Không đổi schema, không chạy updater hoặc sửa dữ liệu SQLite đang dùng. Không coi thông báo được tạo là email đã gửi.
+- Kiểm thử: 60 bài hóa đơn tháng/nháp có sẵn và 2 bài bổ sung về chỉnh sửa, quyền, kết quả lỗi, phát hành và gửi lại đều đạt. Chưa kiểm tra trực quan trên trình duyệt/thiết bị thật trong phiên này.
+
+## 13/10/2026 — Hóa đơn và tổng cần trả trên trang chủ khách thuê
+
+- Thay nội dung mẫu cố định của Hóa đơn cần thanh toán / Tổng cần trả / Hóa đơn mới nhất bằng dữ liệu thực tế. Đọc DB hiện tại read-only thấy khách trong phản ánh có 3 hóa đơn đã phát hành và 1 hóa đơn hủy; không sửa hay tạo hóa đơn để chữa lỗi hiển thị.
+- Chỉ nạp hóa đơn DA_PHAT_HANH của hợp đồng có người đứng tên liên kết đúng tài khoản khách thuê đang hoạt động. Không đưa hóa đơn khách khác, hóa đơn nháp/hủy hoặc nghĩa vụ của người đứng tên vào trang chủ của người ở ghép. Quyền TAI_CHINH kiểm tra ở backend; thiếu quyền/schema có thông báo riêng, không hiển thị nhầm dư nợ bằng 0.
+- Tổng hóa đơn lấy từ chi tiết (GIAM_TRU lưu dương rồi trừ). Số còn trả = max(tổng chi tiết − khoản DA_XAC_NHAN, 0); khoản chờ xác nhận/từ chối/hủy không giảm nợ. Dùng số nguyên/decimal, không double/float. Giữ công nợ hóa đơn sau khi hợp đồng kết thúc. Theo cùng cách tính hiện có của trang hóa đơn; DB thực tế chưa có bảng giao_dich_coc.
+- Đếm tất cả hóa đơn còn dư nợ và cộng tất cả số còn trả trước khi giới hạn danh sách năm hóa đơn mới nhất. Hiển thị mã/kỳ/phòng/hạn/trạng thái/tổng/còn trả; liên kết tới `/ThongBao/ChiTiet?maHoaDon=...` và danh sách `/ThongBao/DanhSach`. Quá hạn tính theo ngày Việt Nam; công nợ 0 hiển thị Đã thanh toán. Các ô báo hỏng chưa tích hợp trong bản sửa này.
+- Kiểm chứng: `dotnet test Tests/QL_PhongTro.Tests/QL_PhongTro.Tests.csproj --no-restore --filter FullyQualifiedName~TenantHome`: build PASS, **14/14 PASS** trên DB tạm (9 ca hợp đồng + 5 ca hóa đơn). Bao gồm giảm trừ/trả thiếu/chờ xác nhận, nợ hợp đồng kết thúc, loại nháp/hủy/khách khác, không tính nợ cho người ở ghép, thu hồi quyền và tổng đủ sáu hóa đơn dù danh sách chỉ hiển thị năm. `git diff --check` PASS.
+- Không đổi schema/DB đang dùng, không cập nhật giá hay chứng từ. Chưa kiểm chứng trực quan trình duyệt/360px; app đã dừng để build, chạy lại `run.bat` và tải lại trang chủ.
+
+## 13/10/2026 — Sửa trang chủ khách thuê không hiển thị hợp đồng
+
+- Nguyên nhân: `_RoleHome.cshtml` ghi cứng thẻ Phòng của tôi là chưa có phòng, trong khi `HomeController` chỉ nạp số yêu cầu thuê. Đọc DB hiện tại ở chế độ read-only xác nhận tên khách thuê trong phản ánh đã có hợp đồng DANG_HIEU_LUC; không sửa hoặc liên kết lại dữ liệu để chữa lỗi giao diện.
+- Trang chủ nạp riêng hợp đồng theo `khach_thue.tai_khoan_id` của tài khoản đăng nhập còn hoạt động, bao gồm người đứng tên và người ở ghép; không phụ thuộc danh sách tin công khai hoặc yêu cầu thuê. Chỉ lấy hợp đồng đã chốt/đã kết thúc, không nháp/hủy và không hợp đồng người khác. Thiếu quyền HOP_DONG hoặc schema không sẵn sàng có thông báo riêng; response no-store.
+- Thẻ hiển thị mã phòng/tòa, mã hợp đồng, vai trò, ngày thuê và giá snapshot kỳ phù hợp. Phân biệt Đang thuê / Chờ bắt đầu thuê / Đã kết thúc thuê theo ngày Việt Nam, kỳ hợp đồng, ngày trả phòng và ngày vào/ra của người ở ghép. Ưu tiên đang thuê, tối đa ba thẻ, có liên kết xem toàn bộ; nút chi tiết tới `/HopDongCuaToi/Details?maHopDong=...`.
+- Không có hợp đồng thì vẫn có lối vào Hợp đồng của tôi; không còn bắt buộc bấm Tìm phòng ngay để tìm trang hợp đồng. Các ô hóa đơn/thanh toán/báo hỏng chưa tích hợp số liệu trong bản sửa này.
+- Kiểm chứng: `dotnet test Tests/QL_PhongTro.Tests/QL_PhongTro.Tests.csproj --no-restore --filter FullyQualifiedName~TenantHomeContract` **9/9 PASS** trên DB tạm: đứng tên/ở ghép, không có tin công khai, giá theo kỳ, không lộ hợp đồng người khác, hợp đồng tương lai/đã kết thúc, người đã rời phòng, nháp/hủy và thu hồi quyền. `git diff --check` PASS. Không đổi schema hoặc dữ liệu hợp đồng đang dùng.
+- CSS riêng cho thẻ hợp đồng để ngắt dòng và xếp nút ở màn hình nhỏ. Chưa kiểm chứng trực quan trình duyệt/360px do không có trình duyệt kết nối. App đã dừng để build; chạy lại `run.bat` và tải lại trang chủ để xem thay đổi.
+
+## 13/10/2026 — Chủ nhà xem hồ sơ khách thuê và menu tài khoản cá nhân
+
+- `/HoSo/DanhSach`: giao diện thống kê, tìm theo tên/SĐT/CCCD, lọc tòa nhà/tình trạng thuê, phân trang 10 hồ sơ. Chủ nhà chỉ thấy người đứng tên/ở ghép từ hợp đồng CHO_HIEU_LUC, DANG_HIEU_LUC, DA_KET_THUC tại tòa đang thuộc mình; không cấp quyền từ yêu cầu thuê, nháp, hủy hoặc tòa của người khác. Mỗi hồ sơ xuất hiện một lần. Danh sách che SĐT/CCCD ở server, giữ 4 số cuối.
+- Tìm kiếm dùng POST có CSRF; từ khóa (tối đa 100 ký tự) được giữ bằng CookieTempData mã hóa, gắn ID người xem. URL chuyển trang không chứa SĐT/CCCD tìm kiếm. Bộ lọc tòa nhà/tình trạng và trang được giữ; tòa ngoài phạm vi trả 403. Hồ sơ đủ/thiếu dựa trên tên, SĐT, CCCD; không giả lập số liệu mẫu.
+- `/HoSo/Xem?id=...`: thẻ hồ sơ chỉ xem, thông tin cá nhân, giấy tờ/ảnh qua endpoint quyền riêng, cư trú hiện tại và hợp đồng liên quan trong phạm vi chủ nhà. Giữ quyền xem đầy đủ theo `HoSoAccess` thực tế, bao gồm quan hệ hợp đồng đã kết thúc; không mở quyền sửa/xóa. Module HOP_DONG bị thu hồi chặn danh sách, chi tiết và ảnh. Quản lý không xem hồ sơ khách thuê qua các trang này.
+- Menu tài khoản: **Hồ sơ của tôi / Đổi mật khẩu / đường kẻ / Đăng xuất**. Giữ avatar/chữ viết tắt và họ tên, hiển thị vai trò tiếng Việt Chủ nhà / Quản lý tòa nhà. Chủ nhà/quản lý vào `/HoSo/CuaToi`, chỉ đọc tài khoản đang đăng nhập (bỏ qua ID truyền trên URL). Khách thuê vẫn vào trang hồ sơ riêng. Sidebar chủ nhà có Hồ sơ khách thuê, chỉ hiện khi có quyền HOP_DONG.
+- CSS riêng `owner-profiles.css`, bố cục danh sách/chi tiết theo ảnh, breadcrumb theo trang. Không tạo ngày cấp/nơi cấp CCCD hoặc thời điểm cập nhật hồ sơ khi schema/model chưa có dữ liệu. Không đổi schema, không updater/initializer hoặc sửa dữ liệu đang dùng.
+- Kiểm chứng: build qua `dotnet test Tests/QL_PhongTro.Tests/QL_PhongTro.Tests.csproj --no-restore --filter "FullyQualifiedName~PermissionTests.Profile|FullyQualifiedName~PermissionTests.MyAccount|FullyQualifiedName~PermissionTests.OwnerProfile|FullyQualifiedName~PermissionTests.OwnerList|FullyQualifiedName~PermissionTests.OwnerDetail|FullyQualifiedName~PermissionTests.StaffPersonal|FullyQualifiedName~PermissionTests.RevokedContract"`: **12/12 PASS** trên DB tạm. Gồm quyền sở hữu/403, danh sách che PII, hợp đồng hủy/nháp/tòa khác, người ở ghép, bộ lọc/phân trang/không trùng, thu hồi quyền module, hồ sơ riêng chủ nhà/quản lý, CSRF tìm kiếm và URL không chứa CCCD. `git diff --check` PASS.
+- Chưa kiểm chứng trực quan Chrome/Safari/360px và thiết bị thật vì không có trình duyệt kết nối; bảng có vùng cuộn riêng trên màn hình nhỏ. Cảnh báo ImageSharp/CS8601 có sẵn. App đã dừng trước build; chạy `run.bat` để xem thay đổi.
+
+## 13/10/2026 — Khách thuê xem thông tin tài khoản theo ảnh tham chiếu
+
+- `/HoSo/Xem` của khách thuê hiển thị Hồ sơ của tôi: thẻ tên/vai trò/trạng thái, ID tài khoản và nút sao chép, thông tin cá nhân, CCCD che bớt, bảo mật và liên kết hợp đồng. Có ID ngay cả khi chưa tạo hồ sơ. Menu khách thuê trỏ tới trang xem; chỉnh sửa vẫn dùng `/HoSo/Index`. Trang chủ nhà/ADMIN xem hồ sơ giữ luồng riêng.
+- ID hiển thị/sao chép là `tai_khoan.id` số thực tế, không dùng ID hồ sơ và không tạo mã KH mới. Dùng trực tiếp với tab Có tài khoản khi chủ nhà thêm người ở ghép. Thống kê hợp đồng lấy đúng người đứng tên/người ở ghép của tài khoản hiện tại, loại lượt đã rời phòng và hợp đồng hết hạn/hủy/nháp.
+- Xác thực hiển thị theo **email** thực tế; không giả lập đã xác thực SĐT hoặc giấy tờ. CCCD chỉ 4 số cuối; ảnh giấy tờ vẫn qua endpoint riêng kiểm tra quyền và no-store. Nối chỉnh sửa hồ sơ, cập nhật CCCD, đổi mật khẩu, hợp đồng và đăng xuất phiên hiện tại với chức năng có sẵn. Chưa triển khai 2FA, xem đầy đủ CCCD sau nhập lại mật khẩu, lịch sử đăng nhập hoặc đăng xuất mọi thiết bị từ trang này.
+- Khi khách lưu hồ sơ, đồng bộ SĐT từ tài khoản vào hồ sơ liên kết để hồ sơ mới đủ dữ liệu cho luồng thêm người ở ghép. GET xem tài khoản không ghi DB; không đổi schema hoặc chạy updater/initializer trên DB đang dùng.
+- CSS/JS riêng `tenant-account.css` / `tenant-account.js`, chỉ nạp cho trang xem hồ sơ của chính khách thuê; bố cục hai cột và breakpoint 1100px/850px/600px. Nút sao chép có thông báo nếu trình duyệt không hỗ trợ clipboard.
+- Kiểm chứng: `dotnet test Tests/QL_PhongTro.Tests/QL_PhongTro.Tests.csproj --no-restore --filter "FullyQualifiedName~PermissionTests.Profile|FullyQualifiedName~PermissionTests.MyAccount"`: build PASS, **6/6 PASS** trên DB tạm. Bao gồm ID tài khoản khác ID hồ sơ, trước/sau tạo hồ sơ, no-store, không lộ CCCD rõ, liên kết thuê đúng người và quyền xem/sửa/ảnh. `git diff --check` PASS.
+- Bộ lọc mở rộng toàn bộ `PermissionTests` đã phát hiện lỗi ở yêu cầu chưa xử lý, giao diện tin đăng (chủ nhà/quản lý/tin hết hạn), nâng cấp v13 với cột v24, menu module, CRUD tòa/phòng và giao diện đăng ký. Đã dừng lượt mở rộng, không coi bộ này đạt và không sửa các module ngoài phạm vi. Không khẳng định đây là lỗi mới hay cũ khi chưa chạy đối chứng.
+- Chưa kiểm chứng trực quan Chrome/Safari/360px, thao tác clipboard và thiết bị thật vì không có trình duyệt kết nối. Cảnh báo ImageSharp/CS8601 có sẵn. App dự án đã dừng trước build; chạy `run.bat` để xem trang mới.
+
+## 13/10/2026 — Hai cách thêm người ở ghép và ngày bắt đầu tự ghi nhận
+
+- Thẻ Thêm người ở ghép có hai tab **Có tài khoản / Chưa có tài khoản**, mặc định Có tài khoản. Tra cứu chính xác ID bằng POST có CSRF, không danh sách/gợi ý; kiểm tra quyền ghi HOP_DONG và chủ nhà sở hữu hợp đồng. Thẻ xác nhận chỉ có tên, SĐT/CCCD đã che ở server, trạng thái xác thực **email** thực tế; không khẳng định đã xác minh giấy tờ. Response no-store.
+- Có tài khoản: dùng lại `khach_thue.tai_khoan_id` và hồ sơ hiện có, không sửa thông tin tài khoản/hồ sơ. Tài khoản KHACH_THUE phải hoạt động, chưa xóa và đủ tên/điện thoại/CCCD hợp lệ. Khi lưu đọc lại toàn bộ dữ liệu, không tin thông tin gửi từ thẻ xác nhận.
+- Chưa có tài khoản: nhập họ tên/SĐT/CCCD; chặn SĐT đã có tài khoản chưa xóa và CCCD liên kết tài khoản. Hồ sơ chưa liên kết, cùng CCCD/tên/SĐT, được tái sử dụng để tránh tạo trùng; thông tin khác bị từ chối thay vì sửa hồ sơ cũ. Bản ghi người ở ghép mới vẫn được tạo trong hợp đồng.
+- Kiểm tra trùng người đứng tên/người đang hoặc sắp ở, sức chứa hiện tại và tương lai, CCCD/tài khoản trong hợp đồng khác đã chốt có khoảng sử dụng chồng lấn. Giữ khoảng ngày bao gồm hai đầu; rời phòng hôm nay vẫn chiếm chỗ hôm nay. Khóa SQLite và phiên bản phòng, nghiệp vụ/nhật ký cùng transaction.
+- **Thay yêu cầu chọn ngày của giao diện trước:** không còn trường nhập ngày bắt đầu. Ngày được lấy từ `ITimeProvider` theo ngày Việt Nam khi POST; `Input.NgayVao` BindNever và mọi giá trị gửi kèm bị bỏ qua. Hôm nay phải thuộc kỳ hợp đồng.
+- Schema SQLite thực tế đã hỗ trợ liên kết; không đổi schema, không chạy updater/initializer trên DB đang dùng. Gửi lời mời SMS và liên kết sau đăng ký chưa triển khai vì chưa có luồng gửi SMS/liên kết tương ứng.
+- Kiểm chứng: `dotnet test Tests/QL_PhongTro.Tests/QL_PhongTro.Tests.csproj --no-restore --filter "FullyQualifiedName~ContractCreationTests|FullyQualifiedName~ContractActivationTests"` build PASS, **149/149 PASS** trên DB tạm, gồm 30 ca mới tra cứu/liên kết, thiếu hồ sơ/trạng thái thay đổi, chặn hợp đồng khác, ranh giới chuyển đi, dùng lại hồ sơ, rollback và HTTP CSRF/403/che PII/bỏ qua ngày giả. Các test ngày cũ được cập nhật theo yêu cầu mới; giữ nguyên file csproj test. `git diff --check` PASS.
+- Chưa kiểm chứng trực quan Chrome/Safari/360px và thiết bị thật. Cảnh báo ImageSharp/CS8601 có sẵn. Chạy lại `run.bat` để sử dụng mã đã build.
+
+## 13/10/2026 — Chi tiết hợp đồng và người ở ghép theo ảnh tham chiếu
+
+- Chi tiết hợp đồng: tiêu đề kèm mã/trạng thái, breadcrumb theo mã hợp đồng, tab Tổng quan / Người ở cùng. Khung hai cột: thông tin hợp đồng, tài chính, chỉ số bàn giao, dịch vụ, hóa đơn và lịch sử gia hạn; cột bên gồm người đứng tên, sức chứa, việc cần chú ý và thao tác hợp đồng. Thông tin bên cho thuê/tài liệu vẫn xem được trong mục mở rộng.
+- Người ở ghép: thanh sức chứa, danh sách người đang ở, người sắp vào, form họ tên/SĐT/CCCD gọn và cột thông tin phòng / sau khi thêm / người đã rời phòng. Giữ ngày bắt đầu ở trong mục mở rộng; mặc định từ `HomNay` hiện có, không đổi backend thành tự ghi ngày khi POST. Giữ ghi nhận chuyển đi, lịch sử, CSRF, kiểm tra sở hữu và phiên bản phòng.
+- Không giả lập dư nợ bằng 0; ghi rõ chưa tổng hợp tại đây. Chỉ hiển thị hóa đơn khi `XemTaiChinh`; nút chưa có nghiệp vụ bị vô hiệu hóa. Không thêm cập nhật schema hay ghi database đang dùng.
+- Kiểm chứng: build thông qua `dotnet test Tests/QL_PhongTro.Tests/QL_PhongTro.Tests.csproj --no-restore --filter "FullyQualifiedName~ContractCreationTests|FullyQualifiedName~ContractActivationTests"` PASS 119/119, bao gồm HTTP form thêm người, CSRF, quyền, sức chứa, chuyển đi và lịch sử trên database tạm. `git diff --check` PASS. Cảnh báo ImageSharp/CS8601 có sẵn.
+- CSS riêng `contract-reference.css`, responsive 950px/600px cho màn hình 360px. Chưa kiểm chứng trực quan Chrome/Safari/thiết bị thật vì không có trình duyệt kết nối. App dự án đã được dừng trước build; chạy lại `run.bat` để xem thay đổi.
+
+## 13/10/2026 — Giao diện lập hợp đồng theo ảnh tham chiếu
+
+- `/HopDong/Create`: chọn yêu cầu đã duyệt và hiển thị khách/phòng/giá; biểu mẫu hợp đồng, chỉ số bàn giao, dịch vụ và điều khoản ở cột trái; tóm tắt, kiểm tra thời hạn/chồng lấn và kết quả sau khi tạo ở cột phải. Thanh Hủy / Lưu bản nháp / Kiểm tra & tạo hợp đồng ở cuối trang.
+- Chọn cọc 0–3 tháng quy đổi sang tiền; vẫn cho nhập tiền cọc tùy chỉnh. Ngày kết thúc, tóm tắt và số trường hoàn tất cập nhật theo biểu mẫu. Giữ POST, CSRF, kiểm tra quyền, khóa phiên bản và nghiệp vụ hiện có; không thay schema/database.
+- Nội dung sau khi tạo phản ánh hành vi thực tế: chưa tự tạo hóa đơn kỳ đầu. Điều khoản bổ sung chưa hỗ trợ lưu; không thêm nút chụp biên bản khi chưa có xử lý ảnh.
+- Kiểm chứng: `dotnet build QL_PhongTro/QL_PhongTro.csproj --no-restore` PASS; `dotnet test Tests/QL_PhongTro.Tests/QL_PhongTro.Tests.csproj --no-restore --filter FullyQualifiedName~ContractCreationTests` PASS 108/108 trên database tạm; `git diff --check` PASS. Cảnh báo ImageSharp và CS8601 có sẵn.
+- CSS có breakpoint 950px/600px và bố cục một cột cho 360px. Chưa kiểm chứng trực quan Chrome/Safari và thiết bị thật do không có trình duyệt kết nối trong phiên; chưa kiểm chứng thao tác JavaScript trên trình duyệt.
+
 ## 12/10/2026 - Huy yeu cau da duyet
 
 - Chủ nhà có mục **Khách đổi ý, không thuê**, bắt buộc lý do và xác nhận. Yêu cầu chuyển Đã hủy, phòng về Trống, tin nguồn tự đăng lại với hạn mới 30 ngày theo yêu cầu PO. Chặn nếu tòa ngừng hoạt động hoặc đã có tin công khai khác.

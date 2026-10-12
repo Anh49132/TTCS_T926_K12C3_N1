@@ -1,7 +1,7 @@
 (() => {
     const rows = [...document.querySelectorAll('#result-table tbody tr')];
     const search = document.getElementById('result-search'), floor = document.getElementById('result-floor');
-    let group = rows.some(row => row.dataset.group === 'issued') ? 'issued' : rows.some(row => row.dataset.group === 'existing') ? 'existing' : 'missing', page = 1;
+    let group = rows.some(row => row.dataset.group === 'issued') ? 'issued' : rows.some(row => row.dataset.group === 'existing') ? 'existing' : rows.some(row => row.dataset.group === 'missing') ? 'missing' : 'other', page = 1;
     const render = () => {
         const term = search.value.trim().toLocaleLowerCase('vi');
         const matches = rows.filter(row => row.dataset.group === group && (row.dataset.room + ' ' + row.dataset.tenant).toLocaleLowerCase('vi').includes(term) && (!floor.value || row.dataset.floor === floor.value));

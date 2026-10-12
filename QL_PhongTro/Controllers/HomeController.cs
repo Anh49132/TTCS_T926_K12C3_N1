@@ -18,6 +18,7 @@ public class HomeController(
     ITimeProvider? clock = null) : Controller
 {
     [HttpGet]
+    [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public async Task<IActionResult> Index(int? toaNhaId = null, string? ky = null)
     {
         var localToday = DateOnly.FromDateTime((clock?.UtcNow ?? DateTime.UtcNow).AddHours(7));
@@ -260,6 +261,13 @@ public class HomeController(
             }
         }
 
+        if (db != null && User.IsInRole("KHACH_THUE") &&
+            int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var tenantAccountId))
+        {
+            await LoadTenantContractsAsync(model.Dashboard, tenantAccountId, localToday);
+            await LoadTenantInvoicesAsync(model.Dashboard, tenantAccountId, localToday);
+        }
+
         if (meterProgress != null && clock != null && User.IsInRole("CHU_NHA")
             && int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var ownerId))
         {
@@ -274,6 +282,73 @@ public class HomeController(
         }
 
         return View(model);
+    }
+
+    private async Task LoadTenantContractsAsync(HomeDashboardViewModel dashboard, int accountId, DateOnly today)
+    {
+        if (db is null) return;
+        var tables = await db.Database.SqlQueryRaw<int>("SELECT COUNT(*) AS Value FROM sqlite_master WHERE type='table' AND name IN ('hop_dong','ky_hop_dong','nguoi_o_ghep','khach_thue','tai_khoan','phong_tro','toa_nha','role_permission')").SingleAsync();
+        if (tables != 8) { dashboard.TenantContractMessage = "Dữ liệu hợp đồng chưa sẵn sàng."; return; }
+        if (!await db.RolePermissions.AnyAsync(p => p.RoleCode == "KHACH_THUE" && p.ModuleCode == "HOP_DONG" && (p.AccessLevel == "READ" || p.AccessLevel == "WRITE" || p.AccessLevel == "FULL")))
+        { dashboard.TenantContractMessage = "Tài khoản chưa được cấp quyền xem hợp đồng."; return; }
+        var profileId = await (from k in db.KhachThues.AsNoTracking() join a in db.TaiKhoans on k.TaiKhoanId equals a.Id
+            where a.Id == accountId && a.VaiTro == "KHACH_THUE" && a.DangHoatDong && !a.IsDeleted select (int?)k.Id).SingleOrDefaultAsync();
+        if (profileId is null) return;
+        var contracts = await (from h in db.HopDongs.AsNoTracking()
+            join r in db.PhongTros on h.PhongId equals r.Id join b in db.ToaNhas on r.ToaNhaId equals b.Id
+            where (h.TrangThai == "DANG_HIEU_LUC" || h.TrangThai == "CHO_HIEU_LUC" || h.TrangThai == "DA_KET_THUC")
+                && (h.KhachDungTenId == profileId || db.NguoiOGheps.Any(g => g.HopDongId == h.Id && g.KhachThueId == profileId))
+            select new { h.Id, h.MaHopDong, h.KhachDungTenId, h.TrangThai, h.NgayTraPhong, r.MaPhong, b.TenToaNha }).ToListAsync();
+        var ids = contracts.Select(h => h.Id).ToList();
+        var periods = await db.KyHopDongs.AsNoTracking().Where(k => ids.Contains(k.HopDongId)).OrderBy(k => k.NgayBatDau).ToListAsync();
+        var stays = await db.NguoiOGheps.AsNoTracking().Where(g => ids.Contains(g.HopDongId) && g.KhachThueId == profileId).OrderBy(g => g.NgayVao).ToListAsync();
+        foreach (var h in contracts)
+        {
+            var terms = periods.Where(k => k.HopDongId == h.Id).ToList();
+            var period = terms.FirstOrDefault(k => k.NgayBatDau <= today && k.NgayKetThuc >= today)
+                ?? terms.FirstOrDefault(k => k.NgayBatDau > today) ?? terms.LastOrDefault();
+            var signer = h.KhachDungTenId == profileId;
+            var member = stays.FirstOrDefault(g => g.HopDongId == h.Id && g.NgayVao <= today && (g.NgayRa == null || g.NgayRa >= today))
+                ?? stays.FirstOrDefault(g => g.HopDongId == h.Id && g.NgayVao > today) ?? stays.LastOrDefault(g => g.HopDongId == h.Id);
+            var active = h.TrangThai == "DANG_HIEU_LUC" && (h.NgayTraPhong == null || h.NgayTraPhong >= today)
+                && terms.Any(k => k.NgayBatDau <= today && k.NgayKetThuc >= today)
+                && (signer || (member is not null && member.NgayVao <= today && (member.NgayRa == null || member.NgayRa >= today)));
+            var future = h.TrangThai != "DA_KET_THUC" && (h.NgayTraPhong == null || h.NgayTraPhong >= today)
+                && terms.Any(k => k.NgayKetThuc >= today) && (signer || (member is not null && (member.NgayRa == null || member.NgayRa >= today)));
+            var label = active ? "Đang thuê" : future ? "Chờ bắt đầu thuê" : "Đã kết thúc thuê";
+            if (period is null) label = "Chưa có thông tin kỳ hợp đồng";
+            dashboard.TenantContracts.Add(new(h.MaHopDong, h.MaPhong, h.TenToaNha, signer ? "Người đứng tên" : "Người ở ghép", label,
+                period?.GiaThue ?? 0, signer ? period?.NgayBatDau : member?.NgayVao, signer ? terms.LastOrDefault()?.NgayKetThuc : member?.NgayRa ?? terms.LastOrDefault()?.NgayKetThuc,
+                active ? 0 : future ? 1 : 2));
+        }
+        dashboard.TenantContracts = dashboard.TenantContracts.OrderBy(c => c.Priority).ThenByDescending(c => c.Start).ToList();
+    }
+
+    private async Task LoadTenantInvoicesAsync(HomeDashboardViewModel dashboard, int accountId, DateOnly today)
+    {
+        if (db is null) return;
+        var tables = await db.Database.SqlQueryRaw<int>("SELECT COUNT(*) AS Value FROM sqlite_master WHERE type='table' AND name IN ('hoa_don','chi_tiet_hoa_don','thanh_toan','hop_dong','khach_thue','tai_khoan','phong_tro','role_permission')").SingleAsync();
+        if (tables != 8) { dashboard.TenantInvoiceMessage = "Dữ liệu hóa đơn chưa sẵn sàng."; return; }
+        if (!await db.RolePermissions.AnyAsync(p => p.RoleCode == "KHACH_THUE" && p.ModuleCode == "TAI_CHINH" && (p.AccessLevel == "READ" || p.AccessLevel == "WRITE" || p.AccessLevel == "FULL")))
+        { dashboard.TenantInvoiceMessage = "Tài khoản chưa được cấp quyền xem hóa đơn."; return; }
+        var rows = await (from bill in db.HoaDons.AsNoTracking()
+            join h in db.HopDongs on bill.HopDongId equals h.Id
+            join k in db.KhachThues on h.KhachDungTenId equals k.Id
+            join a in db.TaiKhoans on k.TaiKhoanId equals a.Id
+            join room in db.PhongTros on h.PhongId equals room.Id
+            where a.Id == accountId && a.VaiTro == "KHACH_THUE" && a.DangHoatDong && !a.IsDeleted && bill.TrangThai == "DA_PHAT_HANH"
+            select new { bill.MaHoaDon, room.MaPhong, bill.Thang, bill.Nam, bill.HanThanhToan, Published = bill.NgayPhatHanh ?? bill.NgayLap,
+                Total = db.ChiTietHoaDons.Where(l => l.HoaDonId == bill.Id).Sum(l => (long?)(l.LoaiKhoan == "GIAM_TRU" ? -l.ThanhTien : l.ThanhTien)) ?? 0L,
+                Paid = db.ThanhToans.Where(p => p.HoaDonId == bill.Id && p.TrangThai == "DA_XAC_NHAN").Sum(p => (long?)p.SoTien) ?? 0L }).ToListAsync();
+        var invoices = rows.Select(b => {
+            var remaining = Math.Max(0L, checked(b.Total - b.Paid));
+            var status = remaining == 0 ? "Đã thanh toán" : today > b.HanThanhToan ? "Quá hạn" : b.Paid > 0 ? "Thanh toán một phần" : "Chưa thanh toán";
+            return new HomeTenantInvoice(b.MaHoaDon, b.MaPhong, b.Thang, b.Nam, b.HanThanhToan, b.Total, b.Paid, remaining, status, b.Published);
+        }).ToList();
+        dashboard.TenantInvoicesReady = true;
+        dashboard.TenantUnpaidInvoices = invoices.Count(b => b.Remaining > 0);
+        dashboard.TenantAmountDue = invoices.Sum(b => (decimal)b.Remaining);
+        dashboard.TenantInvoices = invoices.OrderByDescending(b => b.Published).ThenByDescending(b => b.Year).ThenByDescending(b => b.Month).ThenByDescending(b => b.Code).Take(5).ToList();
     }
 
     [HttpGet]

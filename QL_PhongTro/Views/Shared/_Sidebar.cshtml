@@ -1,4 +1,4 @@
-﻿@inject QL_PhongTro.Authorization.PermissionService Permissions
+@inject QL_PhongTro.Authorization.PermissionService Permissions
 @{
     var allowed = (await Permissions.MenuAsync()).Select(x => x.Code).ToHashSet();
     var admin = User.IsInRole("ADMIN");
@@ -28,6 +28,7 @@
     } else {
         items.Add(("Vận hành", "Quản lý tòa nhà", "/PhongTro/ToaNha", "PHONG_TRO", "building"));
         items.Add(("Vận hành", "Quản lý phòng", "/PhongTro", "PHONG_TRO", "home"));
+        if (owner) items.Add(("Vận hành", "Hồ sơ khách thuê", "/HoSo/DanhSach", "HOP_DONG", "users"));
         if (owner) items.Add(("Vận hành", "Dịch vụ & đơn giá", "/DichVu", "PHONG_TRO", "tag"));
         items.AddRange(new[] {
             ("Vận hành", "Tin đăng cho thuê", "/TinDang/QuanLy", "TIN_DANG", "speaker"),
@@ -60,7 +61,7 @@
 }
 <div class="sidebar-scroll compact-sidebar">
 <a class="sidebar-brand" href="/"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="@Icon("home")" /></svg><span><strong>NhàTốt</strong><small>Sống đúng nơi</small></span></a>
-@if (!admin) { <div class="compact-sidebar-profile"><span class="tenant-avatar">@System.Globalization.StringInfo.GetNextTextElement(name).ToUpperInvariant()</span><div><strong>Xin chào, @name</strong><small>@(owner ? "Chủ nhà" : "Quản lý")</small></div></div> }
+@if (!admin) { <div class="compact-sidebar-profile"><span class="tenant-avatar">@System.Globalization.StringInfo.GetNextTextElement(name).ToUpperInvariant()</span><div><strong>Xin chào, @name</strong><small>@(owner ? "Chủ nhà" : "Quản lý tòa nhà")</small></div></div> }
 <nav aria-label="Menu chức năng">
 <a class="sidebar-link @(path is "/" or "/Home" or "/Home/Index" ? "is-active" : "")" href="/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon("home")" /></svg><span>Tổng quan</span></a>
 @foreach (var group in items.Where(x => allowed.Contains(x.Module)).GroupBy(x => x.Group)) {
@@ -68,7 +69,7 @@
 @if (!string.IsNullOrEmpty(group.Key)) { <h2>@group.Key</h2> }
 @foreach (var item in group) {
     var target = item.Url.Split('?')[0];
-    var selected = path.Equals(target, StringComparison.OrdinalIgnoreCase) &&
+    var selected = (path.Equals(target, StringComparison.OrdinalIgnoreCase) || (target == "/HoSo/DanhSach" && path.Equals("/HoSo/Xem", StringComparison.OrdinalIgnoreCase))) &&
         (item.Url.Contains("section=") ? item.Url.EndsWith("section=" + section) : string.IsNullOrEmpty(section)) &&
         (target != "/ManagedAccounts" || (item.Url.Contains("role=CHU_NHA") ? roleFilter == "CHU_NHA" : roleFilter != "CHU_NHA"));
 <a class="sidebar-link @(selected ? "is-active" : "")" href="@item.Url" data-menu-module="@item.Module" aria-current="@(selected ? "page" : null)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon(item.Icon)" /></svg><span>@item.Title</span></a>

@@ -172,3 +172,20 @@
         }
     });
 })();
+
+(() => {
+ const form=document.getElementById('publish-monthly-drafts'), dialog=document.getElementById('batch-confirmation');
+ if(!form || !dialog) return;
+ form.querySelector('[data-batch-open]').addEventListener('click',()=>{
+  const selected=[...form.querySelectorAll('[name="selectedInvoiceIds"]:checked')];
+  if(selected.length<1 || selected.length>50){form.querySelector('[data-batch-status]').textContent='Hãy chọn từ 1 đến 50 hóa đơn.';return;}
+  const issue=form.querySelector('#batch-issue'),due=form.querySelector('#batch-due');
+  if(!issue.reportValidity() || !due.reportValidity() || due.value<issue.value){form.querySelector('[data-batch-status]').textContent='Kiểm tra ngày phát hành và hạn thanh toán.';return;}
+  dialog.querySelector('[data-batch-count]').textContent=selected.length;
+  dialog.querySelector('[data-batch-total]').textContent=new Intl.NumberFormat('vi-VN').format(selected.reduce((sum,x)=>sum+BigInt(x.dataset.amount),0n))+' đ';
+  dialog.querySelector('[data-batch-date]').textContent=issue.value.split('-').reverse().join('/');
+  dialog.querySelector('[data-batch-due]').textContent=due.value.split('-').reverse().join('/');
+  dialog.querySelector('[name="xacNhan"]').checked=false;dialog.showModal();
+ });
+ dialog.querySelector('[data-batch-close]').addEventListener('click',()=>dialog.close());
+})();

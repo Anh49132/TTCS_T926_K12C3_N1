@@ -46,7 +46,12 @@ else
 <button type="button" class="sidebar-backdrop" id="sidebar-backdrop" aria-label="Đóng thanh điều hướng" hidden></button>
 <div class="dashboard-main" id="dashboard-main">
 <header class="dashboard-header">
-@if (ViewContext.RouteData.Values["controller"]?.ToString() == "PhongTro" && ViewContext.RouteData.Values["action"]?.ToString() == "ChiTietToaNha")
+@if (ViewContext.RouteData.Values["controller"]?.ToString() == "HoSo")
+{
+<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
+<nav class="op-header-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index">⌂</a><span>/</span>@if (ViewContext.RouteData.Values["action"]?.ToString() == "Xem") { <a asp-controller="HoSo" asp-action="DanhSach">Hồ sơ khách thuê</a><span>/</span><strong>@((Model as QL_PhongTro.ViewModels.XemHoSoViewModel)?.HoTen)</strong> } else { <strong>@ViewData["Title"]</strong> }</nav>
+}
+else if (ViewContext.RouteData.Values["controller"]?.ToString() == "PhongTro" && ViewContext.RouteData.Values["action"]?.ToString() == "ChiTietToaNha")
 {
 <button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
 <nav class="dashboard-building-breadcrumb" aria-label="Đường dẫn điều hướng">
@@ -125,12 +130,12 @@ else if (ViewContext.RouteData.Values["controller"]?.ToString() == "PhongTro" &&
 else if (ViewContext.RouteData.Values["controller"]?.ToString() == "HopDong" && ViewContext.RouteData.Values["action"]?.ToString() == "Create")
 {
 <button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
-<nav class="create-header-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index" aria-label="Về trang chủ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10ZM9 20v-7h6v7" /></svg></a><span aria-hidden="true">/</span><a asp-controller="HopDong" asp-action="Index">Hợp đồng &amp; người ở ghép</a><span aria-hidden="true">/</span><strong aria-current="page">Tạo hợp đồng thuê</strong></nav>
+<nav class="create-header-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index" aria-label="Về trang chủ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10ZM9 20v-7h6v7" /></svg></a><span aria-hidden="true">/</span><a asp-controller="HopDong" asp-action="Index">Hợp đồng &amp; người ở ghép</a><span aria-hidden="true">/</span><strong aria-current="page">Lập hợp đồng thuê</strong></nav>
 }
 else if (ViewContext.RouteData.Values["controller"]?.ToString() == "HopDong" && ViewContext.RouteData.Values["action"]?.ToString() == "Details")
 {
 <button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
-<nav class="contract-detail-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index" aria-label="Về tổng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10ZM9 20v-7h6v7" /></svg></a><span aria-hidden="true">/</span><a asp-controller="HopDong" asp-action="Index">Hợp đồng &amp; người ở ghép</a><span aria-hidden="true">/</span><strong aria-current="page">Chi tiết hợp đồng</strong></nav>
+<nav class="contract-detail-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index" aria-label="Về tổng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10ZM9 20v-7h6v7" /></svg></a><span aria-hidden="true">/</span><a asp-controller="HopDong" asp-action="Index">Hợp đồng &amp; người ở ghép</a><span aria-hidden="true">/</span><strong aria-current="page">@((Model as QL_PhongTro.ViewModels.HopDongDetailsViewModel)?.HopDong.MaHopDong ?? "Chi tiết hợp đồng")</strong></nav>
 }
 else if (User.IsInRole("CHU_NHA"))
 {

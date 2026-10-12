@@ -9,7 +9,7 @@ public sealed partial class HoaDonDichVuService
 {
     private static string SnapshotNhap(HoaDon bill) => JsonSerializer.Serialize(new SnapshotHoaDonNhap(bill.TongTien,
         bill.ChiTiet.OrderBy(x => x.SoThuTu).Select(x => new DongLichSuHoaDon(x.SoThuTu, x.LoaiKhoan,
-            x.TenKhoan, x.ChiSoDau, x.ChiSoCuoi, x.SoLuong, x.DonGia, x.ThanhTien, x.GhiChu)).ToList()));
+            x.TenKhoan, x.ChiSoDau, x.ChiSoCuoi, x.SoLuong, x.DonGia, x.ThanhTien, x.GhiChu)).ToList(), bill.HanThanhToan));
 
     private async Task GhiLichSuNhapAsync(int actorId, HoaDon bill, string before)
     {

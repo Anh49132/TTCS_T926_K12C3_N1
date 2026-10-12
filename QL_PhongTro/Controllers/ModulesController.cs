@@ -22,7 +22,7 @@ public class ModulesController(AppDbContext db) : Controller
             _ => null
         };
         if (code == "HOP_DONG") return RedirectToAction("Index", "HopDong");
-        if (code == "TAI_CHINH" && section == null && User.IsInRole("CHU_NHA")) return RedirectToAction("Monthly", "HoaDonDichVu");
+        if (code == "TAI_CHINH" && section == null && User.IsInRole("CHU_NHA")) return RedirectToAction("Management", "HoaDonDichVu");
         if (code == "DIEN_NUOC" && (User.IsInRole("QUAN_LY") || User.IsInRole("CHU_NHA"))) return RedirectToAction("Index", "ChiSoDienNuoc");
         if (code == "BAO_HONG") return View("BaoHong");
         if (code is "PHONG_TRO" or "TAI_KHOAN" or "TIN_DANG") return Redirect(PermissionService.Url(code));

@@ -10,6 +10,8 @@
     else
     {
         <p>Tổng tiền: <strong>@entry.Truoc.TongTien.ToString("N0", vn) đ → @entry.Sau.TongTien.ToString("N0", vn) đ</strong></p>
+        @if(entry.Truoc.HanThanhToan != entry.Sau.HanThanhToan){<p>Hạn thanh toán: @(entry.Truoc.HanThanhToan?.ToString("dd/MM/yyyy") ?? "—") → @entry.Sau.HanThanhToan?.ToString("dd/MM/yyyy")</p>}
+        @foreach(var removed in entry.Truoc.Dong.Where(x=>!entry.Sau.Dong.Any(y=>y.SoThuTu==x.SoThuTu))){<p>Đã xóa khoản: <strong>@removed.TenKhoan</strong> · @removed.ThanhTien.ToString("N0",vn) đ</p>}
         @foreach (var line in entry.Sau.Dong)
         {
             var old = entry.Truoc.Dong.SingleOrDefault(x => x.SoThuTu == line.SoThuTu);

@@ -1,0 +1,124 @@
+/* Chi tiết hợp đồng và người ở ghép — phạm vi riêng. */
+.contract-reference{--ref-accent:#bfa77a;--ref-text:#25282d;--ref-muted:#777f8d;--ref-border:#e5e7eb;min-width:0}
+.contract-reference .ref-back{display:inline-block;color:var(--ref-text);font-size:13px;text-decoration:none;margin:0 0 16px}
+.contract-reference .ref-title{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.contract-reference .ref-title h1{font-size:clamp(22px,2vw,30px);line-height:1.25;margin:0!important;overflow-wrap:anywhere}
+.contract-reference .ref-heading{align-items:center!important;gap:16px!important;margin-bottom:16px!important}
+.contract-reference .ref-heading p{margin:6px 0 0;font-size:14px;color:var(--ref-muted)}
+.contract-reference .ref-heading-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;margin-left:auto;margin-right:0!important}
+.contract-reference .ref-heading-actions form{margin:0}
+.contract-reference .btn{font-size:13px;min-height:40px;padding:10px 16px;border-radius:5px}
+.contract-reference .btn-primary{background:#30343b;border-color:#30343b;color:#fff}
+.contract-reference .btn-outline-secondary,.contract-reference .btn-outline-primary{background:#fff;color:#25282d;border-color:#9098a5}
+.contract-reference .ref-state{display:inline-block;font-size:12px;white-space:nowrap;border-radius:24px;background:#f0f1f3;color:#626977;padding:7px 12px}
+.contract-reference .state-DANG_HIEU_LUC{background:#dcf4df;color:#198a39}
+.contract-reference .state-CHO_HIEU_LUC,.contract-reference .state-NHAP{background:#fff2dd;color:#9a6a1f}
+.contract-reference .ref-tabs{display:flex;gap:24px;border-bottom:1px solid var(--ref-border);margin:0 0 18px!important;padding:0;flex-wrap:wrap}
+.contract-reference .ref-tabs a{padding:12px;color:#717987;text-decoration:none;font-size:14px;border-bottom:2px solid transparent;margin-bottom:-1px}
+.contract-reference .ref-tabs .is-active{border-color:var(--ref-accent);color:#99712c;font-weight:600}
+.contract-reference .ref-workspace{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(320px,1fr);gap:16px;align-items:start}
+.contract-reference .ref-main,.contract-reference .ref-side{min-width:0}
+.contract-details-reference.contract-reference .contract-card.ref-card{padding:16px 18px!important;margin-bottom:12px!important;border:1px solid var(--ref-border);border-radius:6px;background:#fff;box-shadow:none;min-width:0}
+.contract-reference .ref-card-title{display:flex;align-items:center;gap:12px;margin-bottom:12px;min-width:0}
+.contract-reference .ref-card-title h2{font-size:17px;font-weight:700;margin:0;line-height:1.3;overflow-wrap:anywhere}
+.contract-reference .ref-card-title small{font-size:12px;color:var(--ref-muted);display:block;margin-top:6px}
+.contract-reference .ref-card-title>a{margin-left:auto;font-size:12px;white-space:nowrap}
+.contract-reference .ref-icon{width:30px;height:30px;border-radius:6px;flex-shrink:0;background:#fff0de;color:#714923;display:inline-grid;place-items:center;font-size:20px}
+.contract-reference .ref-icon.neutral{background:#e9eaec;color:#45505e}
+.contract-reference .ref-fact-columns{display:grid;grid-template-columns:1fr 1fr;gap:24px;border-top:1px solid #f0f1f3;padding-top:12px}
+.contract-reference .ref-fact-columns>dl+dl{border-left:1px solid var(--ref-border);padding-left:24px}
+.contract-reference .ref-facts{margin:0;min-width:0}
+.contract-reference .ref-facts>div{display:grid;grid-template-columns:minmax(110px,40%) minmax(0,1fr);gap:14px;padding:7px 0;font-size:13px;line-height:1.4}
+.contract-reference .ref-facts dt{font-weight:400;color:#667080}
+.contract-reference .ref-facts dd{margin:0;color:#343c4b;overflow-wrap:anywhere}
+.contract-reference .ref-side .ref-facts>div{border-bottom:1px solid #f0f1f3}
+.contract-reference .ref-side .ref-facts dd{text-align:right}
+.contract-reference .ref-notice{padding:10px 14px;background:#fcf4e8;border-radius:5px;color:#815724;font-size:12px;line-height:1.5;margin:12px 0 0}
+.contract-reference .ref-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.contract-reference .ref-metrics-three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.contract-reference .ref-metrics>div{background:#f8f9fa;border:1px solid #eceef1;border-radius:6px;padding:12px 14px;min-width:0}
+.contract-reference .ref-metrics small{display:block;font-size:12px;color:var(--ref-muted);margin-bottom:5px}
+.contract-reference .ref-metrics strong{font-size:16px;font-weight:700;color:#25282d;overflow-wrap:anywhere}
+.contract-reference .ref-metrics span{font-size:12px;color:#777f8d}
+.contract-reference .ref-table-frame{border:1px solid var(--ref-border);border-radius:5px;overflow:auto}
+.contract-reference .ref-table{width:100%;border-collapse:collapse;font-size:12px}
+.contract-reference .ref-table th{background:#f2f3f5;text-align:left;padding:6px 12px;color:#414b5c;font-weight:600}
+.contract-reference .ref-table td{padding:6px 12px;border-top:1px solid #eff0f2}
+.contract-reference .ref-table td:last-child{white-space:nowrap}
+.contract-reference .contract-note{font-size:12px;margin:8px 0 0;color:var(--ref-muted);line-height:1.5}
+.contract-reference .ref-person{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--ref-border);border-radius:6px;min-width:0;font-size:13px;flex-wrap:wrap}
+.contract-reference .ref-person>div{min-width:0;flex:1}
+.contract-reference .ref-person strong{overflow-wrap:anywhere}
+.contract-reference .ref-person small{display:block;margin-top:8px;color:#536072;font-size:12px;overflow-wrap:anywhere}
+.contract-reference .ref-avatar{width:42px;height:42px;border-radius:50%;background:#e9eaec;display:inline-grid;place-items:center;flex-shrink:0;color:#404a59;font-size:14px;font-weight:600}
+.contract-reference .ref-person-badge{display:inline-block;background:#fbefdb;color:#8c6228;border-radius:4px;padding:6px 10px;font-size:11px;margin-left:6px;white-space:nowrap}
+.contract-reference .ref-person.compact{padding:8px 12px;margin-bottom:6px}
+.contract-reference .ref-person-state{color:#1c9443;margin-left:auto;white-space:nowrap;font-size:12px}
+.contract-reference .ref-capacity{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:10px 12px;border:1px solid var(--ref-border);border-radius:6px;font-size:12px;color:#77808e;flex-wrap:wrap;margin-bottom:8px}
+.contract-reference .ref-capacity strong{font-size:22px;color:#25282d;white-space:nowrap}
+.contract-reference .ref-capacity strong small{font-size:15px}
+.contract-reference .ref-capacity-large{background:#f8f9fa;padding:14px 16px;margin-bottom:14px}
+.contract-reference .ref-capacity progress{appearance:none;border:0;height:12px;flex:1;min-width:80px;border-radius:10px;overflow:hidden;background:#e9eaec}
+.contract-reference .ref-capacity progress::-webkit-progress-bar{background:#e9eaec;border-radius:10px}
+.contract-reference .ref-capacity progress::-webkit-progress-value{background:#bfa77a;border-radius:10px}
+.contract-reference .ref-capacity progress::-moz-progress-bar{background:#bfa77a;border-radius:10px}
+.contract-reference .ref-full{display:block;width:100%;text-align:center;margin-top:8px}
+.contract-reference .ref-action{display:flex;align-items:center;gap:8px;width:100%;background:none;border:0;border-top:1px solid #eff0f2;padding:9px 10px;color:#424c5b;font-size:13px;text-decoration:none;text-align:left}
+.contract-reference .ref-action span{margin-left:auto}
+.contract-reference .ref-action:disabled{color:#9399a4;cursor:default}
+.contract-reference .ref-action.danger{color:#b65a5a}
+.contract-reference .ref-empty{display:flex;align-items:center;justify-content:center;gap:12px;border:1px dashed #d3d8df;border-radius:6px;color:var(--ref-muted);padding:18px;font-size:13px;margin-top:12px}
+.contract-reference .ref-empty-history{border:0;flex-direction:column;font-size:28px;margin:0}
+.contract-reference .ref-empty-history span{font-size:12px}
+.contract-reference .ref-room{display:flex;gap:16px;align-items:center;background:#f3f4f6;border-radius:6px;padding:14px;margin-bottom:12px}
+.contract-reference .ref-room>.ref-icon{width:44px;height:44px}
+.contract-reference .ref-room>div{min-width:0}
+.contract-reference .ref-room strong{font-size:16px;overflow-wrap:anywhere}
+.contract-reference .ref-room small{display:block;font-size:12px;color:var(--ref-muted);margin-top:5px;overflow-wrap:anywhere}
+.contract-reference .ref-checklist{list-style:none;padding:0;margin:0}
+.contract-reference .ref-checklist li{padding:8px 0;font-size:13px}
+.contract-reference .ref-checklist li:before{content:'✓';background:#269b49;color:#fff;width:19px;height:19px;display:inline-grid;place-items:center;border-radius:50%;margin-right:14px}
+.contract-reference .ref-date-notice{padding:12px 14px;color:#1564bb;background:#eaf4ff;border-radius:6px;font-size:13px;line-height:1.5;margin:18px 0 14px}
+.contract-reference .ref-resident-fields{display:grid;grid-template-columns:1fr 1fr;gap:16px 22px}
+.contract-reference .ref-resident-fields>div{min-width:0}
+.contract-reference .ref-field-full{grid-column:1/-1}
+.contract-reference .ref-resident-fields label,.contract-reference .ref-date-picker label{display:block;color:#657081;font-size:13px;margin-bottom:5px}
+.contract-reference em{font-style:normal;color:#c34432}
+.contract-reference .ref-resident-fields input,.contract-reference .ref-date-picker input{display:block;width:100%;height:40px;border:1px solid #d9dfe6;border-radius:5px;padding:9px 14px;font-size:13px;background:#fff;color:#25282d}
+.contract-reference .ref-resident-fields small,.contract-reference .ref-date-picker small{display:block;font-size:12px;color:var(--ref-muted);margin-top:5px;line-height:1.5}
+.contract-reference .ref-date-picker{margin-top:14px;font-size:12px;color:#657081}
+.contract-reference .ref-date-picker summary{cursor:pointer;padding:6px 0}
+.contract-reference .ref-date-picker input{max-width:260px}
+.contract-reference .ref-resident-footer{display:flex;align-items:center;gap:8px;margin-top:18px;flex-wrap:wrap}
+.contract-reference .ref-resident-footer p{background:#f0f2f5;padding:12px 14px;border-radius:6px;font-size:12px;color:#596372;margin:0;flex:1;min-width:180px}
+.contract-reference .ref-resident-footer .btn{white-space:nowrap}
+.contract-reference .ref-roommate{border:1px solid var(--ref-border);border-radius:6px;padding:10px 12px;margin:10px 0;background:#fff}
+.contract-reference .ref-roommate .ref-person{border:0;padding:0;margin:0}
+.contract-reference .ref-roommate>p{font-size:12px;color:var(--ref-muted);margin:8px 0}
+.contract-reference .ref-departure summary{cursor:pointer;font-size:12px;color:#586477;padding:6px 0}
+.contract-reference .ref-departure form{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-top:8px}
+.contract-reference .ref-departure .contract-field{margin:0;min-width:0}
+.contract-reference .ref-bill{display:flex;gap:10px;flex-wrap:wrap;padding:12px 0;border-bottom:1px solid var(--ref-border);font-size:13px}
+.contract-reference .ref-bill strong:last-of-type{margin-left:auto}
+.contract-reference .ref-bill small{width:100%;color:var(--ref-muted)}
+.contract-reference details.ref-card>summary{font-size:14px;font-weight:600;cursor:pointer}
+.contract-reference details.ref-card[open]>summary{margin-bottom:12px}
+.contract-reference a:focus-visible,.contract-reference button:focus-visible,.contract-reference input:focus-visible,.contract-reference summary:focus-visible{outline:2px solid #bfa77a;outline-offset:3px}
+@media(max-width:1150px){.contract-reference .ref-metrics{grid-template-columns:1fr 1fr}.contract-reference .ref-metrics-three{grid-template-columns:repeat(3,minmax(0,1fr))}.contract-reference .ref-fact-columns{gap:14px}.contract-reference .ref-fact-columns>dl+dl{padding-left:14px}.contract-reference .ref-facts>div{grid-template-columns:1fr;gap:4px}}
+@media(max-width:950px){.contract-reference .ref-workspace{grid-template-columns:minmax(0,1fr)}.contract-reference .ref-heading-actions{justify-content:flex-start}.contract-reference .ref-facts>div{grid-template-columns:minmax(110px,40%) minmax(0,1fr)}.contract-reference .ref-tabs{gap:6px}.contract-reference .ref-residents>.ref-side{display:flex;flex-direction:column}.contract-reference .ref-residents>.ref-side>.ref-card{width:100%}}
+@media(max-width:600px){.contract-reference .ref-heading{align-items:flex-start!important}.contract-reference .ref-title h1{font-size:22px}.contract-reference .ref-heading-actions{width:100%}.contract-reference .ref-heading-actions>.btn{flex:1;padding:10px}.contract-reference .ref-tabs a{font-size:12px;padding:10px 6px}.contract-details-reference.contract-reference .contract-card.ref-card{padding:14px!important}.contract-reference .ref-fact-columns{grid-template-columns:1fr;gap:4px}.contract-reference .ref-fact-columns>dl+dl{border:0;padding:0}.contract-reference .ref-facts>div{grid-template-columns:minmax(90px,38%) minmax(0,1fr);gap:10px}.contract-reference .ref-metrics-three{grid-template-columns:1fr}.contract-reference .ref-metrics>div{padding:10px}.contract-reference .ref-metrics strong{font-size:14px}.contract-reference .ref-card-title{gap:8px;flex-wrap:wrap}.contract-reference .ref-card-title h2{font-size:16px}.contract-reference .ref-card-title>a{font-size:11px}.contract-reference .ref-resident-fields{grid-template-columns:1fr}.contract-reference .ref-capacity-large progress{order:3;flex-basis:100%}.contract-reference .ref-person-badge{margin:0}.contract-reference .ref-resident-footer p{flex-basis:100%}.contract-reference .ref-resident-footer .btn{flex:1;padding:10px}.contract-reference .ref-table th,.contract-reference .ref-table td{padding:6px;font-size:11px}.contract-reference .ref-roommate .ref-person{gap:8px}.contract-reference .ref-person-state{margin-left:0}.contract-reference .ref-action{padding:10px 0}}
+@media print{.contract-reference .ref-back,.contract-reference .ref-heading-actions,.contract-reference .ref-tabs,.contract-reference .ref-side,.contract-reference .ref-add-resident,.contract-reference .ref-departure{display:none!important}.contract-reference .ref-workspace{display:block}.contract-reference .ref-card{break-inside:avoid}}
+
+.contract-reference .ref-icon svg{width:20px;height:20px}
+
+.contract-reference .ref-add-tabs{display:flex;gap:8px;border-bottom:1px solid #e5e7eb;margin:16px 0}
+.contract-reference .ref-add-tabs a{padding:10px 16px;color:#697383;text-decoration:none;border-bottom:2px solid transparent;font-size:14px}
+.contract-reference .ref-add-tabs .is-active{color:#947036;border-color:#bfa77a;font-weight:600}
+.contract-reference .ref-account-search label{display:block;margin-bottom:6px;font-size:13px;color:#657081}
+.contract-reference .ref-account-search>div{display:flex;gap:10px}
+.contract-reference .ref-account-search input{width:100%;min-width:0;flex:1;height:40px;padding:9px 14px;border:1px solid #d9dfe6;border-radius:5px;font-size:13px}
+.contract-reference .ref-account-search small{display:block;margin:8px 0;font-size:12px;color:#777f8d}
+.contract-reference .ref-account-search button{white-space:nowrap}
+.contract-reference .ref-account-confirm{margin-top:16px;background:#f8f9fa;border:1px solid #e5e7eb;padding:14px;border-radius:6px}
+.contract-reference .ref-account-confirm .ref-person{border:0;padding:0 0 12px}
+@media(max-width:600px){.contract-reference .ref-account-search>div{flex-direction:column}.contract-reference .ref-add-tabs a{padding:10px;font-size:13px}}

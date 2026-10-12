@@ -43,6 +43,8 @@ public sealed record KetQuaPhongHoaDon(int HopDongId, string MaPhong, string Tra
 }
 public sealed record KetQuaPhatHanhThang(List<KetQuaPhongHoaDon> Phongs)
 {
+    public bool LaPhatHanh { get; init; }
+    public int SoThatBai => Phongs.Count(x => x.TrangThai == "THAT_BAI");
     public int SoDaPhatHanh => Phongs.Count(x => x.TrangThai == "DA_PHAT_HANH");
     public int SoNhap => Phongs.Count(x => x.TrangThai == "NHAP");
     public int SoDaTao => SoDaPhatHanh + SoNhap;
