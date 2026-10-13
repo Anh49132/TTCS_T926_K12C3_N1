@@ -1,4 +1,4 @@
-﻿using Microsoft.Data.Sqlite;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
@@ -7,7 +7,7 @@ namespace QL_PhongTro.Data;
 // Append new versions; never rewrite an update already shared with the team.
 public static class DatabaseUpdates
 {
-    internal const int CurrentVersion = 28;
+    internal const int CurrentVersion = 29;
     private static SqliteConnection Open(string path, bool readOnly)
     {
         var c = new SqliteConnection(new SqliteConnectionStringBuilder
@@ -70,6 +70,7 @@ public static class DatabaseUpdates
         foreach (var entity in db.Model.GetEntityTypes())
         {
             var table = entity.GetTableName()!;
+            if (table == "anh_bao_hong" && schemaVersion < 29) continue;
             if (table == "bao_hong" && schemaVersion < 28) continue;
             if (table == "huy_lan_thu_hoa_don" && (schemaVersion < 27 || !HasTable(c, "thanh_toan"))) continue;
             if (table == "lan_thu_hoa_don" && (schemaVersion < 26 || !HasTable(c, "thanh_toan"))) continue;
@@ -109,6 +110,7 @@ public static class DatabaseUpdates
         if (schemaVersion >= 15) Probe("hop_dong_so_ma", ["nam", "so_cuoi"]);
         if (schemaVersion >= 28) Probe("bao_hong_so_ma", ["thang", "so_cuoi"]);
         if (schemaVersion >= 28) BaoHongSchema.Validate(c);
+        if (schemaVersion >= 29) AnhBaoHongSchema.Validate(c);
         Probe("password_reset_token", ["token_hash", "account_id", "expires_at", "used_at"]);
         Probe("password_reset_request", ["id", "email_key", "requested_at"]);
         Probe("account_session_version", ["account_id", "version"]);
@@ -462,6 +464,7 @@ public static class DatabaseUpdates
         if (version < 26) InvoiceCollectionSchema.Upgrade(c);
         if (version < 27) InvoiceCollectionCancellationSchema.Upgrade(c);
         if (version < 28) BaoHongSchema.Upgrade(c);
+        if (version < 29) AnhBaoHongSchema.Upgrade(c);
         Check(path);
         Console.WriteLine($"Database updated to version {CurrentVersion}. Existing business rows preserved.");
     }

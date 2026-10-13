@@ -4,6 +4,9 @@ using QL_PhongTro.Data;
 using QL_PhongTro.Services;
 using QL_PhongTro.ViewModels;
 using Xunit;
+using Microsoft.AspNetCore.Http;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 namespace QL_PhongTro.Tests;
 
 public sealed class BaoHongTests
@@ -37,7 +40,7 @@ public sealed class BaoHongTests
         public AppDbContext Context() => new(new DbContextOptionsBuilder<AppDbContext>().UseSqlite($"Data Source={Path};Pooling=False;Default Timeout=20").Options);
         public void Execute(string sql) { using var c=new SqliteConnection($"Data Source={Path};Foreign Keys=True;Pooling=False"); c.Open(); using var cmd=c.CreateCommand(); cmd.CommandText=sql; cmd.ExecuteNonQuery(); }
         public long Scalar(string sql) { using var c=new SqliteConnection($"Data Source={Path};Pooling=False"); c.Open(); using var cmd=c.CreateCommand(); cmd.CommandText=sql; return Convert.ToInt64(cmd.ExecuteScalar()); }
-        public void Dispose() { SqliteConnection.ClearAllPools(); foreach(var file in Directory.GetFiles(System.IO.Path.GetDirectoryName(Path)!,System.IO.Path.GetFileName(Path)+"*")) File.Delete(file); }
+        public void Dispose() { var photos = Path + ".repair-images"; if (Directory.Exists(photos)) { foreach (var image in Directory.GetFiles(photos)) File.Delete(image); Directory.Delete(photos); } SqliteConnection.ClearAllPools(); foreach(var file in Directory.GetFiles(System.IO.Path.GetDirectoryName(Path)!,System.IO.Path.GetFileName(Path)+"*")) File.Delete(file); }
     }
     private static BaoHongInput Input(int contract = 1, string level = "THUONG") => new() { HopDongId=contract,LoaiThietBi=" Vòi nước ",MoTa=" Nước rò dưới bồn rửa ",MucDo=level };
 
@@ -138,13 +141,87 @@ public sealed class BaoHongTests
     [Fact]
     public void UpgradePreservesExistingDataAndRerunIsSafe()
     {
-        using var f=new Fixture();f.Execute("DROP TABLE bao_hong; DROP TABLE bao_hong_so_ma; DELETE FROM app_schema_version WHERE version=28");
+        using var f=new Fixture();f.Execute("DROP TABLE anh_bao_hong; DROP TABLE bao_hong; DROP TABLE bao_hong_so_ma; DELETE FROM app_schema_version WHERE version>=28");
         var accounts=f.Scalar("SELECT COUNT(*) FROM tai_khoan");
         var root=Directory.GetCurrentDirectory();while(!File.Exists(System.IO.Path.Combine(root,"QL_PhongTro","Data","permissions.seed.json")))root=Directory.GetParent(root)!.FullName;
         var seed=System.IO.Path.Combine(root,"QL_PhongTro","Data","permissions.seed.json");
         DatabaseUpdates.Update(f.Path,seed); DatabaseUpdates.Update(f.Path,seed);DatabaseUpdates.Check(f.Path);
-        Assert.Equal(accounts,f.Scalar("SELECT COUNT(*) FROM tai_khoan"));Assert.Equal(28,f.Scalar("SELECT MAX(version) FROM app_schema_version"));
+        Assert.Equal(accounts,f.Scalar("SELECT COUNT(*) FROM tai_khoan"));Assert.Equal(29,f.Scalar("SELECT MAX(version) FROM app_schema_version"));
         Assert.Equal(3,f.Scalar("SELECT COUNT(*) FROM hop_dong"));
         using var c=new SqliteConnection($"Data Source={f.Path}");c.Open();using var cmd=c.CreateCommand();cmd.CommandText="PRAGMA foreign_key_check";using var reader=cmd.ExecuteReader();Assert.False(reader.Read());
     }
+    private static IFormFile Photo(string name = "photo.png", int? size = null)
+    {
+        using var image = new Image<Rgb24>(2, 2);
+        using var stream = new MemoryStream();
+        if (name.EndsWith(".jpg") || name.EndsWith(".jpeg")) image.SaveAsJpeg(stream); else image.SaveAsPng(stream);
+        var bytes = stream.ToArray();
+        if (size.HasValue) Array.Resize(ref bytes, size.Value);
+        return new FormFile(new MemoryStream(bytes), 0, bytes.Length, "Input.Images", name);
+    }
+    [Theory]
+    [InlineData(0)] [InlineData(1)] [InlineData(3)]
+    public async Task PhotosSavedPrivatelyAndRetryDoesNotDuplicate(int count)
+    {
+        using var f = new Fixture(); using var db = f.Context();
+        var input = Input(); input.Images = Enumerable.Range(0,count).Select(i => Photo(i % 2 == 0 ? "image.png" : "image.jpeg")).ToList();
+        var service = new BaoHongService(db,f.Time);
+        var report = await service.GuiAsync(2,input);
+        var detail = await service.ChiTietAsync(2,report.Id);
+        Assert.Equal(count,detail!.Images.Count);
+        var store = new BaoHongImageStore(f.Path + ".repair-images");
+        foreach(var photo in detail.Images) Assert.Equal(photo.SoByte,new FileInfo(store.FilePath(photo.KhoaLuu)).Length);
+        Assert.Equal(report.Id,(await service.GuiAsync(2,input)).Id);
+        Assert.Equal(count,f.Scalar("SELECT COUNT(*) FROM anh_bao_hong"));
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => service.ChiTietAsync(3,report.Id));
+        if (count > 0) {
+            input.Images = [];
+            await Assert.ThrowsAsync<BaoHongValidationException>(() => service.GuiAsync(2,input));
+        }
+    }
+    [Fact]
+    public async Task ExactFiveMiBIsAcceptedButExtraByteAndFourthPhotoAreDenied()
+    {
+        var store = new BaoHongImageStore(System.IO.Path.GetTempPath());
+        Assert.Single(await store.PrepareAsync([Photo(size:BaoHongImageStore.MaxBytes)],default));
+        await Assert.ThrowsAsync<BaoHongValidationException>(()=>store.PrepareAsync([Photo(size:BaoHongImageStore.MaxBytes+1)],default));
+        await Assert.ThrowsAsync<BaoHongValidationException>(()=>store.PrepareAsync([Photo(),Photo(),Photo(),Photo()],default));
+        await Assert.ThrowsAsync<BaoHongValidationException>(()=>store.PrepareAsync([Photo("image.gif")],default));
+        var fake = new FormFile(new MemoryStream([1,2,3]),0,3,"Input.Images","fake.jpg");
+        await Assert.ThrowsAsync<BaoHongValidationException>(()=>store.PrepareAsync([fake],default));
+        var mismatch = Photo(); var pngNamedJpg = new FormFile(mismatch.OpenReadStream(),0,mismatch.Length,"Input.Images","fake.jpg");
+        await Assert.ThrowsAsync<BaoHongValidationException>(()=>store.PrepareAsync([pngNamedJpg],default));
+    }
+    [Fact]
+    public async Task ImageWriteFailureAndAuditFailureRollbackEverything()
+    {
+        using var f = new Fixture();
+        var input = Input(); input.Images = [Photo(),Photo()];
+        using(var db=f.Context()) {
+            await Assert.ThrowsAsync<IOException>(()=>new BaoHongService(db,f.Time,new BaoHongImageStore(f.Path)).GuiAsync(2,input));
+        }
+        Assert.Equal(0,f.Scalar("SELECT COUNT(*) FROM bao_hong")); Assert.Equal(0,f.Scalar("SELECT COUNT(*) FROM bao_hong_so_ma"));
+        f.Execute("CREATE TRIGGER fail_photo_audit BEFORE INSERT ON nhat_ky_hoat_dong BEGIN SELECT RAISE(ABORT,'fail'); END");
+        using(var db=f.Context()) await Assert.ThrowsAsync<SqliteException>(()=>new BaoHongService(db,f.Time).GuiAsync(2,input));
+        Assert.Equal(0,f.Scalar("SELECT COUNT(*) FROM bao_hong")); Assert.Equal(0,f.Scalar("SELECT COUNT(*) FROM anh_bao_hong"));
+        Assert.Empty(Directory.GetFiles(f.Path + ".repair-images"));
+    }
+
+    [Fact]
+    public async Task UpgradeFromV28PreservesReportsAndMonthlyCounter()
+    {
+        using var f = new Fixture();
+        int id;
+        using(var db=f.Context()) id=(await new BaoHongService(db,f.Time).GuiAsync(2,Input())).Id;
+        f.Execute("DROP TABLE anh_bao_hong; DELETE FROM app_schema_version WHERE version=29");
+        var root=Directory.GetCurrentDirectory();
+        while(!File.Exists(System.IO.Path.Combine(root,"QL_PhongTro","Data","permissions.seed.json"))) root=Directory.GetParent(root)!.FullName;
+        DatabaseUpdates.Update(f.Path,System.IO.Path.Combine(root,"QL_PhongTro","Data","permissions.seed.json"));
+        DatabaseUpdates.Update(f.Path,System.IO.Path.Combine(root,"QL_PhongTro","Data","permissions.seed.json"));
+        using var check=f.Context();
+        Assert.Equal("BH-202610-0001",(await check.BaoHongs.SingleAsync(x=>x.Id==id)).MaBaoHong);
+        Assert.Equal(1,f.Scalar("SELECT so_cuoi FROM bao_hong_so_ma WHERE thang='202610'"));
+        Assert.Empty(await check.AnhBaoHongs.ToListAsync()); DatabaseUpdates.Check(f.Path);
+    }
+
 }

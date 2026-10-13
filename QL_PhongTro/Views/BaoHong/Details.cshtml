@@ -13,4 +13,10 @@
 <dt>Mức độ</dt><dd>@(Model.BaoHong.MucDo == "GAP" ? "Gấp" : "Thường")</dd>
 <dt>Thời điểm gửi</dt><dd>@Model.BaoHong.NgayTao.AddHours(7).ToString("dd/MM/yyyy HH:mm")</dd>
 <dt>Mô tả sự cố</dt><dd class="repairs-description">@Model.BaoHong.MoTa</dd></dl>
+@if (Model.Images.Count > 0) {
+<h2>Ảnh thiết bị</h2><div class="repair-photos">
+@foreach (var photo in Model.Images) {
+<a asp-action="Image" asp-route-id="@Model.BaoHong.Id" asp-route-order="@photo.ThuTu" target="_blank" rel="noopener"><img src="@Url.Action("Image", new { id = Model.BaoHong.Id, order = photo.ThuTu })" alt="Ảnh thiết bị @photo.ThuTu" loading="lazy" /><span>Mở ảnh @photo.ThuTu</span></a>
+}
+</div> }
 </section></div>

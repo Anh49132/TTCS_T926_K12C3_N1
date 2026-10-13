@@ -12,8 +12,9 @@ public sealed class BaoHongValidationException(string field, string message) : E
     public string Field { get; } = field;
 }
 
-public sealed class BaoHongService(AppDbContext db, ITimeProvider clock)
+public sealed class BaoHongService(AppDbContext db, ITimeProvider clock, BaoHongImageStore? imageStore = null)
 {
+    private readonly BaoHongImageStore images = imageStore ?? new BaoHongImageStore(db.Database.GetDbConnection().DataSource + ".repair-images");
     public static string TenTrangThai(string status) => status switch
     { "MOI" => "Mới", "DANG_XU_LY" => "Đang xử lý", "HOAN_THANH" => "Hoàn thành", "TU_CHOI" => "Từ chối", _ => status };
     private async Task<TaiKhoan> ActorAsync(int actorId, bool write, CancellationToken ct)
@@ -63,6 +64,7 @@ public sealed class BaoHongService(AppDbContext db, ITimeProvider clock)
         await ActorAsync(actorId, false, ct);
         var result = await Rows(actorId).SingleOrDefaultAsync(x => x.BaoHong.Id == id, ct);
         if (result is null && await db.BaoHongs.AnyAsync(x => x.Id == id, ct)) throw new UnauthorizedAccessException();
+        if (result is not null) result.Images = await db.AnhBaoHongs.AsNoTracking().Where(x => x.BaoHongId == id).OrderBy(x => x.ThuTu).ToListAsync(ct);
         return result;
     }
 
@@ -73,6 +75,8 @@ public sealed class BaoHongService(AppDbContext db, ITimeProvider clock)
         if (string.IsNullOrWhiteSpace(description) || description.Length > 5000) throw new BaoHongValidationException("MoTa", "Nhập mô tả sự cố, tối đa 5.000 ký tự.");
         if (input.MucDo is not ("THUONG" or "GAP")) throw new BaoHongValidationException("MucDo", "Chọn mức độ Thường hoặc Gấp.");
         if (!Guid.TryParseExact(input.KhoaChongTrung, "N", out _)) throw new BaoHongValidationException("", "Phiên gửi không hợp lệ. Hãy mở lại biểu mẫu.");
+        await ActorAsync(actorId, true, ct);
+        var prepared = await images.PrepareAsync(input.Images, ct);
         await db.Database.OpenConnectionAsync(ct);
         await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
         await using var tx = await db.Database.UseTransactionAsync(sqlite, ct);
@@ -83,6 +87,9 @@ public sealed class BaoHongService(AppDbContext db, ITimeProvider clock)
             if (existing.NguoiBaoId != actorId) throw new UnauthorizedAccessException();
             if (existing.HopDongId != input.HopDongId || existing.LoaiThietBi != device || existing.MoTa != description || existing.MucDo != input.MucDo)
                 throw new BaoHongValidationException("", "Phiên gửi đã dùng cho nội dung khác. Hãy mở lại biểu mẫu.");
+            var stored = await db.AnhBaoHongs.AsNoTracking().Where(x => x.BaoHongId == existing.Id).OrderBy(x => x.ThuTu).ToListAsync(ct);
+            if (!stored.Select(x => x.Sha256).SequenceEqual(prepared.Select(x => x.Hash)))
+                throw new BaoHongValidationException("Images", "Phiên gửi đã dùng cho bộ ảnh khác. Hãy kiểm tra yêu cầu đã gửi hoặc mở lại biểu mẫu.");
             await tx!.CommitAsync(ct); return existing;
         }
         // Read the clock once after reserving the writer: midnight and expiry use the same instant.
@@ -104,8 +111,28 @@ public sealed class BaoHongService(AppDbContext db, ITimeProvider clock)
             KhachThueId = profileId, PhongId = contract.PhongId, HopDongId = contract.Id, LoaiThietBi = device,
             MoTa = description, MucDo = input.MucDo, TrangThai = "MOI", NgayTao = now, KhoaChongTrung = input.KhoaChongTrung };
         db.BaoHongs.Add(issue); await db.SaveChangesAsync(ct);
-        var audit = JsonSerializer.Serialize(new { issue.MaBaoHong, issue.PhongId, issue.HopDongId, issue.MucDo, issue.TrangThai });
-        await db.Database.ExecuteSqlInterpolatedAsync($"INSERT INTO nhat_ky_hoat_dong(nguoi_thuc_hien_id,ten_nguoi_thuc_hien,vai_tro_luc_thuc_hien,loai_doi_tuong,doi_tuong_id,hanh_dong,du_lieu_sau,thoi_diem) VALUES({actor.Id},{actor.HoTen},{actor.VaiTro},{"bao_hong"},{issue.Id},{"TAO"},{audit},{now})", ct);
-        await tx!.CommitAsync(ct); return issue;
+        var written = new List<string>();
+        try
+        {
+            for (var i = 0; i < prepared.Count; i++)
+            {
+                var photo = prepared[i]; var key = Guid.NewGuid().ToString("N");
+                written.Add(key);
+                try { await images.SaveAsync(key, photo.Bytes, ct); }
+                catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
+                { throw new IOException("Không lưu được ảnh báo hỏng.", ex); }
+                db.AnhBaoHongs.Add(new AnhBaoHong { BaoHongId = issue.Id, ThuTu = i + 1, KhoaLuu = key, ContentType = photo.ContentType, SoByte = photo.Bytes.Length, Sha256 = photo.Hash });
+            }
+            await db.SaveChangesAsync(ct);
+            var audit = JsonSerializer.Serialize(new { issue.MaBaoHong, issue.PhongId, issue.HopDongId, issue.MucDo, issue.TrangThai });
+            await db.Database.ExecuteSqlInterpolatedAsync($"INSERT INTO nhat_ky_hoat_dong(nguoi_thuc_hien_id,ten_nguoi_thuc_hien,vai_tro_luc_thuc_hien,loai_doi_tuong,doi_tuong_id,hanh_dong,du_lieu_sau,thoi_diem) VALUES({actor.Id},{actor.HoTen},{actor.VaiTro},{"bao_hong"},{issue.Id},{"TAO"},{audit},{now})", ct);
+            await tx!.CommitAsync(ct); return issue;
+        }
+        catch
+        {
+            await tx!.RollbackAsync(CancellationToken.None);
+            foreach (var key in written) images.Delete(key);
+            throw;
+        }
     }
 }

@@ -7,7 +7,7 @@
 @if (Model.Phongs.Count == 0) {
     <section class="repairs-card"><h2>Chưa có phòng đủ điều kiện</h2><p>Bạn cần là người đứng tên hoặc người ở ghép đang ở theo hợp đồng còn hiệu lực để gửi báo hỏng.</p><a asp-controller="HopDongCuaToi" asp-action="Index">Xem hợp đồng của tôi</a></section>
 } else {
-<form asp-action="Create" method="post" class="repairs-card">
+<form asp-action="Create" method="post" enctype="multipart/form-data" class="repairs-card">
     <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
     <input asp-for="Input.KhoaChongTrung" type="hidden" />
     <label asp-for="Input.HopDongId">Phòng đang thuê <span>*</span></label>
@@ -25,7 +25,15 @@
         <label class="repairs-radio"><input asp-for="Input.MucDo" id="repair-normal" type="radio" value="THUONG" required /> Thường</label>
         <label class="repairs-radio"><input asp-for="Input.MucDo" id="repair-urgent" type="radio" value="GAP" /> Gấp</label>
     </fieldset><span asp-validation-for="Input.MucDo" class="text-danger"></span>
+    <label for="repair-images">Ảnh thiết bị (không bắt buộc)</label>
+    <p id="repair-image-help">Tối đa 3 ảnh JPG/JPEG hoặc PNG; mỗi ảnh ≤ 5 MiB (5.242.880 byte).</p>
+    <input id="repair-images" type="file" name="Input.Images" accept=".jpg,.jpeg,.png" multiple aria-describedby="repair-image-help repair-image-error" />
+    <span asp-validation-for="Input.Images" class="text-danger"></span>
+    <p id="repair-image-error" class="text-danger" role="alert"></p>
+    <div id="repair-image-preview" class="repair-photos"></div>
     <div class="repairs-actions"><a asp-action="Index">Quay lại</a><button type="submit">Gửi báo hỏng</button></div>
 </form>
 }
 </div>
+
+@section Scripts { <script src="~/js/repair-images.js" asp-append-version="true"></script> }
