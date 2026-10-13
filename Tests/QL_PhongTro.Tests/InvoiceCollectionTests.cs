@@ -172,6 +172,7 @@ public sealed partial class RoomServicesTests
             db.ThanhToans.Add(new() { HoaDonId=id,SoTien=123_456,NgayThanhToan=new(2026,10,1),TrangThai="DA_XAC_NHAN" });
             db.ThanhToans.Add(new() { HoaDonId=id,SoTien=500_000,NgayThanhToan=new(2026,10,2),TrangThai="CHO_XAC_NHAN" });
             await db.SaveChangesAsync();
+            SchemaTestFixture.RemoveBaoHongExtensions(path);
             await db.Database.ExecuteSqlRawAsync("DROP TABLE lan_thu_hoa_don; DELETE FROM app_schema_version WHERE version>=26");
         }
         QL_PhongTro.Data.DatabaseUpdates.Update(path,Path.Combine(app,"Data","permissions.seed.json"));
