@@ -1,0 +1,31 @@
+@model QL_PhongTro.ViewModels.TaoBaoHongViewModel
+@{ ViewData["Title"] = "Gửi báo hỏng"; }
+@section Styles { <link rel="stylesheet" href="~/css/tenant-repairs.css" asp-append-version="true" /> }
+<div class="repairs-page">
+<a asp-action="Index">← Báo hỏng của tôi</a>
+<header><h1>Gửi báo hỏng</h1><p>Báo sự cố tại phòng bạn đang thuê.</p></header>
+@if (Model.Phongs.Count == 0) {
+    <section class="repairs-card"><h2>Chưa có phòng đủ điều kiện</h2><p>Bạn cần là người đứng tên hoặc người ở ghép đang ở theo hợp đồng còn hiệu lực để gửi báo hỏng.</p><a asp-controller="HopDongCuaToi" asp-action="Index">Xem hợp đồng của tôi</a></section>
+} else {
+<form asp-action="Create" method="post" class="repairs-card">
+    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+    <input asp-for="Input.KhoaChongTrung" type="hidden" />
+    <label asp-for="Input.HopDongId">Phòng đang thuê <span>*</span></label>
+    <select asp-for="Input.HopDongId" required>
+        <option value="">Chọn phòng và hợp đồng</option>
+        @foreach (var room in Model.Phongs) { <option value="@room.HopDongId">@room.MaPhong · @room.TenToaNha · @room.MaHopDong</option> }
+    </select><span asp-validation-for="Input.HopDongId" class="text-danger"></span>
+    <label asp-for="Input.LoaiThietBi">Loại thiết bị <span>*</span></label>
+    <input asp-for="Input.LoaiThietBi" maxlength="100" required placeholder="Ví dụ: Vòi nước, điều hòa, ổ điện" />
+    <span asp-validation-for="Input.LoaiThietBi" class="text-danger"></span>
+    <label asp-for="Input.MoTa">Mô tả sự cố <span>*</span></label>
+    <textarea asp-for="Input.MoTa" rows="6" maxlength="5000" required placeholder="Mô tả vị trí và tình trạng thiết bị"></textarea>
+    <span asp-validation-for="Input.MoTa" class="text-danger"></span>
+    <fieldset><legend>Mức độ <span>*</span></legend>
+        <label class="repairs-radio"><input asp-for="Input.MucDo" id="repair-normal" type="radio" value="THUONG" required /> Thường</label>
+        <label class="repairs-radio"><input asp-for="Input.MucDo" id="repair-urgent" type="radio" value="GAP" /> Gấp</label>
+    </fieldset><span asp-validation-for="Input.MucDo" class="text-danger"></span>
+    <div class="repairs-actions"><a asp-action="Index">Quay lại</a><button type="submit">Gửi báo hỏng</button></div>
+</form>
+}
+</div>

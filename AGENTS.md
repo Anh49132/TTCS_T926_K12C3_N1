@@ -369,7 +369,9 @@ Trạng thái theo tiến độ đến **06/10/2026**. "Xong" nghĩa là đã tr
 | S3-09 | Chủ nhà | 3 | Should | Gia hạn hợp đồng: kỳ hạn mới, giá mới (mặc định giữ giá), nối tiếp ngày, lịch sử gia hạn |
 | S3-10 | Chủ nhà | 3 | Should | Tiến độ chốt chỉ số theo tòa/kỳ, danh sách phòng thiếu kèm quản lý, khóa kỳ sau phát hành, cảnh báo đến ngày chốt |
 
-### Sprint 4 — Thanh toán, công nợ, trả phòng, nghiệm thu (43 điểm) — **chưa làm**
+### Sprint 4 — Thanh toán, công nợ, trả phòng, nghiệm thu (43 điểm) — xem tiến độ mới
+
+> S4-06 task 1 triển khai 14/10/2026: [bàn giao báo hỏng](docs/S4-06-bao-hong.md). Schema v28 thêm bao_hong/bộ đếm. PO chốt DANG_HIEU_LUC + kỳ thuê hiện tại, người đứng tên/người ở ghép đang ở, chọn phòng khi nhiều hợp đồng; BH-yyyyMM-0001…9999 theo tháng Việt Nam toàn hệ thống, hết dải từ chối. Có gửi/list/detail và kiểm tra quyền, chưa ảnh/quản lý phản hồi/đổi trạng thái. DB thật không tự nâng; demo riêng cổng5248.
 
 > Kế hoạch bàn giao S4-01/S4-02 ngày 13/10/2026: đọc [docs/ke-hoach-S4-01-S4-02.md](docs/ke-hoach-S4-01-S4-02.md) trước khi triển khai. Tách **khách báo thanh toán** khỏi **chủ nhà xác nhận thu**; báo chờ không cộng vào Tổng đã thu. Tài liệu ghi rõ hiện trạng, schema dự kiến, transaction/chống trùng, quyền, AC/test và các quyết định PO còn thiếu. Đây là kế hoạch, chưa phải chức năng đã hoàn thành; các trạng thái Sprint trong bảng cần đối chiếu mã/tiến độ mới.
 

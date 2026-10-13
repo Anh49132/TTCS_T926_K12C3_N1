@@ -5,10 +5,22 @@ namespace QL_PhongTro.Tests;
 
 internal static class SchemaTestFixture
 {
+    internal static void RemoveBaoHongExtensions(string path)
+    {
+        using var connection = new SqliteConnection($"Data Source={path};Pooling=False");
+        connection.Open(); using var command = connection.CreateCommand();
+        command.CommandText = "SELECT COUNT(*) FROM bao_hong";
+        Assert.Equal(0L, command.ExecuteScalar());
+        command.CommandText = "SELECT COUNT(*) FROM bao_hong_so_ma";
+        Assert.Equal(0L, command.ExecuteScalar());
+        command.CommandText = "DROP TABLE bao_hong; DROP TABLE bao_hong_so_ma";
+        command.ExecuteNonQuery();
+    }
     // Synthetic fixtures start at the current schema. Remove the later, empty
     // room extensions before lowering version markers to emulate an older DB.
     internal static void RemoveRoomExtensions(string path)
     {
+        RemoveBaoHongExtensions(path);
         using var connection = new SqliteConnection($"Data Source={path};Pooling=False");
         connection.Open();
         using var command = connection.CreateCommand();

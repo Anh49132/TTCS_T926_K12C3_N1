@@ -2440,3 +2440,11 @@ Cách chạy lại: `dotnet run --project .\QL_PhongTro\QL_PhongTro.csproj --lau
 - Backup độc lập: data/backups/local-v27-20261013-121438-038806/before.sqlite; updater còn tạo backup cạnh DB. Đối chiếu digest/số hàng sau nâng: giữ nguyên38 bảng/3.922 bản ghi cũ, gồm tài khoản/hash mật khẩu và lịch sử; chỉ thêm bảng/schema26–27, không ghi thu/hủy thử trên DB thật.
 - Version27, integrity_check=ok, foreign_key_check=0. .\run.bat --check-only đạt restore/build/schema ready, không chạy bước tạo ADMIN hay khởi động tác vụ email. Người dùng có thể chạy lại .\run.bat.
 - Ghi chú DB mặc định vẫnv25 ở các mục task1–2 trước là trạng thái lịch sử; hiện DB local đãv27. Chưa commit DB/backup/data, không đổi credential hoặc project test.
+
+## 14/10/2026 — S4-06 task 1: khách gửi và xem lại báo hỏng
+
+- PO chốt hợp đồng DANG_HIEU_LUC + kỳ/ngày ở hiện tại (bao gồm hai đầu); người đứng tên/người ở ghép được gửi, chọn phòng khi nhiều hợp đồng. Mã BH-yyyyMM-xxxx tăng toàn hệ thống từ0001 mỗi tháng VN, hết9999 từ chối.
+- v28 thêm bao_hong và bao_hong_so_ma; SQLite IMMEDIATE, kiểm tra lại hiệu lực/quyền trong transaction, tạo mã/báo/audit cùng transaction, retry cùng khóa không trùng. List/chi tiết chỉ người gửi, cross-tenant403, CSRF và quyền BAO_HONG phía server. Chưa ảnh, cập nhật trạng thái, quản lý phản hồi hoặc tích hợp số báo trên dashboard.
+- Build đạt; 54/54 ca tập trung/hồi quy ghi-hủy thu đạt (18 ca báo hỏng); HTTP app thật đạt, gồm required/CSRF/phòng khác/retry/người ở ghép/cross-tenant và các vai trò nhân viên. Đã gửi bằng trình duyệt BH-202610-0004 trạng thái Mới; form/chi tiết360px không tràn ngang. Chưa toàn suite, Safari/thiết bị thật/review theo DoD.
+- Bản sao v27→28 bảo toàn toàn bộ nội dung40 bảng/241 bản ghi, rerun/check/integrity/FK đạt. DB mặc định và demo Sprint2 gốc giữ v27. Demo riêng cổng5248, Start-S406Demo.ps1; credential giữ cấu hình người dùng, chỉ trong access.json ignored.
+- Bàn giao: docs/S4-06-bao-hong.md. Không commit DB/backup/credential/ảnh/data, không sửa project test csproj.

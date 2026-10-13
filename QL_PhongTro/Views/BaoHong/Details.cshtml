@@ -1,0 +1,16 @@
+@model QL_PhongTro.ViewModels.BaoHongChiTiet
+@{ ViewData["Title"] = Model.BaoHong.MaBaoHong; }
+@section Styles { <link rel="stylesheet" href="~/css/tenant-repairs.css" asp-append-version="true" /> }
+<div class="repairs-page">
+<a asp-action="Index">← Báo hỏng của tôi</a>
+<header><h1>@Model.BaoHong.MaBaoHong</h1><p>Chi tiết báo hỏng</p></header>
+@if (TempData["BaoHongSuccess"] is string message) { <p role="status" class="repairs-success">@message</p> }
+<section class="repairs-card">
+<span class="repairs-status">@QL_PhongTro.Services.BaoHongService.TenTrangThai(Model.BaoHong.TrangThai)</span>
+<dl><dt>Phòng</dt><dd>@Model.MaPhong · @Model.TenToaNha</dd>
+<dt>Hợp đồng</dt><dd>@Model.MaHopDong</dd>
+<dt>Loại thiết bị</dt><dd>@Model.BaoHong.LoaiThietBi</dd>
+<dt>Mức độ</dt><dd>@(Model.BaoHong.MucDo == "GAP" ? "Gấp" : "Thường")</dd>
+<dt>Thời điểm gửi</dt><dd>@Model.BaoHong.NgayTao.AddHours(7).ToString("dd/MM/yyyy HH:mm")</dd>
+<dt>Mô tả sự cố</dt><dd class="repairs-description">@Model.BaoHong.MoTa</dd></dl>
+</section></div>

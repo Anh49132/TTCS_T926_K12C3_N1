@@ -195,6 +195,7 @@ builder.Services.AddScoped<YeuCauThueService>();
 builder.Services.AddScoped<DichVuPhongService>();
 builder.Services.AddScoped<HoaDonDichVuService>();
 builder.Services.AddScoped<GhiThuHoaDonService>();
+builder.Services.AddScoped<BaoHongService>();
 builder.Services.AddScoped<ChiSoDienNuocService>();
 builder.Services.AddScoped<RoomImageDeletionService>();
 builder.Services.AddHostedService<RoomImageCleanupHostedService>();
