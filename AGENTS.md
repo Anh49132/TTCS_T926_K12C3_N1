@@ -371,6 +371,10 @@ Trạng thái theo tiến độ đến **06/10/2026**. "Xong" nghĩa là đã tr
 
 ### Sprint 4 — Thanh toán, công nợ, trả phòng, nghiệm thu (43 điểm) — **chưa làm**
 
+> Kế hoạch bàn giao S4-01/S4-02 ngày 13/10/2026: đọc [docs/ke-hoach-S4-01-S4-02.md](docs/ke-hoach-S4-01-S4-02.md) trước khi triển khai. Tách **khách báo thanh toán** khỏi **chủ nhà xác nhận thu**; báo chờ không cộng vào Tổng đã thu. Tài liệu ghi rõ hiện trạng, schema dự kiến, transaction/chống trùng, quyền, AC/test và các quyết định PO còn thiếu. Đây là kế hoạch, chưa phải chức năng đã hoàn thành; các trạng thái Sprint trong bảng cần đối chiếu mã/tiến độ mới.
+
+> S4-02 task 1 / AC1–AC3 đã triển khai ngày 13/10/2026: [bàn giao ghi thu](docs/S4-02-ghi-thu.md). v26 thêm `lan_thu_hoa_don` làm metadata một-một của `thanh_toan`, không giữ tiền hai nơi; summary/trạng thái thanh toán suy ra. Chưa có hủy lần thu và chưa nối S4-01. Chỉ nâng cấp bản sao để kiểm thử; DB mặc định chưa nâng. Cần nghiệm thu UI trực quan.
+
 | ID | Vai trò | Pt | Ưu tiên | AC chính |
 | --- | --- | --- | --- | --- |
 | S4-01 | Khách | 3 | Must | Báo đã chuyển khoản: số tiền (> 0, ≤ còn phải trả), ngày, hình thức, ảnh chứng từ ≤ 5MB (xem qua link 15 phút); hóa đơn "Chờ xác nhận"; chỉ hủy khi chủ nhà chưa xác nhận |

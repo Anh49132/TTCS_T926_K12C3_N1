@@ -4,6 +4,9 @@ namespace QL_PhongTro.ViewModels;
 
 public sealed class ChiTietHoaDonViewModel
 {
+    public ThanhToanHoaDonSummary? ThanhToan { get; set; }
+    public DateOnly HomNay { get; set; }
+    public string TenNguoiGhiThu { get; set; } = "";
     public IReadOnlyList<LichSuHoaDonNhapViewModel> LichSuNhap { get; set; } = [];
     public required HoaDon HoaDon { get; init; }
     public int ToaNhaId { get; init; }

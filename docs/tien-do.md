@@ -2408,3 +2408,18 @@ Cách chạy lại: `dotnet run --project .\QL_PhongTro\QL_PhongTro.csproj --lau
 - Đồng bộ nhánh UI từ dev 2132d6b, giữ thay đổi local về chỉ số, điều khoản và tài liệu hợp đồng; giải quyết xung đột bằng guard bảng tùy chọn mới và giữ cả ghi chú tiến độ.
 - Build đạt. Kiểm thử tập trung: 8/9 đạt; ResavedDraftRefreshesServicesWithoutDuplicatingThem chưa đạt vì ContractDocumentStore từ chối thư mục tài liệu đã tồn tại khi lưu lại Nháp. Chưa sửa lỗi này trong phạm vi đồng bộ.
 - Chạy thử trang chủ, đăng nhập và tìm tin trả HTTP 200 trên DB thử v25. Không nâng cấp DB thật, không đưa DB/tài liệu riêng tư/project test csproj vào commit.
+# Bổ sung 13/10/2026 — Kế hoạch bàn giao thanh toán S4-01/S4-02
+
+- Đã lập [kế hoạch S4-01/S4-02](ke-hoach-S4-01-S4-02.md) và liên kết trong AGENTS.md: báo thanh toán riêng, chỉ xác nhận thu mới giảm công nợ; có thiết kế dữ liệu, quyền/chứng từ 15 phút, chống trùng/đồng thời, màn hình, thứ tự triển khai và bộ ca nghiệm thu.
+- Đã đọc backlog người dùng đính kèm, mã/model/updater thanh toán; kiểm tra schema SQLite mặc định bằng kết nối chỉ đọc: v25, bảng thanh_toan tối thiểu năm cột, chưa có bảng báo riêng/sổ cọc. Không kết luận đây là DB web đang chạy.
+- Chưa triển khai S4-01/S4-02, chưa chạy updater/build/test chức năng. Cần PO chốt ảnh tiền mặt, thao tác từ chối; tài liệu ghi thêm chính sách nhiều báo chờ và xác nhận khác nội dung báo để người triển khai không tự suy đoán.
+- Chỉ thay tài liệu; không sửa DB, mã hay tệp tien-do.md chưa theo dõi ở gốc.
+
+## 13/10/2026 — S4-02 task 1: ghi thu hóa đơn (AC1–AC3)
+
+- Triển khai ghi thu nhiều lần bằng tiền mặt/chuyển khoản/khác; validation nguyên đồng, không thu vượt, ngày trong 30 ngày VN, quyền chủ nhà sở hữu + CSRF. SQLite IMMEDIATE, khóa chống trùng, lưu thanh toán/metadata/audit cùng transaction. Chưa có hủy lần thu hay nối báo thanh toán S4-01.
+- Giao diện chi tiết hóa đơn/modal theo ảnh: tóm tắt, nhãn, tiến độ, lịch sử người xác nhận; JSON/JavaScript cập nhật tại chỗ và ẩn nút khi hết nợ. Chi tiết/màn hình nháp và giao diện khách hiện có giữ luồng riêng.
+- v26 thêm lan_thu_hoa_don metadata một-một; số tiền chỉ ở thanh_toan, không sửa nội dung hóa đơn phát hành. Khoản legacy giữ nguyên, không suy đoán người/hình thức.
+- Build đạt, 53/53 test liên quan/hồi quy đạt; HTTP app demo thật đạt luồng 3 triệu → thu 1 triệu → thu 2 triệu, retry, lịch sử, nút ẩn, chặn owner khác/khách/quản lý/ADMIN. JS syntax/diff đạt; chưa chạy toàn suite và chưa nghiệm thu trực quan browser/360px/Safari vì không có browser khả dụng.
+- Nâng cấp chỉ trên bản sao data/s402-upgrade-verified: 38 bảng/3.922 bản ghi cũ giữ nguyên digest, integrity=ok, FK=0, chạy lặp/check đạt. DB mặc định vẫn v25, tài khoản/mật khẩu/dữ liệu không đổi.
+- Bàn giao, hướng dẫn nâng cấp/demo và giới hạn: [S4-02 ghi thu](S4-02-ghi-thu.md). Script tạo DB giả mới: verification/New-S402Demo.py; kiểm thử HTTP: verification/Verify-S402Http.py. Không commit DB/backup/credential/keys/logs/data; giữ nguyên tien-do.md untracked ở gốc.

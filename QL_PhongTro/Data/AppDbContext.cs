@@ -22,6 +22,7 @@ public partial class AppDbContext(DbContextOptions<AppDbContext> options, IHttpC
     public DbSet<HopDongDichVu> HopDongDichVus => Set<HopDongDichVu>();
     public DbSet<HoaDon> HoaDons => Set<HoaDon>();
     public DbSet<ThanhToanHoaDon> ThanhToans => Set<ThanhToanHoaDon>();
+    public DbSet<LanThuHoaDon> LanThuHoaDons => Set<LanThuHoaDon>();
     public DbSet<ThongBaoHoaDon> ThongBaoHoaDons => Set<ThongBaoHoaDon>();
     public DbSet<ChiTietHoaDon> ChiTietHoaDons => Set<ChiTietHoaDon>();
     public DbSet<KhachThue> KhachThues { get; set; } = null!;
@@ -82,6 +83,9 @@ public partial class AppDbContext(DbContextOptions<AppDbContext> options, IHttpC
         modelBuilder.Entity<HoaDon>().HasOne<HopDongThamChieu>().WithMany().HasForeignKey(x => x.HopDongId).OnDelete(DeleteBehavior.Restrict);
         modelBuilder.Entity<ThanhToanHoaDon>().HasOne<HoaDon>().WithMany().HasForeignKey(x => x.HoaDonId).OnDelete(DeleteBehavior.Restrict);
         modelBuilder.Entity<ThanhToanHoaDon>().HasIndex(x => new { x.HoaDonId, x.TrangThai });
+        modelBuilder.Entity<LanThuHoaDon>().HasOne<ThanhToanHoaDon>().WithOne().HasForeignKey<LanThuHoaDon>(x => x.ThanhToanId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<LanThuHoaDon>().HasOne<TaiKhoan>().WithMany().HasForeignKey(x => x.NguoiXacNhanId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<LanThuHoaDon>().HasIndex(x => x.KhoaChongTrung).IsUnique();
         modelBuilder.Entity<HoaDon>().HasMany(x => x.ChiTiet).WithOne().HasForeignKey(x => x.HoaDonId).OnDelete(DeleteBehavior.Restrict);
         modelBuilder.Entity<ChiTietHoaDon>().HasOne<DichVu>().WithMany().HasForeignKey(x => x.DichVuId).OnDelete(DeleteBehavior.Restrict);
         modelBuilder.Entity<ChiTietHoaDon>().HasOne<CauHinhDichVu>().WithMany().HasForeignKey(x => x.CauHinhDichVuId).OnDelete(DeleteBehavior.Restrict);

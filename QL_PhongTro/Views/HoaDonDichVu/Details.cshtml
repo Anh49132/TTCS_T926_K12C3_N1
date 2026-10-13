@@ -12,8 +12,14 @@
         DuKien = [new(Model.MaPhong, invoice, [])] };
     ViewData["Title"] = $"{(Model.XemTruoc ? "Xem trước hóa đơn" : "Chi tiết hóa đơn")} · Phòng {Model.MaPhong}";
 }
-@section Styles { <link rel="stylesheet" href="~/css/invoice-flow.css" asp-append-version="true" /> <link rel="stylesheet" href="~/css/monthly-invoices.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/invoice-detail.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/invoice-review.css" asp-append-version="true" /> }
-@section Scripts { <script src="~/js/invoice-review.js" asp-append-version="true"></script><script src="~/js/invoice-publish.js" asp-append-version="true"></script> }
+@section Styles { <link rel="stylesheet" href="~/css/invoice-flow.css" asp-append-version="true" /> <link rel="stylesheet" href="~/css/monthly-invoices.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/invoice-detail.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/invoice-review.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/invoice-collection.css" asp-append-version="true" /> }
+@section Scripts { <script src="~/js/invoice-review.js" asp-append-version="true"></script><script src="~/js/invoice-publish.js" asp-append-version="true"></script><script src="~/js/invoice-collection.js" asp-append-version="true"></script> }
+@if (Model.ThanhToan is not null && !Model.KhachXem && !Model.XemTruoc && invoice.TrangThai != "NHAP")
+{
+    <partial name="_CollectionDetails" model="Model" />
+}
+else
+{
 <div class="monthly-invoices invoice-detail">
 <nav class="mi-breadcrumb" aria-label="Đường dẫn"><a asp-controller="Home" asp-action="Index">Tổng quan</a> / <a asp-controller="@(Model.KhachXem ? "ThongBao" : "HoaDonDichVu")" asp-action="@(Model.KhachXem ? "Index" : "Management")" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-nam="@invoice.Nam" asp-route-thang="@invoice.Thang">Hóa đơn, thanh toán</a> / @Model.MaPhong</nav>
 <header class="id-heading">
@@ -96,3 +102,4 @@ else
 else { <a asp-controller="@(Model.KhachXem ? "ThongBao" : "HoaDonDichVu")" asp-action="@(Model.KhachXem ? "Index" : "Management")" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-nam="@invoice.Nam" asp-route-thang="@invoice.Thang" class="btn btn-outline-secondary">Quay lại danh sách hóa đơn</a> }
 </footer>
 </div>
+}
