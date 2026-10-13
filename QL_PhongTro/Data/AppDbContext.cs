@@ -6,6 +6,7 @@ namespace QL_PhongTro.Data;
 public partial class AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor? httpContext = null) : DbContext(options)
 {
     public DbSet<AnhBaoHong> AnhBaoHongs => Set<AnhBaoHong>();
+    public DbSet<BaoHongTraoDoi> BaoHongTraoDois => Set<BaoHongTraoDoi>();
     public DbSet<BaoHong> BaoHongs => Set<BaoHong>();
     public DbSet<GhiChuPhong> GhiChuPhongs => Set<GhiChuPhong>();
     public DbSet<YeuCauThue> YeuCauThues => Set<YeuCauThue>();
@@ -45,7 +46,12 @@ public partial class AppDbContext(DbContextOptions<AppDbContext> options, IHttpC
         photo.HasIndex(x => x.KhoaLuu).IsUnique();
         photo.HasIndex(x => new { x.BaoHongId, x.ThuTu }).IsUnique();
         photo.HasOne<BaoHong>().WithMany().HasForeignKey(x => x.BaoHongId).OnDelete(DeleteBehavior.Restrict);
+        var discussion = modelBuilder.Entity<BaoHongTraoDoi>();
+        discussion.HasIndex(x => x.KhoaChongTrung).IsUnique();
+        discussion.HasOne<BaoHong>().WithMany().HasForeignKey(x => x.BaoHongId).OnDelete(DeleteBehavior.Restrict);
+        discussion.HasOne<TaiKhoan>().WithMany().HasForeignKey(x => x.NguoiGuiId).OnDelete(DeleteBehavior.Restrict);
         var issue = modelBuilder.Entity<BaoHong>();
+        issue.Property(x => x.PhienBan).IsConcurrencyToken();
         issue.HasIndex(x => x.MaBaoHong).IsUnique();
         issue.HasIndex(x => x.KhoaChongTrung).IsUnique();
         issue.HasOne<TaiKhoan>().WithMany().HasForeignKey(x => x.NguoiBaoId).OnDelete(DeleteBehavior.Restrict);

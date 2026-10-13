@@ -14,6 +14,7 @@ public sealed class BaoHong
     [Column("mo_ta")] public string MoTa { get; set; } = "";
     [Column("muc_do")] public string MucDo { get; set; } = "THUONG";
     [Column("trang_thai")] public string TrangThai { get; set; } = "MOI";
+    [Column("phien_ban")] public int PhienBan { get; set; }
     [Column("ngay_tao")] public DateTime NgayTao { get; set; }
     [Column("khoa_chong_trung")] public string KhoaChongTrung { get; set; } = "";
 }

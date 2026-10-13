@@ -1,0 +1,34 @@
+@model QL_PhongTro.ViewModels.BaoHongChiTiet
+@if (Model.ChoPhepXuLy) {
+<section class="repairs-card" aria-labelledby="repair-status-title">
+<h2 id="repair-status-title">Cập nhật trạng thái</h2>
+@if (Model.TrangThaiTiepTheo.Count == 0) { <p>Báo hỏng đã ở trạng thái cuối. Bạn vẫn có thể gửi phản hồi bên dưới.</p> }
+else {
+<form asp-controller="QuanLyBaoHong" asp-action="CapNhat" asp-route-id="@Model.BaoHong.Id" method="post" class="repair-management-form">
+    <input asp-for="CapNhat.PhienBan" type="hidden" />
+    <input asp-for="CapNhat.KhoaChongTrung" type="hidden" />
+    <label asp-for="CapNhat.TrangThai">Trạng thái tiếp theo <span>*</span></label>
+    <select asp-for="CapNhat.TrangThai" required>
+        <option value="">Chọn trạng thái</option>
+        @foreach (var status in Model.TrangThaiTiepTheo) { <option value="@status">@QL_PhongTro.Services.BaoHongService.TenTrangThai(status)</option> }
+    </select>
+    <span asp-validation-for="CapNhat.TrangThai" class="text-danger"></span>
+    <span asp-validation-for="CapNhat.PhienBan" class="text-danger"></span>
+    <label asp-for="CapNhat.GhiChu">Ghi chú cập nhật <span>*</span></label>
+    <textarea asp-for="CapNhat.GhiChu" rows="3" maxlength="5000" required placeholder="Nêu việc đã làm hoặc lý do từ chối"></textarea>
+    <span asp-validation-for="CapNhat.GhiChu" class="text-danger"></span>
+    <div class="repairs-actions"><button type="submit">Lưu trạng thái</button></div>
+</form>
+}
+</section>
+<section class="repairs-card" aria-labelledby="repair-reply-title">
+<h2 id="repair-reply-title">Gửi phản hồi cho khách</h2>
+<form asp-controller="QuanLyBaoHong" asp-action="PhanHoi" asp-route-id="@Model.BaoHong.Id" method="post" class="repair-management-form">
+    <input asp-for="PhanHoi.KhoaChongTrung" type="hidden" />
+    <label asp-for="PhanHoi.NoiDung">Nội dung phản hồi <span>*</span></label>
+    <textarea asp-for="PhanHoi.NoiDung" rows="4" maxlength="5000" required placeholder="Thông tin kiểm tra, lịch xử lý hoặc hướng dẫn cho khách"></textarea>
+    <span asp-validation-for="PhanHoi.NoiDung" class="text-danger"></span>
+    <div class="repairs-actions"><button type="submit">Gửi phản hồi</button></div>
+</form>
+</section>
+} else { <section class="repairs-card"><p>Bạn hiện có quyền xem. Cần quyền ghi module Báo hỏng để cập nhật và gửi phản hồi.</p></section> }

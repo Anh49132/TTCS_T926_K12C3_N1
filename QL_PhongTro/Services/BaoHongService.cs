@@ -64,8 +64,15 @@ public sealed class BaoHongService(AppDbContext db, ITimeProvider clock, BaoHong
         await ActorAsync(actorId, false, ct);
         var result = await Rows(actorId).SingleOrDefaultAsync(x => x.BaoHong.Id == id, ct);
         if (result is null && await db.BaoHongs.AnyAsync(x => x.Id == id, ct)) throw new UnauthorizedAccessException();
-        if (result is not null) result.Images = await db.AnhBaoHongs.AsNoTracking().Where(x => x.BaoHongId == id).OrderBy(x => x.ThuTu).ToListAsync(ct);
+        if (result is not null) await LoadExtrasAsync(result, ct);
         return result;
+    }
+
+    internal async Task LoadExtrasAsync(BaoHongChiTiet result, CancellationToken ct)
+    {
+        var id = result.BaoHong.Id;
+        result.Images = await db.AnhBaoHongs.AsNoTracking().Where(x => x.BaoHongId == id).OrderBy(x => x.ThuTu).ToListAsync(ct);
+        result.TraoDois = await db.BaoHongTraoDois.AsNoTracking().Where(x => x.BaoHongId == id).OrderBy(x => x.ThoiDiem).ThenBy(x => x.Id).ToListAsync(ct);
     }
 
     public async Task<BaoHong> GuiAsync(int actorId, BaoHongInput input, CancellationToken ct = default)

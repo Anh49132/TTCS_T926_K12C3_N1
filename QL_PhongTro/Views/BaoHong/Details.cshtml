@@ -1,10 +1,11 @@
 @model QL_PhongTro.ViewModels.BaoHongChiTiet
-@{ ViewData["Title"] = Model.BaoHong.MaBaoHong; }
+@{ ViewData["Title"] = Model.BaoHong.MaBaoHong; var controller = Model.LaQuanLy ? "QuanLyBaoHong" : "BaoHong"; }
 @section Styles { <link rel="stylesheet" href="~/css/tenant-repairs.css" asp-append-version="true" /> }
 <div class="repairs-page">
-<a asp-action="Index">← Báo hỏng của tôi</a>
+<a asp-controller="@controller" asp-action="Index">← @(Model.LaQuanLy ? "Báo hỏng được phân công" : "Báo hỏng của tôi")</a>
 <header><h1>@Model.BaoHong.MaBaoHong</h1><p>Chi tiết báo hỏng</p></header>
 @if (TempData["BaoHongSuccess"] is string message) { <p role="status" class="repairs-success">@message</p> }
+<div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 <section class="repairs-card">
 <span class="repairs-status">@QL_PhongTro.Services.BaoHongService.TenTrangThai(Model.BaoHong.TrangThai)</span>
 <dl><dt>Phòng</dt><dd>@Model.MaPhong · @Model.TenToaNha</dd>
@@ -16,7 +17,10 @@
 @if (Model.Images.Count > 0) {
 <h2>Ảnh thiết bị</h2><div class="repair-photos">
 @foreach (var photo in Model.Images) {
-<a asp-action="Image" asp-route-id="@Model.BaoHong.Id" asp-route-order="@photo.ThuTu" target="_blank" rel="noopener"><img src="@Url.Action("Image", new { id = Model.BaoHong.Id, order = photo.ThuTu })" alt="Ảnh thiết bị @photo.ThuTu" loading="lazy" /><span>Mở ảnh @photo.ThuTu</span></a>
+<a asp-controller="@controller" asp-action="Image" asp-route-id="@Model.BaoHong.Id" asp-route-order="@photo.ThuTu" target="_blank" rel="noopener"><img src="@Url.Action("Image", controller, new { id = Model.BaoHong.Id, order = photo.ThuTu })" alt="Ảnh thiết bị @photo.ThuTu" loading="lazy" /><span>Mở ảnh @photo.ThuTu</span></a>
 }
 </div> }
-</section></div>
+</section>
+<partial name="~/Views/BaoHong/_TraoDoi.cshtml" model="Model" />
+@if (Model.LaQuanLy) { <partial name="~/Views/BaoHong/_QuanLyXuLy.cshtml" model="Model" /> }
+</div>

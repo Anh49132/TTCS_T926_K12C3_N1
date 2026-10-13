@@ -24,6 +24,12 @@ public sealed class TaoBaoHongViewModel
 public sealed class BaoHongChiTiet
 {
     public List<AnhBaoHong> Images { get; set; } = [];
+    public List<BaoHongTraoDoi> TraoDois { get; set; } = [];
+    public bool LaQuanLy { get; set; }
+    public bool ChoPhepXuLy { get; set; }
+    public List<string> TrangThaiTiepTheo { get; set; } = [];
+    public BaoHongPhanHoiInput PhanHoi { get; set; } = new();
+    public BaoHongTrangThaiInput CapNhat { get; set; } = new();
     public BaoHong BaoHong { get; init; } = null!;
     public string MaPhong { get; init; } = "";
     public string TenToaNha { get; init; } = "";

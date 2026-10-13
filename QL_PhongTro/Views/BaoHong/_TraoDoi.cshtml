@@ -1,0 +1,19 @@
+@model QL_PhongTro.ViewModels.BaoHongChiTiet
+<section class="repairs-card" aria-labelledby="repair-history-title">
+<h2 id="repair-history-title">Phản hồi và lịch sử xử lý</h2>
+@if (Model.TraoDois.Count == 0) { <p>Chưa có phản hồi hoặc cập nhật từ quản lý.</p> }
+else {
+    <ol class="repair-timeline">
+    @foreach (var item in Model.TraoDois) {
+        <li>
+            <strong>@item.TenNguoiGui · Quản lý</strong>
+            <time datetime="@item.ThoiDiem.ToString("O")">@item.ThoiDiem.AddHours(7).ToString("dd/MM/yyyy HH:mm")</time>
+            @if (item.Loai == "TRANG_THAI") {
+                <p class="repair-history-status">@QL_PhongTro.Services.BaoHongService.TenTrangThai(item.TrangThaiTruoc!) → @QL_PhongTro.Services.BaoHongService.TenTrangThai(item.TrangThaiSau!)</p>
+            } else { <p class="repair-history-status">Phản hồi</p> }
+            <p class="repairs-description">@item.NoiDung</p>
+        </li>
+    }
+    </ol>
+}
+</section>

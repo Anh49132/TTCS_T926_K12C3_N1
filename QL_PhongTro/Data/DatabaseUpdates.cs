@@ -7,7 +7,7 @@ namespace QL_PhongTro.Data;
 // Append new versions; never rewrite an update already shared with the team.
 public static class DatabaseUpdates
 {
-    internal const int CurrentVersion = 29;
+    internal const int CurrentVersion = 30;
     private static SqliteConnection Open(string path, bool readOnly)
     {
         var c = new SqliteConnection(new SqliteConnectionStringBuilder
@@ -70,6 +70,7 @@ public static class DatabaseUpdates
         foreach (var entity in db.Model.GetEntityTypes())
         {
             var table = entity.GetTableName()!;
+            if (table == "bao_hong_trao_doi" && schemaVersion < 30) continue;
             if (table == "anh_bao_hong" && schemaVersion < 29) continue;
             if (table == "bao_hong" && schemaVersion < 28) continue;
             if (table == "huy_lan_thu_hoa_don" && (schemaVersion < 27 || !HasTable(c, "thanh_toan"))) continue;
@@ -91,6 +92,7 @@ public static class DatabaseUpdates
             var store = StoreObjectIdentifier.Table(table, entity.GetSchema());
             var columns = entity.GetProperties().Select(p => p.GetColumnName(store)!)
                 .Where(column => requireAccountSecurity || table != "tai_khoan" || column is not ("email_confirmed" or "is_deleted"));
+            if (schemaVersion < 30 && table == "bao_hong") columns = columns.Where(column => column != "phien_ban");
             if (schemaVersion < 14 && table == "hop_dong")
                 columns = columns.Where(column => column is not ("yeu_cau_thue_id" or "khach_dung_ten_id" or "tien_coc_thoa_thuan" or "ngay_chot_hang_thang" or "nguoi_lap_id" or "ngay_tao"));
             if (schemaVersion < 14 && table == "ky_hop_dong")
@@ -111,6 +113,7 @@ public static class DatabaseUpdates
         if (schemaVersion >= 28) Probe("bao_hong_so_ma", ["thang", "so_cuoi"]);
         if (schemaVersion >= 28) BaoHongSchema.Validate(c);
         if (schemaVersion >= 29) AnhBaoHongSchema.Validate(c);
+        if (schemaVersion >= 30) BaoHongTraoDoiSchema.Validate(c);
         Probe("password_reset_token", ["token_hash", "account_id", "expires_at", "used_at"]);
         Probe("password_reset_request", ["id", "email_key", "requested_at"]);
         Probe("account_session_version", ["account_id", "version"]);
@@ -465,6 +468,7 @@ public static class DatabaseUpdates
         if (version < 27) InvoiceCollectionCancellationSchema.Upgrade(c);
         if (version < 28) BaoHongSchema.Upgrade(c);
         if (version < 29) AnhBaoHongSchema.Upgrade(c);
+        if (version < 30) BaoHongTraoDoiSchema.Upgrade(c);
         Check(path);
         Console.WriteLine($"Database updated to version {CurrentVersion}. Existing business rows preserved.");
     }
