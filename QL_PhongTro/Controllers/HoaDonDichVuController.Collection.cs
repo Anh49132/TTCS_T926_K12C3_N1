@@ -9,6 +9,17 @@ namespace QL_PhongTro.Controllers;
 
 public partial class HoaDonDichVuController
 {
+    [HttpPost, Authorize(Roles = "CHU_NHA"), ValidateAntiForgeryToken, ModuleAccess("TAI_CHINH", write: true)]
+    public async Task<IActionResult> CancelCollection(HuyLanThuHoaDonInput input, CancellationToken ct)
+    {
+        if (!ModelState.IsValid) return BadRequest(new { errors = new Dictionary<string, string[]> { [""] = ["Thông tin lần thu không hợp lệ. Hãy tải lại hóa đơn."] } });
+        try { return Ok(await HttpContext.RequestServices.GetRequiredService<GhiThuHoaDonService>().HuyAsync(AccountId, input, ct)); }
+        catch (UnauthorizedAccessException) { return Forbid(); }
+        catch (GhiThuValidationException ex) { return BadRequest(new { errors = ex.Errors }); }
+        catch (InvalidOperationException ex) { return Conflict(new { errors = new Dictionary<string, string[]> { [""] = [ex.Message] } }); }
+        catch (Exception ex) when (ex is DbUpdateException or SqliteException)
+        { return Conflict(new { errors = new Dictionary<string, string[]> { [""] = ["Chưa thể hủy lần thu. Dữ liệu đã được giữ nguyên; hãy tải lại hóa đơn và thử lại."] } }); }
+    }
     [HttpGet, Authorize(Roles = "CHU_NHA")]
     public async Task<IActionResult> CollectionDetails(int id, CancellationToken ct)
     {

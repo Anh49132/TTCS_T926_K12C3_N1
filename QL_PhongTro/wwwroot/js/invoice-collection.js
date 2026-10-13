@@ -7,8 +7,12 @@
     const money = value => new Intl.NumberFormat('vi-VN', {maximumFractionDigits: 0}).format(value) + ' đ';
     const date = value => value ? value.slice(0, 10).split('-').reverse().join('/') : 'Chưa có thông tin';
     const method = value => ({TIEN_MAT:'Tiền mặt', CHUYEN_KHOAN:'Chuyển khoản', KHAC:'Khác'})[value] || 'Chưa có thông tin';
+    const time = value => value ? new Intl.DateTimeFormat('vi-VN', {timeZone:'Asia/Ho_Chi_Minh', day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', hourCycle:'h23'})
+        .format(new Date(/(?:Z|[+-]\d\d:\d\d)$/.test(value) ? value : value + 'Z')) : 'Chưa có thông tin';
     let busy = false, uncertain = false, submitted = null, returnFocus = null;
     function render(summary) {
+        page.dataset.paid = String(summary.tongDaThu);
+        page.dataset.remaining = String(summary.conPhaiTra);
         page.querySelectorAll('[data-ic-total]').forEach(e => e.textContent = money(summary.tongHoaDon));
         page.querySelectorAll('[data-ic-paid]').forEach(e => e.textContent = money(summary.tongDaThu));
         page.querySelectorAll('[data-ic-remaining]').forEach(e => e.textContent = money(summary.conPhaiTra));
@@ -25,19 +29,108 @@
         const rows = document.getElementById('ic-history-body'); rows.replaceChildren();
         summary.lanThus.forEach((receipt, index) => {
             const row = document.createElement('tr');
-            const time = receipt.thoiDiemGhi ? new Intl.DateTimeFormat('vi-VN', {timeZone:'Asia/Ho_Chi_Minh', day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', hourCycle:'h23'}).format(new Date(receipt.thoiDiemGhi.replace(/Z$/, '') + 'Z')) : 'Chưa có thông tin';
-            [index + 1, money(receipt.soTien), date(receipt.ngayThu), method(receipt.hinhThuc), receipt.ghiChu || '—', receipt.nguoiXacNhan, time].forEach((value, i) => {
+            if (receipt.daHuy) row.className = 'ic-canceled-row';
+            [index + 1, money(receipt.soTien), date(receipt.ngayThu), method(receipt.hinhThuc), receipt.ghiChu || '—', receipt.nguoiXacNhan, time(receipt.thoiDiemGhi)].forEach((value, i) => {
                 const cell = document.createElement('td'); cell.textContent = String(value);
                 if (i === 1) cell.className = 'money';
+                if (i === 1 && receipt.daHuy) {
+                    const crossed = document.createElement('del'); crossed.textContent = String(value);
+                    const badge = document.createElement('span'); badge.className = 'ic-canceled-badge'; badge.textContent = 'Đã hủy';
+                    cell.replaceChildren(crossed, badge);
+                }
                 if (i === 3) { const badge = document.createElement('span'); badge.className = 'ic-method'; badge.textContent = String(value); cell.replaceChildren(badge); }
                 row.append(cell);
-            }); rows.append(row);
+            });
+            const action = document.createElement('td'); action.textContent = '—';
+            if (page.dataset.canCancel === 'true' && receipt.choPhepHuy) {
+                const button = document.createElement('button'); button.type = 'button'; button.className = 'ic-cancel-button'; button.textContent = 'Hủy lần thu';
+                Object.assign(button.dataset, {cancelId:String(receipt.id), cancelVersion:String(receipt.phienBan), cancelAmount:String(receipt.soTien), cancelDate:receipt.ngayThu, cancelMethod:receipt.hinhThuc, cancelRecorder:receipt.nguoiXacNhan});
+                action.replaceChildren(button);
+            }
+            row.append(action); rows.append(row);
+            if (receipt.daHuy) {
+                const details = document.createElement('tr'); details.className = 'ic-cancel-reason';
+                const cell = document.createElement('td'); cell.colSpan = 8;
+                cell.textContent = 'Lý do hủy: ' + (receipt.lyDoHuy || 'Chưa có thông tin (dữ liệu cũ)') + ' · Người hủy: ' + (receipt.nguoiHuy || 'Chưa có thông tin') + ' · ' + time(receipt.thoiDiemHuy);
+                details.append(cell); rows.append(details);
+            }
         });
         document.getElementById('ic-count').textContent = '(' + summary.lanThus.length + ')';
         document.getElementById('ic-empty').hidden = summary.lanThus.length !== 0;
         document.getElementById('ic-history').hidden = summary.lanThus.length === 0;
     }
     document.querySelector('#ic-success button')?.addEventListener('click', () => document.getElementById('ic-success').hidden = true);
+    const cancelDialog = document.getElementById('ic-cancel-dialog'), cancelForm = document.getElementById('ic-cancel-form');
+    if (cancelDialog && cancelForm) {
+        let cancelBusy = false, cancelUncertain = false, cancelPayload = null, cancelFocus = null;
+        const reason = cancelForm.elements.LyDo, cancelSubmit = document.getElementById('ic-cancel-submit');
+        function cancelErrors(values) {
+            const field = document.getElementById('ic-cancel-error-LyDo'), general = document.getElementById('ic-cancel-form-error');
+            field.textContent = ''; reason.removeAttribute('aria-invalid'); general.hidden = true;
+            Object.entries(values || {}).forEach(([key, messages]) => {
+                if (key === 'LyDo') { field.textContent = messages.join(' '); reason.setAttribute('aria-invalid','true'); }
+                else { general.textContent = messages.join(' '); general.hidden = false; }
+            });
+        }
+        function cancelLock(value) {
+            cancelBusy = value; reason.disabled = value || cancelUncertain; cancelSubmit.disabled = value;
+            cancelSubmit.textContent = value ? 'Đang hủy…' : cancelUncertain ? 'Thử lại và đối chiếu' : 'Xác nhận hủy';
+            cancelDialog.querySelectorAll('[data-cancel-close]').forEach(button => button.disabled = value || cancelUncertain);
+        }
+        page.addEventListener('click', event => {
+            const button = event.target.closest('[data-cancel-id]');
+            if (!button || cancelBusy || cancelUncertain || busy || uncertain) return;
+            cancelFocus = button; cancelErrors({}); cancelForm.elements.ThanhToanId.value = button.dataset.cancelId;
+            cancelForm.elements.PhienBan.value = button.dataset.cancelVersion; reason.value = '';
+            document.getElementById('ic-cancel-length').textContent = '0';
+            document.getElementById('ic-cancel-amount').textContent = money(Number(button.dataset.cancelAmount));
+            document.getElementById('ic-cancel-date').textContent = date(button.dataset.cancelDate);
+            document.getElementById('ic-cancel-method').textContent = method(button.dataset.cancelMethod);
+            document.getElementById('ic-cancel-recorder').textContent = button.dataset.cancelRecorder;
+            document.getElementById('ic-cancel-preview-paid').textContent = money(Number(page.dataset.paid) - Number(button.dataset.cancelAmount));
+            document.getElementById('ic-cancel-preview-remaining').textContent = money(Number(page.dataset.remaining) + Number(button.dataset.cancelAmount));
+            cancelDialog.showModal(); reason.focus();
+        });
+        reason.addEventListener('input', () => document.getElementById('ic-cancel-length').textContent = String(reason.value.length));
+        cancelDialog.querySelectorAll('[data-cancel-close]').forEach(button => button.addEventListener('click', () => { if (!cancelBusy && !cancelUncertain) cancelDialog.close(); }));
+        cancelDialog.addEventListener('cancel', event => { if (cancelBusy || cancelUncertain) event.preventDefault(); });
+        cancelDialog.addEventListener('close', () => { if (cancelFocus?.isConnected) cancelFocus.focus(); else if (open && !open.hidden) open.focus(); });
+        function canceledSuccess(summary, reconciled = false) {
+            const receipt = summary.lanThus.find(x => String(x.id) === cancelPayload.get('ThanhToanId'));
+            cancelUncertain = false; render(summary); cancelDialog.close();
+            document.getElementById('ic-success-text').textContent = reconciled ? '✓ Đã đối chiếu: lần thu đã hủy. Số tiền và lịch sử đã được tải lại từ hệ thống.' : '✓ Đã hủy lần thu ' + money(receipt.soTien) + '. Số còn phải trả đã được tính lại.';
+            document.getElementById('ic-success').hidden = false; cancelPayload = null;
+        }
+        cancelForm.addEventListener('submit', async event => {
+            event.preventDefault(); if (cancelBusy) return; cancelErrors({});
+            if (!cancelUncertain) {
+                const value = reason.value.trim();
+                if (value.length < 5 || value.length > 500) { cancelErrors({LyDo:['Lý do phải có từ 5 đến 500 ký tự, không chỉ gồm khoảng trắng.']}); reason.focus(); return; }
+                cancelPayload = new FormData(cancelForm); cancelPayload.set('LyDo',value);
+            }
+            const wasUncertain = cancelUncertain; cancelLock(true);
+            try {
+                const response = await fetch(cancelForm.action, {method:'POST', body:cancelPayload, headers:{'X-Requested-With':'XMLHttpRequest'}});
+                if (response.redirected || response.status === 401) { cancelUncertain = false; cancelErrors({'':['Phiên đăng nhập đã hết hạn. Hãy đăng nhập lại và kiểm tra lịch sử lần thu.']}); return; }
+                if (response.status === 403) { cancelUncertain = false; cancelErrors({'':['Bạn không có quyền hủy lần thu của hóa đơn này.']}); return; }
+                const body = await response.json();
+                if (!response.ok) {
+                    if (wasUncertain && response.status === 409) {
+                        const check = await fetch(page.dataset.summaryUrl);
+                        if (check.ok) {
+                            const summary = await check.json();
+                            if (summary.lanThus.some(x => String(x.id) === cancelPayload.get('ThanhToanId') && x.daHuy)) { canceledSuccess(summary,true); return; }
+                        }
+                    }
+                    cancelUncertain = response.status >= 500; cancelErrors(body.errors || {'':['Hủy thất bại. Hãy kiểm tra lịch sử trước khi thử lại.']}); return;
+                }
+                canceledSuccess(body);
+            } catch {
+                cancelUncertain = true;
+                cancelErrors({'':['Chưa nhận được kết quả hủy. Giữ nguyên lý do, bấm “Thử lại và đối chiếu” để kiểm tra trạng thái. Nếu tải lại trang, hãy xem lịch sử lần thu.']});
+            } finally { cancelLock(false); }
+        });
+    }
     if (!form || !dialog || !open) return;
     const amount = form.elements.SoTien, submit = document.getElementById('ic-submit');
     function errors(values) {

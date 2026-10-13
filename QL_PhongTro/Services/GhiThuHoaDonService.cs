@@ -7,7 +7,7 @@ using QL_PhongTro.Models;
 using QL_PhongTro.ViewModels;
 namespace QL_PhongTro.Services;
 
-public sealed class GhiThuHoaDonService(AppDbContext db, ITimeProvider clock)
+public sealed partial class GhiThuHoaDonService(AppDbContext db, ITimeProvider clock)
 {
     public DateOnly HomNay => DateOnly.FromDateTime(clock.UtcNow.AddHours(7));
     public static string TenHinhThuc(string? code) => code switch {
@@ -29,18 +29,27 @@ public sealed class GhiThuHoaDonService(AppDbContext db, ITimeProvider clock)
 
     public async Task<ThanhToanHoaDonSummary> ChiTietAsync(int actor, int invoiceId, CancellationToken ct = default)
     {
+        if (db.Database.CurrentTransaction is not null) return await SummaryAsync(await OwnedAsync(actor, invoiceId, ct), ct);
+        // One read snapshot for receipt states and cancellation history, even if another request cancels during a GET.
+        await db.Database.OpenConnectionAsync(ct);
+        await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: true);
+        await using var tx = await db.Database.UseTransactionAsync(sqlite, ct);
         var invoice = await OwnedAsync(actor, invoiceId, ct);
-        return await SummaryAsync(invoice, ct);
+        var summary = await SummaryAsync(invoice, ct);
+        await tx!.CommitAsync(ct);
+        return summary;
     }
 
     private async Task<ThanhToanHoaDonSummary> SummaryAsync(HoaDon invoice, CancellationToken ct)
     {
-        var payments = await db.ThanhToans.AsNoTracking().Where(x => x.HoaDonId == invoice.Id && x.TrangThai == "DA_XAC_NHAN")
+        var payments = await db.ThanhToans.AsNoTracking().Where(x => x.HoaDonId == invoice.Id && (x.TrangThai == "DA_XAC_NHAN" || x.TrangThai == "DA_HUY"))
             .OrderBy(x => x.NgayThanhToan).ThenBy(x => x.Id).ToListAsync(ct);
         var ready = await SanSangAsync(ct);
         var ids = payments.Select(x => x.Id).ToList();
         var metadata = ready ? await db.LanThuHoaDons.AsNoTracking().Where(x => ids.Contains(x.ThanhToanId)).ToListAsync(ct) : [];
-        var paid = payments.Aggregate(0L, (sum, x) => checked(sum + x.SoTien));
+        var cancelReady = await HuySanSangAsync(ct);
+        var cancellations = cancelReady ? await db.HuyLanThuHoaDons.AsNoTracking().Where(x => ids.Contains(x.ThanhToanId)).ToListAsync(ct) : [];
+        var paid = payments.Where(x => x.TrangThai == "DA_XAC_NHAN").Aggregate(0L, (sum, x) => checked(sum + x.SoTien));
         var remaining = checked(invoice.TongTien - paid);
         // The optional deposit ledger is owned by S4-04. Never count an offset as cash collected.
         if (await db.Database.SqlQuery<int>($"SELECT COUNT(*) AS Value FROM sqlite_master WHERE type='table' AND name='giao_dich_coc'").SingleAsync(ct) != 0)
@@ -51,8 +60,11 @@ public sealed class GhiThuHoaDonService(AppDbContext db, ITimeProvider clock)
             "THANH_TOAN_MOT_PHAN" => "Trả một phần", _ => "Chưa thanh toán" };
         return new(invoice.TongTien, paid, remaining, status, name, ready && invoice.TrangThai == "DA_PHAT_HANH" && remaining > 0, ready,
             payments.Select(p => { var m = metadata.SingleOrDefault(x => x.ThanhToanId == p.Id);
+                var canceled = cancellations.SingleOrDefault(x => x.ThanhToanId == p.Id);
                 return new LanThuHoaDonItem(p.Id, p.SoTien, p.NgayThanhToan, m?.HinhThuc ?? "", m?.GhiChu,
-                    m?.TenNguoiXacNhan ?? "Chưa có thông tin (dữ liệu cũ)", m?.ThoiDiemGhi); }).ToList());
+                    m?.TenNguoiXacNhan ?? "Chưa có thông tin (dữ liệu cũ)", m?.ThoiDiemGhi, p.TrangThai == "DA_HUY",
+                    canceled?.LyDoHuy, canceled?.TenNguoiHuy, canceled?.ThoiDiemHuy,
+                    canceled?.PhienBan ?? (p.TrangThai == "DA_HUY" ? 1 : 0), cancelReady && p.TrangThai == "DA_XAC_NHAN"); }).ToList(), cancelReady);
     }
 
     public async Task<ThanhToanHoaDonSummary> GhiAsync(int actorId, GhiThuHoaDonInput input, CancellationToken ct = default)

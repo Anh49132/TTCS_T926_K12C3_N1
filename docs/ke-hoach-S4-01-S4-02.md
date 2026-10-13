@@ -2,7 +2,7 @@
 
 Ngày lập: 13/10/2026. **Đây là kế hoạch bàn giao, chưa phải chức năng đã triển khai hay schema đã nâng cấp.**
 
-> Cập nhật triển khai cùng ngày: S4-02 task 1 / AC1–AC3 có trong mã, xem [bàn giao ghi thu](S4-02-ghi-thu.md). Thiết kế thực tế dùng bảng metadata `lan_thu_hoa_don` một-một với `thanh_toan` thay cho thêm cột vào model cũ; S4-01/bảng báo riêng và hủy lần thu vẫn chưa triển khai. Các phần dưới là kế hoạch phần còn lại, không tự tạo bảng thu mới hoặc áp dụng schema dự kiến mà bỏ qua mã v26.
+> Cập nhật triển khai cùng ngày: S4-02 task 1–2 / AC1–AC4 có trong mã, xem [bàn giao ghi/hủy thu](S4-02-ghi-thu.md). v26 dùng metadata `lan_thu_hoa_don` một-một với `thanh_toan`; v27 thêm sự kiện hủy bất biến `huy_lan_thu_hoa_don`, không xóa/khôi phục lần thu. S4-01/bảng báo riêng chưa triển khai. Các phần dưới là kế hoạch phần còn lại, không tự tạo sổ tiền mới hoặc áp dụng schema dự kiến mà bỏ qua mã v27. Quyền hủy đã được người dùng chốt: chủ nhà có quyền tài chính/sở hữu hiện tại, không giới hạn người ghi hay thời gian; không mở cho QUAN_LY.
 
 Đọc cùng [AGENTS.md](../AGENTS.md), [backlog gốc](01-yeu-cau-he-thong.md), [đối chiếu backlog](doi-chieu-backlog-20261012.md) và [tiến độ](tien-do.md). Nội dung dựa trên backlog S4-01…S4-09 người dùng cung cấp và đề xuất tách báo thanh toán ngày 13/10/2026. Không triển khai các story khác trong task S4-01/S4-02.
 

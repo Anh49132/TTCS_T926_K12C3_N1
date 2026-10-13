@@ -1,0 +1,13 @@
+@model QL_PhongTro.ViewModels.ChiTietHoaDonViewModel
+<dialog class="ic-dialog ic-cancel-dialog" id="ic-cancel-dialog" aria-labelledby="ic-cancel-title">
+<div class="ic-dialog-header"><div><h2 id="ic-cancel-title">Hủy lần thu</h2><p>Bản ghi được giữ lại để tra cứu và không thể khôi phục.</p></div><button type="button" class="ic-close" data-cancel-close aria-label="Đóng hộp thoại hủy">×</button></div>
+<dl class="ic-cancel-info"><div><dt>Hóa đơn</dt><dd>@Model.HoaDon.MaHoaDon</dd></div><div><dt>Số tiền</dt><dd id="ic-cancel-amount"></dd></div><div><dt>Ngày thu</dt><dd id="ic-cancel-date"></dd></div><div><dt>Hình thức</dt><dd id="ic-cancel-method"></dd></div><div><dt>Người xác nhận</dt><dd id="ic-cancel-recorder"></dd></div></dl>
+<form id="ic-cancel-form" asp-action="CancelCollection" method="post" novalidate>
+<input type="hidden" name="ThanhToanId"/><input type="hidden" name="PhienBan"/>
+<div id="ic-cancel-form-error" class="ic-form-error" role="alert" hidden></div>
+<label for="ic-cancel-reason">Lý do hủy <em>*</em></label><textarea id="ic-cancel-reason" name="LyDo" maxlength="500" minlength="5" rows="3" required aria-describedby="ic-cancel-error-LyDo" placeholder="Nhập lý do hủy lần thu…"></textarea>
+<div class="ic-cancel-validation"><p id="ic-cancel-error-LyDo" class="ic-error" role="alert"></p><small><span id="ic-cancel-length">0</span>/500</small></div>
+<div class="ic-actor">▣ Người hủy: <strong>@Model.TenNguoiGhiThu</strong></div>
+<div class="ic-cancel-preview"><strong>Sau khi hủy:</strong><p>Tổng đã thu <span id="ic-cancel-preview-paid"></span> · Còn phải trả <span id="ic-cancel-preview-remaining"></span></p></div>
+<footer class="ic-dialog-footer"><small>ⓘ Muốn thu lại, hãy ghi lần thu mới.</small><button type="button" class="ic-button secondary" data-cancel-close>Quay lại</button><button type="submit" class="ic-button danger" id="ic-cancel-submit">Xác nhận hủy</button></footer>
+</form></dialog>

@@ -373,7 +373,7 @@ Trạng thái theo tiến độ đến **06/10/2026**. "Xong" nghĩa là đã tr
 
 > Kế hoạch bàn giao S4-01/S4-02 ngày 13/10/2026: đọc [docs/ke-hoach-S4-01-S4-02.md](docs/ke-hoach-S4-01-S4-02.md) trước khi triển khai. Tách **khách báo thanh toán** khỏi **chủ nhà xác nhận thu**; báo chờ không cộng vào Tổng đã thu. Tài liệu ghi rõ hiện trạng, schema dự kiến, transaction/chống trùng, quyền, AC/test và các quyết định PO còn thiếu. Đây là kế hoạch, chưa phải chức năng đã hoàn thành; các trạng thái Sprint trong bảng cần đối chiếu mã/tiến độ mới.
 
-> S4-02 task 1 / AC1–AC3 đã triển khai ngày 13/10/2026: [bàn giao ghi thu](docs/S4-02-ghi-thu.md). v26 thêm `lan_thu_hoa_don` làm metadata một-một của `thanh_toan`, không giữ tiền hai nơi; summary/trạng thái thanh toán suy ra. Chưa có hủy lần thu và chưa nối S4-01. Chỉ nâng cấp bản sao để kiểm thử; DB mặc định chưa nâng. Cần nghiệm thu UI trực quan.
+> S4-02 task 1–2 / AC1–AC4 đã triển khai ngày 13/10/2026: [bàn giao ghi/hủy thu](docs/S4-02-ghi-thu.md). v26 thêm metadata `lan_thu_hoa_don`; v27 thêm sự kiện bất biến `huy_lan_thu_hoa_don`, chỉ đổi trạng thái khoản thu sang DA_HUY, giữ tiền/ngày/người ghi gốc. Summary loại khoản hủy khỏi tổng nhưng trả đầy đủ lịch sử. Người dùng đã chốt: chỉ chủ nhà sở hữu tòa có quyền tài chính được hủy, không cần là người ghi thu, không giới hạn thời gian; QUAN_LY/ADMIN không hủy. Chưa nối S4-01; các task trước chỉ nâng bản sao. Sau lỗi run.bat ngày 13/10/2026 đã sao lưu/nâng DB local lên v27, giữ nguyên 38 bảng/3.922 bản ghi cũ; run.bat --check-only đạt. 69 test liên quan/hồi quy và HTTP đạt; còn nghiệm thu UI trực quan/review theo DoD.
 
 | ID | Vai trò | Pt | Ưu tiên | AC chính |
 | --- | --- | --- | --- | --- |

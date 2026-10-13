@@ -2423,3 +2423,20 @@ Cách chạy lại: `dotnet run --project .\QL_PhongTro\QL_PhongTro.csproj --lau
 - Build đạt, 53/53 test liên quan/hồi quy đạt; HTTP app demo thật đạt luồng 3 triệu → thu 1 triệu → thu 2 triệu, retry, lịch sử, nút ẩn, chặn owner khác/khách/quản lý/ADMIN. JS syntax/diff đạt; chưa chạy toàn suite và chưa nghiệm thu trực quan browser/360px/Safari vì không có browser khả dụng.
 - Nâng cấp chỉ trên bản sao data/s402-upgrade-verified: 38 bảng/3.922 bản ghi cũ giữ nguyên digest, integrity=ok, FK=0, chạy lặp/check đạt. DB mặc định vẫn v25, tài khoản/mật khẩu/dữ liệu không đổi.
 - Bàn giao, hướng dẫn nâng cấp/demo và giới hạn: [S4-02 ghi thu](S4-02-ghi-thu.md). Script tạo DB giả mới: verification/New-S402Demo.py; kiểm thử HTTP: verification/Verify-S402Http.py. Không commit DB/backup/credential/keys/logs/data; giữ nguyên tien-do.md untracked ở gốc.
+
+## 13/10/2026 — S4-02 task 2 / AC4: hủy lần thu và giữ lịch sử
+
+- Đã triển khai hủy khoản DA_XAC_NHAN bằng lý do trim 5–500 ký tự; giữ bản ghi tiền/ngày/người ghi, đổi DA_HUY và append sự kiện hủy có người/thời điểm/phiên bản. Không khôi phục; muốn thu lại ghi lần mới. Người dùng đã chốt chỉ chủ nhà sở hữu tòa có quyền tài chính được hủy, không giới hạn người ghi hay thời gian; không mở QUAN_LY/ADMIN.
+- v27 bổ sung huy_lan_thu_hoa_don một-một và trigger bất biến/no-restore; giữ nguyên bước v26 và dữ liệu cũ, hỗ trợ khoản legacy thiếu metadata ghi thu. IMMEDIATE transaction, cập nhật có điều kiện, unique/phiên bản0→1, audit allowlist cùng transaction; lý do tự do không vào audit.
+- Hộp thoại lý do và lịch sử gạch ngang/nhãn Đã hủy/lý do/người/thời điểm; JSON/JS cập nhật số tiền/trạng thái/tiến độ và mở lại Ghi thu tiền. GET dùng read snapshot nhất quán; tổng vẫn chỉ tính DA_XAC_NHAN, không cộng khoản hủy/chờ.
+- Build đạt; 36/36 test ghi/hủy thu và 69/69 test tập trung + hồi quy đạt. Có test lý do null/blank/whitespace/4/501 và biên5/500, cuối cùng về chưa trả/một phần, ghi lại đến đủ, hủy/replay trùng, cạnh tranh hai request, chuyển chủ nhà/mất quyền, legacy, rollback metadata/audit/ngắt sau UPDATE trước SAVE và trigger không khôi phục. Chưa chạy toàn suite.
+- HTTP thật trên DB giả đạt thu1+2 triệu/hủy2 triệu/tải lại lịch sử/ghi mới2 triệu đến đủ; CSRF, 4 vai trò/owner trái quyền, lý do sai, giả người hủy, hủy trùng. Scripts Verify-S402Http.py và Verify-S402CancelHttp.py.
+- Nâng chỉ hai bản sao: v25→27 giữ digest38 bảng/3.922 bản ghi, v26→27 giữ39 bảng/68 bản ghi; integrity=ok/FK=0/rerun/check đạt. Kết quả trong data/s402-cancel-upgrade-20261013-115018-697874 (ignored). DB mặc định vẫn v25, demo v26 cũ giữ nguyên.
+- Bàn giao cập nhật [S4-02 ghi/hủy thu](S4-02-ghi-thu.md), AGENTS và kế hoạch. AC1–AC4 đã có trong mã; S4-01 là story riêng chưa nối. Chưa nghiệm thu browser JS/desktop/360px/Safari vì browser inventory rỗng; còn review/merge theo DoD. Không stage DB/credential/project test hay data.
+
+## 13/10/2026 — Khắc phục run.bat: nâng DB local v25 → v27
+
+- Sau lỗi schema expected27/actual25 khi người dùng chạy run.bat, đã dừng app demo, sao lưu và nâng đúng QL_PhongTro/Data/local-dev.sqlite bằng updater hiện có. Không sửa run.bat để nâng tự động.
+- Backup độc lập: data/backups/local-v27-20261013-121438-038806/before.sqlite; updater còn tạo backup cạnh DB. Đối chiếu digest/số hàng sau nâng: giữ nguyên38 bảng/3.922 bản ghi cũ, gồm tài khoản/hash mật khẩu và lịch sử; chỉ thêm bảng/schema26–27, không ghi thu/hủy thử trên DB thật.
+- Version27, integrity_check=ok, foreign_key_check=0. .\run.bat --check-only đạt restore/build/schema ready, không chạy bước tạo ADMIN hay khởi động tác vụ email. Người dùng có thể chạy lại .\run.bat.
+- Ghi chú DB mặc định vẫnv25 ở các mục task1–2 trước là trạng thái lịch sử; hiện DB local đãv27. Chưa commit DB/backup/data, không đổi credential hoặc project test.

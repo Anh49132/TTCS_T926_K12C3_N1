@@ -7,7 +7,7 @@ namespace QL_PhongTro.Data;
 // Append new versions; never rewrite an update already shared with the team.
 public static class DatabaseUpdates
 {
-    internal const int CurrentVersion = 26;
+    internal const int CurrentVersion = 27;
     private static SqliteConnection Open(string path, bool readOnly)
     {
         var c = new SqliteConnection(new SqliteConnectionStringBuilder
@@ -70,6 +70,7 @@ public static class DatabaseUpdates
         foreach (var entity in db.Model.GetEntityTypes())
         {
             var table = entity.GetTableName()!;
+            if (table == "huy_lan_thu_hoa_don" && (schemaVersion < 27 || !HasTable(c, "thanh_toan"))) continue;
             if (table == "lan_thu_hoa_don" && (schemaVersion < 26 || !HasTable(c, "thanh_toan"))) continue;
             if (table == "ghi_chu_phong" && schemaVersion < 25) continue;
             if (table == "thong_bao" && schemaVersion < 21) continue;
@@ -118,6 +119,7 @@ public static class DatabaseUpdates
         if (requireAudit)
             AuditSchema.Validate(c);
         if (schemaVersion >= 26 && HasTable(c, "thanh_toan") && HasTable(c, "lan_thu_hoa_don")) InvoiceCollectionSchema.Validate(c);
+        if (schemaVersion >= 27 && HasTable(c, "thanh_toan") && HasTable(c, "huy_lan_thu_hoa_don")) InvoiceCollectionCancellationSchema.Validate(c);
         if (problems.Count != 0)
             throw new InvalidOperationException("Database schema is not ready: " + string.Join("; ", problems) +
                 "\nStop the app, then run: dotnet run --project QL_PhongTro -- --update-database" +
@@ -455,6 +457,7 @@ public static class DatabaseUpdates
         if (version < 24) RoomDetailsSchema.Upgrade(c);
         if (version < 25) RoomNotesSchema.Upgrade(c);
         if (version < 26) InvoiceCollectionSchema.Upgrade(c);
+        if (version < 27) InvoiceCollectionCancellationSchema.Upgrade(c);
         Check(path);
         Console.WriteLine($"Database updated to version {CurrentVersion}. Existing business rows preserved.");
     }
