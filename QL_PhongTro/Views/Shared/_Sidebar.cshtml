@@ -5,6 +5,7 @@
     var owner = User.IsInRole("CHU_NHA");
     var name = string.IsNullOrWhiteSpace(User.Identity?.Name) ? "Tài khoản" : User.Identity.Name;
     var path = Context.Request.Path.Value ?? "/";
+    if(ViewContext.RouteData.Values["controller"]?.ToString() is "TatToan" or "TraPhong")path="/Modules/HOP_DONG";
     var section = Context.Request.Query["section"].ToString();
     var roleFilter = Context.Request.Query["role"].ToString();
     var items = new List<(string Group, string Title, string Url, string Module, string Icon)>();

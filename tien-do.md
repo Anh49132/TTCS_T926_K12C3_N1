@@ -1,3 +1,11 @@
+### 14/10/2026 – S4-04 task 2: bảng tất toán cọc và khấu trừ
+- PO xác nhận dùng cọc thực giữ, trừ thanh toán/cấn cọc đã xác nhận khỏi nợ; kết quả = cọc − dư nợ kỳ cuối − nợ kỳ trước − hư hỏng. Làm tròn từng khoản AwayFromZero; hư hỏng cho phép bằng 0, không cho âm/tên rỗng.
+- Theo yêu cầu người dùng, khôi phục task 1 đang thiếu ở HEAD 29d4f02, nối hóa đơn kỳ cuối sang bảng tất toán. Chủ nhà thêm/sửa/xóa hư hỏng, xem dự tính từ máy chủ, lưu/sửa NHAP; khách xem cùng snapshot, không sửa. ADMIN chỉ xem, QUAN_LY không truy cập tài chính.
+- Schema v31 bổ sung sổ cọc, bảng tất toán và chi tiết khấu trừ; phiên bản/dấu vân tay nguồn, BEGIN IMMEDIATE, FK RESTRICT, audit và rollback. Không thu/hoàn/cấn cọc trên UI, không phạt, chốt/kết thúc hợp đồng/đổi trạng thái phòng/PDF.
+- Nâng trên bản sao DB giả v30: bảo toàn hash tất cả dòng/cột cũ, backup, integrity/FK và rerun đạt. DB local vẫn giữ nguyên v5/chưa có module hợp đồng/hóa đơn.
+- Demo riêng localhost:5252; New-S404Demo.ps1/Start-S404Demo.ps1, tài khoản ngẫu nhiên trong access.json ignored. Edge desktop/360px: thêm/sửa/xóa, dự tính/lưu, khách xem cùng số liệu, sửa/khách lạ 403; không tràn ngang ở 360px. Chưa Safari/thiết bị thật, review/hợp nhất nhánh.
+- Build cuối đạt; 121/121 test liên quan đạt (38 S4-04/khôi phục task 1 + 83 hồi quy). HTTP danh sách chủ nhà/khách 200; Edge lượt cuối đạt trên data/s404-task2-final, ảnh/report ignored browser-check-c27c22b6. Demo integrity=ok/FK=0. Cảnh báo ImageSharp/CS8601 có sẵn.
+- Bàn giao và lệnh kiểm thử: [docs/S4-04-tat-toan-task2.md](docs/S4-04-tat-toan-task2.md).
 
 ### 13/10/2026 – Dữ liệu kiểm thử Sprint 3 bổ sung
 - Thêm vào DB local tòa kiểm thử ID 7 cho tài khoản chủ nhà được yêu cầu: 60 phòng, 54 hợp đồng, 54 tài khoản khách mẫu, 6 yêu cầu, 6 hóa đơn. Giữ dữ liệu và tài khoản cũ.

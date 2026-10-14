@@ -181,13 +181,14 @@ public sealed partial class BaoHongTests
         using var f = new Fixture(); int id;
         using (var db = f.Context())
         { var input = Input(); input.Images = [Photo()]; id = (await new BaoHongService(db, f.Time).GuiAsync(2, input)).Id; }
-        f.Execute("DROP TABLE bao_hong_trao_doi; ALTER TABLE bao_hong DROP COLUMN phien_ban; DELETE FROM app_schema_version WHERE version=30");
+        SchemaTestFixture.RemoveTatToanExtensions(f.Path);
+        f.Execute("DROP TABLE bao_hong_trao_doi; ALTER TABLE bao_hong DROP COLUMN phien_ban; DELETE FROM app_schema_version WHERE version>=30");
         var root = Directory.GetCurrentDirectory();
         while (!File.Exists(System.IO.Path.Combine(root, "QL_PhongTro", "Data", "permissions.seed.json"))) root = Directory.GetParent(root)!.FullName;
         var seed = System.IO.Path.Combine(root, "QL_PhongTro", "Data", "permissions.seed.json");
         DatabaseUpdates.Update(f.Path, seed); DatabaseUpdates.Update(f.Path, seed); DatabaseUpdates.Check(f.Path);
         using var check = f.Context(); Assert.Equal(0, (await check.BaoHongs.SingleAsync(x => x.Id == id)).PhienBan);
         Assert.Single(await check.AnhBaoHongs.ToListAsync()); Assert.Empty(await check.BaoHongTraoDois.ToListAsync());
-        Assert.Equal(30, f.Scalar("SELECT MAX(version) FROM app_schema_version"));
+        Assert.Equal(31, f.Scalar("SELECT MAX(version) FROM app_schema_version"));
     }
 }

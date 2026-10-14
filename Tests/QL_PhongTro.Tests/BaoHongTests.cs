@@ -141,12 +141,12 @@ public sealed partial class BaoHongTests
     [Fact]
     public void UpgradePreservesExistingDataAndRerunIsSafe()
     {
-        using var f=new Fixture();f.Execute("DROP TABLE bao_hong_trao_doi; DROP TABLE anh_bao_hong; DROP TABLE bao_hong; DROP TABLE bao_hong_so_ma; DELETE FROM app_schema_version WHERE version>=28");
+        using var f=new Fixture();SchemaTestFixture.RemoveTatToanExtensions(f.Path);f.Execute("DROP TABLE bao_hong_trao_doi; DROP TABLE anh_bao_hong; DROP TABLE bao_hong; DROP TABLE bao_hong_so_ma; DELETE FROM app_schema_version WHERE version>=28");
         var accounts=f.Scalar("SELECT COUNT(*) FROM tai_khoan");
         var root=Directory.GetCurrentDirectory();while(!File.Exists(System.IO.Path.Combine(root,"QL_PhongTro","Data","permissions.seed.json")))root=Directory.GetParent(root)!.FullName;
         var seed=System.IO.Path.Combine(root,"QL_PhongTro","Data","permissions.seed.json");
         DatabaseUpdates.Update(f.Path,seed); DatabaseUpdates.Update(f.Path,seed);DatabaseUpdates.Check(f.Path);
-        Assert.Equal(accounts,f.Scalar("SELECT COUNT(*) FROM tai_khoan"));Assert.Equal(30,f.Scalar("SELECT MAX(version) FROM app_schema_version"));
+        Assert.Equal(accounts,f.Scalar("SELECT COUNT(*) FROM tai_khoan"));Assert.Equal(31,f.Scalar("SELECT MAX(version) FROM app_schema_version"));
         Assert.Equal(3,f.Scalar("SELECT COUNT(*) FROM hop_dong"));
         using var c=new SqliteConnection($"Data Source={f.Path}");c.Open();using var cmd=c.CreateCommand();cmd.CommandText="PRAGMA foreign_key_check";using var reader=cmd.ExecuteReader();Assert.False(reader.Read());
     }
@@ -213,6 +213,7 @@ public sealed partial class BaoHongTests
         using var f = new Fixture();
         int id;
         using(var db=f.Context()) id=(await new BaoHongService(db,f.Time).GuiAsync(2,Input())).Id;
+        SchemaTestFixture.RemoveTatToanExtensions(f.Path);
         f.Execute("DROP TABLE bao_hong_trao_doi; ALTER TABLE bao_hong DROP COLUMN phien_ban; DROP TABLE anh_bao_hong; DELETE FROM app_schema_version WHERE version>=29");
         var root=Directory.GetCurrentDirectory();
         while(!File.Exists(System.IO.Path.Combine(root,"QL_PhongTro","Data","permissions.seed.json"))) root=Directory.GetParent(root)!.FullName;

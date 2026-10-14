@@ -17,6 +17,8 @@ public partial class AppDbContext
     // Explicit allowlist: never serialize entities, navigation properties or arbitrary request data.
     private static readonly IReadOnlyDictionary<Type, string[]> AuditFields = new Dictionary<Type, string[]>
     {
+        [typeof(BangTatToan)] = ["HopDongId", "HoaDonCuoiId", "NgayTraPhong", "CocConGiu", "NoHoaDonCuoi", "CongNoCu", "TienHuHong", "TienPhaiHoan", "TienKhachTraThem", "TrangThai", "PhienBan"],
+        [typeof(KhauTruTatToan)] = ["ThanhLyId", "SoThuTu", "SoTien"],
         [typeof(GhiChuPhong)] = ["PhongId", "NguoiTaoId", "Ghim", "NgayTao"],
         [typeof(ChiSoDienNuoc)] = ["HopDongId", "DichVuId", "TuNgay", "DenNgay", "ChiSoDau", "ChiSoCuoi", "DaXacNhanBatThuong", "DaKhoa", "PhienBan"],
         [typeof(NguoiOGhep)] = ["HopDongId", "KhachThueId", "NgayVao", "NgayRa"],
