@@ -1,0 +1,6 @@
+@model List<QL_PhongTro.ViewModels.HopDongTraPhongChon>
+@{ViewData["Title"]="Ghi nhận trả phòng";}
+@section Styles { <link rel="stylesheet" href="~/css/tat-toan.css" asp-append-version="true"/> }
+<div class="settlement-page"><h1>Ghi nhận trả phòng</h1><p class="st-muted">Chọn hợp đồng để nhập thông tin bàn giao và tính hóa đơn kỳ cuối.</p><section class="st-card">
+@foreach(var h in Model){<div class="st-list-row"><div><strong>@h.Ma</strong><p>Phòng @h.Phong · @h.ToaNha · @h.Khach</p></div><a class="btn st-primary" asp-action="Nhap" asp-route-id="@h.Id">Chọn hợp đồng →</a></div>}
+@if(Model.Count==0){<p>Chưa có hợp đồng đang hiệu lực.</p>}</section></div>

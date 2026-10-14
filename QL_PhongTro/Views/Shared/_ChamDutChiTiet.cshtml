@@ -1,0 +1,10 @@
+@model QL_PhongTro.Models.ChamDutHopDong
+@using QL_PhongTro.Services
+<section class="st-termination st-termination-detail">
+<h2>Thông tin chấm dứt hợp đồng</h2>
+@if(Model is null){<p class="st-muted">Chưa đối chiếu thông tin chấm dứt. Chủ nhà có thể bổ sung khi sửa bảng nháp.</p>}
+else{
+<dl class="st-facts"><div><dt>Ngày trả thực tế</dt><dd>@Model.NgayTraPhong.ToString("dd/MM/yyyy")</dd></div><div><dt>Ngày kết thúc đối chiếu (kể cả gia hạn)</dt><dd>@Model.NgayKetThuc.ToString("dd/MM/yyyy")</dd></div><div><dt>Chấm dứt trước hạn</dt><dd>@(Model.TruocHan?"Có":"Không")</dd></div>
+@if(Model.TruocHan){<div><dt>Lý do chấm dứt</dt><dd class="st-note-text">@ChamDutHopDongPolicy.MoTa(Model)</dd></div><div><dt>Áp dụng phạt cọc</dt><dd>@(Model.ApDungPhat?"Có":"Không")</dd></div><div><dt>Phạt chấm dứt trước hạn</dt><dd>@Model.TienPhat.ToString("N0",System.Globalization.CultureInfo.GetCultureInfo("vi-VN")) đ</dd></div>}
+</dl>}
+</section>

@@ -24,6 +24,7 @@ public sealed class ChiTietHoaDonViewModel
     public string ReviewToken { get; init; } = "";
     public long TongCong { get; init; }
     public long SoDaThanhToan { get; init; }
+    public long SoDaCanTru { get; init; }
     public long SoConPhaiTra { get; init; }
     public bool QuaHan { get; init; }
     public int SoNgayTre { get; init; }

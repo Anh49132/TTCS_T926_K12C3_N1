@@ -1,0 +1,49 @@
+@model QL_PhongTro.ViewModels.TatToanViewModel
+@{ViewData["Title"]="Kết quả trả phòng";var vi=System.Globalization.CultureInfo.GetCultureInfo("vi-VN");var confirmed=Model.XacNhan!;}
+@section Styles { <link rel="stylesheet" href="~/css/tat-toan.css" asp-append-version="true"/> }
+<div class="settlement-page">
+    <nav class="st-breadcrumb"><a asp-action="Index">Bảng tất toán</a> / @Model.MaHopDong / <strong>Kết quả trả phòng</strong></nav>
+    <section class="st-success-banner">
+        <div><h1>✓ Đã hoàn tất trả phòng</h1><p>Hợp đồng <strong>@Model.MaHopDong</strong> đã chuyển sang trạng thái <strong>Đã kết thúc</strong>.</p><p class="st-muted">Phòng @Model.Phong · @Model.Khach · Ngày trả @Model.Bang.NgayTraPhong.ToString("dd/MM/yyyy")</p></div>
+        <div class="st-actions">
+            <a class="btn btn-outline-secondary" asp-action="TaiPdf" asp-route-id="@Model.Input.HopDongId">↓ Tải bảng tất toán PDF</a>
+            @if(User.IsInRole("CHU_NHA")){<a class="btn btn-outline-secondary" asp-controller="HoaDonDichVu" asp-action="Details" asp-route-id="@Model.Bang.HoaDonCuoiId">Xem hóa đơn kỳ cuối</a><a class="btn st-primary" asp-controller="HopDong" asp-action="Details" asp-route-id="@Model.Input.HopDongId">Về chi tiết hợp đồng</a>}
+            else if(User.IsInRole("KHACH_THUE")){<a class="btn btn-outline-secondary" asp-controller="ThongBao" asp-action="HoaDon" asp-route-id="@Model.Bang.HoaDonCuoiId">Xem hóa đơn kỳ cuối</a><a class="btn st-primary" asp-controller="HopDongCuaToi" asp-action="Details" asp-route-id="@Model.Input.HopDongId">Về hợp đồng của tôi</a>}
+        </div>
+    </section>
+    <div class="st-grid">
+        <section class="st-card"><p class="st-muted">Mã tất toán: @Model.Bang.Ma <span class="st-badge">Đã chốt</span></p><partial name="_KetQua" model="Model"/>
+            <p>Tiền cọc đã cấn vào hóa đơn: <strong>@confirmed.TienCanTru.ToString("N0",vi) đ</strong></p>
+        </section>
+        <aside class="st-card"><h2>Trạng thái sau tất toán</h2><ul class="st-status-list"><li>✓ Hợp đồng: <strong>Đã kết thúc</strong></li><li>✓ Phòng: <strong>Đã trả</strong></li><li>✓ Hóa đơn kỳ cuối: <strong>Đã phát hành</strong></li><li>🔒 Tạo/phát hành hóa đơn mới: <strong>Đã khóa</strong></li><li>🔒 Bảng tất toán: <strong>Không được chỉnh sửa</strong></li></ul><div class="st-notice">Chủ nhà và khách thuê có thể xem lại cùng bảng tất toán cuối cùng.</div></aside>
+    </div>
+    <section class="st-card"><h2>Tài liệu liên quan</h2>
+        <div class="st-actions"><span>Bảng tất toán @Model.MaHopDong · PDF</span><a class="btn btn-outline-secondary" asp-action="TaiPdf" asp-route-id="@Model.Input.HopDongId">↓ Tải xuống</a></div>
+        <p class="st-muted">Bản PDF chứa số liệu đã xác nhận, đầy đủ các khoản thu, khấu trừ và kết quả tất toán của hai bên.</p>
+    </section>
+    <section class="st-card"><h2>Theo dõi thu/hoàn thực tế sau chốt</h2>
+    <p class="st-muted">Đã chốt là chốt nghĩa vụ, chưa đồng nghĩa đã thu hoặc hoàn tiền xong. Các khoản ghi nhận sau đây không thay đổi bảng số liệu tại thời điểm chốt.</p>
+    @if(TempData["RefundSuccess"] is {} success){<div class="alert alert-success">@success</div>}
+    @if(TempData["RefundError"] is {} error){<div class="alert alert-danger">@error</div>}
+    @if(Model.Bang.TienPhaiHoan>0){
+        <dl class="st-facts"><div><dt>Đã ghi hoàn cọc sau chốt</dt><dd>@Model.DaHoanCoc.ToString("N0",vi) đ</dd></div><div><dt>Còn phải hoàn</dt><dd>@Math.Max(0,Model.Bang.TienPhaiHoan-Model.DaHoanCoc).ToString("N0",vi) đ</dd></div></dl>
+        @if(Model.DuocHoan && Model.DaHoanCoc<Model.Bang.TienPhaiHoan){
+            <form asp-action="HoanCoc" method="post" class="st-refund-form">
+                <input name="Refund.HopDongId" value="@Model.Input.HopDongId" type="hidden"/><input name="Refund.KhoaChongTrung" value="@Guid.NewGuid().ToString("N")" type="hidden"/>
+                <label for="refund-amount">Số tiền đã hoàn thực tế (đ)</label><input id="refund-amount" name="Refund.SoTien" type="number" min="1" max="@Math.Min(Model.CocDangGiu,Model.Bang.TienPhaiHoan-Model.DaHoanCoc)" step="1" required class="form-control"/>
+                <label for="refund-method">Hình thức hoàn tiền</label><select id="refund-method" name="Refund.HinhThuc" required class="form-select"><option value="">Chọn hình thức</option><option value="TIEN_MAT">Tiền mặt</option><option value="CHUYEN_KHOAN">Chuyển khoản</option></select>
+                <label class="st-check"><input name="Refund.DaHoan" value="true" type="checkbox" required/> Tôi xác nhận đã thực hiện hoàn tiền cho khách.</label><button class="btn st-primary" type="submit">Ghi nhận đã hoàn cọc</button>
+            </form>
+        }
+    }
+    <p class="st-space">Công nợ hiện còn phải thu: <strong>@Model.ConPhaiThu.ToString("N0",vi) đ</strong></p>
+    @if(User.IsInRole("CHU_NHA")){<div class="st-actions">@foreach(var debt in Model.NoHienTai.Where(x=>x.ConNo>0)){<a class="btn btn-outline-secondary" asp-controller="HoaDonDichVu" asp-action="Details" asp-route-id="@debt.HoaDonId">Ghi thu @debt.MaHoaDon · @debt.ConNo.ToString("N0",vi) đ</a>}</div>}
+    </section>
+    <section class="st-card"><partial name="_ChamDutChiTiet" model="Model.ChamDut"/><h2 class="st-space">Các khoản khấu trừ đã xác nhận</h2><div class="st-table-wrap"><table><thead><tr><th>Khoản</th><th>Số tiền</th><th>Ghi chú</th></tr></thead><tbody>
+    @foreach(var row in Model.Bang.KhauTru.OrderBy(x=>x.SoThuTu)){<tr data-deduction-type="@row.LoaiKhoan"><td>@row.TenKhoan</td><td>@row.SoTien.ToString("N0",vi) đ</td><td>@row.GhiChu</td></tr>}
+    @if(Model.Bang.KhauTru.Count==0){<tr><td colspan="3">Không có khoản khấu trừ.</td></tr>}
+    </tbody></table></div><partial name="_CongNo" model="Model"/>
+    @if(!string.IsNullOrWhiteSpace(Model.Bang.GhiChu)){<h3>Ghi chú tất toán</h3><p class="st-note-text">@Model.Bang.GhiChu</p>}
+    <p class="st-muted st-space">Hoàn tất bởi @confirmed.TenNguoiXacNhan · @confirmed.ThoiDiem.AddHours(7).ToString("dd/MM/yyyy HH:mm") (giờ Việt Nam)</p>
+    </section>
+</div>
