@@ -74,6 +74,7 @@ public sealed partial class HoaDonDichVuService
         await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
         await using var tx = await db.Database.UseTransactionAsync(sqlite);
         var old = await OwnedInvoiceAsync(actor, id);
+        if (old.LoaiHoaDon == "KY_CUOI") throw new InvalidOperationException("Hóa đơn kỳ cuối cần tính lại từ thông tin bàn giao; không sao chép qua chức năng thay thế hóa đơn tháng.");
         if (old.TrangThai != "DA_HUY" || old.PhienBan != version) throw new InvalidOperationException("Hóa đơn chưa hủy hoặc dữ liệu đã thay đổi. Hãy tải lại trang.");
         var existing = await db.HoaDons.Where(x => x.ThayTheHoaDonId == id).Select(x => (int?)x.Id).SingleOrDefaultAsync();
         if (existing.HasValue) return existing.Value; // Same request is safe to retry.

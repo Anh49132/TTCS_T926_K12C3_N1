@@ -1,3 +1,10 @@
+### 14/10/2026 – S4-04 task 1: ghi nhận trả phòng, hóa đơn kỳ cuối
+- PO xác nhận tính cả ngày trả, chia số ngày thực tế của tháng, bắt đầu từ đầu tháng/ngày vào nếu muộn hơn; điện nước theo giá hiệu lực tại ngày trả.
+- Thêm chọn hợp đồng, nút Xử lý trả phòng, nhập chỉ số cuối, dự tính máy chủ, kiểm tra từng dòng và lưu KY_CUOI/NHAP; snapshot dữ liệu bàn giao trong hóa đơn hiện có, không đổi schema.
+- Kiểm tra sở hữu chủ nhà/quyền hai module/CSRF, chỉ số không giảm, không chồng hóa đơn tháng, một kỳ cuối chưa hủy/hợp đồng; transaction ghi + audit, kiểm tra dữ liệu thay đổi và chống gửi đồng thời.
+- Chưa tất toán cọc, hư hỏng/phạt/công nợ cũ, phí cố định, đóng hợp đồng/trả trạng thái phòng/PDF. Chỉ hỗ trợ điện nước theo công tơ cho task này. Bàn giao và lệnh kiểm thử: [docs/S4-04-hoa-don-ky-cuoi.md](docs/S4-04-hoa-don-ky-cuoi.md).
+- Build đạt; 27/27 test S4-04 đạt (11 ví dụ tiền phòng, HTTP, quyền hai module, CSRF, rollback, đồng thời). Bộ mở rộng 119/121 đạt; 2 lỗi tạo lại hợp đồng nháp và thiếu text hóa đơn đều tái hiện trên HEAD gốc độc lập. Còn cảnh báo ImageSharp/CS8601 hiện hữu.
+- DB local kiểm tra chỉ đọc ở checkout hiện tại chỉ v5/chưa có bảng hợp đồng và hóa đơn, khác ghi chú cũ v27; giữ nguyên DB, không tự nâng cấp. Chưa nghiệm thu trực quan 360px/Chrome/Safari hoặc review/hợp nhất nhánh.
 
 ### 13/10/2026 – Dữ liệu kiểm thử Sprint 3 bổ sung
 - Thêm vào DB local tòa kiểm thử ID 7 cho tài khoản chủ nhà được yêu cầu: 60 phòng, 54 hợp đồng, 54 tài khoản khách mẫu, 6 yêu cầu, 6 hóa đơn. Giữ dữ liệu và tài khoản cũ.

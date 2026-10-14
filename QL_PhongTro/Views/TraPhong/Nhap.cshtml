@@ -1,0 +1,32 @@
+@model QL_PhongTro.ViewModels.TraPhongViewModel
+@using System.Globalization
+@{ ViewData["Title"] = "Ghi nhận trả phòng"; var vi = CultureInfo.GetCultureInfo("vi-VN"); }
+@section Styles { <link rel="stylesheet" href="~/css/tra-phong.css" asp-append-version="true" /> }
+<div class="checkout-page">
+    <nav class="checkout-breadcrumb"><a asp-controller="HopDong" asp-action="Details" asp-route-id="@Model.Input.HopDongId">Hợp đồng &amp; người ở ghép</a> / @Model.MaHopDong / <strong>Trả phòng</strong></nav>
+    <h1>Ghi nhận trả phòng</h1><p class="checkout-muted">Nhập thông tin bàn giao để hệ thống tính hóa đơn kỳ cuối.</p>
+    <div class="checkout-card checkout-contract"><div><small>Mã hợp đồng</small><strong>@Model.MaHopDong</strong></div><div><small>Phòng</small><strong>@Model.Phong · @Model.ToaNha</strong></div><div><small>Khách thuê</small><strong>@Model.Khach</strong></div><div><small>Ngày kết thúc HĐ</small><strong>@Model.NgayKetThuc.ToString("dd/MM/yyyy")</strong></div><span class="checkout-badge">Đang hiệu lực</span></div>
+    @if (ViewData["LoiTraPhong"] is {} error) { <div class="alert alert-warning" role="alert">@error</div> }
+    <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+    @if (Model.HoaDonDaCo.HasValue) { <div class="alert alert-info">Hợp đồng đã có hóa đơn kỳ cuối. <a asp-action="ChiTiet" asp-route-id="@Model.HoaDonDaCo">Xem hóa đơn đã lưu</a></div> }
+    <form asp-action="Tinh" method="post" id="checkout-input" data-preview="@Url.Action("UocTinh")">
+        <input asp-for="Input.HopDongId" type="hidden" />
+        <div class="checkout-grid"><div>
+            <section class="checkout-card"><h2>Thông tin trả phòng</h2><label asp-for="Input.NgayTra">Ngày trả thực tế <span class="text-danger">*</span></label><input asp-for="Input.NgayTra" type="date" class="form-control" required /><span asp-validation-for="Input.NgayTra" class="text-danger"></span>
+                <p class="checkout-note">Tính cả ngày trả phòng. Tiền phòng tính từ đầu tháng hoặc ngày bắt đầu thuê nếu muộn hơn, chia số ngày thực tế của tháng.</p>
+            </section>
+            <section class="checkout-card"><h2>Chỉ số điện nước cuối cùng</h2><div class="checkout-meters">
+                @foreach (var meter in Model.CongTo) {
+                    var electric = meter.Ma == "DIEN";
+                    <div class="checkout-meter"><h3><span class="checkout-icon">@(electric ? "ϟ" : "◉")</span> @meter.Ten</h3><p class="checkout-muted">Chỉ số gần nhất<br /><strong>@meter.ChiSo.ToString("#,##0.###", vi) @meter.DonVi</strong> · chốt ngày @meter.NgayChot.ToString("dd/MM/yyyy")</p>
+                        <p>Đơn giá tại ngày trả: <strong>@meter.DonGia.ToString("N0", vi) đ/@meter.DonVi</strong></p>
+                        @if (electric) { <label asp-for="Input.ChiSoDien">Chỉ số điện cuối *</label><input asp-for="Input.ChiSoDien" type="number" min="0" max="99999999999.999" step="0.001" required class="form-control" /> }
+                        else { <label asp-for="Input.ChiSoNuoc">Chỉ số nước cuối *</label><input asp-for="Input.ChiSoNuoc" type="number" min="0" max="99999999999.999" step="0.001" required class="form-control" /> }
+                    </div>
+                }
+            </div><p class="checkout-note">ⓘ Chỉ số cuối không được nhỏ hơn lần chốt gần nhất. Khi đổi ngày trả, nhấn tính để tải lại đơn giá áp dụng.</p></section>
+        </div><aside class="checkout-card checkout-summary"><h2>▤ Dự tính kỳ cuối</h2><div id="checkout-estimate" aria-live="polite"><p>Nhập ngày trả và hai chỉ số cuối để xem dự tính.</p></div><div class="checkout-note">Đơn giá điện nước có hiệu lực tại ngày trả phòng. Mỗi khoản được làm tròn đến đồng trước khi cộng tổng.</div><p class="checkout-muted">Bước này chưa tất toán cọc hoặc kết thúc hợp đồng.</p></aside></div>
+        <div class="checkout-footer"><a class="btn btn-outline-secondary" asp-controller="HopDong" asp-action="Details" asp-route-id="@Model.Input.HopDongId">Hủy</a><button class="btn checkout-primary" type="submit" disabled="@(Model.CongTo.Count != 2 || Model.HoaDonDaCo.HasValue)">Tính hóa đơn kỳ cuối →</button></div>
+    </form>
+</div>
+@section Scripts { <script src="~/js/tra-phong.js" asp-append-version="true"></script> }

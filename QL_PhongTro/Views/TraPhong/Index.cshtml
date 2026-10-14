@@ -1,0 +1,12 @@
+@model List<QL_PhongTro.ViewModels.HopDongTraPhongChon>
+@{ ViewData["Title"] = "Ghi nhận trả phòng"; }
+@section Styles { <link rel="stylesheet" href="~/css/tra-phong.css" asp-append-version="true" /> }
+<div class="checkout-page">
+    <h1>Ghi nhận trả phòng</h1><p class="checkout-muted">Chọn hợp đồng để nhập thông tin bàn giao và tính hóa đơn kỳ cuối.</p>
+    <section class="checkout-card">
+        @if (Model.Count == 0) { <p>Chưa có hợp đồng đang hiệu lực để ghi nhận trả phòng.</p> }
+        @foreach (var h in Model) {
+            <div class="checkout-choice"><div><strong>@h.Ma</strong><p>Phòng @h.Phong · @h.ToaNha · @h.Khach</p></div><a class="btn checkout-primary" asp-action="Nhap" asp-route-id="@h.Id">Chọn hợp đồng →</a></div>
+        }
+    </section>
+</div>

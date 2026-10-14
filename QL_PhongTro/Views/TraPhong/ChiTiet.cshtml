@@ -1,0 +1,23 @@
+@model QL_PhongTro.ViewModels.TraPhongViewModel
+@using System.Globalization
+@{ ViewData["Title"] = "Hóa đơn kỳ cuối"; var bill = Model.HoaDon!; var vi = CultureInfo.GetCultureInfo("vi-VN"); var saved = bill.Id > 0; }
+@section Styles { <link rel="stylesheet" href="~/css/tra-phong.css" asp-append-version="true" /> }
+<div class="checkout-page">
+    <nav class="checkout-breadcrumb"><a asp-controller="HopDong" asp-action="Details" asp-route-id="@Model.Input.HopDongId">Hợp đồng &amp; người ở ghép</a> / @Model.MaHopDong / <strong>Hóa đơn kỳ cuối</strong></nav>
+    <h1>@(saved ? "Chi tiết hóa đơn kỳ cuối" : "Kiểm tra hóa đơn kỳ cuối")</h1><p class="checkout-muted">Phòng @Model.Phong · @Model.Khach · Ngày trả @bill.DenNgay.ToString("dd/MM/yyyy")</p>
+    @if (TempData["TraPhongSuccess"] is {} success) { <div class="alert alert-success" role="status">@success</div> }
+    <div class="alert alert-info">ⓘ Hóa đơn kỳ cuối được lưu nháp để kiểm tra. Việc tất toán cọc và kết thúc hợp đồng thực hiện ở bước nghiệp vụ tiếp theo.</div>
+    <div class="checkout-grid"><section class="checkout-card"><h2>Chi tiết khoản thu</h2><div class="checkout-table-wrap"><table class="checkout-table"><thead><tr><th>Khoản thu</th><th>Cách tính</th><th>Số lượng</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead><tbody>
+        @foreach (var line in bill.ChiTiet.OrderBy(x => x.SoThuTu)) {
+            <tr><th>@line.TenKhoan</th><td>@(line.LoaiKhoan == "TIEN_PHONG" ? "Theo ngày thực tế" : $"{line.ChiSoCuoi?.ToString("0.###", vi)} − {line.ChiSoDau?.ToString("0.###", vi)}")</td><td>@(line.LoaiKhoan == "TIEN_PHONG" ? $"{line.SoNgayTinhTien ?? DateTime.DaysInMonth(bill.Nam, bill.Thang)}/{line.SoNgayTrongThang ?? DateTime.DaysInMonth(bill.Nam, bill.Thang)} ngày" : $"{line.SoLuong.ToString("0.###", vi)} {line.DonViTinh}")</td><td>@line.DonGia.ToString("N0", vi) đ@(line.LoaiKhoan == "TIEN_PHONG" ? "/tháng" : "")</td><td><strong>@line.ThanhTien.ToString("N0", vi) đ</strong></td></tr>
+        }
+    </tbody></table></div><div class="checkout-total"><strong>Tổng hóa đơn kỳ cuối</strong><strong>@bill.TongTien.ToString("N0", vi) đ</strong></div></section>
+    <aside><section class="checkout-card"><h2>Thông tin tính toán</h2><dl class="checkout-facts"><div><dt>Kỳ tính tiền phòng</dt><dd>@bill.TuNgay.ToString("dd/MM/yyyy") – @bill.DenNgay.ToString("dd/MM/yyyy")</dd></div><div><dt>Đơn giá áp dụng</dt><dd>Tại ngày trả phòng</dd></div><div><dt>Trạng thái</dt><dd><span class="checkout-badge">@(bill.TrangThai == "NHAP" ? "Chưa phát hành" : bill.TrangThai == "DA_HUY" ? "Đã hủy" : "Đã phát hành")</span></dd></div></dl></section>
+    <section class="checkout-card"><h2>Dữ liệu đầu vào</h2>@foreach (var line in bill.ChiTiet.Where(x => x.DichVuId.HasValue)) { <p><strong>@line.TenKhoan</strong>: @line.ChiSoDau?.ToString("0.###", vi) → @line.ChiSoCuoi?.ToString("0.###", vi) @line.DonViTinh</p><p class="checkout-muted">@line.GhiChu</p> }</section></aside></div>
+    <div class="checkout-footer">
+    @if (!saved) {
+        <form method="post" asp-action="Tinh"><input asp-for="Input.HopDongId" type="hidden" /><input asp-for="Input.NgayTra" type="hidden" /><input asp-for="Input.ChiSoDien" type="hidden" /><input asp-for="Input.ChiSoNuoc" type="hidden" /><button class="btn btn-outline-secondary" type="submit" formaction="@Url.Action("Sua")">← Sửa dữ liệu bàn giao</button></form>
+        <form method="post" asp-action="Luu"><input asp-for="Input.HopDongId" type="hidden" /><input asp-for="Input.NgayTra" type="hidden" /><input asp-for="Input.ChiSoDien" type="hidden" /><input asp-for="Input.ChiSoNuoc" type="hidden" /><input asp-for="Input.DauVanTay" type="hidden" /><button class="btn checkout-primary" type="submit">Lưu hóa đơn kỳ cuối</button></form>
+    } else { <a class="btn btn-outline-secondary" asp-controller="HopDong" asp-action="Details" asp-route-id="@bill.HopDongId">← Về chi tiết hợp đồng</a><a class="btn checkout-primary" asp-action="Index">Chọn hợp đồng khác</a> }
+    </div>
+</div>

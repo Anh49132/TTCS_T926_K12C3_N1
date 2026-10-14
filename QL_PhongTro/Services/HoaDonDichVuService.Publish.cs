@@ -57,6 +57,7 @@ public sealed partial class HoaDonDichVuService
             ?? throw new InvalidOperationException("Không tìm thấy hóa đơn.");
         await KiemTraChuNhaAsync(actor, context.ToaNhaId);
         var bill = await db.HoaDons.Include(x => x.ChiTiet).SingleAsync(x => x.Id == input.Id);
+        if (bill.LoaiHoaDon == "KY_CUOI") throw new InvalidOperationException("Hóa đơn kỳ cuối chờ bước tất toán; chưa hỗ trợ phát hành ở bước ghi nhận trả phòng.");
         if (bill.TrangThai != "NHAP") throw new InvalidOperationException("Hóa đơn đã được phát hành hoặc không còn là Nháp. Hãy tải lại trang.");
         if (bill.PhienBan != input.PhienBan) throw new InvalidOperationException("Hóa đơn đã thay đổi sau khi kiểm tra. Hãy tải lại và xác nhận số tiền mới.");
         if (!input.XacNhan) throw new InvalidOperationException("Hãy xác nhận nội dung và tổng tiền trước khi phát hành.");

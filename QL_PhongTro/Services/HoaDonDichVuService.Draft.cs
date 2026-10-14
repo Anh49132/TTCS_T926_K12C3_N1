@@ -44,6 +44,7 @@ public sealed partial class HoaDonDichVuService
         await KiemTraChuNhaAsync(actor, building.Value);
         var invoice = await db.HoaDons.Include(x => x.ChiTiet).SingleAsync(x => x.Id == input.Id);
         if (invoice.TrangThai != "NHAP") throw new InvalidOperationException("Chỉ được sửa hóa đơn Nháp.");
+        if (invoice.LoaiHoaDon == "KY_CUOI") throw new InvalidOperationException("Hóa đơn kỳ cuối giữ nguyên dữ liệu bàn giao đã lưu; không sửa qua màn hình hóa đơn tháng.");
         if (invoice.PhienBan != input.PhienBan) throw new InvalidOperationException("Hóa đơn đã được sửa bởi người khác. Hãy tải lại trang.");
         var beforeHistory = SnapshotNhap(invoice);
         var meters = invoice.ChiTiet.Where(x => x.CachTinhApDung == CachTinhDichVu.TheoChiSo).ToDictionary(x => x.Id);

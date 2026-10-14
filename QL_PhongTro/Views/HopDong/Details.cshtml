@@ -11,6 +11,9 @@
     <div class="contract-heading ref-heading">
         <div><div class="ref-title"><h1>Hợp đồng @Model.HopDong.MaHopDong</h1><span class="ref-state state-@Model.HopDong.TrangThai">● &nbsp; @state</span></div><p>Phòng @Model.Phong · @Model.ToaNha</p></div>
         <div class="ref-heading-actions">
+            @if (User.IsInRole("CHU_NHA") && Model.XemTaiChinh && Model.HopDong.TrangThai == "DANG_HIEU_LUC") {
+                <a class="btn btn-primary" asp-controller="TraPhong" asp-action="Nhap" asp-route-id="@Model.HopDong.Id">Xử lý trả phòng</a>
+            }
             @if (people) { <a class="btn btn-outline-secondary" asp-action="Details" asp-route-id="@Model.HopDong.Id">▤ &nbsp; Xem hợp đồng</a> }
             else { <button type="button" class="btn btn-outline-secondary" onclick="window.print()">▤ &nbsp; In hợp đồng</button> }
             <a class="btn btn-outline-secondary" asp-action="LichSuNguoiO" asp-route-phongId="@Model.HopDong.PhongId">◷ &nbsp; Lịch sử người ở</a>

@@ -31,9 +31,9 @@ else
 @if (TempData["DraftError"] is string error) { <div class="alert alert-danger" role="alert">@error</div> }
 @if (TempData["DraftSuccess"] is string success) { <div class="alert alert-success" role="status">@success</div> }
 @if (!Model.XemTruoc) { <partial name="~/Views/HoaDonDichVu/_Cancellation.cshtml" model="Model" /> }
-@if (!Model.XemTruoc && invoice.TrangThai == "NHAP" && write) { <partial name="_DraftEditor" model="invoice" /><partial name="_PublishDraft" model="Model" /> }
+@if (!Model.XemTruoc && invoice.TrangThai == "NHAP" && write && invoice.LoaiHoaDon != "KY_CUOI") { <partial name="_DraftEditor" model="invoice" /><partial name="_PublishDraft" model="Model" /> }
 @if (!Model.XemTruoc && invoice.TrangThai == "DA_PHAT_HANH") { <div class="alert alert-light">Hóa đơn đã phát hành. Chỉ số, các khoản tiền và tổng tiền đã được khóa.</div> }
-@if(Model.XemTruoc || invoice.TrangThai!="NHAP" || !write){
+@if(Model.XemTruoc || invoice.TrangThai!="NHAP" || !write || invoice.LoaiHoaDon == "KY_CUOI"){
 <section class="mi-card"><h2>Chi tiết các khoản thu</h2>
 <div class="table-responsive"><table class="table id-charges"><thead><tr><th>Khoản thu</th><th>Cách tính</th><th>Số lượng</th><th class="text-end">Đơn giá</th><th class="text-end">Thành tiền</th></tr></thead><tbody>
 @foreach (var line in invoice.ChiTiet.OrderBy(x => x.SoThuTu))
