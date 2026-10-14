@@ -1,4 +1,10 @@
 
+### 14/10/2026 – S4-07:2 giai đoạn 2/6: schema v31
+- Thêm bảng chi phí/lịch sử riêng, view trạng thái, CHECK/FK/UNIQUE/index/trigger: một tổng phí, chỉ HOAN_THANH/Quản lý đúng phân công, hợp đồng gốc, tiền nguyên dương, nguồn hóa đơn NHAP giữ chỗ, chống hai khoản hiệu lực và giữ snapshot hủy/thay thế. Không tự tạo khoản thu/hóa đơn.
+- Chỉ nâng data/s407-cost/stage1-20261014-01/s407-cost-v30.sqlite: v31, integrity/FK đạt;45 bảng/299 bản ghi cũ giữ nguyên; thêm2 bảng rỗng và một dòng phiên bản. Rerun không đổi byte/schema/dữ liệu. Hash nguồn S407 và backup v30 giữ nguyên.
+- Build0 lỗi,22/22 test schema trên bản sao tạm đạt; không seed/reset và không có dữ liệu test vĩnh viễn trong bản thử nghiệm. Hai lỗi công cụ kiểm chứng (handle khi đọc hash/tuple-list) được xử lý ở test hoặc đối chiếu chỉ đọc, không sửa DB nghiệp vụ.
+- Không sửa service/controller/ViewModel/Razor; chưa chạy full suite/HTTP/UI, chưa commit/push/merge. Tích hợp giai đoạn3–5 và giới hạn fixture/optional invoice module ghi trong docs/S4-07-02-schema-v31.md. Dừng ở giai đoạn2.
+
 ### 14/10/2026 – S4-07:1: tiếp nhận và tiến độ báo hỏng
 - UI-01: thông báo thành công chuyển sang `_Toast` dùng chung, giữ tới khi đóng/rời trang; toast mặc định khác/lỗi vẫn tự ẩn3 giây. Chỉ sửa Details/_Toast/site.js, không đổi nghiệp vụ/DB. Build0 lỗi, 50/50 test báo hỏng đạt. Trình duyệt desktop1280/mobile360 xác minh thông báo, nút đóng, không lặp sau reload, lỗi không hiện success. Thử trên bản sao data/s407-ui01/demo/ui01.sqlite, SHA256 nguồn demo không đổi; hướng dẫn cập nhật runtime ở docs/S4-07-tiep-nhan-tien-do.md.
 - PO chốt Chủ nhà chỉ xem nội dung/ảnh/trạng thái/lịch sử thuộc tòa hiện sở hữu, kể cả hợp đồng kết thúc; không cập nhật/phản hồi. Giữ chuyển trạng thái/ghi chú bắt buộc của S4-06.
@@ -34,3 +40,18 @@
 - Nâng bản sao v29 giữ 43 bảng/280 dòng và ảnh, integrity/FK/rerun đạt. DB dùng thật và demo cũ không nâng. Demo mới localhost:5250, data/s406/tracking-latest.txt ignored.
 - Trình duyệt ID13: quản lý cập nhật Đang xử lý/gửi phản hồi, khách reload thấy cùng trang và 3 ảnh. DOM 360px không tràn; không chụp màn hình. Chưa nghiệm thu trực quan/Safari/review thành viên khác.
 - Phạm vi S4-06 đủ AC1–AC4 về chức năng; chưa triển khai thông báo tự động, khách trả lời, chi phí và phần khác của S4-07. Hướng dẫn tại docs/S4-06-trang-thai-phan-hoi.md. Nhánh bàn giao Task3: `feature/S4-06/3.maintenance-request-status-feedback-tracking`.
+# 14/10/2026 — S4-07:2 chi phí sửa chữa
+
+Theo phê duyệt mới, database demo chính S4-07 đã nâng v30→v31; dữ liệu cũ và backup v30 bảo toàn, integrity/FK và rerun đạt. Hoàn thiện service/POST/CSRF/quyền/phân công/transaction/chống trùng, chi tiết dùng chung ba vai trò và toast. Tích hợp bảo vệ snapshot hóa đơn nháp/hủy/thay thế, không tự đưa phí vào hóa đơn hay phát hành trên demo. Runtime launcher đã build mới tại data/s407/runtime. Báo cáo và AC/test: [docs/S4-07-02-chi-phi.md](docs/S4-07-02-chi-phi.md). Test ghi chỉ trên bản sao; chi phí demo chính vẫn0 dòng. Chờ nghiệm thu; không commit/push/merge.
+# 14/10/2026 — S4-07:2 xử lý lỗi nghiệm thu
+
+Đã sửa validation cập nhật ngay khi sửa tiền hợp lệ và hướng dẫn động theo bên chịu phí; server validation/phân quyền/schema giữ nguyên. 95/95 báo hỏng/chi phí PASS; hóa đơn162/164 PASS, hai lỗi nhãn được chạy lại trên baseline4364280 và cũng FAIL, không tự sửa ngoài phạm vi. Kiểm tra chống trùng/vòng đời hóa đơn PASS. SHA256 và snapshot mọi bảng database demo chính đầu/cuối khớp, dữ liệu nghiệm thu giữ nguyên. Runtime launcher đã build lại. Báo cáo: [docs/S4-07-02-xu-ly-loi.md](docs/S4-07-02-xu-ly-loi.md). Chờ nghiệm thu và quyết định hai lỗi hóa đơn cũ; không commit/push/merge.
+# 14/10/2026 — S4-07:2 RC-01 trước commit
+
+Sửa service chi phí để hỗ trợ database v31 chưa cài module hóa đơn: kiểm tra module trong transaction, bỏ truy vấn bảng không tồn tại khi module chưa cài, giữ khóa/chống trùng/kỳ phát hành khi có module; không tạo bảng hóa đơn. Thêm hai case tự tạo DB giả tái hiện FAIL trước sửa và kiểm tra lưu/sửa/lịch sử/replay/ba vai trò. Báo cáo tại docs/S4-07-02-chi-phi.md. Không tác động database demo gốc/backup, không sửa20FAIL cũ, không commit/push/merge; chờ duyệt.
+
+# 15/10/2026 — S4-07:02 rà soát để người dùng tự commit
+
+Sửa dấu ngoặc thừa khiến cài trigger hóa đơn v31 lỗi SQL; chuyển fixture schema chi phí sang dữ liệu giả tự tạo, không phụ thuộc backup ignored; bổ sung cách tính/đơn vị snapshot trên chi tiết hóa đơn. Thêm test lưu chi phí trước rồi cài module hóa đơn, giữ lịch sử và khóa nguồn đã liên kết. Không đổi công thức, không tự đưa phí vào hóa đơn, không chạy updater/seed trên demo.
+
+Rebuild 0 lỗi; smoke4/4 PASS; full suite871ca: **853PASS/18FAIL/0SKIP**, gồm **98/98 báo hỏng/chi phí và164/164 hóa đơn/dịch vụ PASS**. Hai lỗi nhãn hóa đơn cũ đã hết; 18FAIL còn lại trùng danh sách lỗi lịch sử ở module khác, không sửa assertion để che lỗi. Chưa nghiệm thu lại UI/mobile/Safari/SMTP. Chi tiết lỗi, lệnh chạy, bằng chứng và giới hạn: [docs/S4-07-02-ra-soat-20261015.md](docs/S4-07-02-ra-soat-20261015.md). Giữ thay đổi có sẵn và project test; không stage/commit/push.

@@ -17,7 +17,10 @@ else{<span>@line.SoLuong.ToString("0.###",CultureInfo.GetCultureInfo("vi-VN")) @
 </td><td>@line.DonGia.ToString("N0",CultureInfo.GetCultureInfo("vi-VN")) đ</td><td><strong>@line.ThanhTien.ToString("N0",CultureInfo.GetCultureInfo("vi-VN")) đ</strong></td></tr>
 }
 </tbody></table></div>
-@{ var existing = Model.ChiTiet.Where(x=>x.LoaiKhoan is "PHAT_SINH" or "GIAM_TRU").OrderBy(x=>x.SoThuTu).ToList(); }
+@foreach(var repair in Model.ChiTiet.Where(x => x.BaoHongId.HasValue)) {
+<p><strong>@repair.TenKhoan · @repair.ThanhTien.ToString("N0", CultureInfo.GetCultureInfo("vi-VN")) đ</strong><br/>Khoản sửa chữa đã liên kết báo hỏng – giữ nguyên nguồn và lịch sử.</p>
+}
+@{ var existing = Model.ChiTiet.Where(x=>!x.BaoHongId.HasValue && (x.LoaiKhoan is "PHAT_SINH" or "GIAM_TRU")).OrderBy(x=>x.SoThuTu).ToList(); }
 <h3>Khoản điều chỉnh</h3>
 <div id="draft-adjustments">
 @for(var i=0;i<existing.Count;i++){

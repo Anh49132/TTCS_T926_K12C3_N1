@@ -23,6 +23,11 @@ public sealed class TaoBaoHongViewModel
 }
 public sealed class BaoHongChiTiet
 {
+    public ChiPhiBaoHong? ChiPhi { get; set; }
+    public BaoHongChiPhiInput ChiPhiInput { get; set; } = new();
+    public bool ChiPhiDaKhoa { get; set; }
+    public string TrangThaiChiPhi { get; set; } = "";
+    public List<LichSuChiPhiBaoHong> LichSuChiPhi { get; set; } = [];
     public List<AnhBaoHong> Images { get; set; } = [];
     public List<BaoHongTraoDoi> TraoDois { get; set; } = [];
     public bool LaQuanLy { get; set; }

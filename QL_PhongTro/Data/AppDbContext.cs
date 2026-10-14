@@ -5,6 +5,8 @@ namespace QL_PhongTro.Data;
 
 public partial class AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor? httpContext = null) : DbContext(options)
 {
+    public DbSet<ChiPhiBaoHong> ChiPhiBaoHongs => Set<ChiPhiBaoHong>();
+    public DbSet<LichSuChiPhiBaoHong> LichSuChiPhiBaoHongs => Set<LichSuChiPhiBaoHong>();
     public DbSet<AnhBaoHong> AnhBaoHongs => Set<AnhBaoHong>();
     public DbSet<BaoHongTraoDoi> BaoHongTraoDois => Set<BaoHongTraoDoi>();
     public DbSet<BaoHong> BaoHongs => Set<BaoHong>();
@@ -42,6 +44,20 @@ public partial class AppDbContext(DbContextOptions<AppDbContext> options, IHttpC
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        var cost = modelBuilder.Entity<ChiPhiBaoHong>();
+        cost.Property(x => x.PhienBan).IsConcurrencyToken();
+        cost.HasIndex(x => x.BaoHongId).IsUnique();
+        cost.HasIndex(x => new { x.HopDongId, x.ChoThuKhach, x.KyDuKien });
+        cost.HasOne<BaoHong>().WithMany().HasForeignKey(x => x.BaoHongId).OnDelete(DeleteBehavior.Restrict);
+        cost.HasOne<HopDongThamChieu>().WithMany().HasForeignKey(x => x.HopDongId).OnDelete(DeleteBehavior.Restrict);
+        cost.HasOne<TaiKhoan>().WithMany().HasForeignKey(x => x.NguoiTaoId).OnDelete(DeleteBehavior.Restrict);
+        cost.HasOne<TaiKhoan>().WithMany().HasForeignKey(x => x.NguoiCapNhatId).OnDelete(DeleteBehavior.Restrict);
+        var costHistory = modelBuilder.Entity<LichSuChiPhiBaoHong>();
+        costHistory.HasIndex(x => x.KhoaChongTrung).IsUnique();
+        costHistory.HasIndex(x => new { x.ChiPhiId, x.PhienBanSau }).IsUnique();
+        costHistory.HasIndex(x => new { x.ChiPhiId, x.ThoiDiem, x.Id });
+        costHistory.HasOne<ChiPhiBaoHong>().WithMany().HasForeignKey(x => x.ChiPhiId).OnDelete(DeleteBehavior.Restrict);
+        costHistory.HasOne<TaiKhoan>().WithMany().HasForeignKey(x => x.NguoiCapNhatId).OnDelete(DeleteBehavior.Restrict);
         var photo = modelBuilder.Entity<AnhBaoHong>();
         photo.HasIndex(x => x.KhoaLuu).IsUnique();
         photo.HasIndex(x => new { x.BaoHongId, x.ThuTu }).IsUnique();

@@ -198,6 +198,7 @@ builder.Services.AddScoped<GhiThuHoaDonService>();
 builder.Services.AddSingleton(new BaoHongImageStore(databasePath + ".repair-images"));
 builder.Services.AddScoped<BaoHongService>();
 builder.Services.AddScoped<QuanLyBaoHongService>();
+builder.Services.AddScoped<BaoHongChiPhiService>();
 builder.Services.AddScoped<ChuNhaBaoHongService>();
 builder.Services.AddScoped<ChiSoDienNuocService>();
 builder.Services.AddScoped<RoomImageDeletionService>();

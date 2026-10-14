@@ -1,0 +1,37 @@
+@model QL_PhongTro.ViewModels.BaoHongChiTiet
+@{ var vn = System.Globalization.CultureInfo.GetCultureInfo("vi-VN"); }
+<section class="repairs-card" aria-labelledby="repair-cost-heading">
+<h2 id="repair-cost-heading">Chi phí sửa chữa</h2>
+@if (Model.ChiPhi is { } cost) {
+<dl><dt>Số tiền</dt><dd><strong>@cost.SoTien.ToString("N0", vn) đ</strong></dd>
+<dt>Bên chịu chi phí</dt><dd>@(cost.BenChiuPhi == "CHU_NHA" ? "Chủ nhà" : "Khách thuê")</dd>
+<dt>Trạng thái</dt><dd><span class="repairs-status">@(Model.TrangThaiChiPhi switch {
+"CHO_DUA_VAO_HOA_DON" => "Chờ đưa vào hóa đơn kỳ sau", "TRONG_HOA_DON_NHAP" => "Đã gắn vào hóa đơn nháp",
+"DA_DUA_VAO_HOA_DON" => "Đã đưa vào hóa đơn", "HOA_DON_DA_HUY" => "Hóa đơn đã hủy – giữ lịch sử", _ => "Chủ nhà chịu – không thu khách" })</span></dd>
+@if (cost.ChoThuKhach) { <dt>Kỳ dự kiến</dt><dd>@(cost.KyDuKien?.ToString("MM/yyyy") ?? "Chưa tìm được kỳ phù hợp của hợp đồng gốc")</dd> }
+<dt>Cập nhật</dt><dd>@cost.NgayCapNhat.AddHours(7).ToString("dd/MM/yyyy HH:mm")</dd></dl>
+@if (Model.ChiPhiDaKhoa) { <p>Chi phí đã gắn vào hóa đơn, không được chỉnh sửa. Lịch sử được giữ khi hóa đơn hủy hoặc thay thế.</p> }
+<details><summary>Lịch sử chi phí</summary><ol>
+@foreach (var entry in Model.LichSuChiPhi) { <li>@entry.ThoiDiem.AddHours(7).ToString("dd/MM/yyyy HH:mm") · @(entry.Loai == "TAO" ? "Ghi nhận" : "Chỉnh sửa") · @entry.SoTienSau.ToString("N0", vn) đ · @(entry.BenChiuPhiSau == "CHU_NHA" ? "Chủ nhà" : "Khách thuê")</li> }
+</ol></details>
+} else { <p>Chưa ghi nhận chi phí sửa chữa.</p> }
+@if (Model.LaQuanLy && Model.ChoPhepXuLy && Model.BaoHong.TrangThai == "HOAN_THANH" && !Model.ChiPhiDaKhoa) {
+<form asp-controller="QuanLyBaoHong" asp-action="ChiPhi" asp-route-id="@Model.BaoHong.Id" method="post" class="repair-management-form" data-repair-cost-form>
+<input asp-for="ChiPhiInput.PhienBan" type="hidden"/><input asp-for="ChiPhiInput.KhoaChongTrung" type="hidden"/>
+<label asp-for="ChiPhiInput.SoTien">Số tiền sửa chữa (VND)</label>
+<input asp-for="ChiPhiInput.SoTien" type="text" inputmode="numeric" pattern="[0-9]+" maxlength="19" required placeholder="350000"/>
+<span asp-validation-for="ChiPhiInput.SoTien" class="text-danger"></span>
+<label asp-for="ChiPhiInput.BenChiuPhi">Bên chịu chi phí</label>
+<select asp-for="ChiPhiInput.BenChiuPhi" required><option value="">Chọn bên chịu chi phí</option><option value="CHU_NHA">Chủ nhà</option><option value="KHACH_THUE">Khách thuê</option></select>
+<span asp-validation-for="ChiPhiInput.BenChiuPhi" class="text-danger"></span>
+<p data-cost-guidance aria-live="polite"
+   data-tenant="Khách thuê chịu: chờ đưa vào hóa đơn kỳ sau của hợp đồng gốc. Lưu chi phí không tự thêm vào hóa đơn."
+   data-owner="Chủ nhà chịu: không tạo khoản chờ thu từ khách thuê."
+   data-empty="Chọn bên chịu chi phí để xem hướng dẫn.">@(Model.ChiPhiInput.BenChiuPhi == "KHACH_THUE"
+       ? "Khách thuê chịu: chờ đưa vào hóa đơn kỳ sau của hợp đồng gốc. Lưu chi phí không tự thêm vào hóa đơn."
+       : Model.ChiPhiInput.BenChiuPhi == "CHU_NHA" ? "Chủ nhà chịu: không tạo khoản chờ thu từ khách thuê."
+       : "Chọn bên chịu chi phí để xem hướng dẫn.")</p>
+<button type="submit" class="btn btn-primary">Lưu chi phí sửa chữa</button>
+</form>
+} else if (Model.LaQuanLy && Model.BaoHong.TrangThai != "HOAN_THANH") { <p>Chỉ ghi nhận chi phí sau khi báo hỏng Hoàn thành.</p> }
+</section>

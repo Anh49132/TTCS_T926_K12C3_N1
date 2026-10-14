@@ -10,9 +10,37 @@ namespace QL_PhongTro.Controllers;
 
 [Authorize(Roles = "QUAN_LY"), ModuleAccess("BAO_HONG")]
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-public sealed class QuanLyBaoHongController(QuanLyBaoHongService service, BaoHongImageStore images) : Controller
+public sealed class QuanLyBaoHongController(QuanLyBaoHongService service, BaoHongImageStore images, BaoHongChiPhiService costs) : Controller
 {
     private int ActorId => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+    [HttpPost, ValidateAntiForgeryToken, ModuleAccess("BAO_HONG", write: true)]
+    public async Task<IActionResult> ChiPhi(int id, [Bind(Prefix = "ChiPhiInput")] BaoHongChiPhiInput input, CancellationToken ct)
+    {
+        try
+        {
+            if (ModelState.IsValid)
+            {
+                await costs.LuuAsync(ActorId, id, input, ct);
+                TempData["BaoHongSuccess"] = "Đã lưu chi phí sửa chữa.";
+                return RedirectToAction(nameof(Details), new { id });
+            }
+        }
+        catch (UnauthorizedAccessException) { return Forbid(); }
+        catch (KeyNotFoundException) { return NotFound(); }
+        catch (BaoHongValidationException ex) { ModelState.AddModelError(ex.Field.Length == 0 ? "" : "ChiPhiInput." + ex.Field, ex.Message); }
+        catch (ChiPhiConflictException ex) { Response.StatusCode = 409; ModelState.AddModelError("", ex.Message); }
+        catch (Exception ex) when (ex is SqliteException or DbUpdateException)
+        { ModelState.AddModelError("", "Chưa xác nhận được kết quả lưu. Hãy kiểm tra lịch sử hoặc thử lại cùng biểu mẫu."); }
+        try
+        {
+            var result = await service.ChiTietAsync(ActorId, id, ct);
+            if (result is null) return NotFound();
+            if (!result.ChoPhepXuLy) return Forbid();
+            result.ChiPhiInput = input;
+            return View("~/Views/BaoHong/Details.cshtml", result);
+        }
+        catch (UnauthorizedAccessException) { return Forbid(); }
+    }
     [HttpGet]
     public async Task<IActionResult> Index(int page = 1, CancellationToken ct = default)
     {

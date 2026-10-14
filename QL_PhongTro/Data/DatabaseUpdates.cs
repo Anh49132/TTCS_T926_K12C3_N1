@@ -7,7 +7,7 @@ namespace QL_PhongTro.Data;
 // Append new versions; never rewrite an update already shared with the team.
 public static class DatabaseUpdates
 {
-    internal const int CurrentVersion = 30;
+    internal const int CurrentVersion = 31;
     private static SqliteConnection Open(string path, bool readOnly)
     {
         var c = new SqliteConnection(new SqliteConnectionStringBuilder
@@ -70,6 +70,7 @@ public static class DatabaseUpdates
         foreach (var entity in db.Model.GetEntityTypes())
         {
             var table = entity.GetTableName()!;
+            if (schemaVersion < 31 && table is "chi_phi_bao_hong" or "lich_su_chi_phi_bao_hong") continue;
             if (table == "bao_hong_trao_doi" && schemaVersion < 30) continue;
             if (table == "anh_bao_hong" && schemaVersion < 29) continue;
             if (table == "bao_hong" && schemaVersion < 28) continue;
@@ -114,6 +115,7 @@ public static class DatabaseUpdates
         if (schemaVersion >= 28) BaoHongSchema.Validate(c);
         if (schemaVersion >= 29) AnhBaoHongSchema.Validate(c);
         if (schemaVersion >= 30) BaoHongTraoDoiSchema.Validate(c);
+        if (schemaVersion >= 31) BaoHongChiPhiSchema.Validate(c);
         Probe("password_reset_token", ["token_hash", "account_id", "expires_at", "used_at"]);
         Probe("password_reset_request", ["id", "email_key", "requested_at"]);
         Probe("account_session_version", ["account_id", "version"]);
@@ -469,6 +471,7 @@ public static class DatabaseUpdates
         if (version < 28) BaoHongSchema.Upgrade(c);
         if (version < 29) AnhBaoHongSchema.Upgrade(c);
         if (version < 30) BaoHongTraoDoiSchema.Upgrade(c);
+        if (version < 31) BaoHongChiPhiSchema.Upgrade(c);
         Check(path);
         Console.WriteLine($"Database updated to version {CurrentVersion}. Existing business rows preserved.");
     }

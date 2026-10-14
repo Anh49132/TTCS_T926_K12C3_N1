@@ -59,6 +59,7 @@ public sealed partial class HoaDonDichVuService
         var bill = await db.HoaDons.Include(x => x.ChiTiet).SingleAsync(x => x.Id == input.Id);
         if (bill.TrangThai != "NHAP") throw new InvalidOperationException("Hóa đơn đã được phát hành hoặc không còn là Nháp. Hãy tải lại trang.");
         if (bill.PhienBan != input.PhienBan) throw new InvalidOperationException("Hóa đơn đã thay đổi sau khi kiểm tra. Hãy tải lại và xác nhận số tiền mới.");
+        await ValidateRepairSnapshotsAsync(bill);
         if (!input.XacNhan) throw new InvalidOperationException("Hãy xác nhận nội dung và tổng tiền trước khi phát hành.");
         var dates = NgayHoaDon(input.NgayPhatHanh, input.HanThanhToan);
         if (bill.ChiTiet.Count == 0 || bill.ChiTiet.Any(x => x.DonGia < 0 || x.SoLuong < 0 || string.IsNullOrWhiteSpace(x.TenKhoan)))

@@ -4,5 +4,7 @@
 
 .repair-timeline{list-style:none;padding:0;margin:0}.repair-timeline li{padding:16px 0;border-bottom:1px solid #E9EAEC}.repair-timeline li:last-child{border-bottom:0}.repair-timeline time{display:block;color:#60646a;font-size:.9rem;margin-top:4px}.repair-history-status{font-weight:600;margin:10px 0}.repair-management-form label{display:block;margin:16px 0 6px;font-weight:600}.repair-management-form select,.repair-management-form textarea{width:100%;max-width:100%;box-sizing:border-box;padding:12px;border:1px solid #b6b9be;border-radius:8px;font:inherit}.repair-management-form textarea{resize:vertical}
 
+.repair-management-form input:not([type=hidden]){display:block;width:100%;max-width:100%;box-sizing:border-box;padding:12px;border:1px solid #b6b9be;border-radius:8px;font:inherit}
+
 /* Keep the existing account menu within the viewport on repair pages only. */
 @media(max-width:420px){body:has(.repairs-page) .latte-header-user{padding-left:.25rem}body:has(.repairs-page) .latte-header-user .sidebar-account .account-label strong,body:has(.repairs-page) .latte-header-user .sidebar-account .account-label small{max-width:4rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}

@@ -45,6 +45,7 @@ public sealed partial class HoaDonDichVuService
         var invoice = await db.HoaDons.Include(x => x.ChiTiet).SingleAsync(x => x.Id == input.Id);
         if (invoice.TrangThai != "NHAP") throw new InvalidOperationException("Chỉ được sửa hóa đơn Nháp.");
         if (invoice.PhienBan != input.PhienBan) throw new InvalidOperationException("Hóa đơn đã được sửa bởi người khác. Hãy tải lại trang.");
+        await ValidateRepairSnapshotsAsync(invoice);
         var beforeHistory = SnapshotNhap(invoice);
         var meters = invoice.ChiTiet.Where(x => x.CachTinhApDung == CachTinhDichVu.TheoChiSo).ToDictionary(x => x.Id);
         if (input.ChiSo.Count != meters.Count || input.ChiSo.Select(x => x.Id).Distinct().Count() != meters.Count
@@ -70,6 +71,8 @@ public sealed partial class HoaDonDichVuService
         }
         var adjustments = invoice.ChiTiet.Where(x => x.LoaiKhoan is "PHAT_SINH" or "GIAM_TRU").ToDictionary(x => x.Id);
         var editIds = additions.Where(x => x.Id.HasValue).Select(x => x.Id!.Value).ToList();
+        if (editIds.Concat(input.XoaKhoanIds).Any(id => adjustments.TryGetValue(id, out var line) && line.BaoHongId.HasValue))
+            throw new InvalidOperationException("Khoản sửa chữa đã liên kết báo hỏng được giữ nguyên, không sửa hoặc xóa trong hóa đơn nháp.");
         if (editIds.Distinct().Count() != editIds.Count || editIds.Any(x => !adjustments.ContainsKey(x))
             || input.XoaKhoanIds.Any(x => !adjustments.ContainsKey(x)) || editIds.Intersect(input.XoaKhoanIds).Any())
             throw new InvalidOperationException("Danh sách khoản điều chỉnh không hợp lệ.");

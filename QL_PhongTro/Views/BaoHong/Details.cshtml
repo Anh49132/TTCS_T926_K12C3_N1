@@ -9,6 +9,7 @@
     }
 }
 @section Styles { <link rel="stylesheet" href="~/css/tenant-repairs.css" asp-append-version="true" /> }
+@section Scripts { <script src="~/js/repair-cost.js" asp-append-version="true" defer></script> }
 <div class="repairs-page">
 <a asp-controller="@controller" asp-action="Index">← @(Model.LaQuanLy ? "Báo hỏng được phân công" : Model.LaChuNha ? "Báo hỏng tại tòa nhà của tôi" : "Báo hỏng của tôi")</a>
 <header><h1>@Model.BaoHong.MaBaoHong</h1><p>Chi tiết báo hỏng</p></header>
@@ -30,5 +31,6 @@
 </div> }
 </section>
 <partial name="~/Views/BaoHong/_TraoDoi.cshtml" model="Model" />
+<partial name="~/Views/BaoHong/_ChiPhi.cshtml" model="Model" />
 @if (Model.LaQuanLy) { <partial name="~/Views/BaoHong/_QuanLyXuLy.cshtml" model="Model" /> }
 </div>

@@ -72,6 +72,16 @@ public sealed class BaoHongService(AppDbContext db, ITimeProvider clock, BaoHong
     internal async Task LoadExtrasAsync(BaoHongChiTiet result, CancellationToken ct)
     {
         var id = result.BaoHong.Id;
+        result.ChiPhi = await db.ChiPhiBaoHongs.AsNoTracking().SingleOrDefaultAsync(x => x.BaoHongId == id, ct);
+        if (result.ChiPhi is not null)
+        {
+            result.TrangThaiChiPhi = await db.Database.SqlQuery<string>($"SELECT trang_thai_phan_bo AS Value FROM chi_phi_bao_hong_trang_thai WHERE bao_hong_id={id}").SingleAsync(ct);
+            result.ChiPhiDaKhoa = result.TrangThaiChiPhi is "TRONG_HOA_DON_NHAP" or "DA_DUA_VAO_HOA_DON" or "HOA_DON_DA_HUY";
+            result.ChiPhiInput.SoTien = result.ChiPhi.SoTien.ToString(CultureInfo.InvariantCulture);
+            result.ChiPhiInput.BenChiuPhi = result.ChiPhi.BenChiuPhi;
+            result.ChiPhiInput.PhienBan = result.ChiPhi.PhienBan;
+            result.LichSuChiPhi = await db.LichSuChiPhiBaoHongs.AsNoTracking().Where(x => x.ChiPhiId == result.ChiPhi.Id).OrderBy(x => x.PhienBanSau).ToListAsync(ct);
+        }
         result.Images = await db.AnhBaoHongs.AsNoTracking().Where(x => x.BaoHongId == id).OrderBy(x => x.ThuTu).ToListAsync(ct);
         result.TraoDois = await db.BaoHongTraoDois.AsNoTracking().Where(x => x.BaoHongId == id).OrderBy(x => x.ThoiDiem).ThenBy(x => x.Id).ToListAsync(ct);
     }
