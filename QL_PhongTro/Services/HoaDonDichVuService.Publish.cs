@@ -48,15 +48,24 @@ public sealed partial class HoaDonDichVuService
         return count;
     }
 
-    private async Task PhatHanhNhapCoreAsync(int actor, PhatHanhNhapViewModel input)
+    internal async Task PhatHanhKyCuoiTrongTatToanAsync(int actor,PhatHanhNhapViewModel input)
+    {
+        if(db.Database.CurrentTransaction is null)throw new InvalidOperationException("Cần transaction tất toán.");
+        await PhatHanhNhapCoreAsync(actor,input,true);
+    }
+
+    private async Task PhatHanhNhapCoreAsync(int actor, PhatHanhNhapViewModel input,bool trongTatToan=false)
     {
         var context = await (from invoice in db.HoaDons.AsNoTracking()
             join contract in db.HopDongs on invoice.HopDongId equals contract.Id
             join room in db.PhongTros on contract.PhongId equals room.Id
-            where invoice.Id == input.Id select new { room.Id, room.ToaNhaId, room.MaPhong, contract.KhachDungTenId }).SingleOrDefaultAsync()
+            where invoice.Id == input.Id select new { room.Id, room.ToaNhaId, room.MaPhong, contract.KhachDungTenId,ContractState=contract.TrangThai }).SingleOrDefaultAsync()
             ?? throw new InvalidOperationException("Không tìm thấy hóa đơn.");
         await KiemTraChuNhaAsync(actor, context.ToaNhaId);
+        if(context.ContractState=="DA_KET_THUC")throw new InvalidOperationException("Hợp đồng đã kết thúc, không được phát hành hóa đơn mới.");
         var bill = await db.HoaDons.Include(x => x.ChiTiet).SingleAsync(x => x.Id == input.Id);
+        if(bill.LoaiHoaDon=="KY_CUOI" && !trongTatToan)throw new InvalidOperationException("Hóa đơn kỳ cuối chỉ được phát hành khi xác nhận tất toán.");
+        if(trongTatToan && bill.LoaiHoaDon!="KY_CUOI")throw new InvalidOperationException("Chỉ phát hành hóa đơn kỳ cuối trong tất toán.");
         if (bill.TrangThai != "NHAP") throw new InvalidOperationException("Hóa đơn đã được phát hành hoặc không còn là Nháp. Hãy tải lại trang.");
         if (bill.PhienBan != input.PhienBan) throw new InvalidOperationException("Hóa đơn đã thay đổi sau khi kiểm tra. Hãy tải lại và xác nhận số tiền mới.");
         if (!input.XacNhan) throw new InvalidOperationException("Hãy xác nhận nội dung và tổng tiền trước khi phát hành.");
@@ -73,7 +82,10 @@ public sealed partial class HoaDonDichVuService
                 || decimal.Round(line.ChiSoDau.Value, 3) != line.ChiSoDau || decimal.Round(line.ChiSoCuoi.Value, 3) != line.ChiSoCuoi
                 || line.SoLuong != line.ChiSoCuoi.Value - line.ChiSoDau.Value))
                 throw new InvalidOperationException("Chỉ số trên hóa đơn không hợp lệ.");
-            if (ThanhTien(line.SoLuong, line.DonGia) != line.ThanhTien)
+            var expected=line.LoaiKhoan=="TIEN_PHONG" && line.SoNgayTinhTien.HasValue && line.SoNgayTrongThang.HasValue
+                ? TraPhongService.TienPhongTheoNgay(line.DonGia,line.SoNgayTinhTien.Value,line.SoNgayTrongThang.Value)
+                : ThanhTien(line.SoLuong,line.DonGia);
+            if (expected != line.ThanhTien)
                 throw new InvalidOperationException("Thành tiền không khớp chi tiết. Hãy lưu và kiểm tra lại bản nháp.");
         }
         if (TongCong(bill.ChiTiet) < 0 || TongCong(bill.ChiTiet) != bill.TongTien)

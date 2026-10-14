@@ -1,0 +1,7 @@
+@model List<QL_PhongTro.ViewModels.TatToanChon>
+@{ ViewData["Title"]="Bảng tất toán"; }
+@section Styles { <link rel="stylesheet" href="~/css/tat-toan.css" asp-append-version="true" /> }
+<div class="settlement-page"><h1>Bảng tất toán</h1><p class="st-muted">Đối chiếu cọc thực giữ, hóa đơn kỳ cuối, công nợ và các khoản hư hỏng.</p><section class="st-card">
+@if(Model.Count==0){<p>Chưa có bảng tất toán hoặc hợp đồng có hóa đơn kỳ cuối để lập bảng.</p>}
+@foreach(var row in Model){<div class="st-list-row"><div><strong>@row.MaHopDong</strong><p>Phòng @row.Phong · @row.ToaNha</p></div><a class="btn st-primary" asp-action="@(row.DaLuu?"ChiTiet":"Nhap")" asp-route-id="@row.Id">@(row.DaLuu?"Xem bảng tất toán":"Lập bảng tất toán") →</a></div>}
+</section></div>

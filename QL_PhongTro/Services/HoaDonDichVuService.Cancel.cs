@@ -24,6 +24,9 @@ public sealed partial class HoaDonDichVuService
 
     public async Task<string?> LyDoChanHuyAsync(int id)
     {
+        if(await db.Database.SqlQuery<int>($"SELECT COUNT(*) AS Value FROM sqlite_master WHERE type='table' AND name='thanh_ly_hop_dong'").SingleAsync()!=0
+            && await db.BangTatToans.AnyAsync(x=>x.TrangThai=="DA_CHOT" && db.HoaDons.Any(h=>h.Id==id && h.HopDongId==x.HopDongId)))
+            return "Hóa đơn thuộc bảng tất toán đã xác nhận, không được hủy.";
         // Optional future payment modules: refuse active/pending money instead of deleting or moving it.
         foreach (var (table, query) in new[] {
             ("thanh_toan", "SELECT COUNT(*) AS Value FROM thanh_toan WHERE hoa_don_id={0} AND (trang_thai NOT IN ('DA_HUY','TU_CHOI') OR trang_thai IS NULL)"),
@@ -74,6 +77,8 @@ public sealed partial class HoaDonDichVuService
         await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
         await using var tx = await db.Database.UseTransactionAsync(sqlite);
         var old = await OwnedInvoiceAsync(actor, id);
+        if(await db.HopDongs.AnyAsync(x=>x.Id==old.HopDongId && x.TrangThai=="DA_KET_THUC"))throw new InvalidOperationException("Hợp đồng đã kết thúc, không được tạo hóa đơn thay thế.");
+        if(old.LoaiHoaDon=="KY_CUOI")throw new InvalidOperationException("Cần tính lại kỳ cuối từ thông tin bàn giao; không sao chép hóa đơn tháng.");
         if (old.TrangThai != "DA_HUY" || old.PhienBan != version) throw new InvalidOperationException("Hóa đơn chưa hủy hoặc dữ liệu đã thay đổi. Hãy tải lại trang.");
         var existing = await db.HoaDons.Where(x => x.ThayTheHoaDonId == id).Select(x => (int?)x.Id).SingleOrDefaultAsync();
         if (existing.HasValue) return existing.Value; // Same request is safe to retry.

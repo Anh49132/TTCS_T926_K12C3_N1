@@ -1,0 +1,47 @@
+@model QL_PhongTro.ViewModels.TatToanViewModel
+@{ViewData["Title"]="Kiểm tra và xác nhận tất toán";var vi=System.Globalization.CultureInfo.GetCultureInfo("vi-VN");}
+@section Styles { <link rel="stylesheet" href="~/css/tat-toan.css" asp-append-version="true"/> }
+<div class="settlement-page">
+    <nav class="st-breadcrumb"><a asp-action="ChiTiet" asp-route-id="@Model.Input.HopDongId">Bảng tất toán</a> / @Model.MaHopDong / <strong>Xác nhận</strong></nav>
+    <h1>Kiểm tra và xác nhận tất toán</h1>
+    <p class="st-muted">Đối chiếu toàn bộ số liệu trước khi hoàn tất trả phòng.</p>
+    <partial name="_ThongTin" model="Model"/>
+    <div asp-validation-summary="All" class="alert alert-danger" role="alert"></div>
+    <div class="st-grid">
+        <section class="st-card">
+            <partial name="_ChamDutChiTiet" model="Model.ChamDut"/>
+            <h2 class="st-space">Các khoản khấu trừ</h2>
+            <div class="st-table-wrap"><table><thead><tr><th>Khoản khấu trừ</th><th>Số tiền</th><th>Ghi chú</th></tr></thead><tbody>
+                @foreach(var row in Model.Bang.KhauTru.OrderBy(x=>x.SoThuTu)){<tr><td>@row.TenKhoan</td><td>@row.SoTien.ToString("N0",vi) đ</td><td>@row.GhiChu</td></tr>}
+                @if(Model.Bang.KhauTru.Count==0){<tr><td colspan="3">Không có khoản khấu trừ.</td></tr>}
+            </tbody></table></div>
+            <partial name="_CongNo" model="Model"/>
+            @if(!string.IsNullOrWhiteSpace(Model.Bang.GhiChu)){<h3>Ghi chú tất toán</h3><p class="st-note-text">@Model.Bang.GhiChu</p>}
+        </section>
+        <aside class="st-card">
+            <partial name="_KetQua" model="Model"/>
+            <form asp-action="XemTruocXacNhan" method="post">
+                <input asp-for="Confirm.HopDongId" type="hidden"/><input asp-for="Confirm.PhienBan" type="hidden"/><input asp-for="Confirm.DauVanTay" type="hidden"/>
+                <label class="st-check"><input asp-for="Confirm.DaKiemTra" required/> Tôi đã kiểm tra các khoản tiền và chỉ số cuối kỳ.</label>
+                <div class="st-actions"><a class="btn btn-outline-secondary" asp-action="Nhap" asp-route-id="@Model.Input.HopDongId">Quay lại chỉnh sửa</a><button class="btn st-primary" type="submit">Xem trước &amp; xác nhận</button></div>
+            </form>
+        </aside>
+    </div>
+    @if(ViewData["ShowConfirmation"] is true)
+    {
+        <div class="st-confirm-overlay"><section class="st-confirm-dialog" role="dialog" aria-modal="true" aria-labelledby="confirm-title" tabindex="-1">
+            <a class="st-confirm-close" asp-action="XacNhan" asp-route-id="@Model.Input.HopDongId" aria-label="Quay lại kiểm tra">×</a>
+            <h2 id="confirm-title">Xác nhận hoàn tất trả phòng</h2>
+            <p class="st-muted">Vui lòng kiểm tra lần cuối trước khi kết thúc hợp đồng @Model.MaHopDong.</p>
+            <dl class="st-facts"><div><dt>Phòng</dt><dd>@Model.Phong · @Model.ToaNha</dd></div><div><dt>Khách thuê</dt><dd>@Model.Khach</dd></div><div><dt>Ngày trả thực tế</dt><dd>@Model.Bang.NgayTraPhong.ToString("dd/MM/yyyy")</dd></div></dl>
+            <div class="st-result @(Model.KetQua<0?"is-debit":"is-credit")"><strong>@(Model.KetQua<0?"Khách còn phải trả thêm":Model.KetQua>0?"Số tiền cần hoàn cho khách":"Không thu/hoàn thêm")</strong><strong>@Math.Abs(Model.KetQua).ToString("N0",vi) đ</strong></div>
+            <div class="st-notice"><strong>Sau khi xác nhận, hệ thống sẽ:</strong><ul><li>Phát hành hóa đơn kỳ cuối và lưu bảng tất toán cuối cùng.</li><li>Cấn cọc vào các hóa đơn còn nợ, khóa các khoản tiền đã chốt.</li><li>Đưa phòng về Trống và tạo tin nháp để Chủ nhà kiểm tra.</li><li>Chuyển hợp đồng sang Đã kết thúc, khóa tạo/phát hành hóa đơn mới.</li></ul><p>Đây là chốt nghĩa vụ; số tiền còn phải thu/hoàn được ghi nhận thực tế sau.</p><p class="text-danger">Thao tác này không thể hoàn tác trực tiếp.</p></div>
+            <form asp-action="HoanTat" method="post">
+                <input asp-for="Confirm.HopDongId" type="hidden"/><input asp-for="Confirm.PhienBan" type="hidden"/><input asp-for="Confirm.DauVanTay" type="hidden"/><input name="Confirm.DaKiemTra" value="true" type="hidden"/>
+                <label class="st-check"><input asp-for="Confirm.DongY" required/> Tôi xác nhận số liệu đã được hai bên đối chiếu.</label>
+                <div class="st-actions"><a class="btn btn-outline-secondary" asp-action="XacNhan" asp-route-id="@Model.Input.HopDongId">Quay lại kiểm tra</a><button class="btn st-primary" type="submit">Hoàn tất trả phòng</button></div>
+            </form>
+        </section></div>
+        <script>document.querySelector('.st-confirm-dialog')?.focus();</script>
+    }
+</div>

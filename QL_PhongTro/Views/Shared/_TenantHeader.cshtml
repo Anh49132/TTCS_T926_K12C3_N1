@@ -5,7 +5,7 @@
     var name = User.Identity?.Name ?? "Khách thuê";
     var controller = ViewContext.RouteData.Values["controller"]?.ToString();
     var action = ViewContext.RouteData.Values["action"]?.ToString();
-    string Active(string value) => controller == value && !(value == "Home" && action == "GioiThieu") ? "is-active" : "";
+    string Active(string value) => (controller == value || (controller == "TatToan" && value == "HopDongCuaToi")) && !(value == "Home" && action == "GioiThieu") ? "is-active" : "";
     var actor = int.TryParse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out var actorId) ? actorId : 0;
     var showNotifications = await NotificationPermissions.AllowsAsync("TAI_CHINH")
         && await QL_PhongTro.Services.InvoiceNotificationDispatcher.IsInstalledAsync(NotificationDb);

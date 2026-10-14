@@ -5,6 +5,12 @@ namespace QL_PhongTro.Data;
 
 public partial class AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor? httpContext = null) : DbContext(options)
 {
+    public DbSet<XacNhanTatToan> XacNhanTatToans => Set<XacNhanTatToan>();
+    public DbSet<LichSuTrangThaiPhong> LichSuTrangThaiPhongs => Set<LichSuTrangThaiPhong>();
+    public DbSet<ChamDutHopDong> ChamDutHopDongs => Set<ChamDutHopDong>();
+    public DbSet<GiaoDichCoc> GiaoDichCocs => Set<GiaoDichCoc>();
+    public DbSet<BangTatToan> BangTatToans => Set<BangTatToan>();
+    public DbSet<KhauTruTatToan> KhauTruTatToans => Set<KhauTruTatToan>();
     public DbSet<AnhBaoHong> AnhBaoHongs => Set<AnhBaoHong>();
     public DbSet<BaoHongTraoDoi> BaoHongTraoDois => Set<BaoHongTraoDoi>();
     public DbSet<BaoHong> BaoHongs => Set<BaoHong>();
@@ -42,6 +48,28 @@ public partial class AppDbContext(DbContextOptions<AppDbContext> options, IHttpC
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<XacNhanTatToan>().HasIndex(x=>x.HopDongId).IsUnique();
+        modelBuilder.Entity<XacNhanTatToan>().HasIndex(x=>x.ThanhLyId).IsUnique();
+        modelBuilder.Entity<XacNhanTatToan>().HasOne<BangTatToan>().WithMany().HasForeignKey(x=>x.ThanhLyId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<XacNhanTatToan>().HasOne<HopDongThamChieu>().WithMany().HasForeignKey(x=>x.HopDongId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<XacNhanTatToan>().HasOne<TaiKhoan>().WithMany().HasForeignKey(x=>x.NguoiXacNhanId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<LichSuTrangThaiPhong>().HasOne<PhongTro>().WithMany().HasForeignKey(x=>x.PhongId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<LichSuTrangThaiPhong>().HasOne<HopDongThamChieu>().WithMany().HasForeignKey(x=>x.HopDongId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<ChamDutHopDong>().HasIndex(x=>x.HopDongId).IsUnique();
+        modelBuilder.Entity<ChamDutHopDong>().HasIndex(x=>x.HoaDonCuoiId).IsUnique();
+        modelBuilder.Entity<ChamDutHopDong>().Property(x=>x.PhienBan).IsConcurrencyToken();
+        modelBuilder.Entity<ChamDutHopDong>().HasOne<HopDongThamChieu>().WithMany().HasForeignKey(x=>x.HopDongId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<ChamDutHopDong>().HasOne<HoaDon>().WithMany().HasForeignKey(x=>x.HoaDonCuoiId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<ChamDutHopDong>().HasOne<TaiKhoan>().WithMany().HasForeignKey(x=>x.NguoiCapNhatId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<GiaoDichCoc>().HasOne<HopDongThamChieu>().WithMany().HasForeignKey(x => x.HopDongId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<GiaoDichCoc>().HasOne<HoaDon>().WithMany().HasForeignKey(x => x.HoaDonId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<GiaoDichCoc>().HasOne<TaiKhoan>().WithMany().HasForeignKey(x => x.NguoiThucHienId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<BangTatToan>().HasIndex(x => x.HopDongId).IsUnique();
+        modelBuilder.Entity<BangTatToan>().Property(x => x.PhienBan).IsConcurrencyToken();
+        modelBuilder.Entity<BangTatToan>().HasOne<HopDongThamChieu>().WithMany().HasForeignKey(x => x.HopDongId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<BangTatToan>().HasOne<HoaDon>().WithMany().HasForeignKey(x => x.HoaDonCuoiId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<BangTatToan>().HasOne<TaiKhoan>().WithMany().HasForeignKey(x => x.NguoiLapId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<BangTatToan>().HasMany(x => x.KhauTru).WithOne().HasForeignKey(x => x.ThanhLyId).OnDelete(DeleteBehavior.Restrict);
         var photo = modelBuilder.Entity<AnhBaoHong>();
         photo.HasIndex(x => x.KhoaLuu).IsUnique();
         photo.HasIndex(x => new { x.BaoHongId, x.ThuTu }).IsUnique();

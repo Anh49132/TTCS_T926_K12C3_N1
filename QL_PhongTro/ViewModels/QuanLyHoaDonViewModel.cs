@@ -12,6 +12,6 @@ public sealed class DongQuanLyHoaDon {
  public string MaPhong {get;set;}=""; public string TenKhach {get;set;}="";
  public int Nam {get;set;} public int Thang {get;set;} public string TrangThai {get;set;}="";
  public DateOnly? NgayPhatHanh {get;set;} public DateOnly HanThanhToan {get;set;}
- public long TongTien {get;set;} public long DaThu {get;set;} public bool QuaHan {get;set;}
- public string HienThi => TrangThai=="NHAP" ? "Nháp" : TrangThai=="DA_HUY" ? "Đã hủy" : DaThu>=TongTien ? "Đã thanh toán" : QuaHan ? "Quá hạn" : DaThu>0 ? "Trả một phần" : "Chờ thanh toán";
+ public long TongTien {get;set;} public long DaThu {get;set;} public bool QuaHan {get;set;} public long DaCanTru {get;set;} public long ConNo=>checked(TongTien-DaThu-DaCanTru);
+ public string HienThi => TrangThai=="NHAP" ? "Nháp" : TrangThai=="DA_HUY" ? "Đã hủy" : ConNo<=0 ? "Đã thanh toán" : QuaHan ? "Quá hạn" : DaThu>0 || DaCanTru>0 ? "Trả một phần" : "Chờ thanh toán";
 }

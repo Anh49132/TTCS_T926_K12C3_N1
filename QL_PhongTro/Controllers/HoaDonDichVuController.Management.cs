@@ -28,9 +28,11 @@ public partial class HoaDonDichVuController
                 TongTien=bill.TongTien,
                 DaThu=db.ThanhToans.Where(t=>t.HoaDonId==bill.Id && t.TrangThai=="DA_XAC_NHAN").Sum(t=>(long?)t.SoTien) ?? 0
             }).ToListAsync();
-        foreach(var row in rows) row.QuaHan = row.TrangThai=="DA_PHAT_HANH" && row.DaThu<row.TongTien && row.HanThanhToan<today;
+        var offsets=await QL_PhongTro.Services.CanTruHoaDonQueries.LayAsync(db,rows.Select(x=>x.Id));
+        foreach(var row in rows)row.DaCanTru=offsets.GetValueOrDefault(row.Id);
+        foreach(var row in rows) row.QuaHan = row.TrangThai=="DA_PHAT_HANH" && row.ConNo>0 && row.HanThanhToan<today;
         model.SoNhap=rows.Count(r=>r.TrangThai=="NHAP");
-        model.SoCho=rows.Count(r=>r.TrangThai=="DA_PHAT_HANH" && r.DaThu<r.TongTien);
+        model.SoCho=rows.Count(r=>r.TrangThai=="DA_PHAT_HANH" && r.ConNo>0);
         model.SoQuaHan=rows.Count(r=>r.QuaHan);
         model.DaThuThang=await (from t in db.ThanhToans join h in db.HoaDons on t.HoaDonId equals h.Id
             join c in db.HopDongs on h.HopDongId equals c.Id join r in db.PhongTros on c.PhongId equals r.Id

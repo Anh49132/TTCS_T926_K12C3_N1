@@ -189,7 +189,7 @@ public sealed partial class PermissionTests
     public async Task ApprovedCancellationFailsClosedForUnknownDepositSchema()
     {
         var id = ApprovedCancellationFixture();
-        Execute("CREATE TABLE giao_dich_coc(id INTEGER PRIMARY KEY)");
+        Execute("DROP TABLE giao_dich_coc; CREATE TABLE giao_dich_coc(id INTEGER PRIMARY KEY)");
         await Assert.ThrowsAsync<InvalidOperationException>(() => CancelApproved(id));
         Assert.Equal("DA_DUYET", Scalar("SELECT trang_thai FROM yeu_cau_thue WHERE id=$id", ("$id", id)));
     }
