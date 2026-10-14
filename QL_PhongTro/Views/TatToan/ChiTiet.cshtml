@@ -1,0 +1,10 @@
+@model QL_PhongTro.ViewModels.TatToanViewModel
+@{ViewData["Title"]="Chi tiết bảng tất toán";var vi=System.Globalization.CultureInfo.GetCultureInfo("vi-VN");}
+@section Styles { <link rel="stylesheet" href="~/css/tat-toan.css" asp-append-version="true" /> }
+<div class="settlement-page"><nav class="st-breadcrumb"><a asp-action="Index">Bảng tất toán</a> / @Model.MaHopDong / <strong>Chi tiết</strong></nav><h1>Bảng tất toán chi tiết <span class="st-badge">@(Model.Bang.TrangThai=="NHAP"?"Bản nháp":"Đã chốt")</span></h1><p class="st-muted">@Model.Bang.Ma · Cập nhật @Model.Bang.CapNhatLuc.AddHours(7).ToString("dd/MM/yyyy HH:mm")</p>
+@if(TempData["TatToanSuccess"] is {} message){<div class="alert alert-success">@message</div>}
+<partial name="_ThongTin" model="Model"/><div class="st-notice">Đây là bảng số liệu đã lưu, chủ nhà và khách thuê xem cùng một bản. Bảng nháp có thể thay đổi khi chủ nhà đối chiếu và lưu lại; chưa xác nhận hoàn tất trả phòng.</div>
+<div class="st-grid"><section class="st-card"><partial name="_ChamDutChiTiet" model="Model.ChamDut"/><h2 class="st-space">Các khoản khấu trừ</h2><div class="st-table-wrap"><table><thead><tr><th>Tên khoản</th><th>Số tiền</th><th>Ghi chú</th></tr></thead><tbody>
+@foreach(var row in Model.Bang.KhauTru.OrderBy(x=>x.SoThuTu)){<tr data-deduction-type="@row.LoaiKhoan"><td>@row.TenKhoan</td><td><strong>@row.SoTien.ToString("N0",vi) đ</strong></td><td>@row.GhiChu</td></tr>}
+@if(Model.Bang.KhauTru.Count==0){<tr><td colspan="3">Không có khoản khấu trừ hư hỏng.</td></tr>}
+</tbody></table></div><partial name="_CongNo" model="Model"/>@if(!string.IsNullOrWhiteSpace(Model.Bang.GhiChu)){<h3 class="st-space">Ghi chú tất toán</h3><p class="st-note-text">@Model.Bang.GhiChu</p>}</section><aside class="st-card"><partial name="_KetQua" model="Model"/><div class="st-actions"><a class="btn btn-outline-secondary" asp-action="Index">Quay lại</a>@if(Model.DuocSua){<a class="btn st-primary" asp-action="Nhap" asp-route-id="@Model.Input.HopDongId">Sửa bảng nháp</a>}</div></aside></div></div>

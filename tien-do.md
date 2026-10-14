@@ -1,3 +1,11 @@
+### 14/10/2026 – S4-04 task 2: bảng tất toán cọc và khấu trừ
+- PO xác nhận dùng cọc thực giữ, trừ thanh toán/cấn cọc đã xác nhận khỏi nợ; kết quả = cọc − dư nợ kỳ cuối − nợ kỳ trước − hư hỏng. Làm tròn từng khoản AwayFromZero; hư hỏng cho phép bằng 0, không cho âm/tên rỗng.
+- Theo yêu cầu người dùng, khôi phục task 1 đang thiếu ở HEAD 29d4f02, nối hóa đơn kỳ cuối sang bảng tất toán. Chủ nhà thêm/sửa/xóa hư hỏng, xem dự tính từ máy chủ, lưu/sửa NHAP; khách xem cùng snapshot, không sửa. ADMIN chỉ xem, QUAN_LY không truy cập tài chính.
+- Schema v31 bổ sung sổ cọc, bảng tất toán và chi tiết khấu trừ; phiên bản/dấu vân tay nguồn, BEGIN IMMEDIATE, FK RESTRICT, audit và rollback. Không thu/hoàn/cấn cọc trên UI, không phạt, chốt/kết thúc hợp đồng/đổi trạng thái phòng/PDF.
+- Nâng trên bản sao DB giả v30: bảo toàn hash tất cả dòng/cột cũ, backup, integrity/FK và rerun đạt. DB local vẫn giữ nguyên v5/chưa có module hợp đồng/hóa đơn.
+- Demo riêng localhost:5252; New-S404Demo.ps1/Start-S404Demo.ps1, tài khoản ngẫu nhiên trong access.json ignored. Edge desktop/360px: thêm/sửa/xóa, dự tính/lưu, khách xem cùng số liệu, sửa/khách lạ 403; không tràn ngang ở 360px. Chưa Safari/thiết bị thật, review/hợp nhất nhánh.
+- Build cuối đạt; 121/121 test liên quan đạt (38 S4-04/khôi phục task 1 + 83 hồi quy). HTTP danh sách chủ nhà/khách 200; Edge lượt cuối đạt trên data/s404-task2-final, ảnh/report ignored browser-check-c27c22b6. Demo integrity=ok/FK=0. Cảnh báo ImageSharp/CS8601 có sẵn.
+- Bàn giao và lệnh kiểm thử: [docs/S4-04-tat-toan-task2.md](docs/S4-04-tat-toan-task2.md).
 
 ### 13/10/2026 – Dữ liệu kiểm thử Sprint 3 bổ sung
 - Thêm vào DB local tòa kiểm thử ID 7 cho tài khoản chủ nhà được yêu cầu: 60 phòng, 54 hợp đồng, 54 tài khoản khách mẫu, 6 yêu cầu, 6 hóa đơn. Giữ dữ liệu và tài khoản cũ.
@@ -25,3 +33,12 @@
 - Nâng bản sao v29 giữ 43 bảng/280 dòng và ảnh, integrity/FK/rerun đạt. DB dùng thật và demo cũ không nâng. Demo mới localhost:5250, data/s406/tracking-latest.txt ignored.
 - Trình duyệt ID13: quản lý cập nhật Đang xử lý/gửi phản hồi, khách reload thấy cùng trang và 3 ảnh. DOM 360px không tràn; không chụp màn hình. Chưa nghiệm thu trực quan/Safari/review thành viên khác.
 - Phạm vi S4-06 đủ AC1–AC4 về chức năng; chưa triển khai thông báo tự động, khách trả lời, chi phí và phần khác của S4-07. Hướng dẫn tại docs/S4-06-trang-thai-phan-hoi.md. Nhánh bàn giao Task3: `feature/S4-06/3.maintenance-request-status-feedback-tracking`.
+
+### 15/10/2026 – S4-04 task 3: chấm dứt trước hạn và phạt cọc
+- Khôi phục task 1–2 từ commit 79d428a trên nhánh task 3 bắt đầu ở 29d4f02. Chưa commit/push.
+- PO chốt: ngày trả < ngày kết thúc kỳ cuối (kể cả gia hạn); 4 lý do, Khác cần ghi rõ; Có phạt thì số nguyên đồng >0 và ≤ cọc thỏa thuận, Không phạt =0.
+- Đã thêm chọn lý do/Có–Không/mức phạt ở trả phòng và tất toán, lưu cùng transaction, hiển thị cho chủ nhà/khách thuê; PHAT_COC riêng tối đa một dòng, không cộng lặp hư hỏng, cập nhật tổng khấu trừ và hoàn/trả thêm.
+- Schema v32 thêm cham_dut_hop_dong, tien_phat và loai_khoan; unique/ CHECK/FK RESTRICT/trigger, snapshot/phiên bản/fingerprint chống stale, audit không ghi nội dung lý do khác. Giữ bước v31; nâng bản sao v31 có dữ liệu, bảo toàn mọi cột cũ, backup/integrity/FK/rerun đạt. Không nâng DB local v5 hoặc demo task 2 v31.
+- Build đạt; 145/145 test liên quan đạt (24 task 3 + 121 hồi quy). Edge kiểm tra trả phòng, đổi Có/Không, thêm/sửa/xóa hư hỏng, lưu một dòng phạt, khách xem cùng số liệu, 403 khi sửa/trái sở hữu; DOM 360px không tràn. Ảnh/report ở browser-check-* trong bộ demo ignored.
+- Demo riêng localhost:5253; data/s404-task3-demo/latest.txt trỏ bộ mới. Cọc 7m − cuối 1.863.742 − cũ 1.2m − hư hỏng450k − phạt3.5m => khách trả thêm13.742đ. New-S404Demo.ps1/Start-S404Demo.ps1 có -Task3; không ghi đè demo cũ.
+- Chưa xác nhận/chốt tất toán, kết thúc hợp đồng/phòng/tin, ghi CAN_TRU/hoàn cọc hay PDF. Khi làm bước chốt phải chuyển phạt/hư hỏng thành PHAT_SINH và tránh cộng hai lần theo AGENTS 7.6. Chưa nghiệm thu Safari/thiết bị thật/review thành viên khác. Hướng dẫn: docs/S4-04-cham-dut-truoc-han-task3.md.

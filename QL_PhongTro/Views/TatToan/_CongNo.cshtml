@@ -1,0 +1,5 @@
+@model QL_PhongTro.ViewModels.TatToanViewModel
+@{ var vi=System.Globalization.CultureInfo.GetCultureInfo("vi-VN"); }
+<details class="st-debts"><summary>Đối chiếu chi tiết hóa đơn và thanh toán</summary><div class="st-table-wrap"><table><thead><tr><th>Hóa đơn</th><th>Tổng tiền</th><th>Đã thanh toán</th><th>Đã cấn cọc</th><th>Còn nợ</th></tr></thead><tbody>
+@foreach(var row in Model.CongNo){<tr><td><strong>@row.MaHoaDon</strong><small>@row.Thang.ToString("00")/@row.Nam @(row.KyCuoi?"· Kỳ cuối":"")</small></td><td>@row.TongTien.ToString("N0",vi) đ</td><td>@row.DaThanhToan.ToString("N0",vi) đ</td><td>@row.DaCanTru.ToString("N0",vi) đ</td><td><strong>@row.ConNo.ToString("N0",vi) đ</strong></td></tr>}
+</tbody></table></div><p class="st-muted">Chỉ các khoản thanh toán/cấn trừ đã xác nhận được trừ nợ. Hóa đơn kỳ trước ở trạng thái nháp hoặc đã hủy không được cộng vào công nợ.</p></details>
