@@ -23,6 +23,7 @@ public sealed class TaoBaoHongViewModel
 }
 public sealed class BaoHongChiTiet
 {
+    public BaoHongCanhBao? CanhBaoQuaHan { get; set; }
     public ChiPhiBaoHong? ChiPhi { get; set; }
     public BaoHongChiPhiInput ChiPhiInput { get; set; } = new();
     public bool ChiPhiDaKhoa { get; set; }
@@ -41,4 +42,9 @@ public sealed class BaoHongChiTiet
     public string TenToaNha { get; init; } = "";
     public string MaHopDong { get; init; } = "";
     public string TenNguoiBao { get; init; } = "";
+}
+
+public sealed record BaoHongCanhBao(TimeSpan ThoiGianCho)
+{
+    public string ThoiGianChoHienThi => $"{(long)ThoiGianCho.Days * 24 + ThoiGianCho.Hours} giờ {ThoiGianCho.Minutes} phút";
 }

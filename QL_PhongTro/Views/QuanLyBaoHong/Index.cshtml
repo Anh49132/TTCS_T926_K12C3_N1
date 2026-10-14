@@ -8,7 +8,10 @@
     <section class="repairs-card"><p>@(page == 1 ? "Chưa có báo hỏng trong phạm vi của bạn." : "Không có báo hỏng trên trang này.")</p></section>
 }
 @foreach (var row in Model.Take(20)) {
-    <article class="repairs-card">
+    <article class="repairs-card @(!owner && row.CanhBaoQuaHan is not null ? "repairs-card-overdue" : "")">
+        @if (!owner && row.CanhBaoQuaHan is { } warning) {
+            <partial name="~/Views/BaoHong/_CanhBaoQuaHan.cshtml" model="warning" />
+        }
         <span class="repairs-status">@QL_PhongTro.Services.BaoHongService.TenTrangThai(row.BaoHong.TrangThai)</span>
         <h2><a asp-action="Details" asp-route-id="@row.BaoHong.Id">@row.BaoHong.MaBaoHong</a></h2>
         <p>@row.MaPhong · @row.TenToaNha</p><strong>@row.BaoHong.LoaiThietBi</strong>

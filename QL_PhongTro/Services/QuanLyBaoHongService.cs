@@ -49,8 +49,11 @@ public sealed class QuanLyBaoHongService(AppDbContext db, ITimeProvider clock, B
     public async Task<List<BaoHongChiTiet>> DanhSachAsync(int managerId, int page, CancellationToken ct = default)
     {
         await ActorAsync(managerId, false, ct);
-        return await Rows(managerId).OrderByDescending(x => x.BaoHong.Id)
+        var rows = await Rows(managerId).OrderByDescending(x => x.BaoHong.Id)
             .Skip((Math.Clamp(page, 1, 100000) - 1) * 20).Take(21).ToListAsync(ct);
+        var now = clock.UtcNow;
+        foreach (var row in rows) row.CanhBaoQuaHan = BaoHongCanhBaoService.DanhGia(row.BaoHong, now);
+        return rows;
     }
 
     public async Task<BaoHongChiTiet?> ChiTietAsync(int managerId, int id, CancellationToken ct = default)
@@ -59,6 +62,7 @@ public sealed class QuanLyBaoHongService(AppDbContext db, ITimeProvider clock, B
         var result = await ScopedAsync(managerId, id, ct);
         if (result is null) return null;
         await tenantService.LoadExtrasAsync(result, ct);
+        result.CanhBaoQuaHan = BaoHongCanhBaoService.DanhGia(result.BaoHong, clock.UtcNow);
         result.LaQuanLy = true; result.ChoPhepXuLy = actor.CanWrite;
         result.TrangThaiTiepTheo = TrangThaiTiepTheo(result.BaoHong.TrangThai);
         result.CapNhat.PhienBan = result.BaoHong.PhienBan;

@@ -14,6 +14,9 @@
 <a asp-controller="@controller" asp-action="Index">← @(Model.LaQuanLy ? "Báo hỏng được phân công" : Model.LaChuNha ? "Báo hỏng tại tòa nhà của tôi" : "Báo hỏng của tôi")</a>
 <header><h1>@Model.BaoHong.MaBaoHong</h1><p>Chi tiết báo hỏng</p></header>
 <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+@if (Model.LaQuanLy && Model.CanhBaoQuaHan is { } warning) {
+    <partial name="~/Views/BaoHong/_CanhBaoQuaHan.cshtml" model="warning" />
+}
 <section class="repairs-card">
 <span class="repairs-status">@QL_PhongTro.Services.BaoHongService.TenTrangThai(Model.BaoHong.TrangThai)</span>
 <dl><dt>Phòng</dt><dd>@Model.MaPhong · @Model.TenToaNha</dd>
