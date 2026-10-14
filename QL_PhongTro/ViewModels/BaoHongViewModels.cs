@@ -26,6 +26,7 @@ public sealed class BaoHongChiTiet
     public List<AnhBaoHong> Images { get; set; } = [];
     public List<BaoHongTraoDoi> TraoDois { get; set; } = [];
     public bool LaQuanLy { get; set; }
+    public bool LaChuNha { get; set; }
     public bool ChoPhepXuLy { get; set; }
     public List<string> TrangThaiTiepTheo { get; set; } = [];
     public BaoHongPhanHoiInput PhanHoi { get; set; } = new();
@@ -34,4 +35,5 @@ public sealed class BaoHongChiTiet
     public string MaPhong { get; init; } = "";
     public string TenToaNha { get; init; } = "";
     public string MaHopDong { get; init; } = "";
+    public string TenNguoiBao { get; init; } = "";
 }

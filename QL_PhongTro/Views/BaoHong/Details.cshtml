@@ -1,15 +1,23 @@
 @model QL_PhongTro.ViewModels.BaoHongChiTiet
-@{ ViewData["Title"] = Model.BaoHong.MaBaoHong; var controller = Model.LaQuanLy ? "QuanLyBaoHong" : "BaoHong"; }
+@{
+    ViewData["Title"] = Model.BaoHong.MaBaoHong;
+    var controller = Model.LaQuanLy ? "QuanLyBaoHong" : Model.LaChuNha ? "ChuNhaBaoHong" : "BaoHong";
+    if (TempData["BaoHongSuccess"] is string message)
+    {
+        ViewData["ToastSuccess"] = message;
+        ViewData["ToastPersistent"] = true;
+    }
+}
 @section Styles { <link rel="stylesheet" href="~/css/tenant-repairs.css" asp-append-version="true" /> }
 <div class="repairs-page">
-<a asp-controller="@controller" asp-action="Index">← @(Model.LaQuanLy ? "Báo hỏng được phân công" : "Báo hỏng của tôi")</a>
+<a asp-controller="@controller" asp-action="Index">← @(Model.LaQuanLy ? "Báo hỏng được phân công" : Model.LaChuNha ? "Báo hỏng tại tòa nhà của tôi" : "Báo hỏng của tôi")</a>
 <header><h1>@Model.BaoHong.MaBaoHong</h1><p>Chi tiết báo hỏng</p></header>
-@if (TempData["BaoHongSuccess"] is string message) { <p role="status" class="repairs-success">@message</p> }
 <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 <section class="repairs-card">
 <span class="repairs-status">@QL_PhongTro.Services.BaoHongService.TenTrangThai(Model.BaoHong.TrangThai)</span>
 <dl><dt>Phòng</dt><dd>@Model.MaPhong · @Model.TenToaNha</dd>
 <dt>Hợp đồng</dt><dd>@Model.MaHopDong</dd>
+<dt>Người gửi</dt><dd>@Model.TenNguoiBao</dd>
 <dt>Loại thiết bị</dt><dd>@Model.BaoHong.LoaiThietBi</dd>
 <dt>Mức độ</dt><dd>@(Model.BaoHong.MucDo == "GAP" ? "Gấp" : "Thường")</dd>
 <dt>Thời điểm gửi</dt><dd>@Model.BaoHong.NgayTao.AddHours(7).ToString("dd/MM/yyyy HH:mm")</dd>

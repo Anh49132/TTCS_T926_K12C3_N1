@@ -1,18 +1,20 @@
 @model List<QL_PhongTro.ViewModels.BaoHongChiTiet>
-@{ ViewData["Title"] = "Báo hỏng được phân công"; var page = (int)(ViewData["Page"] ?? 1); }
+@{ var owner = ViewData["LaChuNha"] is true; var title = owner ? "Báo hỏng tại tòa nhà của tôi" : "Báo hỏng được phân công";
+   ViewData["Title"] = title; var page = (int)(ViewData["Page"] ?? 1); }
 @section Styles { <link rel="stylesheet" href="~/css/tenant-repairs.css" asp-append-version="true" /> }
 <div class="repairs-page">
-<header><h1>Báo hỏng được phân công</h1><p>Các báo hỏng tại tòa nhà bạn đang quản lý.</p></header>
+<header><h1>@title</h1><p>@(owner ? "Theo dõi tiến độ tại các tòa nhà bạn hiện sở hữu." : "Các báo hỏng tại tòa nhà bạn đang quản lý.")</p></header>
 @if (Model.Count == 0) {
-    <section class="repairs-card"><p>@(page == 1 ? "Chưa có báo hỏng trong phạm vi được phân công." : "Không có báo hỏng trên trang này.")</p></section>
+    <section class="repairs-card"><p>@(page == 1 ? "Chưa có báo hỏng trong phạm vi của bạn." : "Không có báo hỏng trên trang này.")</p></section>
 }
 @foreach (var row in Model.Take(20)) {
     <article class="repairs-card">
         <span class="repairs-status">@QL_PhongTro.Services.BaoHongService.TenTrangThai(row.BaoHong.TrangThai)</span>
         <h2><a asp-action="Details" asp-route-id="@row.BaoHong.Id">@row.BaoHong.MaBaoHong</a></h2>
         <p>@row.MaPhong · @row.TenToaNha</p><strong>@row.BaoHong.LoaiThietBi</strong>
+        <p class="repairs-description">@row.BaoHong.MoTa</p>
         <p>@(row.BaoHong.MucDo == "GAP" ? "Gấp" : "Thường") · @row.BaoHong.NgayTao.AddHours(7).ToString("dd/MM/yyyy HH:mm")</p>
-        <a asp-action="Details" asp-route-id="@row.BaoHong.Id">Xem và xử lý →</a>
+        <a asp-action="Details" asp-route-id="@row.BaoHong.Id">@(owner ? "Xem tiến độ →" : "Xem và xử lý →")</a>
     </article>
 }
 <nav class="repairs-actions" aria-label="Phân trang báo hỏng">

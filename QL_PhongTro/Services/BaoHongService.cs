@@ -51,7 +51,8 @@ public sealed class BaoHongService(AppDbContext db, ITimeProvider clock, BaoHong
         join p in db.PhongTros on b.PhongId equals p.Id
         join t in db.ToaNhas on p.ToaNhaId equals t.Id
         join h in db.HopDongs on b.HopDongId equals h.Id
-        select new BaoHongChiTiet { BaoHong = b, MaPhong = p.MaPhong, TenToaNha = t.TenToaNha, MaHopDong = h.MaHopDong };
+        join a in db.TaiKhoans on b.NguoiBaoId equals a.Id
+        select new BaoHongChiTiet { BaoHong = b, MaPhong = p.MaPhong, TenToaNha = t.TenToaNha, MaHopDong = h.MaHopDong, TenNguoiBao = a.HoTen };
 
     public async Task<List<BaoHongChiTiet>> DanhSachAsync(int actorId, int page, CancellationToken ct = default)
     {

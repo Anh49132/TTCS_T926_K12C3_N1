@@ -1,4 +1,13 @@
 
+### 14/10/2026 – S4-07:1: tiếp nhận và tiến độ báo hỏng
+- UI-01: thông báo thành công chuyển sang `_Toast` dùng chung, giữ tới khi đóng/rời trang; toast mặc định khác/lỗi vẫn tự ẩn3 giây. Chỉ sửa Details/_Toast/site.js, không đổi nghiệp vụ/DB. Build0 lỗi, 50/50 test báo hỏng đạt. Trình duyệt desktop1280/mobile360 xác minh thông báo, nút đóng, không lặp sau reload, lỗi không hiện success. Thử trên bản sao data/s407-ui01/demo/ui01.sqlite, SHA256 nguồn demo không đổi; hướng dẫn cập nhật runtime ở docs/S4-07-tiep-nhan-tien-do.md.
+- PO chốt Chủ nhà chỉ xem nội dung/ảnh/trạng thái/lịch sử thuộc tòa hiện sở hữu, kể cả hợp đồng kết thúc; không cập nhật/phản hồi. Giữ chuyển trạng thái/ghi chú bắt buộc của S4-06.
+- Thêm service/controller GET Chủ nhà với quyền backend ở list/detail/image, nối menu tới dữ liệu thật; dùng chung view, thêm tên người gửi và mô tả sự cố trong danh sách. CSS màn hình nhỏ chỉ trong trang báo hỏng.
+- Không đổi schema/migration/updater. Demo riêng data/s407/demo-20261014-164333-49008c, localhost5271; SHA256 nguồn Sprint2 trước/sau không đổi, integrity/FK đạt.
+- Build đạt0 lỗi; 50/50 test báo hỏng đạt (40 hồi quy +10 mới), HTTP403/CSRF400/ghi chú/chuyển trạng thái/stale409/retry/ảnh/lịch sử/hợp đồng kết thúc đạt. Lần test đầu bị sandbox chặn testhost; chạy lại ngoài sandbox đạt.
+- Trình duyệt Chủ nhà có tên/ảnh/lịch sử, không form ghi; Quản lý có form đúng. DOM360px Chủ nhà354/Quản lý345, ảnh tải được. Chưa nghiệm thu Safari/thiết bị thật/review thành viên khác. Chưa commit/push/merge.
+- Hướng dẫn, TC01–TC16 và giới hạn: docs/S4-07-tiep-nhan-tien-do.md. Chạy verification/Start-S407Demo.ps1, ID2 giữ trạng thái Mới để nghiệm thu.
+
 ### 13/10/2026 – Dữ liệu kiểm thử Sprint 3 bổ sung
 - Thêm vào DB local tòa kiểm thử ID 7 cho tài khoản chủ nhà được yêu cầu: 60 phòng, 54 hợp đồng, 54 tài khoản khách mẫu, 6 yêu cầu, 6 hóa đơn. Giữ dữ liệu và tài khoản cũ.
 - Đã nạp thử bản sao; backup, integrity_check=ok, foreign_key_check=0; kiểm tra bảo toàn mọi bản ghi cũ và schema. Không build/test ứng dụng vì không đổi mã.

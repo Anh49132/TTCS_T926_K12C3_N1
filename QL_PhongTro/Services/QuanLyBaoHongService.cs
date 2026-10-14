@@ -36,7 +36,8 @@ public sealed class QuanLyBaoHongService(AppDbContext db, ITimeProvider clock, B
         join p in db.PhongTros on b.PhongId equals p.Id
         join t in db.ToaNhas on p.ToaNhaId equals t.Id where t.QuanLyId == managerId
         join h in db.HopDongs on b.HopDongId equals h.Id
-        select new BaoHongChiTiet { BaoHong = b, MaPhong = p.MaPhong, TenToaNha = t.TenToaNha, MaHopDong = h.MaHopDong };
+        join a in db.TaiKhoans on b.NguoiBaoId equals a.Id
+        select new BaoHongChiTiet { BaoHong = b, MaPhong = p.MaPhong, TenToaNha = t.TenToaNha, MaHopDong = h.MaHopDong, TenNguoiBao = a.HoTen };
 
     private async Task<BaoHongChiTiet?> ScopedAsync(int managerId, int id, CancellationToken ct)
     {
