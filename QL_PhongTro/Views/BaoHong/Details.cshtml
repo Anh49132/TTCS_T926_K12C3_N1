@@ -11,7 +11,7 @@
 @section Styles { <link rel="stylesheet" href="~/css/tenant-repairs.css" asp-append-version="true" /> }
 @section Scripts { <script src="~/js/repair-cost.js" asp-append-version="true" defer></script> }
 <div class="repairs-page">
-<a asp-controller="@controller" asp-action="Index">← @(Model.LaQuanLy ? "Báo hỏng được phân công" : Model.LaChuNha ? "Báo hỏng tại tòa nhà của tôi" : "Báo hỏng của tôi")</a>
+<a asp-controller="@controller" asp-action="Index" asp-all-route-data="@((ViewData["BaoHongBoLoc"] as QL_PhongTro.ViewModels.BaoHongBoLoc)?.RouteValues())">← @(Model.LaQuanLy ? "Báo hỏng được phân công" : Model.LaChuNha ? "Báo hỏng tại tòa nhà của tôi" : "Báo hỏng của tôi")</a>
 <header><h1>@Model.BaoHong.MaBaoHong</h1><p>Chi tiết báo hỏng</p></header>
 <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
 @if (Model.LaQuanLy && Model.CanhBaoQuaHan is { } warning) {

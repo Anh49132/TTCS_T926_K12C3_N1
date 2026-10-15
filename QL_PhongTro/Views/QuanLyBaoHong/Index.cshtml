@@ -1,27 +1,53 @@
 @model List<QL_PhongTro.ViewModels.BaoHongChiTiet>
 @{ var owner = ViewData["LaChuNha"] is true; var title = owner ? "Báo hỏng tại tòa nhà của tôi" : "Báo hỏng được phân công";
-   ViewData["Title"] = title; var page = (int)(ViewData["Page"] ?? 1); }
+   ViewData["Title"] = title; var page = (int)(ViewData["Page"] ?? 1);
+   var filter = ViewData["BaoHongBoLoc"] as QL_PhongTro.ViewModels.BaoHongBoLoc;
+}
 @section Styles { <link rel="stylesheet" href="~/css/tenant-repairs.css" asp-append-version="true" /> }
 <div class="repairs-page">
 <header><h1>@title</h1><p>@(owner ? "Theo dõi tiến độ tại các tòa nhà bạn hiện sở hữu." : "Các báo hỏng tại tòa nhà bạn đang quản lý.")</p></header>
+@if (!owner && filter is not null) {
+<form asp-controller="QuanLyBaoHong" asp-action="Index" method="get" class="repairs-card repair-filters" aria-label="Bộ lọc báo hỏng">
+    <div><label for="repair-building">Tòa nhà</label><select id="repair-building" name="toaNhaId">
+        <option value="">Tất cả tòa được phân công</option>
+        @foreach (var building in (IEnumerable<QL_PhongTro.ViewModels.ToaNhaBaoHongLoc>)ViewData["BaoHongToaNhas"]!) {
+            <option value="@building.Id" selected="@(filter.ToaNhaId == building.Id)">@building.TenToaNha</option>
+        }
+    </select></div>
+    <div><label for="repair-status">Trạng thái</label><select id="repair-status" name="trangThai">
+        <option value="">Tất cả trạng thái</option>
+        <option value="MOI" selected="@(filter.TrangThai == "MOI")">Mới</option>
+        <option value="DANG_XU_LY" selected="@(filter.TrangThai == "DANG_XU_LY")">Đang xử lý</option>
+        <option value="HOAN_THANH" selected="@(filter.TrangThai == "HOAN_THANH")">Đã xong</option>
+        <option value="TU_CHOI" selected="@(filter.TrangThai == "TU_CHOI")">Từ chối</option>
+    </select></div>
+    <div><label for="repair-priority">Mức độ khẩn</label><select id="repair-priority" name="mucDo">
+        <option value="">Tất cả mức độ</option>
+        <option value="THUONG" selected="@(filter.MucDo == "THUONG")">Thường</option>
+        <option value="GAP" selected="@(filter.MucDo == "GAP")">Gấp</option>
+    </select></div>
+    <div class="repairs-actions"><button type="submit">Áp dụng bộ lọc</button><a asp-controller="QuanLyBaoHong" asp-action="Index">Xóa bộ lọc</a></div>
+</form>
+}
 @if (Model.Count == 0) {
-    <section class="repairs-card"><p>@(page == 1 ? "Chưa có báo hỏng trong phạm vi của bạn." : "Không có báo hỏng trên trang này.")</p></section>
+    <section class="repairs-card" role="status"><p>@(filter?.DangLoc == true ? "Không có báo hỏng phù hợp với bộ lọc đã chọn." : page == 1 ? "Chưa có báo hỏng trong phạm vi của bạn." : "Không có báo hỏng trên trang này.")</p></section>
 }
 @foreach (var row in Model.Take(20)) {
+    var detailRoutes = (filter ?? new QL_PhongTro.ViewModels.BaoHongBoLoc()).RouteValues(id: row.BaoHong.Id);
     <article class="repairs-card @(!owner && row.CanhBaoQuaHan is not null ? "repairs-card-overdue" : "")">
         @if (!owner && row.CanhBaoQuaHan is { } warning) {
             <partial name="~/Views/BaoHong/_CanhBaoQuaHan.cshtml" model="warning" />
         }
         <span class="repairs-status">@QL_PhongTro.Services.BaoHongService.TenTrangThai(row.BaoHong.TrangThai)</span>
-        <h2><a asp-action="Details" asp-route-id="@row.BaoHong.Id">@row.BaoHong.MaBaoHong</a></h2>
+        <h2><a asp-action="Details" asp-all-route-data="detailRoutes">@row.BaoHong.MaBaoHong</a></h2>
         <p>@row.MaPhong · @row.TenToaNha</p><strong>@row.BaoHong.LoaiThietBi</strong>
         <p class="repairs-description">@row.BaoHong.MoTa</p>
         <p>@(row.BaoHong.MucDo == "GAP" ? "Gấp" : "Thường") · @row.BaoHong.NgayTao.AddHours(7).ToString("dd/MM/yyyy HH:mm")</p>
-        <a asp-action="Details" asp-route-id="@row.BaoHong.Id">@(owner ? "Xem tiến độ →" : "Xem và xử lý →")</a>
+        <a asp-action="Details" asp-all-route-data="detailRoutes">@(owner ? "Xem tiến độ →" : "Xem và xử lý →")</a>
     </article>
 }
 <nav class="repairs-actions" aria-label="Phân trang báo hỏng">
-@if (page > 1) { <a asp-route-page="@(page-1)">← Trang trước</a> }
-@if (Model.Count > 20) { <a asp-route-page="@(page+1)">Trang sau →</a> }
+@if (page > 1) { <a asp-action="Index" asp-all-route-data="@((filter ?? new QL_PhongTro.ViewModels.BaoHongBoLoc()).RouteValues(page-1))">← Trang trước</a> }
+@if (Model.Count > 20) { <a asp-action="Index" asp-all-route-data="@((filter ?? new QL_PhongTro.ViewModels.BaoHongBoLoc()).RouteValues(page+1))">Trang sau →</a> }
 </nav>
 </div>

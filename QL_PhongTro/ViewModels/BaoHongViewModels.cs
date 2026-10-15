@@ -38,6 +38,7 @@ public sealed class BaoHongChiTiet
     public BaoHongPhanHoiInput PhanHoi { get; set; } = new();
     public BaoHongTrangThaiInput CapNhat { get; set; } = new();
     public BaoHong BaoHong { get; init; } = null!;
+    public int ToaNhaId { get; init; }
     public string MaPhong { get; init; } = "";
     public string TenToaNha { get; init; } = "";
     public string MaHopDong { get; init; } = "";

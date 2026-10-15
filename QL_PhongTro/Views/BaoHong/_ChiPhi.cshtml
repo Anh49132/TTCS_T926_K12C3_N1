@@ -16,7 +16,7 @@
 </ol></details>
 } else { <p>Chưa ghi nhận chi phí sửa chữa.</p> }
 @if (Model.LaQuanLy && Model.ChoPhepXuLy && Model.BaoHong.TrangThai == "HOAN_THANH" && !Model.ChiPhiDaKhoa) {
-<form asp-controller="QuanLyBaoHong" asp-action="ChiPhi" asp-route-id="@Model.BaoHong.Id" method="post" class="repair-management-form" data-repair-cost-form>
+<form asp-controller="QuanLyBaoHong" asp-action="ChiPhi" asp-all-route-data="@((ViewData["BaoHongBoLoc"] as QL_PhongTro.ViewModels.BaoHongBoLoc ?? new()).RouteValues(id: Model.BaoHong.Id))" method="post" class="repair-management-form" data-repair-cost-form>
 <input asp-for="ChiPhiInput.PhienBan" type="hidden"/><input asp-for="ChiPhiInput.KhoaChongTrung" type="hidden"/>
 <label asp-for="ChiPhiInput.SoTien">Số tiền sửa chữa (VND)</label>
 <input asp-for="ChiPhiInput.SoTien" type="text" inputmode="numeric" pattern="[0-9]+" maxlength="19" required placeholder="350000"/>

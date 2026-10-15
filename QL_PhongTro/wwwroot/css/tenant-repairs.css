@@ -7,5 +7,6 @@
 .repair-management-form input:not([type=hidden]){display:block;width:100%;max-width:100%;box-sizing:border-box;padding:12px;border:1px solid #b6b9be;border-radius:8px;font:inherit}
 
 /* Keep the existing account menu within the viewport on repair pages only. */
+.repair-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.repair-filters>div{min-width:0}.repair-filters label{display:block;font-weight:600;margin-bottom:6px}.repair-filters .repairs-actions{grid-column:1/-1;margin-top:0;justify-content:flex-start;flex-wrap:wrap}@media(max-width:600px){.repair-filters{grid-template-columns:1fr}}
 .repairs-card-overdue{border:2px solid #9B2920;border-left-width:6px}.repair-overdue-warning{background:#FFF4E8;border:1px solid #B66D24;border-radius:10px;padding:14px 16px;margin:12px 0;color:#702018;overflow-wrap:anywhere}.repair-overdue-label{display:block;font-size:1rem}.repair-overdue-warning p{margin:6px 0 0}
 @media(max-width:420px){body:has(.repairs-page) .latte-header-user{padding-left:.25rem}body:has(.repairs-page) .latte-header-user .sidebar-account .account-label strong,body:has(.repairs-page) .latte-header-user .sidebar-account .account-label small{max-width:4rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}}
