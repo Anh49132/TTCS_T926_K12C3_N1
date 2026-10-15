@@ -24,12 +24,14 @@ else
 <nav class="mi-breadcrumb" aria-label="Đường dẫn"><a asp-controller="Home" asp-action="Index">Tổng quan</a> / <a asp-controller="@(Model.KhachXem ? "ThongBao" : "HoaDonDichVu")" asp-action="@(Model.KhachXem ? "Index" : "Management")" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-nam="@invoice.Nam" asp-route-thang="@invoice.Thang">Hóa đơn, thanh toán</a> / @Model.MaPhong</nav>
 <header class="id-heading">
 <a asp-controller="@(Model.KhachXem ? "ThongBao" : "HoaDonDichVu")" asp-action="@(Model.KhachXem ? "Index" : "Management")" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-nam="@invoice.Nam" asp-route-thang="@invoice.Thang" class="btn btn-outline-secondary id-back">← Quay lại danh sách</a>
-<div><div class="id-title"><h1>@(Model.XemTruoc ? "Xem trước hóa đơn" : "Hóa đơn") @(Model.XemTruoc ? Model.MaPhong : invoice.MaHoaDon)</h1><span class="id-status">@(Model.XemTruoc ? "Đủ dữ liệu" : invoice.TrangThai == "DA_PHAT_HANH" ? "Đã phát hành" : invoice.TrangThai == "DA_HUY" ? "Đã hủy" : "Bản nháp")</span></div><p>@Model.TenKhach · @Model.TenToaNha · Kỳ tháng @invoice.Thang/@invoice.Nam</p></div>
+<div><div class="id-title"><h1>@(Model.XemTruoc ? "Xem trước hóa đơn" : "Hóa đơn") @(Model.XemTruoc ? Model.MaPhong : invoice.MaHoaDon)</h1><span class="id-status">@(Model.XemTruoc ? "Đủ dữ liệu" : Model.KhachXem && Model.BaoCaoChoXacNhan is not null ? "Chờ xác nhận" : invoice.TrangThai == "DA_PHAT_HANH" ? "Đã phát hành" : invoice.TrangThai == "DA_HUY" ? "Đã hủy" : "Bản nháp")</span></div><p>@Model.TenKhach · @Model.TenToaNha · Kỳ tháng @invoice.Thang/@invoice.Nam</p></div>
 <button type="button" class="btn btn-outline-secondary id-print" onclick="window.print()">▤ Xem bản in</button>
 </header>
 <div class="id-columns"><div>
 @if (TempData["DraftError"] is string error) { <div class="alert alert-danger" role="alert">@error</div> }
 @if (TempData["DraftSuccess"] is string success) { <div class="alert alert-success" role="status">@success</div> }
+@if (Model.KhachXem && TempData["PaymentReportSuccess"] is string paymentSuccess) { <div class="alert alert-success" role="status">@paymentSuccess</div> }
+@if (Model.KhachXem && TempData["PaymentReportError"] is string paymentError) { <div class="alert alert-danger" role="alert">@paymentError</div> }
 @if (!Model.XemTruoc) { <partial name="~/Views/HoaDonDichVu/_Cancellation.cshtml" model="Model" /> }
 @if (!Model.XemTruoc && invoice.TrangThai == "NHAP" && write && invoice.LoaiHoaDon!="KY_CUOI") { <partial name="_DraftEditor" model="invoice" /><partial name="_PublishDraft" model="Model" /> }
 @if (!Model.XemTruoc && invoice.TrangThai == "DA_PHAT_HANH") { <div class="alert alert-light">Hóa đơn đã phát hành. Chỉ số, các khoản tiền và tổng tiền đã được khóa.</div> }
@@ -62,6 +64,39 @@ else
                 </dd>
             </div>
         </dl>
+        @if (Model.BaoCaoChoXacNhan is not null)
+        {
+            <div class="alert alert-info mt-3 mb-0" role="status">
+                Báo cáo thanh toán @Model.BaoCaoChoXacNhan.SoTien.ToString("N0", vn) đ, ngày @Model.BaoCaoChoXacNhan.NgayThanhToan.ToString("dd/MM/yyyy"),
+                hình thức @(Model.BaoCaoChoXacNhan.HinhThucBaoCao == "TIEN_MAT" ? "Tiền mặt" : "Chuyển khoản") đang chờ xác nhận. Bạn không thể sửa báo cáo đã gửi.
+            </div>
+        }
+        else if (invoice.TrangThai == "DA_PHAT_HANH" && Model.SoConPhaiTra > 0)
+        {
+            <form asp-controller="ThongBao" asp-action="BaoCaoThanhToan" method="post" class="mt-4">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="hoaDonId" value="@invoice.Id" />
+                <h3 class="h5">Báo cáo thanh toán</h3>
+                <div class="mb-3">
+                    <label for="payment-report-amount" class="form-label">Số tiền đã thanh toán (đồng)</label>
+                    <input id="payment-report-amount" name="soTien" type="number" class="form-control" min="1" max="@Model.SoConPhaiTra" step="1" required />
+                    <div class="form-text">Nhập số nguyên đồng, tối đa @Model.SoConPhaiTra.ToString("N0", vn) đ còn phải trả.</div>
+                </div>
+                <div class="mb-3">
+                    <label for="payment-report-date" class="form-label">Ngày thanh toán</label>
+                    <input id="payment-report-date" name="ngayThanhToan" type="date" class="form-control" value="@Model.HomNay.ToString("yyyy-MM-dd")" required />
+                </div>
+                <div class="mb-3">
+                    <label for="payment-report-method" class="form-label">Hình thức thanh toán</label>
+                    <select id="payment-report-method" name="hinhThucThanhToan" class="form-select" required>
+                        <option value="">Chọn hình thức</option>
+                        <option value="TIEN_MAT">Tiền mặt</option>
+                        <option value="CHUYEN_KHOAN">Chuyển khoản</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-dark">Gửi báo cáo thanh toán</button>
+            </form>
+        }
     </section>
 }
 else

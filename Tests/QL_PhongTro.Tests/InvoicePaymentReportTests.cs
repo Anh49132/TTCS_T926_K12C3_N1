@@ -1,0 +1,183 @@
+using System.Net;
+using System.Text.Json;
+using Microsoft.EntityFrameworkCore;
+using QL_PhongTro.Data;
+using QL_PhongTro.Services;
+using QL_PhongTro.ViewModels;
+using Xunit;
+
+namespace QL_PhongTro.Tests;
+
+public sealed partial class RoomServicesTests
+{
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    [InlineData(1.5)]
+    public async Task TenantPaymentReportRejectsZeroAndNegativeAmounts(decimal amount)
+    {
+        using var db = Context();
+        var fixture = await BillingAsync(db);
+        await LinkTenantsAsync(db, fixture.B);
+        var invoiceId = await AddPublishedTenantInvoiceAsync(db, fixture.A, "PAYMENT-REPORT-INVALID", false);
+
+        var exception = await Assert.ThrowsAsync<GhiThuValidationException>(() =>
+            new BaoCaoThanhToanService(db).GuiAsync(3, invoiceId, amount, new(2026, 10, 13), "TIEN_MAT"));
+
+        Assert.Contains("SoTien", exception.Errors.Keys);
+        Assert.Empty(await db.ThanhToans.ToListAsync());
+    }
+
+    [Fact]
+    public async Task TenantPaymentReportRejectsAmountAboveRemaining()
+    {
+        using var db = Context();
+        var fixture = await BillingAsync(db);
+        await LinkTenantsAsync(db, fixture.B);
+        var invoiceId = await AddPublishedTenantInvoiceAsync(db, fixture.A, "PAYMENT-REPORT-OVER", false);
+        var total = await db.HoaDons.Where(x => x.Id == invoiceId).Select(x => x.TongTien).SingleAsync();
+
+        var exception = await Assert.ThrowsAsync<GhiThuValidationException>(() =>
+            new BaoCaoThanhToanService(db).GuiAsync(3, invoiceId, total + 1, new(2026, 10, 13), "CHUYEN_KHOAN"));
+
+        Assert.Contains("SoTien", exception.Errors.Keys);
+        Assert.Contains(total.ToString("N0"), exception.Errors["SoTien"][0]);
+        Assert.Empty(await db.ThanhToans.ToListAsync());
+    }
+
+    [Fact]
+    public async Task TenantCanSubmitValidPaymentReportAndCannotEditWhilePending()
+    {
+        int invoiceId;
+        using (var db = Context())
+        {
+            var fixture = await BillingAsync(db);
+            await LinkTenantsAsync(db, fixture.B);
+            invoiceId = await AddPublishedTenantInvoiceAsync(db, fixture.A, "PAYMENT-REPORT-LOCK", false);
+            await new BaoCaoThanhToanService(db).GuiAsync(3, invoiceId, 250_000, new(2026, 10, 12), "CHUYEN_KHOAN");
+
+            var report = await db.ThanhToans.SingleAsync(x => x.HoaDonId == invoiceId);
+            Assert.Equal(250_000, report.SoTien);
+            Assert.Equal(new DateOnly(2026, 10, 12), report.NgayThanhToan);
+            Assert.Equal("CHUYEN_KHOAN", report.HinhThucBaoCao);
+            Assert.Equal("CHO_XAC_NHAN", report.TrangThai);
+            var repeat = await Assert.ThrowsAsync<GhiThuValidationException>(() =>
+                new BaoCaoThanhToanService(db).GuiAsync(3, invoiceId, 1, new(2026, 10, 13), "TIEN_MAT"));
+            Assert.Contains("đang chờ xác nhận", repeat.Errors[""][0]);
+        }
+
+        using var factory = BillingWeb(new MockTimeProvider { UtcNow = new(2026, 10, 12, 17, 30, 0, DateTimeKind.Utc) });
+        using var tenant = factory.CreateClient(new() { AllowAutoRedirect = false });
+        await Login(tenant, "tenant");
+        var response = await tenant.GetAsync($"/ThongBao/HoaDon/{invoiceId}");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var html = WebUtility.HtmlDecode(await response.Content.ReadAsStringAsync());
+        Assert.Contains("Chờ xác nhận", html);
+        Assert.Contains("Bạn không thể sửa báo cáo đã gửi", html);
+        Assert.DoesNotContain("name=\"soTien\"", html);
+        Assert.DoesNotContain("Gửi báo cáo thanh toán", html);
+    }
+
+    [Fact]
+    public async Task TenantPaymentReportHttpRejectsInvalidAmountsAndReturnsPendingStatus()
+    {
+        int invoiceId;
+        long total;
+        using (var db = Context())
+        {
+            var fixture = await BillingAsync(db);
+            await LinkTenantsAsync(db, fixture.B);
+            invoiceId = await AddPublishedTenantInvoiceAsync(db, fixture.A, "PAYMENT-REPORT-HTTP", false);
+            total = await db.HoaDons.Where(x => x.Id == invoiceId).Select(x => x.TongTien).SingleAsync();
+        }
+
+        using var factory = BillingWeb(new MockTimeProvider { UtcNow = new(2026, 10, 12, 17, 30, 0, DateTimeKind.Utc) });
+        using var tenant = factory.CreateClient(new() { AllowAutoRedirect = false });
+        await Login(tenant, "tenant");
+        var form = new Dictionary<string, string>
+        {
+            ["hoaDonId"] = invoiceId.ToString(),
+            ["soTien"] = "0",
+            ["ngayThanhToan"] = "2026-10-13",
+            ["hinhThucThanhToan"] = "TIEN_MAT"
+        };
+
+        foreach (var invalid in new[] { "0", "-1", (total + 1).ToString() })
+        {
+            var rejected = await Post(tenant, "/ThongBao/BaoCaoThanhToan", new(form) { ["soTien"] = invalid });
+            Assert.Equal(HttpStatusCode.Redirect, rejected.StatusCode);
+        }
+        using (var verify = Context())
+            Assert.Empty(await verify.ThanhToans.ToListAsync());
+
+        var accepted = await Post(tenant, "/ThongBao/BaoCaoThanhToan", new(form) { ["soTien"] = "250000", ["hinhThucThanhToan"] = "CHUYEN_KHOAN" });
+        Assert.Equal(HttpStatusCode.Redirect, accepted.StatusCode);
+        using (var verify = Context())
+        {
+            var report = await verify.ThanhToans.SingleAsync(x => x.HoaDonId == invoiceId);
+            Assert.Equal("CHO_XAC_NHAN", report.TrangThai);
+        }
+
+        var list = await tenant.GetStringAsync("/ThongBao/DanhSachDuLieu");
+        Assert.Contains("CHO_XAC_NHAN", list);
+        var detailData = await tenant.GetStringAsync("/ThongBao/ChiTietDuLieu?maHoaDon=PAYMENT-REPORT-HTTP");
+        using (var data = JsonDocument.Parse(detailData))
+        {
+            Assert.True(data.RootElement.GetProperty("choXacNhan").GetBoolean());
+            Assert.Equal(250_000, data.RootElement.GetProperty("soTienBaoCaoChoXacNhan").GetInt64());
+            Assert.False(data.RootElement.GetProperty("choPhepBaoCaoThanhToan").GetBoolean());
+        }
+        var detailPage = WebUtility.HtmlDecode(await tenant.GetStringAsync("/ThongBao/ChiTiet?maHoaDon=PAYMENT-REPORT-HTTP"));
+        Assert.Contains("tenant-payment-report-form", detailPage);
+        var pageResponse = await tenant.GetAsync($"/ThongBao/HoaDon/{invoiceId}");
+        Assert.Equal(HttpStatusCode.OK, pageResponse.StatusCode);
+        var page = WebUtility.HtmlDecode(await pageResponse.Content.ReadAsStringAsync());
+        var statusPosition = page.IndexOf("id-status", StringComparison.Ordinal);
+        var statusMarkup = statusPosition >= 0 ? page.Substring(statusPosition, Math.Min(180, page.Length - statusPosition)) : page;
+        Assert.Contains("Chờ xác nhận", statusMarkup);
+        Assert.Contains("bạn không thể sửa báo cáo đã gửi", page, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("name=\"soTien\"", page);
+    }
+
+    [Fact]
+    public async Task Version35AddsPaymentMethodWithoutChangingExistingPaymentRows()
+    {
+        int invoiceId;
+        using (var db = Context())
+        {
+            var fixture = await BillingAsync(db);
+            await LinkTenantsAsync(db, fixture.B);
+            invoiceId = await AddPublishedTenantInvoiceAsync(db, fixture.A, "PAYMENT-REPORT-MIGRATION", false);
+            db.ThanhToans.Add(new()
+            {
+                HoaDonId = invoiceId,
+                SoTien = 123_456,
+                NgayThanhToan = new(2026, 10, 1),
+                TrangThai = "DA_XAC_NHAN"
+            });
+            await db.SaveChangesAsync();
+        }
+
+        using (var connection = Open())
+        using (var command = connection.CreateCommand())
+        {
+            command.CommandText = "ALTER TABLE thanh_toan DROP COLUMN hinh_thuc_bao_cao";
+            command.ExecuteNonQuery();
+            command.CommandText = "DELETE FROM app_schema_version WHERE version=35";
+            command.ExecuteNonQuery();
+            command.CommandText = "SELECT MAX(version) FROM app_schema_version";
+            Assert.Equal(34L, command.ExecuteScalar());
+            command.CommandText = "SELECT COUNT(*) FROM pragma_table_info('thanh_toan') WHERE name='hinh_thuc_bao_cao'";
+            Assert.Equal(0L, command.ExecuteScalar());
+        }
+
+        DatabaseUpdates.Update(path, Path.Combine(app, "Data", "permissions.seed.json"));
+        DatabaseUpdates.Check(path);
+
+        using var verify = Context();
+        var payment = await verify.ThanhToans.SingleAsync(x => x.HoaDonId == invoiceId);
+        Assert.Equal(123_456, payment.SoTien);
+        Assert.Equal("DA_XAC_NHAN", payment.TrangThai);
+        Assert.Null(payment.HinhThucBaoCao);
+    }
+}

@@ -20,7 +20,8 @@
         CHUA_THANH_TOAN: "Chưa thanh toán",
         THANH_TOAN_MOT_PHAN: "Thanh toán một phần",
         DA_THANH_TOAN: "Đã thanh toán",
-        QUA_HAN: "Quá hạn"
+        QUA_HAN: "Quá hạn",
+        CHO_XAC_NHAN: "Chờ xác nhận"
     };
 
     const invoiceUrl = (invoice) => {
@@ -115,7 +116,7 @@
             due.textContent = invoice.hanThanhToan;
             const status = document.createElement("td");
             const badge = document.createElement("span");
-            badge.className = `badge ${invoice.quaHan ? "text-bg-danger" : invoice.trangThai === "DA_THANH_TOAN" ? "text-bg-success" : "text-bg-secondary"}`;
+            badge.className = `badge ${invoice.trangThai === "CHO_XAC_NHAN" ? "text-bg-warning" : invoice.quaHan ? "text-bg-danger" : invoice.trangThai === "DA_THANH_TOAN" ? "text-bg-success" : "text-bg-secondary"}`;
             badge.textContent = statusLabels[invoice.trangThai] || invoice.tenTrangThai;
             status.append(badge);
             if (invoice.quaHan) {

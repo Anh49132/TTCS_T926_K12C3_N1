@@ -13,6 +13,12 @@
     const remaining = document.getElementById("tenant-invoice-remaining");
     const due = document.getElementById("tenant-invoice-due");
     const overdue = document.getElementById("tenant-invoice-overdue");
+    const reportForm = document.getElementById("tenant-payment-report-form");
+    const reportInvoiceId = document.getElementById("tenant-payment-report-invoice-id");
+    const reportAmount = document.getElementById("tenant-payment-report-amount");
+    const reportLimit = document.getElementById("tenant-payment-report-limit");
+    const reportDate = document.getElementById("tenant-payment-report-date");
+    const pendingReport = document.getElementById("tenant-payment-report-pending");
     const vnd = new Intl.NumberFormat("vi-VN");
 
     const cell = (value, className) => {
@@ -68,6 +74,18 @@
             due.textContent = invoice.hanThanhToan;
             overdue.textContent = invoice.quaHan ? `Quá hạn ${invoice.soNgayTre} ngày` : "";
             overdue.hidden = !invoice.quaHan;
+            reportForm.hidden = !invoice.choPhepBaoCaoThanhToan;
+            if (invoice.choPhepBaoCaoThanhToan) {
+                reportInvoiceId.value = invoice.hoaDonId;
+                reportAmount.max = invoice.soConPhaiTra;
+                reportDate.value = invoice.homNay;
+                reportLimit.textContent = `Nhập số nguyên đồng, tối đa ${vnd.format(invoice.soConPhaiTra)} đ còn phải trả.`;
+            }
+            pendingReport.hidden = !invoice.choXacNhan;
+            if (invoice.choXacNhan) {
+                const method = invoice.hinhThucBaoCaoChoXacNhan === "TIEN_MAT" ? "Tiền mặt" : "Chuyển khoản";
+                pendingReport.textContent = `Báo cáo thanh toán ${vnd.format(invoice.soTienBaoCaoChoXacNhan)} đ, ngày ${invoice.ngayBaoCaoChoXacNhan}, hình thức ${method} đang chờ xác nhận. Bạn không thể sửa báo cáo đã gửi.`;
+            }
             loading.hidden = true;
             content.hidden = false;
         } catch {

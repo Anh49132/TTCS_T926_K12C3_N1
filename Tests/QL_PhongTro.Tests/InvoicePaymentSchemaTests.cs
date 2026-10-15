@@ -28,6 +28,14 @@ public sealed partial class RoomServicesTests
 
         DatabaseUpdates.Update(path, Path.Combine(app, "Data", "permissions.seed.json"));
         DatabaseUpdates.Check(path);
+        using (var schema = Open())
+        using (var command = schema.CreateCommand())
+        {
+            command.CommandText = "SELECT MAX(version) FROM app_schema_version";
+            Assert.Equal(35L, command.ExecuteScalar());
+            command.CommandText = "SELECT COUNT(*) FROM pragma_table_info('thanh_toan') WHERE name='hinh_thuc_bao_cao'";
+            Assert.Equal(1L, command.ExecuteScalar());
+        }
 
         using var verify = Context();
         var invoice = await verify.HoaDons.Include(x => x.ChiTiet).SingleAsync(x => x.Id == invoiceId);

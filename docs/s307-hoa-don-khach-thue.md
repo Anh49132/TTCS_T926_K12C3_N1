@@ -18,7 +18,16 @@ Các dòng đã lưu tiếp tục là snapshot bất biến của hóa đơn. Kh
 - Số còn phải trả là `max(tổng cộng - đã thanh toán, 0)`. Khi trả dư, hiển thị số đã thanh toán thực tế và số còn phải trả bằng 0.
 - Quá hạn khi hóa đơn đang `DA_PHAT_HANH`, số còn phải trả > 0 và ngày hiện tại tại Việt Nam lớn hơn ngày hạn. Ngày hạn chưa quá hạn; ngày lịch đầu tiên sau hạn là trễ 1 ngày. Hóa đơn đã trả đủ không có nhãn dù thanh toán sau hạn.
 - Nhãn dùng nền đỏ nhạt/chữ đỏ với nội dung `Quá hạn N ngày`. Hạn hiển thị `dd/MM/yyyy`. `Asia/Ho_Chi_Minh` được tính bằng UTC+7 trước khi so ngày lịch.
-- Bảng thanh toán được thêm bằng updater schema v23 (bảng `thanh_toan`), FK hóa đơn `ON DELETE RESTRICT`; các schema đã cài và dữ liệu cũ được giữ nguyên. Đây chỉ là lưu trữ/đọc khoản thanh toán, chưa triển khai luồng khách báo trả hoặc chủ nhà xác nhận thu của S4.
+- Bảng thanh toán được thêm bằng updater schema v23 (bảng `thanh_toan`), FK hóa đơn `ON DELETE RESTRICT`; các schema đã cài và dữ liệu cũ được giữ nguyên.
+- Quy tắc hiện hành của dự án: VND là số nguyên đồng; thành tiền làm tròn từng dòng `AwayFromZero`. Báo cáo thanh toán nhận số nguyên đồng, không tự làm tròn số khách nhập. Hình thức báo cáo trong phạm vi này là Tiền mặt hoặc Chuyển khoản.
+
+## Báo cáo thanh toán của khách thuê
+
+- Tại `/ThongBao/ChiTiet?maHoaDon=<mã>` và `/ThongBao/HoaDon/{id}`, khách thuê có thể gửi số tiền, ngày thanh toán và hình thức Tiền mặt/Chuyển khoản cho hóa đơn đã phát hành còn dư nợ.
+- Backend xác thực quyền sở hữu hóa đơn; số tiền phải là số nguyên đồng lớn hơn 0 và không vượt số còn phải trả sau khi trừ các lần thu đã xác nhận và cấn trừ cọc.
+- Báo cáo được lưu thành khoản thanh toán `CHO_XAC_NHAN`; không sửa trạng thái phát hành bất biến của hóa đơn. Trang chi tiết và danh sách khách thuê hiển thị “Chờ xác nhận”. Trong khi có báo cáo chờ xác nhận, khách không thể gửi/sửa báo cáo khác cho hóa đơn đó.
+- Updater schema v35 thêm cột tùy chọn `hinh_thuc_bao_cao`, giới hạn hai hình thức trên và giữ nguyên các dòng thanh toán lịch sử.
+- Chưa có tải/xem ảnh chứng từ, hủy báo cáo, hoặc thao tác chủ nhà xác nhận/từ chối báo cáo trong phạm vi này.
 
 ### Bổ sung quyết định PO: không phát hành dịch vụ khoán theo người
 
@@ -38,7 +47,7 @@ Các dòng đã lưu tiếp tục là snapshot bất biến của hóa đơn. Kh
 
 - PO chốt sắp xếp mặc định theo kỳ mới nhất trước; nếu cùng kỳ, mã hóa đơn mới tạo hơn trước. Phân trang 10 hóa đơn/trang.
 - Danh sách có các cột mã hóa đơn, kỳ, tổng cộng, còn phải trả, hạn thanh toán và trạng thái. Bộ lọc kỳ chọn một tháng (`yyyy-MM`); bộ lọc trạng thái chọn một giá trị hoặc “Tất cả”. Hai bộ lọc được kết hợp bằng điều kiện AND.
-- Trạng thái suy ra từ các khoản `DA_XAC_NHAN`: còn 0 đồng là `Đã thanh toán`; còn nợ và đã quá hạn là `Quá hạn`; còn nợ, chưa quá hạn và đã trả một phần là `Thanh toán một phần`; các trường hợp còn lại là `Chưa thanh toán`. Quá hạn chỉ khi ngày Việt Nam đã qua hạn, không phải đúng ngày hạn. Nhãn `Quá hạn N ngày` trên dòng danh sách dùng cùng quy tắc với trang chi tiết.
+- Trạng thái suy ra từ các khoản `DA_XAC_NHAN`, trừ khi có báo cáo `CHO_XAC_NHAN` thì hiển thị “Chờ xác nhận”; nếu không, còn 0 đồng là `Đã thanh toán`; còn nợ và đã quá hạn là `Quá hạn`; còn nợ, chưa quá hạn và đã trả một phần là `Thanh toán một phần`; các trường hợp còn lại là `Chưa thanh toán`. Quá hạn chỉ khi ngày Việt Nam đã qua hạn, không phải đúng ngày hạn. Nhãn `Quá hạn N ngày` trên dòng danh sách dùng cùng quy tắc với trang chi tiết.
 - Kỳ phải đúng định dạng tháng `yyyy-MM`; trạng thái ngoài danh mục bị từ chối với HTTP 400 và thông báo cụ thể. Trang phân biệt “Bạn chưa có hóa đơn nào.” với “Không có hóa đơn nào khớp bộ lọc.”; lỗi tải danh sách cũng được thông báo.
 - Chọn hóa đơn mở chi tiết; đường quay lại giữ kỳ, trạng thái và trang hiện tại. Xóa bộ lọc quay về trang đầu của toàn bộ danh sách. Danh sách, bộ lọc và chi tiết đều được giới hạn theo tài khoản khách thuê ở backend.
 
@@ -57,7 +66,7 @@ Không đưa database, file mã, credential hoặc backup demo vào Git.
 ## Kiểm thử
 
 ```powershell
-dotnet test Tests\QL_PhongTro.Tests\QL_PhongTro.Tests.csproj --filter "FullyQualifiedName~TenantCanOpenOnlyTheirPublishedInvoiceByCodeAndSeeAllOrderedLines|FullyQualifiedName~TenantInvoiceSummaryReflectsPaymentsDiscountsAndVietnamDueDates|FullyQualifiedName~Version23AddsPaymentHistoryWithoutChangingExistingInvoiceData|FullyQualifiedName~TenantInvoiceList"
+dotnet test Tests\QL_PhongTro.Tests\QL_PhongTro.Tests.csproj --filter "FullyQualifiedName~TenantPaymentReport|FullyQualifiedName~TenantCanOpenOnlyTheirPublishedInvoiceByCodeAndSeeAllOrderedLines|FullyQualifiedName~TenantInvoiceSummaryReflectsPaymentsDiscountsAndVietnamDueDates|FullyQualifiedName~Version23AddsPaymentHistoryWithoutChangingExistingInvoiceData|FullyQualifiedName~TenantInvoiceList"
 ```
 
 Kiểm thử danh sách dùng SQLite tạm, xác minh quyền sở hữu, dữ liệu rỗng/phân trang/sắp xếp, từng trạng thái, bộ lọc đơn/kết hợp, lỗi kỳ/trạng thái, khớp nhãn quá hạn với chi tiết và giữ bộ lọc khi quay lại. Kiểm thử tổng kết/schema hiện có xác nhận phép tính tổng/giảm trừ, nhiều khoản thanh toán, hạn/biên ngày Việt Nam, không hiện nhãn khi đủ tiền, HTML và updater v23 bảo toàn hóa đơn cùng FK.
