@@ -11,7 +11,7 @@ using QL_PhongTro.ViewModels;
 namespace QL_PhongTro.Controllers;
 
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-public class TinDangController(AppDbContext db, YeuCauThueService requests, DichVuService services,
+public partial class TinDangController(AppDbContext db, YeuCauThueService requests, DichVuService services,
     DichVuPhongService roomServices, TinDangExpirationService expiration, IAppointmentEmailSender? email = null) : Controller
 {
     private int AccountId => int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : 0;
@@ -198,6 +198,9 @@ public class TinDangController(AppDbContext db, YeuCauThueService requests, Dich
     [Authorize(Roles = "CHU_NHA,QUAN_LY,ADMIN"), ModuleAccess("TIN_DANG", write: true), HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> Tao(TaoTinDangViewModel form, string? intent)
     {
+        await db.Database.OpenConnectionAsync();
+        await using var sqlite = ((Microsoft.Data.Sqlite.SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        await using var transaction = await db.Database.UseTransactionAsync(sqlite);
         var source = await TaoModelAsync(form.PhongId);
         if (source is null) return NotFound();
         TinDang? listing;
@@ -216,6 +219,13 @@ public class TinDangController(AppDbContext db, YeuCauThueService requests, Dich
         var isDraft = intent == "NHAP";
         var wasPublic = listing?.TrangThai == "DANG_HIEN_THI";
         var currentListingId = listing?.Id ?? 0;
+        if (!isDraft && listing?.TrangThai == "NHAP")
+        {
+            var room = await db.PhongTros.AsNoTracking().SingleAsync(x => x.Id == form.PhongId);
+            var building = await db.ToaNhas.AsNoTracking().SingleAsync(x => x.Id == room.ToaNhaId);
+            foreach (var error in await KiemTraBatNhapAsync(listing, room, building, form.TieuDe, form.NoiDung))
+                ModelState.AddModelError("", error);
+        }
         if (intent is not (null or "NHAP" or "DANG_HIEN_THI"))
             ModelState.AddModelError("", "Thao tác tin đăng không hợp lệ.");
         if (isDraft && wasPublic)
@@ -245,7 +255,7 @@ public class TinDangController(AppDbContext db, YeuCauThueService requests, Dich
             listing.NgayHetHan = now.AddDays(30);
         }
         listing.TrangThai = isDraft ? "NHAP" : "DANG_HIEN_THI";
-        try { await db.SaveChangesAsync(); }
+        try { await db.SaveChangesAsync(); await transaction!.CommitAsync(); }
         catch (DbUpdateException)
         {
             ModelState.AddModelError("", "Không thể đăng tin vì phòng vừa có tin khác được hiển thị.");
@@ -277,6 +287,7 @@ public class TinDangController(AppDbContext db, YeuCauThueService requests, Dich
     [Authorize(Roles = "CHU_NHA,QUAN_LY"), ModuleAccess("TIN_DANG", write: true), HttpPost, ValidateAntiForgeryToken]
     public async Task<IActionResult> DoiTrangThai(int id, string trangThai, string trangThaiDaXem)
     {
+        if (trangThai == "DANG_HIEN_THI" && trangThaiDaXem == "NHAP") return await Dang(id);
         if (trangThai is not ("NHAP" or "DANG_HIEN_THI" or "TAM_AN" or "DA_CHO_THUE")) return BadRequest();
         var listing = await db.TinDangs.SingleOrDefaultAsync(x => x.Id == id);
         if (listing is null) return NotFound();

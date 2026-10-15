@@ -15,6 +15,24 @@ public sealed partial class PermissionTests
     private static string AntiForgery(string html) => WebUtility.HtmlDecode(
         Regex.Match(html, "name=\"__RequestVerificationToken\"[^>]*value=\"([^\"]+)\"").Groups[1].Value);
 
+    private static string ListingManagementRow(string html, int listingId) => Assert.Single(
+        Regex.Matches(html, "<tr\\s+data-lm-row\\b.*?</tr>", RegexOptions.Singleline)
+            .Select(match => match.Value),
+        row => row.Contains($"href=\"/TinDang/Sua/{listingId}\"", StringComparison.Ordinal));
+
+    private static void AssertPublicListingAction(string row, int listingId, string seenStatus)
+    {
+        // Check the real action and its target/state rather than a previous button caption.
+        var form = Assert.Single(Regex.Matches(row, "<form\\b.*?</form>", RegexOptions.Singleline)
+            .Select(match => match.Value),
+            value => value.Contains("action=\"/TinDang/DoiTrangThai\"", StringComparison.Ordinal)
+                && value.Contains("name=\"trangThai\" value=\"DANG_HIEN_THI\"", StringComparison.Ordinal));
+        Assert.Contains($"name=\"id\" value=\"{listingId}\"", form);
+        Assert.Contains($"name=\"trangThaiDaXem\" value=\"{seenStatus}\"", form);
+        Assert.NotEmpty(AntiForgery(form));
+        Assert.DoesNotContain("disabled=", form);
+    }
+
     [Fact]
     public async Task QuanLy_ChiDangVaGoTinCuaToaDuocPhanCong()
     {
@@ -28,8 +46,10 @@ public sealed partial class PermissionTests
         using var manager = await Login("QUAN_LY");
         var manageHtml = WebUtility.HtmlDecode(await manager.GetStringAsync("/TinDang/QuanLy"));
         Assert.Contains("href=\"/TinDang/QuanLy\"", manageHtml);
-        Assert.Contains($"phongId={assignedRoomId}", manageHtml);
-        Assert.DoesNotContain($"phongId={otherRoomId}", manageHtml);
+        var assignedRow = ListingManagementRow(manageHtml, assignedListingId);
+        Assert.Contains($"data-building=\"{assignedBuildingId}\"", assignedRow);
+        AssertPublicListingAction(assignedRow, assignedListingId, "TAM_AN");
+        Assert.DoesNotContain($"href=\"/TinDang/Sua/{otherListingId}\"", manageHtml);
 
         var createHtml = await manager.GetStringAsync($"/TinDang/Tao?phongId={assignedRoomId}");
         var publish = await manager.PostAsync("/TinDang/Tao", new FormUrlEncodedContent(new Dictionary<string, string>
@@ -90,8 +110,8 @@ public sealed partial class PermissionTests
         using var owner = await Login("CHU_NHA");
 
         var manage = WebUtility.HtmlDecode(await owner.GetStringAsync("/TinDang/QuanLy"));
-        Assert.Contains("Quản lý tin đăng", manage);
-        Assert.Contains("Đăng lại", manage);
+        Assert.Contains("<h1>Tin đăng cho thuê</h1>", manage);
+        AssertPublicListingAction(ListingManagementRow(manage, listingId), listingId, "TAM_AN");
 
         var createHtml = await owner.GetStringAsync($"/TinDang/Tao?phongId={roomId}");
         var publish = await owner.PostAsync("/TinDang/Tao", new FormUrlEncodedContent(new Dictionary<string, string>
@@ -148,8 +168,11 @@ public sealed partial class PermissionTests
 
         Assert.Equal("TAM_AN", Scalar("SELECT trang_thai FROM tin_dang WHERE id=$id", ("$id", listingId)));
         Assert.Contains("Đã hết hạn", manage);
-        Assert.Contains("tự động chuyển sang Tạm ẩn", manage);
-        Assert.Contains("Đăng lại", manage);
+        Assert.Contains("Có tin đã hết hạn", manage);
+        var row = ListingManagementRow(manage, listingId);
+        Assert.Contains("data-status=\"TAM_AN\"", row);
+        Assert.Contains("lm-expired", row);
+        AssertPublicListingAction(row, listingId, "TAM_AN");
         using var guest = Client();
         Assert.Equal(HttpStatusCode.NotFound, (await guest.GetAsync($"/TinDang/ChiTiet/{listingId}")).StatusCode);
     }

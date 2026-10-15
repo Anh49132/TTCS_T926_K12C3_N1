@@ -6,9 +6,10 @@ using System.Text;
 using System.Text.Json;
 
 if(args.Length is <2 or >3)throw new ArgumentException("Usage: S404Browser <demo-directory> <base-url>");
-var checkoutListing=args.Length==3 && args[2]=="s4052";
-var task4=args.Length==3 && args[2] is "task4" or "s4052";
-var task3=args.Length==3 && args[2] is "task3" or "task4" or "s4052";
+var publishListing=args.Length==3 && args[2]=="s4053";
+var checkoutListing=args.Length==3 && args[2] is "s4052" or "s4053";
+var task4=args.Length==3 && args[2] is "task4" or "s4052" or "s4053";
+var task3=args.Length==3 && args[2] is "task3" or "task4" or "s4052" or "s4053";
 var folder=Path.GetFullPath(args[0]);var url=args[1].TrimEnd('/');
 var access=JsonDocument.Parse(await File.ReadAllTextAsync(Path.Combine(folder,"access.json"))).RootElement;
 var output=Path.Combine(folder,"browser-check-"+Guid.NewGuid().ToString("N")[..8]);Directory.CreateDirectory(output);
@@ -143,6 +144,26 @@ try
             if(!(await Eval("document.querySelector('[name=NoiDung]').value.includes('Mô tả được giữ nguyên từ tin cũ.') && document.body.textContent.includes('4.500.000')")).GetBoolean())throw new Exception("Draft lost original description or uses old room price.");
             if((await Eval("document.documentElement.scrollWidth>innerWidth")).GetBoolean())throw new Exception("Draft editor overflows mobile.");
             Console.WriteLine("PASS: S4-05 automatic draft marker, original description, current price and 360px");
+            if(publishListing)
+            {
+                var publishWatch=Stopwatch.StartNew();
+                await Navigate("/TinDang/QuanLy");
+                await Screenshot("publish-before-mobile-360.png");
+                var form=await Eval("Object.fromEntries(new FormData(document.querySelector('.lm-publish-form')))");
+                var listingId=form.GetProperty("id").GetString()!;
+                await Eval("document.querySelector('.lm-publish-button').click();true");
+                await Wait("document.readyState==='complete' && !document.querySelector('.lm-publish-button') && document.querySelector('[data-status=DANG_HIEN_THI]')!==null");
+                publishWatch.Stop();
+                if(publishWatch.Elapsed>=TimeSpan.FromMinutes(1))throw new Exception("One-click publication exceeded one minute.");
+                await Screenshot("publish-after-mobile-360.png");
+                if((await Eval("document.documentElement.scrollWidth>innerWidth")).GetBoolean())throw new Exception("Published list overflows mobile.");
+                await Navigate("/TinDang/ChiTiet/"+listingId);
+                await Screenshot("published-detail-mobile-360.png");
+                if(!(await Eval("document.body.textContent.includes('4.500.000') && document.body.textContent.includes('Mô tả được giữ nguyên từ tin cũ.')")).GetBoolean())throw new Exception("Public listing content/price mismatch.");
+                var repeat=(await Eval("(async()=>{const r=await fetch('/TinDang/Dang',{method:'POST',body:new URLSearchParams("+form.GetRawText()+")});return r.status})()")).GetInt32();
+                if(repeat!=200)throw new Exception("Repeated publication failed.");
+                Console.WriteLine($"PASS: one native button click publishes draft in {publishWatch.Elapsed.TotalSeconds:F2}s, mobile360, public content and repeated request");
+            }
         }
         await Login("Tenant");await Viewport(360,900,true);await Navigate("/TatToan/ChiTiet/1");await Screenshot("confirmed-tenant-mobile-360.png");
         if(!(await Eval("document.body.textContent.includes('Đã kết thúc') && document.body.textContent.includes('13.742') && !document.body.textContent.includes('Hoàn tất trả phòng') && document.querySelectorAll('[data-deduction-type=PHAT_COC]').length===1")).GetBoolean())throw new Exception("Tenant final snapshot mismatch.");

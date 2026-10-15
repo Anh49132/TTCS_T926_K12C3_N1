@@ -24,3 +24,5 @@
 .lm-more-button svg{display:block;width:17px;height:17px;fill:currentColor;stroke:none}
 .lm-more-button:hover,.lm-action-menu[open] .lm-more-button{background:#E9EAEC;color:#535860}
 .lm-more-button:focus-visible{outline:2px solid #BFA77A;outline-offset:2px}
+
+.lm-publish-form{margin-top:.5rem}.lm-publish-button{border:0;border-radius:5px;background:#30343B;color:#fff;padding:.45rem .8rem;font:inherit;font-size:.75rem;cursor:pointer}.lm-publish-button:disabled{opacity:.6;cursor:wait}

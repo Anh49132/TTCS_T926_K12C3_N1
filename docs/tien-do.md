@@ -1,3 +1,10 @@
+## 15/10/2026 — S4-05 phần 3: đăng tin Nháp một nút
+
+- Nhánh `feature/S4-05/03-publish-draft-listing`, kế thừa `ed0100a`. Nút Đăng tin ngay trên Nháp, hiển thị ở 360px; bật trên cùng bản ghi, ghi ngày/hết hạn và cập nhật danh sách.
+- Người dùng xác nhận mô tả/ảnh không bắt buộc. Kiểm tra tiêu đề, giới hạn độ dài hiện có, giá/diện tích/sức chứa, địa chỉ, phòng Trống/tòa hoạt động/quyền và chống tin công khai trùng. Menu và form sửa không bỏ qua kiểm tra Nháp.
+- SQLite IMMEDIATE, trạng thái/audit cùng transaction; bấm lại không đổi ngày/hết hạn hoặc tạo audit mới. Giữ dữ liệu gốc/schema33 và các luồng ngoài phạm vi.
+- Edge 360px PASS, một lần bấm đăng trong 0,96s trên demo. 28 ca mới và 124 ca hồi quy PASS. Ban đầu tích hợp 36/39; sau yêu cầu xử lý đã cập nhật ba test theo giao diện hiện tại, giữ kiểm tra nghiệp vụ: lượt gộp đăng Nháp/tích hợp cuối 65/65 PASS. Chi tiết và kết quả nghiệp vụ cuối: [báo cáo S4-05 phần 3](s4053-bat-tin-nhap.md). Chưa commit/push.
+
 ## 15/10/2026 — S4-05 phần 2: tự tạo tin Nháp sau trả phòng
 
 - Nhánh feature/S4-05/02-auto-create-draft-listing kế thừa 35dfa7f. Tạo tin Nháp cùng transaction tất toán: sao chép nguyên tiêu đề/mô tả của tin cùng phòng không phải Nháp mới nhất, liên kết nguồn, đặt người đăng/ngày tạo mới và xóa ngày đăng/hết hạn. Thiếu nguồn dùng mã phòng/mô tả công khai; không lấy ghi chú nội bộ. Hai lựa chọn PO đã hỏi nhưng chưa trả lời, đang dùng phương án đề xuất, chưa ghi là đã được PO xác nhận.

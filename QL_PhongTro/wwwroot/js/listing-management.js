@@ -44,3 +44,7 @@
 })();
 
 (() => {const menus=[...document.querySelectorAll('.lm-action-menu')];menus.forEach(menu=>menu.addEventListener('toggle',()=>{if(menu.open)menus.forEach(other=>{if(other!==menu)other.open=false;});}));document.addEventListener('click',event=>menus.forEach(menu=>{if(!menu.contains(event.target))menu.open=false;}));document.addEventListener('keydown',event=>{if(event.key==='Escape')menus.forEach(menu=>{if(menu.open){menu.open=false;menu.querySelector('summary').focus();}});});})();
+
+// Prevent accidental repeated clicks; the server also handles repeated requests.
+document.querySelectorAll('.lm-publish-form').forEach(form=>form.addEventListener('submit',()=>{const button=form.querySelector('button[type=submit]');if(button){button.disabled=true;button.textContent='Đang đăng…';}}));
+window.addEventListener('pageshow',()=>document.querySelectorAll('.lm-publish-button').forEach(button=>{button.disabled=false;button.textContent='Đăng tin';}));
