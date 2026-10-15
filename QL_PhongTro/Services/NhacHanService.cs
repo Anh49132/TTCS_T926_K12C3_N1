@@ -142,7 +142,7 @@ public sealed class NhacHanResult
     public int Tong => SapDenHan + QuaHan;
 }
 
-public sealed class NhacHanHostedService(IServiceScopeFactory scopeFactory, ILogger<NhacHanHostedService> logger)
+public sealed class NhacHanHostedService(IServiceScopeFactory scopeFactory, ILogger<NhacHanHostedService> logger, ITimeProvider clock)
     : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -151,6 +151,14 @@ public sealed class NhacHanHostedService(IServiceScopeFactory scopeFactory, ILog
         {
             try
             {
+                var nextRun = GetNext08h00Vn(clock.UtcNow);
+                var delay = nextRun - clock.UtcNow;
+                if (delay > TimeSpan.Zero)
+                {
+                    try { await Task.Delay(delay, stoppingToken); }
+                    catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested) { break; }
+                }
+
                 await using var scope = scopeFactory.CreateAsyncScope();
                 var service = scope.ServiceProvider.GetRequiredService<NhacHanService>();
                 await service.ChayNhacHanAsync(cancellationToken: stoppingToken);
@@ -162,16 +170,16 @@ public sealed class NhacHanHostedService(IServiceScopeFactory scopeFactory, ILog
             catch (Exception exception)
             {
                 logger.LogError(exception, "Không xử lý được nhắc hạn hóa đơn.");
-            }
-
-            try
-            {
-                await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
-            }
-            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
-            {
-                break;
+                try { await Task.Delay(TimeSpan.FromHours(1), stoppingToken); }
+                catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested) { break; }
             }
         }
+    }
+
+    public static DateTime GetNext08h00Vn(DateTime utcNow)
+    {
+        var vnNow = utcNow.AddHours(7);
+        var today08 = new DateTime(vnNow.Year, vnNow.Month, vnNow.Day, 8, 0, 0);
+        return vnNow < today08 ? today08.AddHours(-7) : today08.AddDays(1).AddHours(-7);
     }
 }
