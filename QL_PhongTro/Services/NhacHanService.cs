@@ -52,8 +52,41 @@ public sealed class NhacHanService(IServiceScopeFactory scopeFactory, ILogger<Nh
             }
         }
 
-        // Quá hạn processing is intentionally omitted for this branch (S4-08).
-        // It will be implemented in a later branch (S4-09?).
+        // 2. Nhắc quá hạn (ngày sau hạn thanh toán)
+        var quaHan = await db.HoaDons
+            .AsNoTracking()
+            .Where(h => h.TrangThai == ""DA_PHAT_HANH""
+                && h.HanThanhToan == ngayChay.AddDays(-1)
+                && !db.ThongBaos.Any(t => t.HoaDonId == h.Id && t.LoaiThongBao == LoaiThongBaoHoaDon.QuaHan))
+            .Select(h => new { h.Id, h.HopDongId, h.Thang, h.Nam, h.TongTien, h.HanThanhToan })
+            .ToListAsync(cancellationToken);
+
+        foreach (var invoice in quaHan)
+        {
+            var khachDungTenId = await db.HopDongs
+                .Where(h => h.Id == invoice.HopDongId)
+                .Select(h => h.KhachDungTenId)
+                .SingleAsync(cancellationToken);
+
+            if (khachDungTenId.HasValue)
+            {
+                var taiKhoan = await db.TaiKhoans
+                    .AsNoTracking()
+                    .Where(t => t.Id == khachDungTenId.Value && t.DangHoatDong && t.EmailConfirmed)
+                    .Select(t => new { t.Id, t.Email, t.HoTen })
+                    .SingleOrDefaultAsync(cancellationToken);
+
+                if (taiKhoan != null && !string.IsNullOrWhiteSpace(taiKhoan.Email))
+                {
+                    var soConPhaiTra = await TinhSoConPhaiTraAsync(db, invoice.Id, cancellationToken);
+                    if (soConPhaiTra > 0)
+                    {
+                        await thongBaoService.TaoThongBaoQuaHanAsync(invoice.Id, taiKhoan.Id, taiKhoan.Email, taiKhoan.HoTen, soConPhaiTra, cancellationToken);
+                        result.QuaHan++;
+                    }
+                }
+            }
+        }
 
         return result;
     }
@@ -82,6 +115,6 @@ public sealed class NhacHanService(IServiceScopeFactory scopeFactory, ILogger<Nh
 public sealed class NhacHanResult
 {
     public int SapDenHan { get; set; }
-    public int QuaHan { get; set; } // Kept for compatibility, remains 0 in this branch
+    public int QuaHan { get; set; }
     public int Tong => SapDenHan + QuaHan;
 }
