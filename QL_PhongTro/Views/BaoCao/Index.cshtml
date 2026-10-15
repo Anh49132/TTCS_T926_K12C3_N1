@@ -1,0 +1,75 @@
+@model QL_PhongTro.ViewModels.BaoCaoDoanhThuViewModel
+@using System.Globalization
+@{
+    ViewData["Title"] = "Báo cáo tài chính theo tháng";
+    var vn = CultureInfo.GetCultureInfo("vi-VN");
+}
+
+<article class="bc-page" data-revenue-report>
+    <header class="bc-heading">
+        <div>
+            <p class="bc-eyebrow">TÀI CHÍNH · BÁO CÁO</p>
+            <h1>Báo cáo tài chính theo tháng</h1>
+            <p class="bc-subtitle">Theo dõi tiền đã phát hành, đã thu và còn phải thu theo kỳ hóa đơn.</p>
+        </div>
+        <form asp-controller="BaoCao" asp-action="Index" method="get" class="bc-filter-form">
+            <div class="bc-filter-group">
+                <label for="toaNhaId" class="bc-label">Tòa nhà</label>
+                <select name="toaNhaId" id="toaNhaId" class="bc-select" asp-for="ToaNhaId" asp-items="Model.DanhSachToaNha"></select>
+            </div>
+            <div class="bc-filter-group">
+                <label for="thang" class="bc-label">Tháng</label>
+                <select name="thang" id="thang" class="bc-select">
+                    @for (var month = 1; month <= 12; month++)
+                    {
+                        <option value="@month" selected="@(Model.DenThang == month)">Tháng @month.ToString("D2")</option>
+                    }
+                </select>
+            </div>
+            <div class="bc-filter-group">
+                <label for="nam" class="bc-label">Năm</label>
+                <input name="nam" id="nam" type="number" min="1900" max="9999" value="@Model.DenNam" class="bc-input-year" required />
+            </div>
+            <button type="submit" class="bc-button">Xem báo cáo</button>
+        </form>
+    </header>
+
+    @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+    {
+        <section class="bc-alert bc-alert-error" role="alert">@Model.ErrorMessage</section>
+    }
+    else
+    {
+        <p class="bc-subtitle">Kỳ @Model.DenThang.ToString("D2")/@Model.DenNam · @Model.TenToaNhaDangChon</p>
+        <section class="bc-kpi-grid" aria-label="Tổng hợp tài chính tháng">
+            <article class="bc-kpi-card">
+                <span class="bc-kpi-label">Tổng tiền đã phát hành</span>
+                <strong class="bc-kpi-value">@Model.TongPhatHanh.ToString("N0", vn) <small>đ</small></strong>
+                <p class="bc-kpi-hint">Tổng hóa đơn đã phát hành trong kỳ</p>
+            </article>
+            <article class="bc-kpi-card bc-kpi-success">
+                <span class="bc-kpi-label">Tổng tiền đã thu</span>
+                <strong class="bc-kpi-value">@Model.TongDaThu.ToString("N0", vn) <small>đ</small></strong>
+                <p class="bc-kpi-hint">Khoản thanh toán đã xác nhận</p>
+            </article>
+            <article class="bc-kpi-card bc-kpi-warning">
+                <span class="bc-kpi-label">Số còn phải thu</span>
+                <strong class="bc-kpi-value">@Model.TongConPhaiThu.ToString("N0", vn) <small>đ</small></strong>
+                <p class="bc-kpi-hint">Sau thanh toán và cấn trừ cọc đã xác nhận</p>
+            </article>
+            <article class="bc-kpi-card bc-kpi-info">
+                <span class="bc-kpi-label">Tỷ lệ thu</span>
+                <strong class="bc-kpi-value">@Model.TiLeThuTongThe.ToString("0.#", vn)%</strong>
+                <p class="bc-kpi-hint">Tiền đã thu / tổng tiền đã phát hành</p>
+            </article>
+        </section>
+        @if (Model.TongPhatHanh == 0)
+        {
+            <p class="bc-table-footer">Kỳ này chưa có hóa đơn đã phát hành. Tỷ lệ thu được tính là 0%.</p>
+        }
+    }
+</article>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/bao-cao.css" asp-append-version="true" />
+}

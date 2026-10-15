@@ -205,6 +205,7 @@ builder.Services.AddScoped<RoomImageDeletionService>();
 builder.Services.AddHostedService<RoomImageCleanupHostedService>();
 builder.Services.AddScoped<TinDangExpirationService>();
 builder.Services.AddHostedService<TinDangExpirationHostedService>();
+builder.Services.AddScoped<BaoCaoService>();
 builder.Services.Configure<DichVuMacDinhOptions>(builder.Configuration.GetSection("DichVuMacDinh"));
 
 builder.Services.AddAuthentication()
