@@ -206,12 +206,12 @@ builder.Services.AddAuthentication()
             var id = context.Principal?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var version = context.Principal?.FindFirst(SessionVersionStore.ClaimType)?.Value;
             if (!int.TryParse(id, out var accountId) || !context.HttpContext.RequestServices.GetRequiredService<SessionVersionStore>().IsValid(accountId, version))
-                context.Fail("Phiên đăng nhập đã bị vô hiệu hóa.");
+                context.Fail("PhiÃªn Ä‘Äƒng nháº­p Ä‘Ã£ bá»‹ vÃ´ hiá»‡u hÃ³a.");
             if (int.TryParse(id, out var currentId))
             {
                 var account = await context.HttpContext.RequestServices.GetRequiredService<AppDbContext>().TaiKhoans.AsNoTracking().SingleOrDefaultAsync(a => a.Id == currentId);
                 if (account is null || account.IsDeleted || !account.EmailConfirmed || !account.DangHoatDong || account.MustChangePassword)
-                    context.Fail("Tài khoản chưa được phép sử dụng phiên này.");
+                    context.Fail("TÃ i khoáº£n chÆ°a Ä‘Æ°á»£c phÃ©p sá»­ dá»¥ng phiÃªn nÃ y.");
             }
         }
     };

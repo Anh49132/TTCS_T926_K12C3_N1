@@ -31,6 +31,7 @@ public partial class AppDbContext(DbContextOptions<AppDbContext> options, IHttpC
     public DbSet<AppRole> AppRoles { get; set; } = null!;
     public DbSet<AppModule> AppModules { get; set; } = null!;
     public DbSet<RolePermission> RolePermissions { get; set; } = null!;
+    public DbSet<EmailGuiLog> EmailGuiLogs { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
