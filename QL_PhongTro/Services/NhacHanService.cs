@@ -1,11 +1,10 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 using QL_PhongTro.Data;
 using QL_PhongTro.Models;
 
 namespace QL_PhongTro.Services;
 
-public sealed class NhacHanService(IServiceScopeFactory scopeFactory, ILogger<NhacHanService> logger, ITimeProvider clock)
+public sealed class NhacHanService(IServiceScopeFactory scopeFactory, ITimeProvider clock)
 {
     public async Task<NhacHanResult> ChayNhacHanAsync(DateOnly? ngayGiaLap = null, CancellationToken cancellationToken = default)
     {
@@ -14,14 +13,12 @@ public sealed class NhacHanService(IServiceScopeFactory scopeFactory, ILogger<Nh
 
         using var scope = scopeFactory.CreateAsyncScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        var thongBaoService = scope.ServiceProvider.GetRequiredService<ThongBaoHoaDonService>();
-
         // 1. Nhắc sắp đến hạn (còn 2 ngày)
         var sapDenHan = await db.HoaDons
             .AsNoTracking()
-            .Where(h => h.TrangThai == ""DA_PHAT_HANH""
+            .Where(h => h.TrangThai == "DA_PHAT_HANH"
                 && h.HanThanhToan == ngayChay.AddDays(2)
-                && !db.ThongBaos.Any(t => t.HoaDonId == h.Id && t.LoaiThongBao == LoaiThongBaoHoaDon.SapDenHan))
+                && !db.ThongBaoHoaDons.Any(t => t.HoaDonId == h.Id && t.LoaiThongBao == LoaiThongBaoHoaDon.SapDenHan))
             .Select(h => new { h.Id, h.HopDongId, h.Thang, h.Nam, h.TongTien, h.HanThanhToan })
             .ToListAsync(cancellationToken);
 
@@ -34,10 +31,10 @@ public sealed class NhacHanService(IServiceScopeFactory scopeFactory, ILogger<Nh
 
             if (khachDungTenId.HasValue)
             {
-                var taiKhoan = await db.TaiKhoans
-                    .AsNoTracking()
-                    .Where(t => t.Id == khachDungTenId.Value && t.DangHoatDong && t.EmailConfirmed)
-                    .Select(t => new { t.Id, t.Email, t.HoTen })
+                var taiKhoan = await (from profile in db.KhachThues.AsNoTracking()
+                    join account in db.TaiKhoans.AsNoTracking() on profile.TaiKhoanId equals account.Id
+                    where profile.Id == khachDungTenId.Value && account.DangHoatDong && account.EmailConfirmed
+                    select new { account.Id, account.Email, account.HoTen })
                     .SingleOrDefaultAsync(cancellationToken);
 
                 if (taiKhoan != null && !string.IsNullOrWhiteSpace(taiKhoan.Email))
@@ -45,7 +42,8 @@ public sealed class NhacHanService(IServiceScopeFactory scopeFactory, ILogger<Nh
                     var soConPhaiTra = await TinhSoConPhaiTraAsync(db, invoice.Id, cancellationToken);
                     if (soConPhaiTra > 0)
                     {
-                        await thongBaoService.TaoThongBaoSapDenHanAsync(invoice.Id, taiKhoan.Id, taiKhoan.Email, taiKhoan.HoTen, soConPhaiTra, cancellationToken);
+                        db.ThongBaoHoaDons.Add(TaoThongBao(invoice.Id, taiKhoan.Id, taiKhoan.Email,
+                            taiKhoan.HoTen, soConPhaiTra, invoice.HanThanhToan, LoaiThongBaoHoaDon.SapDenHan, clock.UtcNow));
                         result.SapDenHan++;
                     }
                 }
@@ -55,9 +53,9 @@ public sealed class NhacHanService(IServiceScopeFactory scopeFactory, ILogger<Nh
         // 2. Nhắc quá hạn (ngày sau hạn thanh toán)
         var quaHan = await db.HoaDons
             .AsNoTracking()
-            .Where(h => h.TrangThai == ""DA_PHAT_HANH""
+            .Where(h => h.TrangThai == "DA_PHAT_HANH"
                 && h.HanThanhToan == ngayChay.AddDays(-1)
-                && !db.ThongBaos.Any(t => t.HoaDonId == h.Id && t.LoaiThongBao == LoaiThongBaoHoaDon.QuaHan))
+                && !db.ThongBaoHoaDons.Any(t => t.HoaDonId == h.Id && t.LoaiThongBao == LoaiThongBaoHoaDon.QuaHan))
             .Select(h => new { h.Id, h.HopDongId, h.Thang, h.Nam, h.TongTien, h.HanThanhToan })
             .ToListAsync(cancellationToken);
 
@@ -70,10 +68,10 @@ public sealed class NhacHanService(IServiceScopeFactory scopeFactory, ILogger<Nh
 
             if (khachDungTenId.HasValue)
             {
-                var taiKhoan = await db.TaiKhoans
-                    .AsNoTracking()
-                    .Where(t => t.Id == khachDungTenId.Value && t.DangHoatDong && t.EmailConfirmed)
-                    .Select(t => new { t.Id, t.Email, t.HoTen })
+                var taiKhoan = await (from profile in db.KhachThues.AsNoTracking()
+                    join account in db.TaiKhoans.AsNoTracking() on profile.TaiKhoanId equals account.Id
+                    where profile.Id == khachDungTenId.Value && account.DangHoatDong && account.EmailConfirmed
+                    select new { account.Id, account.Email, account.HoTen })
                     .SingleOrDefaultAsync(cancellationToken);
 
                 if (taiKhoan != null && !string.IsNullOrWhiteSpace(taiKhoan.Email))
@@ -81,24 +79,49 @@ public sealed class NhacHanService(IServiceScopeFactory scopeFactory, ILogger<Nh
                     var soConPhaiTra = await TinhSoConPhaiTraAsync(db, invoice.Id, cancellationToken);
                     if (soConPhaiTra > 0)
                     {
-                        await thongBaoService.TaoThongBaoQuaHanAsync(invoice.Id, taiKhoan.Id, taiKhoan.Email, taiKhoan.HoTen, soConPhaiTra, cancellationToken);
+                        db.ThongBaoHoaDons.Add(TaoThongBao(invoice.Id, taiKhoan.Id, taiKhoan.Email,
+                            taiKhoan.HoTen, soConPhaiTra, invoice.HanThanhToan, LoaiThongBaoHoaDon.QuaHan, clock.UtcNow));
                         result.QuaHan++;
                     }
                 }
             }
         }
 
+        await db.SaveChangesAsync(cancellationToken);
         return result;
+    }
+
+    private static ThongBaoHoaDon TaoThongBao(
+        int hoaDonId, int nguoiNhanId, string email, string ten, long soConPhaiTra,
+        DateOnly hanThanhToan, string loaiThongBao, DateTime ngayTaoUtc)
+    {
+        var laSapDenHan = loaiThongBao == LoaiThongBaoHoaDon.SapDenHan;
+        var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+        var tieuDe = laSapDenHan ? "Hóa đơn sắp đến hạn thanh toán" : "Hóa đơn đã quá hạn thanh toán";
+        var noiDung = $"Xin chào {ten}, hóa đơn của bạn còn phải thanh toán {soConPhaiTra.ToString("N0", culture)} đ. " +
+            $"Hạn thanh toán: {hanThanhToan:dd/MM/yyyy}.";
+        return new ThongBaoHoaDon
+        {
+            NguoiNhanId = nguoiNhanId,
+            HoaDonId = hoaDonId,
+            LoaiThongBao = loaiThongBao,
+            TieuDe = tieuDe,
+            NoiDung = noiDung,
+            DuongDan = $"/ThongBao/HoaDon/{hoaDonId}",
+            EmailNhan = email,
+            NgayTao = ngayTaoUtc,
+            TrangThaiEmail = "CHO_GUI"
+        };
     }
 
     private static async Task<long> TinhSoConPhaiTraAsync(AppDbContext db, int hoaDonId, CancellationToken cancellationToken)
     {
         var tongThanhToan = await db.ThanhToans
-            .Where(t => t.HoaDonId == hoaDonId && t.TrangThai == ""DA_XAC_NHAN"")
+            .Where(t => t.HoaDonId == hoaDonId && t.TrangThai == "DA_XAC_NHAN")
             .SumAsync(t => (long?)t.SoTien, cancellationToken) ?? 0L;
 
         var tongCanTru = await db.GiaoDichCocs
-            .Where(g => g.HoaDonId == hoaDonId && g.TrangThai == ""DA_XAC_NHAN"" && g.Loai == ""CAN_TRU"")
+            .Where(g => g.HoaDonId == hoaDonId && g.TrangThai == "DA_XAC_NHAN" && g.Loai == "CAN_TRU")
             .SumAsync(g => (long?)g.SoTien, cancellationToken) ?? 0L;
 
         var invoice = await db.HoaDons
@@ -117,4 +140,38 @@ public sealed class NhacHanResult
     public int SapDenHan { get; set; }
     public int QuaHan { get; set; }
     public int Tong => SapDenHan + QuaHan;
+}
+
+public sealed class NhacHanHostedService(IServiceScopeFactory scopeFactory, ILogger<NhacHanHostedService> logger)
+    : BackgroundService
+{
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            try
+            {
+                await using var scope = scopeFactory.CreateAsyncScope();
+                var service = scope.ServiceProvider.GetRequiredService<NhacHanService>();
+                await service.ChayNhacHanAsync(cancellationToken: stoppingToken);
+            }
+            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+            {
+                break;
+            }
+            catch (Exception exception)
+            {
+                logger.LogError(exception, "Không xử lý được nhắc hạn hóa đơn.");
+            }
+
+            try
+            {
+                await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
+            }
+            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+            {
+                break;
+            }
+        }
+    }
 }

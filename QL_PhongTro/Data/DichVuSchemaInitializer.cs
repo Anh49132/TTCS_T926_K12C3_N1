@@ -24,10 +24,14 @@ public static class DichVuSchemaInitializer
         using var readerScript = new StreamReader(stream);
         using var tx = connection.BeginTransaction();
         check.Transaction = tx; check.CommandText = readerScript.ReadToEnd(); check.ExecuteNonQuery();
+        check.CommandText = "CREATE INDEX IF NOT EXISTS ix_hoa_don_report_status_period_contract ON hoa_don(trang_thai,nam,thang,hop_dong_id);";
+        check.ExecuteNonQuery();
         InvoiceIssueDateSchema.Ensure(connection, tx);
         check.CommandText = "SELECT MAX(version) FROM app_schema_version";
         if (Convert.ToInt32(check.ExecuteScalar()) >= 22) InvoiceCancellationSchema.Ensure(connection, tx);
         InvoicePaymentSchema.Ensure(connection, tx);
+        check.CommandText = "CREATE INDEX IF NOT EXISTS ix_thanh_toan_hoa_don_trang_thai ON thanh_toan(hoa_don_id,trang_thai);";
+        check.ExecuteNonQuery();
         check.CommandText = "SELECT MAX(version) FROM app_schema_version";
         if (Convert.ToInt32(check.ExecuteScalar()) >= 26) InvoiceCollectionSchema.Ensure(connection, tx);
         check.CommandText = "SELECT MAX(version) FROM app_schema_version";

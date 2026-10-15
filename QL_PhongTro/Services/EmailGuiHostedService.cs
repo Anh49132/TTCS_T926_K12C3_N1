@@ -15,8 +15,8 @@ public sealed class EmailGuiHostedService(
             try
             {
                 await using var scope = scopeFactory.CreateAsyncScope();
-                var emailService = scope.ServiceProvider.GetRequiredService<EmailGuiService>();
-                var processed = await emailService.XuLyHangDoiGuiAsync(cancellationToken: stoppingToken);
+                var dispatcher = scope.ServiceProvider.GetRequiredService<InvoiceNotificationDispatcher>();
+                var processed = await dispatcher.DispatchAsync(stoppingToken);
                 if (processed > 0)
                 {
                     logger.LogInformation("Đã gửi {Count} email từ hàng đợi", processed);

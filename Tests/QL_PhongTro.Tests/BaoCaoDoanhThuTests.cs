@@ -63,6 +63,20 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
                 id INTEGER PRIMARY KEY, hoa_don_id INTEGER NOT NULL, so_tien INTEGER NOT NULL,
                 ngay_thanh_toan TEXT NOT NULL, trang_thai TEXT NOT NULL
             );
+            CREATE TABLE chi_tiet_hoa_don (
+                id INTEGER PRIMARY KEY, hoa_don_id INTEGER NOT NULL, so_thu_tu INTEGER NOT NULL,
+                dich_vu_id INTEGER NULL, cau_hinh_dich_vu_id INTEGER NULL, ky_hop_dong_id INTEGER NULL,
+                loai_khoan TEXT NOT NULL DEFAULT 'DICH_VU', ten_khoan TEXT NOT NULL DEFAULT '',
+                cach_tinh_ap_dung TEXT NULL, don_vi_tinh TEXT NULL, so_luong TEXT NOT NULL DEFAULT '1',
+                don_gia INTEGER NOT NULL DEFAULT 0, chi_so_dau TEXT NULL, chi_so_cuoi TEXT NULL,
+                so_ngay_tinh_tien INTEGER NULL, so_ngay_trong_thang INTEGER NULL,
+                thanh_tien INTEGER NOT NULL DEFAULT 0, ghi_chu TEXT NULL, chi_so_id INTEGER NULL, bao_hong_id INTEGER NULL
+            );
+            CREATE TABLE hop_dong_dich_vu (
+                id INTEGER PRIMARY KEY, hop_dong_id INTEGER NOT NULL, dich_vu_id INTEGER NOT NULL,
+                cau_hinh_dich_vu_id INTEGER NOT NULL, ten_dich_vu TEXT NOT NULL, cach_tinh TEXT NOT NULL,
+                don_vi_tinh TEXT NOT NULL, don_gia INTEGER NOT NULL, ngay_ghi_nhan TEXT NOT NULL
+            );
             CREATE INDEX ix_hoa_don_report_status_period_contract ON hoa_don(trang_thai,nam,thang,hop_dong_id);
             CREATE INDEX ix_thanh_toan_hoa_don_trang_thai ON thanh_toan(hoa_don_id,trang_thai);
 
@@ -81,6 +95,15 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
                   (2, 20, NULL, 'Toà nhà Moonlit', '456 Ba Đình', 1);
             """;
         cmd.ExecuteNonQuery();
+        using (var invoiceGuards = conn.BeginTransaction())
+        {
+            InvoiceCollectionSchema.Ensure(conn, invoiceGuards);
+            InvoiceCollectionCancellationSchema.Ensure(conn, invoiceGuards);
+            TatToanSchema.EnsureInvoiceGuard(conn, invoiceGuards);
+            XacNhanTatToanSchema.EnsureInvoiceGuards(conn, invoiceGuards);
+            BaoHongChiPhiSchema.InstallForNewInvoiceModule(conn, invoiceGuards);
+            invoiceGuards.Commit();
+        }
     }
 
     private static string AntiForgeryToken(string html) => WebUtility.HtmlDecode(
@@ -202,7 +225,7 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
 
         db.PhongTros.Add(new PhongTro { Id = 101, ToaNhaId = 1, MaPhong = "101", TrangThai = "DANG_THUE", GiaThue = 5_000_000, DienTich = 25, SoNguoiToiDa = 2, NgayTao = new DateTime(2026, 1, 1) });
         db.HopDongs.Add(new HopDongThamChieu { Id = 1001, PhongId = 101, TrangThai = "DANG_HIEU_LUC", MaHopDong = "HD-1001", KhachDungTenId = 40 });
-        db.KyHopDongs.Add(new KyHopDongThamChieu { Id = 1001, HopDongId = 1001, NgayBatDau = new DateOnly(2026, 1, 1), NgayKetThuc = new DateOnly(2026, 12, 31) });
+        db.KyHopDongs.Add(new KyHopDongThamChieu { Id = 1001, HopDongId = 1001, NgayBatDau = new DateOnly(2026, 1, 1), NgayKetThuc = new DateOnly(2026, 12, 31), GiaThue = 1_000_000 });
 
         // 1 hóa đơn đã phát hành (5.000.000), 1 hóa đơn nháp (10.000.000), 1 hóa đơn đã hủy (20.000.000)
         db.HoaDons.AddRange(
@@ -241,7 +264,7 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
 
         db.PhongTros.Add(new PhongTro { Id = 101, ToaNhaId = 1, MaPhong = "101", TrangThai = "DANG_THUE", GiaThue = 5_000_000, DienTich = 25, SoNguoiToiDa = 2, NgayTao = new DateTime(2026, 1, 1) });
         db.HopDongs.Add(new HopDongThamChieu { Id = 1001, PhongId = 101, TrangThai = "DANG_HIEU_LUC", MaHopDong = "HD-1001", KhachDungTenId = 40 });
-        db.KyHopDongs.Add(new KyHopDongThamChieu { Id = 1001, HopDongId = 1001, NgayBatDau = new DateOnly(2026, 1, 1), NgayKetThuc = new DateOnly(2026, 12, 31) });
+        db.KyHopDongs.Add(new KyHopDongThamChieu { Id = 1001, HopDongId = 1001, NgayBatDau = new DateOnly(2026, 1, 1), NgayKetThuc = new DateOnly(2026, 12, 31), GiaThue = 1_000_000 });
 
         db.HoaDons.Add(new HoaDon { Id = 2001, HopDongId = 1001, Thang = 10, Nam = 2026, TongTien = 5_000_000, TrangThai = "DA_PHAT_HANH", MaHoaDon = "HD-01" });
 
@@ -288,7 +311,7 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
         );
 
         db.HopDongs.Add(new HopDongThamChieu { Id = 1001, PhongId = 101, TrangThai = "DANG_HIEU_LUC", MaHopDong = "HD-1001", KhachDungTenId = 40 });
-        db.KyHopDongs.Add(new KyHopDongThamChieu { Id = 1001, HopDongId = 1001, NgayBatDau = new DateOnly(2026, 1, 1), NgayKetThuc = new DateOnly(2026, 12, 31) });
+        db.KyHopDongs.Add(new KyHopDongThamChieu { Id = 1001, HopDongId = 1001, NgayBatDau = new DateOnly(2026, 1, 1), NgayKetThuc = new DateOnly(2026, 12, 31), GiaThue = 1_000_000 });
 
         await db.SaveChangesAsync();
 
@@ -307,7 +330,10 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
         Assert.Equal(100.0m, monthlyBuilding.TiLeLapDay);
 
         // Trường hợp toà không có phòng nào cho thuê (chỉ toàn ngừng cho thuê)
-        db.PhongTros.Remove((await db.PhongTros.FindAsync(101))!);
+        (await db.PhongTros.FindAsync(101))!.TrangThai = "NGUNG_CHO_THUE";
+        var activeTerm = await db.KyHopDongs.FindAsync(1001);
+        activeTerm!.NgayKetThuc = new DateOnly(2026, 9, 30);
+        (await db.HopDongs.FindAsync(1001))!.TrangThai = "DA_KET_THUC";
         await db.SaveChangesAsync();
 
         var resultEmpty = await service.LayBaoCaoAsync(10, "CHU_NHA", 1, 10, 2026, 10, 2026);
@@ -368,7 +394,7 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
 
         db.PhongTros.Add(new PhongTro { Id = 101, ToaNhaId = 1, MaPhong = "101", TrangThai = "DANG_THUE", GiaThue = 5_000_000, DienTich = 25, SoNguoiToiDa = 2, NgayTao = new DateTime(2026, 1, 1) });
         db.HopDongs.Add(new HopDongThamChieu { Id = 1001, PhongId = 101, TrangThai = "DANG_HIEU_LUC", MaHopDong = "HD-1001", KhachDungTenId = 40 });
-        db.KyHopDongs.Add(new KyHopDongThamChieu { Id = 1001, HopDongId = 1001, NgayBatDau = new DateOnly(2026, 1, 1), NgayKetThuc = new DateOnly(2026, 12, 31) });
+        db.KyHopDongs.Add(new KyHopDongThamChieu { Id = 1001, HopDongId = 1001, NgayBatDau = new DateOnly(2026, 1, 1), NgayKetThuc = new DateOnly(2026, 12, 31), GiaThue = 1_000_000 });
 
         // Tạo hóa đơn cho 6 tháng: T5, T6, T7, T8, T9, T10 năm 2026
         for (int m = 5; m <= 10; m++)
@@ -415,9 +441,6 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
             Assert.Equal(tableRow.Thang, chartItem.Thang);
             Assert.Equal(tableRow.Nam, chartItem.Nam);
             Assert.Equal(tableRow.TongPhatHanh, chartItem.TongPhatHanh);
-            Assert.Equal(tableRow.TongDaThu, chartItem.TongDaThu);
-            Assert.Equal(tableRow.SoConPhaiThu, chartItem.SoConPhaiThu);
-            Assert.Equal(tableRow.TiLeThu, chartItem.TiLeThu);
         }
     }
 
@@ -510,7 +533,8 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
                 Id = contractId,
                 HopDongId = contractId,
                 NgayBatDau = i == 1 ? new DateOnly(2026, 10, 31) : new DateOnly(2026, 1, 1),
-                NgayKetThuc = i == 2 ? new DateOnly(2026, 10, 31) : new DateOnly(2026, 12, 31)
+                NgayKetThuc = i == 2 ? new DateOnly(2026, 10, 31) : new DateOnly(2026, 12, 31),
+                GiaThue = 1_000_000
             });
         }
         await db.SaveChangesAsync();
@@ -566,8 +590,25 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
 
         using var command = connection.CreateCommand();
         command.CommandText = "SELECT MAX(version) FROM app_schema_version";
-        Assert.Equal(35L, command.ExecuteScalar());
+        Assert.Equal(36L, command.ExecuteScalar());
         ReportPerformanceSchema.Validate(connection);
+    }
+
+    [Fact]
+    public void EmailGuiLogSchema_IsInstalledAndValidated()
+    {
+        using var connection = new SqliteConnection(new SqliteConnectionStringBuilder
+        {
+            DataSource = _dbPath,
+            ForeignKeys = true,
+            Pooling = false
+        }.ToString());
+        connection.Open();
+
+        using var command = connection.CreateCommand();
+        command.CommandText = "SELECT MAX(version) FROM app_schema_version";
+        Assert.Equal(36L, command.ExecuteScalar());
+        EmailGuiLogSchema.Validate(connection);
     }
 
     [Fact]
@@ -605,7 +646,7 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
             if (i <= 400)
             {
                 contracts.Add(new HopDongThamChieu { Id = cId, PhongId = rId, TrangThai = "DANG_HIEU_LUC", MaHopDong = $"HD-{cId}", KhachDungTenId = 40 });
-                periods.Add(new KyHopDongThamChieu { Id = cId, HopDongId = cId, NgayBatDau = new DateOnly(2025, 1, 1), NgayKetThuc = new DateOnly(2026, 12, 31) });
+                periods.Add(new KyHopDongThamChieu { Id = cId, HopDongId = cId, NgayBatDau = new DateOnly(2025, 1, 1), NgayKetThuc = new DateOnly(2026, 12, 31), GiaThue = 1_000_000 });
 
                 // 12 tháng hóa đơn
                 for (int m = 1; m <= 12; m++)

@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using QL_PhongTro.Data;
+using QL_PhongTro.Models;
 namespace QL_PhongTro.Services;
 
-public sealed class InvoiceNotificationDispatcher(AppDbContext db, IInvoiceEmailSender sender, ITimeProvider clock)
+public sealed class InvoiceNotificationDispatcher(AppDbContext db, IQueuedInvoiceEmailSender sender, ITimeProvider clock)
 {
     public static async Task<bool> IsInstalledAsync(AppDbContext context, CancellationToken cancellationToken = default) =>
         await context.Database.SqlQueryRaw<int>("SELECT COUNT(*) AS Value FROM sqlite_master WHERE type='table' AND name IN ('thong_bao','hoa_don')")
@@ -14,7 +15,11 @@ public sealed class InvoiceNotificationDispatcher(AppDbContext db, IInvoiceEmail
         if (!await IsInstalledAsync(db, cancellationToken)) return 0;
         var now = clock.UtcNow;
         var publishedIds = db.HoaDons.Where(x => x.TrangThai == "DA_PHAT_HANH").Select(x => x.Id);
-        var candidates = await db.ThongBaoHoaDons.AsNoTracking().Where(x => x.LoaiThongBao == "HOA_DON_MOI" && publishedIds.Contains(x.HoaDonId)
+        var candidates = await db.ThongBaoHoaDons.AsNoTracking().Where(x =>
+            (x.LoaiThongBao == LoaiThongBaoHoaDon.HoaDonMoi
+                || x.LoaiThongBao == LoaiThongBaoHoaDon.SapDenHan
+                || x.LoaiThongBao == LoaiThongBaoHoaDon.QuaHan)
+            && publishedIds.Contains(x.HoaDonId)
             && (x.TrangThaiEmail == "CHO_GUI" || (x.TrangThaiEmail == "DANG_GUI" && x.KhoaXuLyDen < now)))
             .OrderBy(x => x.Id).Take(10).ToListAsync(cancellationToken);
         var sent = 0;

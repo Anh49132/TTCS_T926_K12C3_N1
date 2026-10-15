@@ -180,29 +180,28 @@ public sealed partial class HoaDonDichVuService(AppDbContext db, DichVuService s
         if (!taoNhap)
         {
             invoice.TrangThai = "DA_PHAT_HANH"; invoice.NgayPhatHanh = (clock ?? new SystemTimeProvider()).UtcNow; invoice.NguoiPhatHanhId = accountId;
-        }
-        await db.SaveChangesAsync(); await sqlite.CommitAsync();
-            // Create email log for notification
+
             var recipient = await (from kt in db.KhachThues
-                               join tk in db.TaiKhoans on kt.TaiKhoanId equals tk.Id
-                               where kt.Id == contract.HopDong.KhachDungTenId
-                               && tk.DangHoatDong && tk.EmailConfirmed
-                               select new { kt.Id, tk.Email, tk.HoTen })
-                               .FirstOrDefaultAsync();
+                                   join tk in db.TaiKhoans on kt.TaiKhoanId equals tk.Id
+                                   where kt.Id == contract.HopDong.KhachDungTenId
+                                         && tk.DangHoatDong && tk.EmailConfirmed
+                                   select new { kt.Id, tk.Email }).FirstOrDefaultAsync();
             if (recipient != null && !string.IsNullOrWhiteSpace(recipient.Email))
             {
-                var emailLog = new EmailGuiLog
+                db.EmailGuiLogs.Add(new EmailGuiLog
                 {
                     HoaDonId = invoice.Id,
                     LoaiThongBao = LoaiThongBaoHoaDon.HoaDonMoi,
                     NguoiNhanId = recipient.Id,
-                    EmailNguoiNhan = recipient.Email,
+                    EmailNguoiNhan = recipient.Email!,
                     TrangThai = TrangThaiEmail.ChoGui,
                     SoLanThu = 0,
                     NgayGui = (clock ?? new SystemTimeProvider()).UtcNow
-                };
-                db.EmailGuiLogs.Add(emailLog);
+                });
             }
+        }
+        await db.SaveChangesAsync();
+        await transaction!.CommitAsync();
         return invoice.Id;
     }
 
