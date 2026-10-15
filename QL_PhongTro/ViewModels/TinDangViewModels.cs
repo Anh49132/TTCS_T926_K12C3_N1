@@ -12,6 +12,7 @@ public sealed class TinDangDanhSachViewModel
 
 public sealed class TinDangQuanLyItemViewModel
 {
+    public bool TuDongSauTraPhong { get; init; }
     public int ToaNhaId { get; init; }
     public long GiaThue { get; init; }
     public decimal DienTich { get; init; }

@@ -117,6 +117,10 @@ public class TinDangController(AppDbContext db, YeuCauThueService requests, Dich
         var latest = await db.TinDangs.AsNoTracking().Where(x => roomIds.Contains(x.PhongId))
             .GroupBy(x => x.PhongId).Select(g => g.OrderByDescending(x => x.Id).First()).ToListAsync();
         var listingByRoom = latest.ToDictionary(x => x.PhongId);
+        var latestIds=latest.Select(x=>x.Id).ToArray();
+        var checkoutDraftIds=(await db.NhatKyHoatDongs.AsNoTracking()
+            .Where(x=>x.LoaiDoiTuong=="tin_dang" && x.HanhDong=="TAO_NHAP_TRA_PHONG" && latestIds.Contains(x.DoiTuongId))
+            .Select(x=>x.DoiTuongId).ToListAsync()).ToHashSet();
         return View(new TinDangQuanLyViewModel
         {
             DanhSach = rooms.Select(x =>
@@ -134,6 +138,7 @@ public class TinDangController(AppDbContext db, YeuCauThueService requests, Dich
                     TenToaNha = x.BuildingName,
                     TrangThaiPhong = x.Room.TrangThai,
                     TinDangId = listing?.Id,
+                    TuDongSauTraPhong = listing is not null && checkoutDraftIds.Contains(listing.Id),
                     TieuDe = listing?.TieuDe,
                     TrangThaiTin = listing?.TrangThai,
                     NgayHetHan = listing?.NgayHetHan,

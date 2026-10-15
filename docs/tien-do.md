@@ -1,3 +1,11 @@
+## 15/10/2026 — S4-05 phần 2: tự tạo tin Nháp sau trả phòng
+
+- Nhánh feature/S4-05/02-auto-create-draft-listing kế thừa 35dfa7f. Tạo tin Nháp cùng transaction tất toán: sao chép nguyên tiêu đề/mô tả của tin cùng phòng không phải Nháp mới nhất, liên kết nguồn, đặt người đăng/ngày tạo mới và xóa ngày đăng/hết hạn. Thiếu nguồn dùng mã phòng/mô tả công khai; không lấy ghi chú nội bộ. Hai lựa chọn PO đã hỏi nhưng chưa trả lời, đang dùng phương án đề xuất, chưa ghi là đã được PO xác nhận.
+- Giữ ảnh theo phòng, không chép/xóa tệp; giá lấy từ phòng hiện tại, không nối giá vào mô tả. Không sửa tin cũ; nếu còn tin công khai thì chặn preflight/xác nhận để tránh tự hiển thị khi phòng Trống. Gửi lặp/đồng thời không thêm tin, lỗi tạo tin/marker rollback toàn bộ. Dùng audit marker sẵn có, không đổi schema v33.
+- Danh sách có nhãn Nháp tự tạo sau trả phòng ngay dưới tiêu đề, thấy được ở mobile. 124/124 test liên quan PASS (13 ca mới phần 2); bộ tích hợp 27 PASS/3 FAIL trên 30, tổng không trùng 151 PASS/3 FAIL trên 154. Ba FAIL trùng lỗi quản lý tin đã có trên phần 1; không sửa mã ngoài phạm vi.
+- Edge desktop/360px trên giao diện cuối PASS: mô tả, giá hiện tại 4.500.000đ, nhãn, lặp 409, trái quyền 403 và khách chỉ đọc. CSDL gốc giữ SHA256, UnitTest1.cs giữ nguyên; demo mới chưa chốt riêng cổng 5252. Chưa commit/push.
+- Hướng dẫn/quy tắc tạm dùng/kết quả/giới hạn: [s4052-tu-tao-tin-nhap.md](s4052-tu-tao-tin-nhap.md). Chưa chạy lại toàn bộ suite/Safari/tải production; không khẳng định không thể có bug khác hoặc xung đột với merge tương lai.
+
 ## 15/10/2026 — Kiểm thử mở rộng S4-05 phần 1
 
 - Bổ sung 18 ca, nâng bộ chuyên biệt lên 28/28 PASS: trạng thái hợp đồng/phòng, đổi quyền/sở hữu/tài khoản, GET/POST đủ vai trò, dữ liệu cũ/tràn phiên bản, hợp đồng hiệu lực khác cùng phòng, lịch sử đang mở và rollback khi ghi lịch sử lỗi; giữ các ca lặp/đồng thời/CSRF/audit nền đã đạt.

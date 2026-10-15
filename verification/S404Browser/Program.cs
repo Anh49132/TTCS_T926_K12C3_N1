@@ -6,8 +6,9 @@ using System.Text;
 using System.Text.Json;
 
 if(args.Length is <2 or >3)throw new ArgumentException("Usage: S404Browser <demo-directory> <base-url>");
-var task4=args.Length==3 && args[2]=="task4";
-var task3=args.Length==3 && args[2] is "task3" or "task4";
+var checkoutListing=args.Length==3 && args[2]=="s4052";
+var task4=args.Length==3 && args[2] is "task4" or "s4052";
+var task3=args.Length==3 && args[2] is "task3" or "task4" or "s4052";
 var folder=Path.GetFullPath(args[0]);var url=args[1].TrimEnd('/');
 var access=JsonDocument.Parse(await File.ReadAllTextAsync(Path.Combine(folder,"access.json"))).RootElement;
 var output=Path.Combine(folder,"browser-check-"+Guid.NewGuid().ToString("N")[..8]);Directory.CreateDirectory(output);
@@ -131,6 +132,18 @@ try
         if(!(await Eval("document.body.textContent.includes('Đã kết thúc') && document.body.textContent.includes('13.742') && !document.body.textContent.includes('Sửa bảng nháp')")).GetBoolean())throw new Exception("Confirmed result mismatch.");
         await Navigate("/HopDong/Details/1");
         if(!(await Eval("document.body.textContent.includes('Đã kết thúc')")).GetBoolean())throw new Exception("Contract did not show ended status.");
+        if(checkoutListing)
+        {
+            await Navigate("/TinDang/QuanLy");
+            if(!(await Eval("document.querySelector('.lm-room .lm-checkout-draft')?.textContent==='Nháp tự tạo sau trả phòng' && document.body.textContent.includes('4.500.000')")).GetBoolean())throw new Exception("Automatic draft marker/current room price missing.");
+            await Viewport(360,900,true);await Screenshot("auto-draft-list-mobile-360.png");
+            if((await Eval("document.documentElement.scrollWidth>innerWidth")).GetBoolean())throw new Exception("Listing page overflows mobile.");
+            var editHref=(await Eval("document.querySelector('a[aria-label=\"Chỉnh sửa tin phòng A103\"]').getAttribute('href')")).GetString()!;
+            await Navigate(editHref);await Screenshot("auto-draft-edit-mobile-360.png");
+            if(!(await Eval("document.querySelector('[name=NoiDung]').value.includes('Mô tả được giữ nguyên từ tin cũ.') && document.body.textContent.includes('4.500.000')")).GetBoolean())throw new Exception("Draft lost original description or uses old room price.");
+            if((await Eval("document.documentElement.scrollWidth>innerWidth")).GetBoolean())throw new Exception("Draft editor overflows mobile.");
+            Console.WriteLine("PASS: S4-05 automatic draft marker, original description, current price and 360px");
+        }
         await Login("Tenant");await Viewport(360,900,true);await Navigate("/TatToan/ChiTiet/1");await Screenshot("confirmed-tenant-mobile-360.png");
         if(!(await Eval("document.body.textContent.includes('Đã kết thúc') && document.body.textContent.includes('13.742') && !document.body.textContent.includes('Hoàn tất trả phòng') && document.querySelectorAll('[data-deduction-type=PHAT_COC]').length===1")).GetBoolean())throw new Exception("Tenant final snapshot mismatch.");
         var denied=(await Eval("(async()=>{return (await fetch('/TatToan/XacNhan/1')).status})()")).GetInt32();

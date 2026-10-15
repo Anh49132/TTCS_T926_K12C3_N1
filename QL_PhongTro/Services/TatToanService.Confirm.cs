@@ -47,6 +47,8 @@ public sealed partial class TatToanService
         var room=await (from h in db.HopDongs join p in db.PhongTros on h.PhongId equals p.Id where h.Id==contract select p).AsNoTracking().SingleAsync();
         if(room.TrangThai!="DANG_THUE" || await db.HopDongs.AnyAsync(x=>x.PhongId==room.Id && x.Id!=contract && x.TrangThai=="DANG_HIEU_LUC"))
             throw new InvalidOperationException("Trạng thái phòng/hợp đồng không phù hợp để hoàn tất trả phòng.");
+        if(await db.TinDangs.AnyAsync(x=>x.PhongId==room.Id && x.TrangThai=="DANG_HIEN_THI"))
+            throw new InvalidOperationException("Phòng còn tin đang công khai. Hãy tạm ẩn tin cũ trước khi xác nhận trả phòng để tránh hiển thị ngoài ý muốn.");
         var bill=await db.HoaDons.AsNoTracking().Include(x=>x.ChiTiet).SingleAsync(x=>x.Id==saved.HoaDonCuoiId);
         if(bill.TrangThai!="NHAP" || !bill.ChiTiet.Any(x=>x.LoaiKhoan=="TIEN_PHONG") || bill.ChiTiet.Count==0 || HoaDonDichVuService.TongCong(bill.ChiTiet)!=bill.TongTien)
             throw new InvalidOperationException("Hóa đơn kỳ cuối phải là bản nháp đầy đủ, tổng tiền khớp chi tiết.");
@@ -97,14 +99,7 @@ public sealed partial class TatToanService
         var history=await db.LichSuTrangThaiPhongs.SingleOrDefaultAsync(x=>x.PhongId==room.Id && x.DenThoiDiem==null);
         if(history is not null){history.DenThoiDiem=clock.UtcNow;await db.SaveChangesAsync();}
         db.LichSuTrangThaiPhongs.Add(new() {PhongId=room.Id,HopDongId=h.Id,TrangThai="TRONG",TuThoiDiem=clock.UtcNow});
-        var listing=await db.TinDangs.Where(x=>x.PhongId==room.Id).OrderByDescending(x=>x.NgayTao).ThenByDescending(x=>x.Id).FirstOrDefaultAsync();
-        if(listing is not null)
-        {
-            if(listing.TrangThai=="DANG_HIEN_THI")listing.TrangThai="DA_CHO_THUE";
-            db.TinDangs.Add(new() {PhongId=room.Id,NguoiDangId=actor,TinGocId=listing.Id,TieuDe=listing.TieuDe,
-                NoiDung=$"{listing.NoiDung}\nGiá thuê hiện tại: {room.GiaThue.ToString("N0",System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))} đ/tháng.",TrangThai="NHAP",NgayTao=clock.UtcNow});
-        }
-        else db.TinDangs.Add(new() {PhongId=room.Id,NguoiDangId=actor,TieuDe=$"Cho thuê phòng {room.MaPhong}",NoiDung=$"Giá thuê: {room.GiaThue.ToString("N0",System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))} đ/tháng.",TrangThai="NHAP",NgayTao=clock.UtcNow});
+        await TaoTinNhapSauTraPhongAsync(actor,h,room);
         bang.TrangThai="DA_CHOT";bang.PhienBan++;bang.CapNhatLuc=clock.UtcNow;
         await db.SaveChangesAsync();
         db.XacNhanTatToans.Add(new() {ThanhLyId=bang.Id,HopDongId=h.Id,NguoiXacNhanId=actor,

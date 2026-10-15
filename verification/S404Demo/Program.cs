@@ -11,7 +11,7 @@ using QL_PhongTro.ViewModels;
 
 if(args.Length is <2 or >3)throw new ArgumentException("Usage: S404Demo <application-directory> <new-demo-directory>");
 var task5=args.Length==3 && args[2]=="task5";
-var task3=args.Length==3 && args[2] is "task3" or "task4" or "task5";
+var task3=args.Length==3 && args[2] is "task3" or "task4" or "task5" or "s4052";
 var app=Path.GetFullPath(args[0]);var folder=Path.GetFullPath(args[1]);
 if(Directory.Exists(folder))throw new IOException("Refusing to overwrite an existing demo directory.");
 Directory.CreateDirectory(folder);var path=Path.Combine(folder,"s404.sqlite");
@@ -57,6 +57,13 @@ using(var db=new AppDbContext(new DbContextOptionsBuilder<AppDbContext>().UseSql
     var settlement=new TatToanService(db,clock);var draft=await settlement.NhapAsync(1,h.Id);
     draft.Input.KhauTru=[new() {TenKhoan="Thay khóa cửa",SoTien=250000,GhiChu="Mất chìa khóa"},new() {TenKhoan="Sơn lại tường",SoTien=200000,GhiChu="Tường bị bẩn"}];
     await settlement.LuuAsync(1,draft.Input);
+    if(args.Length==3 && args[2]=="s4052")
+    {
+        db.TinDangs.Add(new() {PhongId=room.Id,NguoiDangId=1,TieuDe="Phòng A103 có ban công — tin cũ",NoiDung="Mô tả được giữ nguyên từ tin cũ.\nPhòng thoáng, có ban công.\nNội dung thử nghiệm: giá cũ 3.000.000 đ/tháng; hãy kiểm tra giá ở trường giá phòng.",TrangThai="DA_CHO_THUE",NgayTao=clock.UtcNow.AddDays(-60),NgayDang=clock.UtcNow.AddDays(-59),NgayHetHan=clock.UtcNow.AddDays(-29)});
+        for(var i=1;i<=8;i++)db.AnhPhongs.Add(new() {PhongId=room.Id,ThuTu=i,DuongDan="/images/hero-clean.jpg",DuongDanAnhNho="/images/hero-clean.jpg",MoTa=$"Ảnh minh họa demo {i}",NgayTao=clock.UtcNow});
+        await db.SaveChangesAsync();
+        await db.Database.ExecuteSqlInterpolatedAsync($"UPDATE phong_tro SET gia_thue=4500000 WHERE id={room.Id}");
+    }
     if(task5)
     {
         var ready=await settlement.KiemTraChotAsync(1,h.Id);
