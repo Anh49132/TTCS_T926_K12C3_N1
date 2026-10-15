@@ -63,6 +63,48 @@
                 <p class="bc-kpi-hint">Tiền đã thu / tổng tiền đã phát hành</p>
             </article>
         </section>
+        <section class="bc-card" aria-labelledby="occupancy-heading">
+            <header class="bc-card-header">
+                <div>
+                    <h2 id="occupancy-heading">Tỷ lệ lấp đầy theo tòa</h2>
+                    <p>Số phòng được tính theo trạng thái tại ngày cuối tháng; phòng ngừng cho thuê không tính vào tổng phòng cho thuê.</p>
+                </div>
+            </header>
+            <div class="bc-table-container">
+                <table class="bc-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Tòa nhà</th>
+                            <th scope="col" class="text-center">Phòng đang thuê</th>
+                            <th scope="col" class="text-center">Tổng phòng cho thuê</th>
+                            <th scope="col" class="text-center">Phòng còn trống</th>
+                            <th scope="col" class="text-center">Tỷ lệ lấp đầy</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.LapDayTheoToaNha.Count == 0)
+                        {
+                            <tr><td colspan="5" class="bc-empty-cell">Chưa có tòa nhà trong phạm vi xem.</td></tr>
+                        }
+                        else
+                        {
+                            @foreach (var building in Model.LapDayTheoToaNha)
+                            {
+                                <tr>
+                                    <th scope="row">@building.TenToaNha</th>
+                                    <td class="text-center">@building.SoPhongDangThue</td>
+                                    <td class="text-center">@building.TongPhongChoThue</td>
+                                    <td class="text-center">@building.SoPhongTrong</td>
+                                    <td class="text-center">
+                                        @(building.TiLeLapDay.HasValue ? building.TiLeLapDay.Value.ToString("0.#", vn) + "%" : "—")
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
         @if (Model.TongPhatHanh == 0)
         {
             <p class="bc-table-footer">Kỳ này chưa có hóa đơn đã phát hành. Tỷ lệ thu được tính là 0%.</p>

@@ -168,6 +168,11 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
         Assert.Equal(7_000_000, monthly.TongDaThu);
         Assert.Equal(1_500_000, monthly.TongConPhaiThu);
         Assert.Equal(82.4m, monthly.TiLeThuTongThe);
+        var buildingOccupancy = Assert.Single(monthly.LapDayTheoToaNha);
+        Assert.Equal(2, buildingOccupancy.SoPhongDangThue);
+        Assert.Equal(3, buildingOccupancy.TongPhongChoThue);
+        Assert.Equal(1, buildingOccupancy.SoPhongTrong);
+        Assert.Equal(66.7m, buildingOccupancy.TiLeLapDay);
 
         // Tổng hợp KPI
         Assert.Equal(8_500_000, result.TongPhatHanh);
@@ -282,6 +287,11 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
         Assert.Equal(1, row.SoPhongDangThue);
         Assert.Equal(1, row.TongPhongChoThue);
         Assert.Equal(100.0m, row.TiLeLapDay);
+        var monthly = await service.LayBaoCaoThangAsync(10, "CHU_NHA", 1, 10, 2026);
+        var monthlyBuilding = Assert.Single(monthly.LapDayTheoToaNha);
+        Assert.Equal(1, monthlyBuilding.SoPhongDangThue);
+        Assert.Equal(1, monthlyBuilding.TongPhongChoThue);
+        Assert.Equal(100.0m, monthlyBuilding.TiLeLapDay);
 
         // Trường hợp toà không có phòng nào cho thuê (chỉ toàn ngừng cho thuê)
         db.PhongTros.Remove((await db.PhongTros.FindAsync(101))!);
@@ -291,6 +301,8 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
         var rowEmpty = Assert.Single(resultEmpty.ChiTietTheoThang);
         Assert.Equal(0, rowEmpty.TongPhongChoThue);
         Assert.Null(rowEmpty.TiLeLapDay); // Mẫu số 0 hiển thị không áp dụng
+        var monthlyEmpty = await service.LayBaoCaoThangAsync(10, "CHU_NHA", 1, 10, 2026);
+        Assert.Null(Assert.Single(monthlyEmpty.LapDayTheoToaNha).TiLeLapDay);
     }
 
     [Fact]
@@ -445,6 +457,82 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
         Assert.Equal(0, result.TongDaThu);
         Assert.Equal(0, result.TongConPhaiThu);
         Assert.Equal(0m, result.TiLeThuTongThe);
+    }
+
+    [Fact]
+    public async Task MonthlyOccupancy_UsesInclusiveContractDates_AndExcludesStoppedRooms()
+    {
+        using var db = CreateContext();
+        var rooms = Enumerable.Range(1, 10).Select(i => new PhongTro
+        {
+            Id = 500 + i,
+            ToaNhaId = 1,
+            MaPhong = $"{500 + i}",
+            TrangThai = i <= 8 ? "DANG_THUE" : "TRONG",
+            GiaThue = 2_000_000,
+            DienTich = 20,
+            SoNguoiToiDa = 2,
+            NgayTao = new DateTime(2026, 1, 1)
+        }).ToArray();
+        db.PhongTros.AddRange(rooms);
+        for (var i = 1; i <= 8; i++)
+        {
+            var contractId = 800 + i;
+            db.HopDongs.Add(new HopDongThamChieu
+            {
+                Id = contractId,
+                PhongId = 500 + i,
+                TrangThai = i == 2 ? "DA_KET_THUC" : "DANG_HIEU_LUC",
+                NgayTraPhong = i == 2 ? new DateOnly(2026, 10, 31) : null,
+                MaHopDong = $"HD-{contractId}",
+                KhachDungTenId = 40
+            });
+            db.KyHopDongs.Add(new KyHopDongThamChieu
+            {
+                Id = contractId,
+                HopDongId = contractId,
+                NgayBatDau = i == 1 ? new DateOnly(2026, 10, 31) : new DateOnly(2026, 1, 1),
+                NgayKetThuc = i == 2 ? new DateOnly(2026, 10, 31) : new DateOnly(2026, 12, 31)
+            });
+        }
+        await db.SaveChangesAsync();
+
+        var result = await new BaoCaoService(db, _clock).LayBaoCaoThangAsync(10, "CHU_NHA", 1, 10, 2026);
+        var building = Assert.Single(result.LapDayTheoToaNha);
+
+        Assert.Equal(8, building.SoPhongDangThue);
+        Assert.Equal(10, building.TongPhongChoThue);
+        Assert.Equal(80m, building.TiLeLapDay);
+    }
+
+    [Fact]
+    public async Task MonthlyOccupancy_IsZeroWhenAllRentableRoomsAreVacant()
+    {
+        using var db = CreateContext(actorId: 20);
+        db.PhongTros.AddRange(Enumerable.Range(1, 10).Select(i => new PhongTro
+        {
+            Id = 600 + i,
+            ToaNhaId = 2,
+            MaPhong = $"{600 + i}",
+            TrangThai = "TRONG",
+            GiaThue = 2_000_000,
+            DienTich = 20,
+            SoNguoiToiDa = 2,
+            NgayTao = new DateTime(2026, 1, 1)
+        }));
+        db.PhongTros.Add(new PhongTro
+        {
+            Id = 611, ToaNhaId = 2, MaPhong = "611", TrangThai = "NGUNG_CHO_THUE",
+            GiaThue = 2_000_000, DienTich = 20, SoNguoiToiDa = 2, NgayTao = new DateTime(2026, 1, 1)
+        });
+        await db.SaveChangesAsync();
+
+        var result = await new BaoCaoService(db, _clock).LayBaoCaoThangAsync(20, "CHU_NHA", 2, 10, 2026);
+        var building = Assert.Single(result.LapDayTheoToaNha);
+
+        Assert.Equal(0, building.SoPhongDangThue);
+        Assert.Equal(10, building.TongPhongChoThue);
+        Assert.Equal(0, building.TiLeLapDay);
     }
 
     [Fact]
