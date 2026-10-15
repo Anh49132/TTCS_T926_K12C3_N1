@@ -1,0 +1,59 @@
+.debt-page{max-width:1500px;margin:0 auto;padding:1rem 0 2rem;color:#252a32}
+.debt-heading{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin:0 0 1rem}
+.debt-heading h1{font-size:1.7rem;line-height:1.2;font-weight:750;margin:0 0 .2rem;color:#151a22}
+.debt-heading p{margin:0;color:#68717d;font-size:.9rem}
+.debt-export{display:inline-flex;align-items:center;gap:.5rem;border:1px solid #9d7d4d;border-radius:6px;padding:.5rem .85rem;color:#604b2e;background:#fff;text-decoration:none;font-weight:650;white-space:nowrap}
+.debt-export:hover{background:#faf6ef;color:#49371f}
+.debt-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.75rem;margin-bottom:1rem}
+.debt-stat{min-height:76px;display:flex;align-items:center;gap:.8rem;padding:.8rem 1rem;border:1px solid #e3e5e8;border-radius:8px;background:#fff;box-shadow:0 1px 3px #17202b0a}
+.debt-stat-money{background:#fbf8f0;border-color:#eee5d2}
+.debt-stat-invoice{background:#fbfaf7}
+.debt-stat-overdue{background:#fff6f5;border-color:#f2e3e2}
+.debt-stat-icon{width:38px;height:38px;display:grid;place-items:center;flex:none;border-radius:50%;background:#f2e7d2;color:#795a2e;font-size:1.25rem;font-weight:700}
+.debt-stat-overdue .debt-stat-icon{background:#fbe4e2;color:#bd4141}
+.debt-stat small,.debt-stat strong{display:block}
+.debt-stat small{font-size:.74rem;color:#6d737b}
+.debt-stat strong{font-size:1.35rem;line-height:1.35;color:#242a32;font-weight:750}
+.debt-stat-money strong{color:#88663a}
+.debt-stat-overdue strong{color:#bd4141}
+.debt-panel{background:#fff;border:1px solid #e3e5e8;border-radius:9px;box-shadow:0 1px 3px #17202b0a}
+.debt-filter-panel{padding:1rem 1.1rem .75rem;margin-bottom:1rem}
+.debt-panel h2{font-size:1rem;font-weight:750;color:#202630;margin:0}
+.debt-filter-panel>h2{margin-bottom:.8rem}
+.debt-filter-form{display:grid;grid-template-columns:minmax(170px,1.2fr) minmax(280px,1.45fr) minmax(280px,1.45fr) auto;align-items:end;gap:.8rem}
+.debt-field{display:flex;flex-direction:column;gap:.32rem;min-width:0}
+.debt-field>span:first-child{font-size:.74rem;font-weight:650;color:#4d5560}
+.debt-field select,.debt-range input,.debt-search input{min-width:0;height:36px;border:1px solid #d9dde2;border-radius:5px;background:#fff;color:#303741;padding:.4rem .6rem;font:inherit;font-size:.78rem}
+.debt-field select{width:100%}
+.debt-range{display:flex;align-items:center;gap:.35rem;min-width:0}
+.debt-range>span{font-size:.72rem;color:#6d737b;white-space:nowrap}
+.debt-range input{width:72px;flex:1}
+.debt-filter-actions{display:flex;gap:.45rem;align-items:center}
+.debt-apply,.debt-reset{height:36px;display:inline-flex;align-items:center;justify-content:center;padding:0 .8rem;border-radius:5px;font:inherit;font-size:.75rem;font-weight:650;white-space:nowrap}
+.debt-apply{border:1px solid #252a32;background:#252a32;color:#fff}
+.debt-apply:hover{background:#11151b}
+.debt-reset{border:1px solid #a68a61;color:#684f2d;background:#fff;text-decoration:none}
+.debt-reset:hover{background:#faf6ef}
+.debt-filter-note{margin-top:.6rem;color:#727984;font-size:.7rem}
+.debt-filter-note span{font-size:.9rem;margin-right:.25rem}
+.debt-table-heading{min-height:48px;display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.65rem .9rem;border-bottom:1px solid #e6e8eb}
+.debt-table-heading h2{display:flex;align-items:center;gap:.45rem}
+.debt-search{height:32px;width:min(280px,48%);display:flex;align-items:center;gap:.35rem;border:1px solid #d9dde2;border-radius:5px;padding:0 .5rem;color:#737b85}
+.debt-search input{height:28px;width:100%;border:0;padding:0;outline:0;font-size:.75rem}
+.debt-table-wrap{overflow-x:auto}
+.debt-table{width:100%;border-collapse:collapse;font-size:.76rem;white-space:nowrap}
+.debt-table th,.debt-table td{padding:.48rem .7rem;border-bottom:1px solid #eceef0;text-align:left}
+.debt-table thead th{background:#f8f9fa;color:#4a515b;font-size:.7rem;font-weight:700}
+.debt-table tbody tr:hover{background:#fcfaf6}
+.debt-table .debt-center{text-align:center}
+.debt-amount{font-variant-numeric:tabular-nums}
+.debt-overdue-badge{display:inline-block;border-radius:20px;padding:.13rem .48rem;background:#edf0f2;color:#626a73;font-size:.68rem;font-weight:700}
+.debt-overdue-badge.is-warning{background:#fff1d4;color:#a16a13}
+.debt-overdue-badge.is-danger{background:#fde5e4;color:#b43d3d}
+.debt-table .debt-empty td{text-align:center;color:#737b85;padding:1.5rem}
+.debt-table tfoot th{background:#f8efdc;color:#634b2c;border-bottom:0;font-weight:750}
+.debt-table tfoot th:nth-child(2),.debt-table tfoot th:nth-child(3){font-variant-numeric:tabular-nums}
+.debt-table tr[hidden]{display:none}
+@media(max-width:1200px){.debt-filter-form{grid-template-columns:repeat(2,minmax(0,1fr))}.debt-filter-actions{grid-column:1/-1}}
+@media(max-width:1050px){.debt-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.debt-page{padding-top:.2rem}.debt-heading{align-items:flex-start}.debt-heading h1{font-size:1.35rem}.debt-heading p{font-size:.8rem}.debt-export{font-size:.72rem;padding:.4rem .55rem}.debt-stats{gap:.5rem}.debt-stat{padding:.6rem;min-height:66px;gap:.5rem}.debt-stat-icon{width:30px;height:30px;font-size:1rem}.debt-stat strong{font-size:1.05rem}.debt-stat small{font-size:.64rem}.debt-filter-panel{padding:.8rem}.debt-filter-form{grid-template-columns:1fr}.debt-filter-actions{grid-column:auto}.debt-apply,.debt-reset{flex:1}.debt-table-heading{align-items:flex-start;flex-direction:column}.debt-search{width:100%}.debt-table{min-width:760px}}

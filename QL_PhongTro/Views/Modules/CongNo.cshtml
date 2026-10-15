@@ -1,8 +1,46 @@
 @model QL_PhongTro.ViewModels.CongNoIndexViewModel
-@{ ViewData["Title"] = "Công nợ theo phòng"; }
-<div class="container-fluid py-4">
-<div class="d-flex justify-content-end mb-3"><a class="btn btn-outline-dark" href="@Url.Action("ExportCsv", "Modules", new { toaNhaId = Model.ToaNhaId, quaHanTu = Model.QuaHanTu, quaHanDen = Model.QuaHanDen, tienTu = Model.TienTu, tienDen = Model.TienDen })">Xuất CSV</a></div>
-<h1 class="h2 mb-1">Công nợ theo phòng</h1><p class="text-muted">Theo dõi số tiền còn thiếu và mức độ quá hạn theo từng phòng.</p>
-<form method="get" action="/CongNo" class="card card-body mb-4"><div class="row align-items-end g-3"><div class="col-md-3"><label class="form-label">Tòa nhà</label><select class="form-select" name="toaNhaId"><option value="">Tất cả tòa nhà</option>@foreach(var b in Model.Buildings){<option value="@b.Id" selected="@(Model.ToaNhaId == b.Id)">@b.Name</option>}</select></div><div class="col-md-2"><label class="form-label">Quá hạn từ</label><input class="form-control" type="number" min="0" name="quaHanTu" value="@Model.QuaHanTu" /></div><div class="col-md-2"><label class="form-label">Quá hạn đến</label><input class="form-control" type="number" min="0" name="quaHanDen" value="@Model.QuaHanDen" /></div><div class="col-md-2"><label class="form-label">Tiền thiếu từ</label><input class="form-control" type="number" min="0" name="tienTu" value="@Model.TienTu" /></div><div class="col-md-2"><label class="form-label">Tiền thiếu đến</label><input class="form-control" type="number" min="0" name="tienDen" value="@Model.TienDen" /></div><div class="col-md-auto"><button class="btn btn-dark">Áp dụng bộ lọc</button></div></div><div class="small text-muted mt-2">Ngày là số nguyên không âm; tiền tính theo VND. Để trống nghĩa là không giới hạn.</div></form>
-<div class="card"><div class="card-header bg-white"><h2 class="h5 mb-0">Danh sách công nợ</h2></div><div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead><tr><th>Phòng</th><th>Tòa nhà</th><th>Người đứng tên</th><th>HĐ chưa trả hết</th><th>Tổng còn thiếu</th><th>Quá hạn dài nhất</th></tr></thead><tbody>@foreach(var row in Model.Rows){<tr><td><strong>@row.MaPhong</strong></td><td>@row.TenToaNha</td><td>@row.NguoiDungTen</td><td>@row.SoHoaDonChuaTraHet</td><td>@row.TongConThieu.ToString("N0") đ</td><td>@row.SoNgayQuaHanDaiNhat ngày</td></tr>}@if(Model.Rows.Count == 0){<tr><td colspan="6" class="text-center text-muted py-4">Không có phòng đang nợ.</td></tr>}</tbody><tfoot><tr class="table-warning"><th colspan="3">TỔNG KẾT QUẢ ĐANG LỌC</th><th>@Model.TotalInvoices hóa đơn</th><th>@Model.TotalOutstanding.ToString("N0") đ</th><th>-</th></tr></table></div></div>
+@{
+    ViewData["Title"] = "Công nợ";
+    var overdueRooms = Model.Rows.Count(x => x.SoNgayQuaHanDaiNhat > 0);
+    var exportUrl = Url.Action("ExportCsv", "Modules", new { toaNhaId = Model.ToaNhaId, quaHanTu = Model.QuaHanTu, quaHanDen = Model.QuaHanDen, tienTu = Model.TienTu, tienDen = Model.TienDen });
+}
+@section Styles { <link rel="stylesheet" href="~/css/debt-list.css" asp-append-version="true" /> }
+<div class="debt-page">
+    <div class="debt-heading">
+        <div><h1>Công nợ theo phòng</h1><p>Theo dõi số tiền còn thiếu và mức độ quá hạn theo từng phòng.</p></div>
+        <a class="debt-export" href="@exportUrl"><span aria-hidden="true">⇩</span> Xuất CSV</a>
+    </div>
+
+    <section class="debt-stats" aria-label="Tổng quan công nợ">
+        <article class="debt-stat debt-stat-money"><span class="debt-stat-icon">₫</span><div><small>Tổng còn thiếu</small><strong>@Model.TotalOutstanding.ToString("N0") đ</strong></div></article>
+        <article class="debt-stat"><span class="debt-stat-icon">▦</span><div><small>Phòng còn nợ</small><strong>@Model.Rows.Count</strong></div></article>
+        <article class="debt-stat debt-stat-invoice"><span class="debt-stat-icon">▤</span><div><small>Hóa đơn chưa trả hết</small><strong>@Model.TotalInvoices</strong></div></article>
+        <article class="debt-stat debt-stat-overdue"><span class="debt-stat-icon">◷</span><div><small>Phòng đang quá hạn</small><strong>@overdueRooms</strong></div></article>
+    </section>
+
+    <section class="debt-panel debt-filter-panel">
+        <h2><span aria-hidden="true">▽</span> Bộ lọc công nợ</h2>
+        <form method="get" action="/CongNo" class="debt-filter-form">
+            <label class="debt-field debt-field-building"><span>Tòa nhà</span><select name="toaNhaId"><option value="">Tất cả tòa nhà</option>@foreach (var b in Model.Buildings) { <option value="@b.Id" selected="@(Model.ToaNhaId == b.Id)">@b.Name</option> }</select></label>
+            <label class="debt-field"><span>Số ngày quá hạn</span><span class="debt-range"><span>Từ</span><input type="number" min="0" name="quaHanTu" value="@Model.QuaHanTu" placeholder="0 ngày" /><span>Đến</span><input type="number" min="0" name="quaHanDen" value="@Model.QuaHanDen" placeholder="90 ngày" /></span></label>
+            <label class="debt-field"><span>Số tiền còn thiếu</span><span class="debt-range"><span>Từ</span><input type="number" min="0" step="1" name="tienTu" value="@Model.TienTu" placeholder="0 đ" aria-label="Số tiền còn thiếu từ" /><span>Đến</span><input type="number" min="0" step="1" name="tienDen" value="@Model.TienDen" placeholder="Không giới hạn" aria-label="Số tiền còn thiếu đến" /><span>đ</span></span></label>
+            <div class="debt-filter-actions"><button type="submit" class="debt-apply">Áp dụng bộ lọc</button><a class="debt-reset" href="/CongNo">Bỏ bộ lọc</a></div>
+        </form>
+        <div class="debt-filter-note"><span aria-hidden="true">ⓘ</span> Số liệu cập nhật đến @DateTime.Today.ToString("dd/MM/yyyy"). Các khoảng lọc tính theo VND và ngày nguyên.</div>
+    </section>
+
+    <section class="debt-panel debt-table-panel">
+        <div class="debt-table-heading"><h2><span aria-hidden="true">▤</span> Danh sách công nợ</h2><label class="debt-search"><span aria-hidden="true">⌕</span><input id="debt-search" type="search" placeholder="Tìm phòng, người đứng tên..." aria-label="Tìm phòng hoặc người đứng tên" /></label></div>
+        <div class="debt-table-wrap"><table class="debt-table"><thead><tr><th>Phòng</th><th>Tòa nhà</th><th>Người đứng tên</th><th>HĐ chưa trả hết</th><th>Tổng còn thiếu</th><th>Quá hạn dài nhất</th></tr></thead>
+            <tbody id="debt-rows">
+            @foreach (var row in Model.Rows) { <tr data-search="@($"{row.MaPhong} {row.TenToaNha} {row.NguoiDungTen}".ToLowerInvariant())"><td>@row.MaPhong</td><td>@row.TenToaNha</td><td>@row.NguoiDungTen</td><td class="debt-center">@row.SoHoaDonChuaTraHet</td><td class="debt-amount">@row.TongConThieu.ToString("N0") đ</td><td><span class="debt-overdue-badge @(row.SoNgayQuaHanDaiNhat > 30 ? "is-danger" : row.SoNgayQuaHanDaiNhat > 0 ? "is-warning" : "is-normal")">@row.SoNgayQuaHanDaiNhat ngày</span></td></tr> }
+            @if (Model.Rows.Count == 0) { <tr class="debt-empty"><td colspan="6">Không có phòng đang nợ theo bộ lọc này.</td></tr> }
+            </tbody><tfoot><tr><th colspan="3">TỔNG KẾT KẾT QUẢ ĐANG LỌC</th><th>@Model.TotalInvoices hóa đơn</th><th>@Model.TotalOutstanding.ToString("N0") đ</th><th>—</th></tr></tfoot>
+        </table></div>
+    </section>
 </div>
+@section Scripts {
+<script>
+(() => { const search = document.getElementById('debt-search'); if (!search) return; search.addEventListener('input', () => { const q = search.value.trim().toLocaleLowerCase('vi'); document.querySelectorAll('#debt-rows tr[data-search]').forEach(row => row.hidden = !row.dataset.search.includes(q)); }); })();
+</script>
+}
