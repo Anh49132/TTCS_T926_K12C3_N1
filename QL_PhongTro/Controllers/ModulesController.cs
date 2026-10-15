@@ -34,16 +34,17 @@ public class ModulesController(AppDbContext db) : Controller
             return View("BaoHong");
         }
         if (code == "TAI_CHINH" && section == "cong-no")
-            return await CongNo(toaNhaId: null);
+            return await CongNo(null, null, null, null, null);
         if (code is "PHONG_TRO" or "TAI_KHOAN" or "TIN_DANG") return Redirect(PermissionService.Url(code));
         return View(module);
     }
 
     [HttpGet("/CongNo")]
     [ModuleAccess]
-    public Task<IActionResult> CongNo(int? toaNhaId) => CongNoPage(toaNhaId);
+    public Task<IActionResult> CongNo(int? toaNhaId, int? quaHanTu, int? quaHanDen, long? tienTu, long? tienDen)
+        => CongNoPage(toaNhaId, quaHanTu, quaHanDen, tienTu, tienDen);
 
-    private async Task<IActionResult> CongNoPage(int? toaNhaId)
+    private async Task<IActionResult> CongNoPage(int? toaNhaId, int? quaHanTu, int? quaHanDen, long? tienTu, long? tienDen)
     {
         var buildings = await db.ToaNhas.AsNoTracking().OrderBy(x => x.TenToaNha)
             .Select(x => new CongNoIndexViewModel.BuildingOption(x.Id, x.TenToaNha)).ToListAsync();
@@ -64,8 +65,13 @@ public class ModulesController(AppDbContext db) : Controller
             return new CongNoRowViewModel(g.Key.RoomId, g.Key.MaPhong, g.Key.Building, g.Key.Name, outstanding.Count,
                 outstanding.Sum(x => Math.Max(0, x.TongTien - (paid.TryGetValue(x.InvoiceId, out var p) ? p : 0))),
                 outstanding.Count == 0 ? 0 : outstanding.Max(x => Math.Max(0, today.DayNumber - x.HanThanhToan.DayNumber)));
-        }).Where(x => x.TongConThieu > 0).OrderBy(x => x.TenToaNha).ThenBy(x => x.MaPhong).ToList();
-        return View("CongNo", new CongNoIndexViewModel { ToaNhaId = toaNhaId, Buildings = buildings, Rows = rows });
+        }).Where(x => x.TongConThieu > 0)
+          .Where(x => !quaHanTu.HasValue || x.SoNgayQuaHanDaiNhat >= Math.Max(0, quaHanTu.Value))
+          .Where(x => !quaHanDen.HasValue || x.SoNgayQuaHanDaiNhat <= Math.Max(0, quaHanDen.Value))
+          .Where(x => !tienTu.HasValue || x.TongConThieu >= Math.Max(0, tienTu.Value))
+          .Where(x => !tienDen.HasValue || x.TongConThieu <= Math.Max(0, tienDen.Value))
+          .OrderBy(x => x.TenToaNha).ThenBy(x => x.MaPhong).ToList();
+        return View("CongNo", new CongNoIndexViewModel { ToaNhaId = toaNhaId, QuaHanTu = quaHanTu, QuaHanDen = quaHanDen, TienTu = tienTu, TienDen = tienDen, Buildings = buildings, Rows = rows });
     }
 
     [HttpGet("/api/modules/{code}")]
