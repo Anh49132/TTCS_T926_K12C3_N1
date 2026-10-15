@@ -38,11 +38,30 @@ public sealed partial class RoomServicesTests
         var total = await db.HoaDons.Where(x => x.Id == invoiceId).Select(x => x.TongTien).SingleAsync();
 
         var exception = await Assert.ThrowsAsync<GhiThuValidationException>(() =>
-            new BaoCaoThanhToanService(db).GuiAsync(3, invoiceId, total + 1, new(2026, 10, 13), "CHUYEN_KHOAN"));
+            new BaoCaoThanhToanService(db).GuiAsync(3, invoiceId, total + 1, new(2026, 10, 13), "TIEN_MAT"));
 
         Assert.Contains("SoTien", exception.Errors.Keys);
         Assert.Contains(total.ToString("N0"), exception.Errors["SoTien"][0]);
         Assert.Empty(await db.ThanhToans.ToListAsync());
+    }
+
+    [Fact]
+    public async Task BankTransferRequiresProofButCashPaymentDoesNot()
+    {
+        using var db = Context();
+        var fixture = await BillingAsync(db);
+        await LinkTenantsAsync(db, fixture.B);
+        var invoiceId = await AddPublishedTenantInvoiceAsync(db, fixture.A, "PAYMENT-REPORT-PROOF-REQUIRED", false);
+        var reports = new BaoCaoThanhToanService(db);
+
+        var missingProof = await Assert.ThrowsAsync<GhiThuValidationException>(() =>
+            reports.GuiAsync(3, invoiceId, 250_000, new(2026, 10, 12), "CHUYEN_KHOAN"));
+        Assert.Contains("AnhChungTu", missingProof.Errors.Keys);
+        Assert.Empty(await db.ThanhToans.ToListAsync());
+
+        await reports.GuiAsync(3, invoiceId, 250_000, new(2026, 10, 12), "TIEN_MAT");
+        var cashReport = await db.ThanhToans.SingleAsync(x => x.HoaDonId == invoiceId);
+        Assert.Null(cashReport.AnhChungTuKey);
     }
 
     [Fact]
@@ -54,12 +73,12 @@ public sealed partial class RoomServicesTests
             var fixture = await BillingAsync(db);
             await LinkTenantsAsync(db, fixture.B);
             invoiceId = await AddPublishedTenantInvoiceAsync(db, fixture.A, "PAYMENT-REPORT-LOCK", false);
-            await new BaoCaoThanhToanService(db).GuiAsync(3, invoiceId, 250_000, new(2026, 10, 12), "CHUYEN_KHOAN");
+            await new BaoCaoThanhToanService(db).GuiAsync(3, invoiceId, 250_000, new(2026, 10, 12), "TIEN_MAT");
 
             var report = await db.ThanhToans.SingleAsync(x => x.HoaDonId == invoiceId);
             Assert.Equal(250_000, report.SoTien);
             Assert.Equal(new DateOnly(2026, 10, 12), report.NgayThanhToan);
-            Assert.Equal("CHUYEN_KHOAN", report.HinhThucBaoCao);
+            Assert.Equal("TIEN_MAT", report.HinhThucBaoCao);
             Assert.Equal("CHO_XAC_NHAN", report.TrangThai);
             var repeat = await Assert.ThrowsAsync<GhiThuValidationException>(() =>
                 new BaoCaoThanhToanService(db).GuiAsync(3, invoiceId, 1, new(2026, 10, 13), "TIEN_MAT"));
@@ -110,7 +129,7 @@ public sealed partial class RoomServicesTests
         using (var verify = Context())
             Assert.Empty(await verify.ThanhToans.ToListAsync());
 
-        var accepted = await Post(tenant, "/ThongBao/BaoCaoThanhToan", new(form) { ["soTien"] = "250000", ["hinhThucThanhToan"] = "CHUYEN_KHOAN" });
+        var accepted = await Post(tenant, "/ThongBao/BaoCaoThanhToan", new(form) { ["soTien"] = "250000", ["hinhThucThanhToan"] = "TIEN_MAT" });
         Assert.Equal(HttpStatusCode.Redirect, accepted.StatusCode);
         using (var verify = Context())
         {
@@ -140,7 +159,7 @@ public sealed partial class RoomServicesTests
     }
 
     [Fact]
-    public async Task Version35AddsPaymentMethodWithoutChangingExistingPaymentRows()
+    public async Task Version36AddsProofMetadataWithoutChangingExistingPaymentRows()
     {
         int invoiceId;
         using (var db = Context())
@@ -161,13 +180,18 @@ public sealed partial class RoomServicesTests
         using (var connection = Open())
         using (var command = connection.CreateCommand())
         {
-            command.CommandText = "ALTER TABLE thanh_toan DROP COLUMN hinh_thuc_bao_cao";
+            command.CommandText = """
+                DROP INDEX ux_thanh_toan_anh_chung_tu_key;
+                ALTER TABLE thanh_toan DROP COLUMN anh_chung_tu_key;
+                ALTER TABLE thanh_toan DROP COLUMN anh_chung_tu_content_type;
+                ALTER TABLE thanh_toan DROP COLUMN anh_chung_tu_so_byte;
+                """;
             command.ExecuteNonQuery();
-            command.CommandText = "DELETE FROM app_schema_version WHERE version=35";
+            command.CommandText = "DELETE FROM app_schema_version WHERE version=36";
             command.ExecuteNonQuery();
             command.CommandText = "SELECT MAX(version) FROM app_schema_version";
-            Assert.Equal(34L, command.ExecuteScalar());
-            command.CommandText = "SELECT COUNT(*) FROM pragma_table_info('thanh_toan') WHERE name='hinh_thuc_bao_cao'";
+            Assert.Equal(35L, command.ExecuteScalar());
+            command.CommandText = "SELECT COUNT(*) FROM pragma_table_info('thanh_toan') WHERE name='anh_chung_tu_key'";
             Assert.Equal(0L, command.ExecuteScalar());
         }
 
@@ -178,6 +202,8 @@ public sealed partial class RoomServicesTests
         var payment = await verify.ThanhToans.SingleAsync(x => x.HoaDonId == invoiceId);
         Assert.Equal(123_456, payment.SoTien);
         Assert.Equal("DA_XAC_NHAN", payment.TrangThai);
-        Assert.Null(payment.HinhThucBaoCao);
+        Assert.Null(payment.AnhChungTuKey);
+        Assert.Null(payment.AnhChungTuContentType);
+        Assert.Null(payment.AnhChungTuSoByte);
     }
 }

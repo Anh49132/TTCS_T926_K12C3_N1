@@ -13,7 +13,7 @@
     ViewData["Title"] = $"{(Model.XemTruoc ? "Xem trước hóa đơn" : "Chi tiết hóa đơn")} · Phòng {Model.MaPhong}";
 }
 @section Styles { <link rel="stylesheet" href="~/css/invoice-flow.css" asp-append-version="true" /> <link rel="stylesheet" href="~/css/monthly-invoices.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/invoice-detail.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/invoice-review.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/invoice-collection.css" asp-append-version="true" /> }
-@section Scripts { <script src="~/js/invoice-review.js" asp-append-version="true"></script><script src="~/js/invoice-publish.js" asp-append-version="true"></script><script src="~/js/invoice-collection.js" asp-append-version="true"></script> }
+@section Scripts { <script src="~/js/invoice-review.js" asp-append-version="true"></script><script src="~/js/invoice-publish.js" asp-append-version="true"></script><script src="~/js/invoice-collection.js" asp-append-version="true"></script><script src="~/js/invoice-payment-proof.js" asp-append-version="true"></script> }
 @if (Model.ThanhToan is not null && !Model.KhachXem && !Model.XemTruoc && invoice.TrangThai != "NHAP")
 {
     <partial name="_CollectionDetails" model="Model" />

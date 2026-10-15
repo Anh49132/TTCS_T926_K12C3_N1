@@ -18,8 +18,47 @@
     const reportAmount = document.getElementById("tenant-payment-report-amount");
     const reportLimit = document.getElementById("tenant-payment-report-limit");
     const reportDate = document.getElementById("tenant-payment-report-date");
+    const reportMethod = document.getElementById("tenant-payment-report-method");
+    const reportProof = document.getElementById("tenant-payment-report-proof");
+    const reportProofError = document.getElementById("tenant-payment-report-proof-error");
+    const reportProofRequirement = document.getElementById("tenant-payment-report-proof-requirement");
     const pendingReport = document.getElementById("tenant-payment-report-pending");
     const vnd = new Intl.NumberFormat("vi-VN");
+
+    const updateProofRequirement = () => {
+        const required = reportMethod.value === "CHUYEN_KHOAN";
+        reportProof.setAttribute("aria-required", String(required));
+        reportProofRequirement.textContent = required ? "(bắt buộc khi chuyển khoản)" : "(không bắt buộc)";
+        if (!reportProof.files.length) reportProofError.hidden = true;
+    };
+
+    const validateProof = () => {
+        reportProofError.hidden = true;
+        if (!reportProof.files.length) {
+            if (reportMethod.value !== "CHUYEN_KHOAN") return true;
+            reportProofError.textContent = "Vui lòng tải ảnh chứng từ khi chọn Chuyển khoản.";
+            reportProofError.hidden = false;
+            return false;
+        }
+        const file = reportProof.files[0];
+        const extension = file.name.split(".").pop().toLowerCase();
+        const acceptedExtension = ["jpg", "jpeg", "png"].includes(extension);
+        if (!acceptedExtension) reportProofError.textContent = "Chỉ nhận ảnh JPG/JPEG hoặc PNG.";
+        else if (file.size > 5 * 1024 * 1024) reportProofError.textContent = "Ảnh chứng từ vượt quá dung lượng tối đa 5 MiB (5.242.880 byte).";
+        else return true;
+        reportProofError.hidden = false;
+        return false;
+    };
+
+    reportMethod.addEventListener("change", updateProofRequirement);
+    updateProofRequirement();
+    reportProof.addEventListener("change", validateProof);
+    reportForm.addEventListener("submit", event => {
+        if (!validateProof()) {
+            event.preventDefault();
+            reportProof.focus();
+        }
+    });
 
     const cell = (value, className) => {
         const element = document.createElement("td");

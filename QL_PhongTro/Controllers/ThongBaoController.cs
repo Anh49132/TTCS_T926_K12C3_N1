@@ -195,13 +195,14 @@ public sealed class ThongBaoController(
         return View("~/Views/HoaDonDichVu/Details.cshtml", model);
     }
 
-    [HttpPost, ValidateAntiForgeryToken]
+    [HttpPost, ValidateAntiForgeryToken, RequestSizeLimit(6 * 1024 * 1024),
+     RequestFormLimits(MultipartBodyLengthLimit = 6 * 1024 * 1024)]
     public async Task<IActionResult> BaoCaoThanhToan(int hoaDonId, decimal? soTien, DateOnly? ngayThanhToan,
-        string? hinhThucThanhToan, CancellationToken cancellationToken)
+        string? hinhThucThanhToan, IFormFile? anhChungTu, CancellationToken cancellationToken)
     {
         try
         {
-            await paymentReports.GuiAsync(Actor, hoaDonId, soTien, ngayThanhToan, hinhThucThanhToan, cancellationToken);
+            await paymentReports.GuiAsync(Actor, hoaDonId, soTien, ngayThanhToan, hinhThucThanhToan, anhChungTu, cancellationToken);
             TempData["PaymentReportSuccess"] = "Đã gửi báo cáo thanh toán. Hóa đơn đang chờ chủ nhà xác nhận.";
         }
         catch (GhiThuValidationException ex)

@@ -196,6 +196,8 @@ builder.Services.AddScoped<DichVuPhongService>();
 builder.Services.AddScoped<HoaDonDichVuService>();
 builder.Services.AddScoped<GhiThuHoaDonService>();
 builder.Services.AddScoped<IBaoCaoThanhToanService, BaoCaoThanhToanService>();
+builder.Services.AddSingleton(new PaymentProofImageStore(databasePath + ".payment-proofs"));
+builder.Services.AddScoped<IPaymentProofService, PaymentProofService>();
 builder.Services.AddSingleton(new BaoHongImageStore(databasePath + ".repair-images"));
 builder.Services.AddScoped<BaoHongService>();
 builder.Services.AddScoped<QuanLyBaoHongService>();

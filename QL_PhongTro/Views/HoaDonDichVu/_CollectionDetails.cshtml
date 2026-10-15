@@ -52,6 +52,23 @@ else if(line.LoaiKhoan == "DICH_VU" && line.CachTinhApDung == CachTinhDichVu.The
 </tbody></table></div><p class="ic-hint">ⓘ Các lần thu đã hủy không được tính vào tổng đã thu và không thể khôi phục.</p></section>
 <partial name="_Cancellation" model="Model" />
 <partial name="_DraftHistory" model="Model.LichSuNhap" />
+@if (Model.BaoCaoChoXacNhan is { } report)
+{
+<section class="ic-card" aria-labelledby="ic-payment-report-title">
+    <h2 id="ic-payment-report-title">Báo cáo thanh toán · Chờ xác nhận</h2>
+    <dl class="ic-info">
+        <div><dt>Số tiền</dt><dd>@report.SoTien.ToString("N0",vn) đ</dd></div>
+        <div><dt>Ngày thanh toán</dt><dd>@report.NgayThanhToan.ToString("dd/MM/yyyy")</dd></div>
+        <div><dt>Hình thức</dt><dd>@GhiThuHoaDonService.TenHinhThuc(report.HinhThucBaoCao)</dd></div>
+    </dl>
+    @if (!string.IsNullOrEmpty(report.AnhChungTuKey))
+    {
+        <button type="button" class="btn btn-outline-primary" data-payment-proof-link="@Url.Action("PaymentProofLink", "HoaDonDichVu", new { paymentId = report.Id })" aria-controls="ic-payment-proof-image">Xem ảnh chứng từ</button>
+        <p class="small text-danger mt-2" data-payment-proof-error role="alert" hidden></p>
+        <img id="ic-payment-proof-image" class="img-fluid mt-3" alt="Ảnh chứng từ thanh toán" hidden />
+    }
+</section>
+}
 </div><aside>
 <section class="ic-card"><h2>Tiến độ thanh toán</h2><div class="ic-progress" role="progressbar" aria-label="Tỉ lệ đã thu" aria-valuemin="0" aria-valuemax="100" aria-valuenow="@progress.ToString("0",CultureInfo.InvariantCulture)"><div id="ic-progress-fill" style="width:@progress.ToString("0.##",CultureInfo.InvariantCulture)%">@progress.ToString("0",vn)%</div></div><div class="ic-progress-labels"><div><span>Đã thu</span><strong><span data-ic-paid>@summary.TongDaThu.ToString("N0",vn) đ</span> / <span data-ic-total>@summary.TongHoaDon.ToString("N0",vn) đ</span></strong></div><div><span>Còn</span><strong class="ic-debt" data-ic-remaining>@summary.ConPhaiTra.ToString("N0",vn) đ</strong></div></div></section>
 <section class="ic-card"><h2>Thông tin hóa đơn</h2><dl class="ic-info"><div><dt>Khách thuê</dt><dd>@Model.TenKhach</dd></div><div><dt>Phòng</dt><dd>@Model.MaPhong</dd></div><div><dt>Tòa nhà</dt><dd>@Model.TenToaNha</dd></div><div><dt>Ngày phát hành</dt><dd>@issue.ToString("dd/MM/yyyy")</dd></div><div><dt>Hạn thanh toán</dt><dd>@bill.HanThanhToan.ToString("dd/MM/yyyy")</dd></div></dl></section>

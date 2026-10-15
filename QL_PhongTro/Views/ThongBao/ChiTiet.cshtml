@@ -45,7 +45,7 @@
                     </div>
                 </dl>
                 <div id="tenant-payment-report-pending" class="alert alert-info mt-3 mb-0" role="status" hidden></div>
-                <form asp-controller="ThongBao" asp-action="BaoCaoThanhToan" method="post" id="tenant-payment-report-form" class="mt-4" hidden>
+                <form asp-controller="ThongBao" asp-action="BaoCaoThanhToan" method="post" enctype="multipart/form-data" id="tenant-payment-report-form" class="mt-4" hidden>
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="hoaDonId" id="tenant-payment-report-invoice-id" />
                     <h4 class="h6">Báo cáo thanh toán</h4>
@@ -65,6 +65,13 @@
                             <option value="TIEN_MAT">Tiền mặt</option>
                             <option value="CHUYEN_KHOAN">Chuyển khoản</option>
                         </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tenant-payment-report-proof" class="form-label">Ảnh chứng từ <span id="tenant-payment-report-proof-requirement">(không bắt buộc)</span></label>
+                        <input id="tenant-payment-report-proof" name="anhChungTu" type="file" class="form-control"
+                               accept=".jpg,.jpeg,.png,image/jpeg,image/png" />
+                        <div class="form-text">Chỉ nhận JPG/JPEG hoặc PNG, tối đa 5 MiB (5.242.880 byte).</div>
+                        <div id="tenant-payment-report-proof-error" class="text-danger" role="alert" hidden></div>
                     </div>
                     <button type="submit" class="btn btn-dark">Gửi báo cáo thanh toán</button>
                 </form>
