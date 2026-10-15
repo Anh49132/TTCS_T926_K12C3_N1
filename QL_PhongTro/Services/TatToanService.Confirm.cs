@@ -93,8 +93,7 @@ public sealed partial class TatToanService
                 HoaDonId=debt.HoaDonId,Loai="CAN_TRU",SoTien=amount,NguoiThucHienId=actor,NgayGiaoDich=clock.UtcNow});
             remaining=checked(remaining-amount);offset=checked(offset+amount);
         }
-        var h=await db.HopDongs.SingleAsync(x=>x.Id==input.HopDongId);var room=await db.PhongTros.SingleAsync(x=>x.Id==h.PhongId);
-        h.TrangThai="DA_KET_THUC";h.NgayTraPhong=bang.NgayTraPhong;room.TrangThai="TRONG";room.PhienBan++;
+        var (h,room)=await GiaiPhongPhongAsync(actor,input.HopDongId,bang.NgayTraPhong);
         var history=await db.LichSuTrangThaiPhongs.SingleOrDefaultAsync(x=>x.PhongId==room.Id && x.DenThoiDiem==null);
         if(history is not null){history.DenThoiDiem=clock.UtcNow;await db.SaveChangesAsync();}
         db.LichSuTrangThaiPhongs.Add(new() {PhongId=room.Id,HopDongId=h.Id,TrangThai="TRONG",TuThoiDiem=clock.UtcNow});

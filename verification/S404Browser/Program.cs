@@ -14,7 +14,7 @@ var output=Path.Combine(folder,"browser-check-"+Guid.NewGuid().ToString("N")[..8
 var edge=Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),"Microsoft/Edge/Application/msedge.exe");
 var listener=new TcpListener(IPAddress.Loopback,0);listener.Start();var port=((IPEndPoint)listener.LocalEndpoint).Port;listener.Stop();
 var psi=new ProcessStartInfo(edge) {UseShellExecute=false,CreateNoWindow=true,WindowStyle=ProcessWindowStyle.Hidden};
-foreach(var arg in new[] {"--headless=new","--disable-gpu","--no-first-run","--no-default-browser-check","--remote-debugging-port="+port,"--user-data-dir="+Path.Combine(output,"profile"),"about:blank"})psi.ArgumentList.Add(arg);
+foreach(var arg in new[] {"--headless=new","--no-sandbox","--disable-gpu","--no-first-run","--no-default-browser-check","--remote-debugging-port="+port,"--user-data-dir="+Path.Combine(output,"profile"),"about:blank"})psi.ArgumentList.Add(arg);
 using var browser=Process.Start(psi)??throw new Exception("Cannot start Edge.");
 try
 {
@@ -119,6 +119,10 @@ try
         var confirmForm=await Eval("const consent=document.querySelector('[name=\"Confirm.DongY\"]');consent.checked=true;Array.from(new FormData(consent.closest('form')))");
         await Eval("document.querySelector('[name=\"Confirm.DongY\"]').closest('form').requestSubmit();true");
         await Wait("location.pathname==='/TatToan/KetQua/1' && document.readyState==='complete'");
+        if(!(await Eval("document.querySelector('#current-room-state')?.textContent==='Trống' && document.body.textContent.includes('Làm mới trạng thái phòng')")).GetBoolean())throw new Exception("S4-05 result does not show live vacant room.");
+        await Navigate("/TatToan/KetQua/1");
+        if(!(await Eval("document.querySelector('#current-room-state')?.textContent==='Trống'")).GetBoolean())throw new Exception("S4-05 refresh lost room state.");
+        Console.WriteLine("PASS: S4-05 live room status and refresh");
         await Screenshot("confirmed-result-mobile-360.png");
         if((await Eval("document.documentElement.scrollWidth")).GetInt32()>360)throw new Exception("Confirmed result overflows mobile.");
         await Viewport(1440,1000,false);await Screenshot("confirmed-result-desktop.png");

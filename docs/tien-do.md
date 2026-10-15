@@ -1,3 +1,17 @@
+## 15/10/2026 — Kiểm thử mở rộng S4-05 phần 1
+
+- Bổ sung 18 ca, nâng bộ chuyên biệt lên 28/28 PASS: trạng thái hợp đồng/phòng, đổi quyền/sở hữu/tài khoản, GET/POST đủ vai trò, dữ liệu cũ/tràn phiên bản, hợp đồng hiệu lực khác cùng phòng, lịch sử đang mở và rollback khi ghi lịch sử lỗi; giữ các ca lặp/đồng thời/CSRF/audit nền đã đạt.
+- Lượt toàn dự án hoàn tất 901 PASS/22 FAIL trên 923 test (26 phút 26 giây); chạy riêng 5 ca HTTP bổ sung chưa có trong lượt toàn bộ, tổng hợp 906 PASS/22 FAIL trên 928 ca không trùng. Cả 22 FAIL đều tái hiện trên bản sao commit gốc edef5ea, không có test lỗi mới trong đối chiếu. Không sửa thêm mã chức năng hoặc mã ngoài phạm vi sau lượt này.
+- CSDL gốc giữ nguyên SHA256; UnitTest1.cs sẵn có giữ nguyên. Chưa commit/push. Các giới hạn Safari/tải production/SMTP thật/merge tương lai vẫn được ghi rõ.
+- [Ma trận trường hợp](s4051-ma-tran-kiem-thu.md), [kết quả và 22 test lỗi cũ](s4051-ket-qua-kiem-thu.md).
+
+## 15/10/2026 — S4-05 phần 1: tự động giải phóng phòng
+
+- Nhánh feature/S4-05/01-auto-release-room lấy từ dev edef5ea. Dùng xác nhận tất toán S4-04 hiện có để kết thúc hợp đồng và đưa phòng về Trống trong cùng transaction; guard riêng kiểm tra quyền, trạng thái, hợp đồng khác cùng phòng và tăng phiên bản phòng an toàn. Giữ điều kiện tài chính/phiên bản, lịch sử, audit và hành vi tin Nháp có sẵn; không thêm luồng kết thúc bỏ qua tất toán.
+- Kết quả hiển thị trạng thái phòng hiện tại từ CSDL, nút làm mới và liên kết xem phòng. Gửi lại yêu cầu cũ không giải phóng phòng lần nữa, kể cả khi phòng đã đổi trạng thái sau đó. Không đổi schema v33 và không nâng CSDL gốc.
+- 93/93 test liên quan PASS (10 test S4-05 mới); Edge desktop/360px PASS, lặp 409 và trái quyền 403. Kiểm tra mở rộng kích hoạt/chấm dứt đạt 35/36; tổng 128 PASS/1 FAIL trên 129 test khác nhau. Một test giao diện hóa đơn không tìm thấy “2 người” cũng FAIL trên nền edef5ea chưa sửa, đã đối chiếu cùng line 35 trong bản sao git archive; giữ phạm vi, không sửa UI hóa đơn. Chưa chạy toàn bộ test mọi module/Safari/tải production. CSDL gốc giữ SHA256, UnitTest1.cs giữ nguyên. Chưa commit/push.
+- Demo riêng cổng 5251, tạo mới bằng verification/New-S405Demo.ps1, chạy bằng verification/Start-S405Demo.ps1. Hướng dẫn/kết quả: [s4051-tu-dong-giai-phong-phong.md](s4051-tu-dong-giai-phong-phong.md).
+
 ## Cập nhật 13/10/2026 — Thêm 10 phòng trống
 
 - Bổ sung B051–B060 tại tòa Sprint 3 (ID 6), trạng thái TRONG, giá 3.500.000 đ/tháng, 25 m², tối đa 3 người.

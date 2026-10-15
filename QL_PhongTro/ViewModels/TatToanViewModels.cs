@@ -22,6 +22,9 @@ public sealed class TatToanViewModel
     public TatToanInput Input { get; set; } = new();
     public string MaHopDong { get; set; } = "";
     public string Phong { get; set; } = "";
+    public int PhongId { get; set; }
+    public string TrangThaiPhong { get; set; } = "";
+    public string TenTrangThaiPhong => TrangThaiPhong switch { "TRONG"=>"Trống", "DANG_THUE"=>"Đang thuê", "DA_DAT_COC"=>"Đã đặt cọc", "NGUNG_CHO_THUE"=>"Ngừng cho thuê", _=>"Chưa xác định" };
     public string ToaNha { get; set; } = "";
     public string Khach { get; set; } = "";
     public XacNhanTatToan? XacNhan { get; set; }

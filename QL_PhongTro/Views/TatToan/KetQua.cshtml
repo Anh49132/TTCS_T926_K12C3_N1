@@ -6,6 +6,8 @@
     <section class="st-success-banner">
         <div><h1>✓ Đã hoàn tất trả phòng</h1><p>Hợp đồng <strong>@Model.MaHopDong</strong> đã chuyển sang trạng thái <strong>Đã kết thúc</strong>.</p><p class="st-muted">Phòng @Model.Phong · @Model.Khach · Ngày trả @Model.Bang.NgayTraPhong.ToString("dd/MM/yyyy")</p></div>
         <div class="st-actions">
+            <a class="btn btn-outline-secondary" asp-action="KetQua" asp-route-id="@Model.Input.HopDongId">Làm mới trạng thái phòng</a>
+            @if(User.IsInRole("CHU_NHA")){<a class="btn btn-outline-secondary" asp-controller="PhongTro" asp-action="Details" asp-route-id="@Model.PhongId">Xem phòng @Model.Phong</a>}
             <a class="btn btn-outline-secondary" asp-action="TaiPdf" asp-route-id="@Model.Input.HopDongId">↓ Tải bảng tất toán PDF</a>
             @if(User.IsInRole("CHU_NHA")){<a class="btn btn-outline-secondary" asp-controller="HoaDonDichVu" asp-action="Details" asp-route-id="@Model.Bang.HoaDonCuoiId">Xem hóa đơn kỳ cuối</a><a class="btn st-primary" asp-controller="HopDong" asp-action="Details" asp-route-id="@Model.Input.HopDongId">Về chi tiết hợp đồng</a>}
             else if(User.IsInRole("KHACH_THUE")){<a class="btn btn-outline-secondary" asp-controller="ThongBao" asp-action="HoaDon" asp-route-id="@Model.Bang.HoaDonCuoiId">Xem hóa đơn kỳ cuối</a><a class="btn st-primary" asp-controller="HopDongCuaToi" asp-action="Details" asp-route-id="@Model.Input.HopDongId">Về hợp đồng của tôi</a>}
@@ -15,7 +17,7 @@
         <section class="st-card"><p class="st-muted">Mã tất toán: @Model.Bang.Ma <span class="st-badge">Đã chốt</span></p><partial name="_KetQua" model="Model"/>
             <p>Tiền cọc đã cấn vào hóa đơn: <strong>@confirmed.TienCanTru.ToString("N0",vi) đ</strong></p>
         </section>
-        <aside class="st-card"><h2>Trạng thái sau tất toán</h2><ul class="st-status-list"><li>✓ Hợp đồng: <strong>Đã kết thúc</strong></li><li>✓ Phòng: <strong>Đã trả</strong></li><li>✓ Hóa đơn kỳ cuối: <strong>Đã phát hành</strong></li><li>🔒 Tạo/phát hành hóa đơn mới: <strong>Đã khóa</strong></li><li>🔒 Bảng tất toán: <strong>Không được chỉnh sửa</strong></li></ul><div class="st-notice">Chủ nhà và khách thuê có thể xem lại cùng bảng tất toán cuối cùng.</div></aside>
+        <aside class="st-card"><h2>Trạng thái sau tất toán</h2><ul class="st-status-list"><li>✓ Hợp đồng: <strong>Đã kết thúc</strong></li><li>✓ Phòng tại thời điểm trả: <strong>Trống</strong></li><li>Phòng hiện tại: <strong id="current-room-state">@Model.TenTrangThaiPhong</strong></li><li>✓ Hóa đơn kỳ cuối: <strong>Đã phát hành</strong></li><li>🔒 Tạo/phát hành hóa đơn mới: <strong>Đã khóa</strong></li><li>🔒 Bảng tất toán: <strong>Không được chỉnh sửa</strong></li></ul><div class="st-notice">Chủ nhà và khách thuê có thể xem lại cùng bảng tất toán cuối cùng.</div></aside>
     </div>
     <section class="st-card"><h2>Tài liệu liên quan</h2>
         <div class="st-actions"><span>Bảng tất toán @Model.MaHopDong · PDF</span><a class="btn btn-outline-secondary" asp-action="TaiPdf" asp-route-id="@Model.Input.HopDongId">↓ Tải xuống</a></div>

@@ -39,7 +39,7 @@ public sealed partial class TatToanService(AppDbContext db, ITimeProvider clock)
         var owner = await KiemTraQuyenAsync(actor, contract, sua);
         var model = await (from h in db.HopDongs.AsNoTracking() join p in db.PhongTros on h.PhongId equals p.Id
             join b in db.ToaNhas on p.ToaNhaId equals b.Id where h.Id == contract
-            select new TatToanViewModel { MaHopDong = h.MaHopDong, Phong = p.MaPhong, ToaNha = b.TenToaNha,TrangThaiHopDong=h.TrangThai }).SingleAsync();
+            select new TatToanViewModel { MaHopDong = h.MaHopDong, Phong = p.MaPhong, PhongId=p.Id, TrangThaiPhong=p.TrangThai, ToaNha = b.TenToaNha,TrangThaiHopDong=h.TrangThai }).SingleAsync();
         var tenant = await db.HopDongs.Where(x => x.Id == contract).Select(x => x.KhachDungTenId).SingleAsync();
         model.Khach = await db.KhachThues.Where(x => x.Id == tenant).Select(x => x.HoTen).SingleOrDefaultAsync() ?? "";
         model.DuocSua = owner && await db.RolePermissions.CountAsync(x=>x.RoleCode=="CHU_NHA" && (x.ModuleCode=="HOP_DONG" || x.ModuleCode=="TAI_CHINH") && (x.AccessLevel=="WRITE" || x.AccessLevel=="FULL"))==2
