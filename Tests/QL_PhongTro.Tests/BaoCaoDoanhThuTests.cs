@@ -360,6 +360,8 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
         // Tạo hóa đơn cho 6 tháng: T5, T6, T7, T8, T9, T10 năm 2026
         for (int m = 5; m <= 10; m++)
         {
+            if (m == 7) continue; // Tháng không có hóa đơn vẫn phải có cột bằng 0.
+
             db.HoaDons.Add(new HoaDon
             {
                 Id = 2000 + m,
@@ -388,6 +390,9 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
 
         Assert.Equal(6, result.ChiTietTheoThang.Count);
         Assert.Equal(6, result.BieuDo6Thang.Count);
+        Assert.Equal(new[] { 5, 6, 7, 8, 9, 10 }, result.BieuDo6Thang.Select(x => x.Thang));
+        Assert.Equal(0, result.BieuDo6Thang.Single(x => x.Thang == 7).TongPhatHanh);
+        Assert.Equal(0, result.ChiTietTheoThang.Single(x => x.Thang == 7).TongPhatHanh);
 
         for (int i = 0; i < 6; i++)
         {
