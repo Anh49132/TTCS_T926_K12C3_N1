@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -17,6 +17,13 @@ public partial class AppDbContext
     // Explicit allowlist: never serialize entities, navigation properties or arbitrary request data.
     private static readonly IReadOnlyDictionary<Type, string[]> AuditFields = new Dictionary<Type, string[]>
     {
+        [typeof(TinDang)] = ["PhongId", "NguoiDangId", "TinGocId", "TrangThai", "NgayTao"],
+        [typeof(XacNhanTatToan)] = ["ThanhLyId", "HopDongId", "NguoiXacNhanId", "ThoiDiem", "SoTienTatToan", "TienCanTru"],
+        [typeof(LichSuTrangThaiPhong)] = ["PhongId", "HopDongId", "TrangThai", "TuThoiDiem", "DenThoiDiem"],
+        [typeof(GiaoDichCoc)] = ["HopDongId", "HoaDonId", "Loai", "SoTien", "HinhThuc", "TrangThai", "NguoiThucHienId", "NgayGiaoDich"],
+        [typeof(ChamDutHopDong)] = ["HopDongId", "HoaDonCuoiId", "NgayTraPhong", "NgayKetThuc", "CocThoaThuan", "TruocHan", "LyDo", "ApDungPhat", "TienPhat", "PhienBan"],
+        [typeof(BangTatToan)] = ["HopDongId", "HoaDonCuoiId", "NgayTraPhong", "CocConGiu", "NoHoaDonCuoi", "CongNoCu", "TienHuHong", "TienPhat", "TienPhaiHoan", "TienKhachTraThem", "TrangThai", "PhienBan"],
+        [typeof(KhauTruTatToan)] = ["ThanhLyId", "SoThuTu", "LoaiKhoan", "SoTien"],
         [typeof(GhiChuPhong)] = ["PhongId", "NguoiTaoId", "Ghim", "NgayTao"],
         [typeof(ChiSoDienNuoc)] = ["HopDongId", "DichVuId", "TuNgay", "DenNgay", "ChiSoDau", "ChiSoCuoi", "DaXacNhanBatThuong", "DaKhoa", "PhienBan"],
         [typeof(NguoiOGhep)] = ["HopDongId", "KhachThueId", "NgayVao", "NgayRa"],

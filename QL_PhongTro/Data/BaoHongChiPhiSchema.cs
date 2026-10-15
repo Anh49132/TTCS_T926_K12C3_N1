@@ -12,7 +12,9 @@ public static class BaoHongChiPhiSchema
         if (count == 1) throw new InvalidOperationException("Incomplete invoice schema; inspect before upgrading repair costs.");
         return count == 2;
     }
-    public static void Upgrade(SqliteConnection c)
+    public static void Upgrade(SqliteConnection c) => Install(c, true);
+    internal static void InstallForReconciliation(SqliteConnection c) => Install(c, false);
+    private static void Install(SqliteConnection c, bool recordVersion)
     {
         using var tx = c.BeginTransaction(deferred: false);
         using var cmd = c.CreateCommand(); cmd.Transaction = tx;
@@ -129,8 +131,11 @@ public static class BaoHongChiPhiSchema
             """;
         cmd.ExecuteNonQuery();
         Validate(c, tx);
-        cmd.CommandText = "INSERT INTO app_schema_version(version,applied_at) VALUES(31,strftime('%Y-%m-%dT%H:%M:%fZ','now'))";
-        cmd.ExecuteNonQuery(); tx.Commit();
+        if (recordVersion)
+        {
+            cmd.CommandText = "INSERT INTO app_schema_version(version,applied_at) VALUES(31,strftime('%Y-%m-%dT%H:%M:%fZ','now'))";
+            cmd.ExecuteNonQuery();
+        } tx.Commit();
     }
     private static void InstallInvoiceGuards(SqliteCommand cmd)
     {

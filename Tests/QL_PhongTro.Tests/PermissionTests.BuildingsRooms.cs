@@ -19,7 +19,8 @@ public sealed partial class PermissionTests
         var response = await client.PostAsync("/PhongTro/TaoToaNha", new FormUrlEncodedContent(new Dictionary<string, string>
         {
             ["__RequestVerificationToken"] = await PropertyToken(client, "/PhongTro/TaoToaNha"),
-            ["TenToaNha"] = "Tòa kiểm thử", ["DiaChi"] = "12 Hà Nội", ["SoTang"] = "3"
+            ["TenToaNha"] = "Tòa kiểm thử", ["DiaChi"] = "12 Hà Nội", ["SoTang"] = "3",
+            ["PhuongXa"] = "Phường kiểm thử", ["QuanHuyen"] = "Quận kiểm thử", ["TinhThanh"] = "Hà Nội"
         }));
         Assert.Equal(HttpStatusCode.Redirect, response.StatusCode);
         Assert.Contains("Đã thêm tòa nhà thành công.", WebUtility.HtmlDecode(await client.GetStringAsync(response.Headers.Location)));
@@ -39,7 +40,7 @@ public sealed partial class PermissionTests
         using var client = await Login("CHU_NHA");
         var buildingId = await CreateTestBuilding(client);
         var emptyPage = WebUtility.HtmlDecode(await client.GetStringAsync("/PhongTro"));
-        Assert.Contains("value=\"\">Tất cả tòa nhà", emptyPage);
+        Assert.Contains("value=\"\">Tất cả cơ sở", emptyPage);
         var createPage = await client.GetStringAsync("/PhongTro/Create");
         Assert.DoesNotContain($"selected=\"selected\" value=\"{buildingId}\"", createPage);
 
@@ -52,7 +53,7 @@ public sealed partial class PermissionTests
         Assert.Contains("data-confirm=", page);
         Assert.Contains("A101", page);
         var roomId = Convert.ToInt32(Scalar("SELECT id FROM phong_tro WHERE toa_nha_id=$id", ("$id", buildingId)));
-        Assert.Contains("Sửa phòng", WebUtility.HtmlDecode(await client.GetStringAsync($"/PhongTro/Edit/{roomId}")));
+        Assert.Contains("Chỉnh sửa phòng", WebUtility.HtmlDecode(await client.GetStringAsync($"/PhongTro/Edit/{roomId}")));
         form["MaPhong"] = "A102";
         var edited = await client.PostAsync($"/PhongTro/Edit/{roomId}", new FormUrlEncodedContent(form));
         Assert.Equal(HttpStatusCode.Redirect, edited.StatusCode);
@@ -62,7 +63,8 @@ public sealed partial class PermissionTests
         var buildingForm = new Dictionary<string, string>
         {
             ["__RequestVerificationToken"] = form["__RequestVerificationToken"],
-            ["TenToaNha"] = "Tòa đã sửa", ["DiaChi"] = "24 Hà Nội", ["SoTang"] = "4"
+            ["TenToaNha"] = "Tòa đã sửa", ["DiaChi"] = "24 Hà Nội", ["SoTang"] = "4",
+            ["PhuongXa"] = "Phường kiểm thử", ["QuanHuyen"] = "Quận kiểm thử", ["TinhThanh"] = "Hà Nội"
         };
         Assert.Equal(HttpStatusCode.Redirect, (await client.PostAsync($"/PhongTro/SuaToaNha/{buildingId}", new FormUrlEncodedContent(buildingForm))).StatusCode);
         Assert.Contains("Đã cập nhật tòa nhà thành công.", WebUtility.HtmlDecode(await client.GetStringAsync("/PhongTro/ToaNha")));

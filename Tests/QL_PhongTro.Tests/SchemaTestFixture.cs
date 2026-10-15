@@ -5,6 +5,31 @@ namespace QL_PhongTro.Tests;
 
 internal static class SchemaTestFixture
 {
+    internal static void RemoveXacNhanExtensions(string path)
+    {
+        using var c=new SqliteConnection($"Data Source={path};Pooling=False");c.Open();using var cmd=c.CreateCommand();
+        foreach(var table in new[] {"xac_nhan_tat_toan","lich_su_trang_thai_phong"})
+        {
+            cmd.CommandText=$"SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='{table}'";
+            if(Convert.ToInt32(cmd.ExecuteScalar())==0)continue;
+            cmd.CommandText=$"SELECT COUNT(*) FROM {table}";Assert.Equal(0L,cmd.ExecuteScalar());
+            cmd.CommandText=$"DROP TABLE {table}";cmd.ExecuteNonQuery();
+        }
+        cmd.CommandText="DROP TRIGGER IF EXISTS hop_dong_ket_thuc_no_invoice; DROP TRIGGER IF EXISTS hop_dong_ket_thuc_no_publish; DROP TRIGGER IF EXISTS tat_toan_no_cancel_invoice; DELETE FROM app_schema_version WHERE version>=33";
+        cmd.ExecuteNonQuery();
+    }
+    internal static void RemoveTatToanExtensions(string path)
+    {
+        RemoveXacNhanExtensions(path);
+        using var connection=new SqliteConnection($"Data Source={path};Pooling=False");connection.Open();using var cmd=connection.CreateCommand();
+        foreach(var table in new[] {"cham_dut_hop_dong","chi_tiet_khau_tru","thanh_ly_hop_dong","giao_dich_coc"})
+        {
+            cmd.CommandText=$"SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='{table}'";
+            if(Convert.ToInt32(cmd.ExecuteScalar())==0)continue;
+            cmd.CommandText=$"SELECT COUNT(*) FROM {table}";Assert.Equal(0L,cmd.ExecuteScalar());
+            cmd.CommandText=$"DROP TABLE {table}";cmd.ExecuteNonQuery();
+        }
+    }
     internal static void RemoveChiPhiExtensions(string path)
     {
         using var connection = new SqliteConnection($"Data Source={path};Pooling=False");
@@ -30,6 +55,7 @@ internal static class SchemaTestFixture
     }
     internal static void RemoveBaoHongExtensions(string path)
     {
+        RemoveTatToanExtensions(path);
         RemoveChiPhiExtensions(path);
         using var connection = new SqliteConnection($"Data Source={path};Pooling=False");
         connection.Open(); using var command = connection.CreateCommand();

@@ -61,5 +61,21 @@ else
                 </div>
             </form>
         </section>
+        <section class="container py-4" aria-labelledby="featured-listings-title">
+            <h2 id="featured-listings-title">Tin đăng mới nhất</h2>
+            <div class="row g-3">
+            @foreach (var item in Model.TinMoiNhat) {
+                <div class="col-12 col-md-6 col-lg-4"><a class="card h-100 text-decoration-none" asp-controller="TinDang" asp-action="ChiTiet" asp-route-id="@item.Id">
+                    <img class="card-img-top" src="@(item.AnhDaiDien ?? Url.Content("~/room-placeholder.svg"))" alt="Phòng @item.TieuDe" loading="lazy" style="height:180px;object-fit:cover" />
+                    <div class="card-body"><h3 class="h5">@item.TieuDe</h3><strong>@item.GiaThue.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")) đ/tháng</strong><p>@(item.QuanHuyen ?? item.DiaChi ?? item.TenToaNha)</p><span>@item.DienTich.ToString("0.#") m² · @item.SoNguoiToiDa người</span></div>
+                </a></div>
+            }
+            @if(Model.TinMoiNhat.Count == 0){<p>Chưa có tin đăng đang hiển thị.</p>}
+            </div>
+        </section>
+        <section class="container py-4" aria-labelledby="home-values-title">
+            <h2 id="home-values-title">Tại sao nên chọn NhàTốt?</h2>
+            <div class="row g-3"><div class="col-12 col-md-4"><h3 class="h5">Giá thật minh bạch</h3><p>Xem giá thuê và các khoản dịch vụ trước khi gửi yêu cầu.</p></div><div class="col-12 col-md-4"><h3 class="h5">Ảnh thật xác thực</h3><p>Xem ảnh phòng do bên cho thuê cung cấp.</p></div><div class="col-12 col-md-4"><h3 class="h5">Liên hệ trực tiếp</h3><p>Gửi yêu cầu thuê hoặc hẹn xem phòng với bên quản lý.</p></div></div>
+        </section>
     </div>
 }

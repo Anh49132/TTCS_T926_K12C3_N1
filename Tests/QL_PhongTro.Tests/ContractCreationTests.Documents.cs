@@ -85,4 +85,54 @@ public sealed partial class ContractCreationTests
         Assert.False(controller.ModelState.IsValid);
         Assert.Empty(await db.HopDongs.ToListAsync());
     }
+    [Fact]
+    public async Task DraftResaveKeepsAttachmentsAndUpdatesTermsWhileActiveContractCannotBeResaved()
+    {
+        using var db = Context();
+        var input = Valid(); input.Intent = "NHAP";
+        input.DieuKhoanBoSung = "Điều khoản ban đầu";
+        input.TaiLieus = [Upload("contract.pdf", "%PDF-1.7\nDraft"u8.ToArray())];
+        Assert.IsType<RedirectToActionResult>(await Controller(db).Create(input, default));
+        var id = (await db.HopDongs.SingleAsync()).Id;
+        var store = new ContractDocumentStore(path);
+        try
+        {
+            var first = await store.ReadAsync(id);
+            var file = Assert.Single(first.Files);
+            var bytes = await File.ReadAllBytesAsync(store.FilePath(id, file.Id));
+            input.TaiLieus = []; input.DieuKhoanBoSung = "Điều khoản nháp đã sửa";
+            Assert.IsType<RedirectToActionResult>(await Controller(db).Create(input, default));
+            var next = await store.ReadAsync(id);
+            Assert.Equal(input.DieuKhoanBoSung, next.Terms);
+            Assert.Equal(file, Assert.Single(next.Files));
+            Assert.Equal(bytes, await File.ReadAllBytesAsync(store.FilePath(id, file.Id)));
+            input.Intent = "HIEU_LUC";
+            Assert.IsType<RedirectToActionResult>(await Controller(db).Create(input, default));
+            Assert.IsType<ViewResult>(await Controller(db).Create(input, default));
+            Assert.Equal(next, (await store.ReadAsync(id)) with { Files = next.Files });
+        }
+        finally { store.Delete(id); }
+    }
+
+    [Fact]
+    public async Task UncommittedDraftDocumentWriteRestoresPreviousManifestAndFileBytes()
+    {
+        var store = new ContractDocumentStore(path);
+        await store.WriteAsync(1, "Old draft", [Upload("old.pdf", "%PDF-1.7\nOld"u8.ToArray())]);
+        try
+        {
+            var before = await store.ReadAsync(1);
+            var file = Assert.Single(before.Files);
+            using (await store.PrepareWriteAsync(1, "Uncommitted", [], true))
+                Assert.Equal("Uncommitted", (await store.ReadAsync(1)).Terms);
+            var after = await store.ReadAsync(1);
+            Assert.Equal(before.Terms, after.Terms);
+            Assert.Equal(file, Assert.Single(after.Files));
+            Assert.Equal("%PDF-1.7\nOld"u8.ToArray(), await File.ReadAllBytesAsync(store.FilePath(1, file.Id)));
+            await Assert.ThrowsAsync<IOException>(() => store.PrepareWriteAsync(1, "Forbidden", [], false));
+            Assert.Equal(before.Terms, (await store.ReadAsync(1)).Terms);
+        }
+        finally { store.Delete(1); }
+    }
+
 }

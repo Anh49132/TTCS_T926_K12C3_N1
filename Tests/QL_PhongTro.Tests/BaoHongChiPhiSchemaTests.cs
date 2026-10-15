@@ -24,6 +24,7 @@ public sealed partial class BaoHongChiPhiSchemaTests
             Directory.CreateDirectory(directory); Path = System.IO.Path.Combine(directory,"test.sqlite");
             LocalDatabaseInitializer.Create(Path, Seed);
             RentalRequestSchema.Initialize(Path);
+            SchemaTestFixture.RemoveTatToanExtensions(Path);
             SchemaTestFixture.RemoveChiPhiExtensions(Path);
             using (var setup = new SqliteConnection($"Data Source={Path};Foreign Keys=True;Pooling=False"))
             {
@@ -121,7 +122,7 @@ public sealed partial class BaoHongChiPhiSchemaTests
         }
         var old=Snapshot(f.Db); DatabaseUpdates.Update(f.Path,f.Seed); DatabaseUpdates.Check(f.Path);
         var after=Snapshot(f.Db); foreach(var row in old)Assert.Equal(row.Value,after[row.Key]);
-        Assert.Equal(31,f.Scalar("SELECT MAX(version) FROM app_schema_version"));
+        Assert.Equal(34,f.Scalar("SELECT MAX(version) FROM app_schema_version"));
         Assert.Equal(0,f.Scalar("SELECT COUNT(*) FROM chi_phi_bao_hong"));Assert.Equal(0,f.Scalar("SELECT COUNT(*) FROM lich_su_chi_phi_bao_hong"));
         f.Db.Close(); SqliteConnection.ClearAllPools();
         var hash=System.Security.Cryptography.SHA256.HashData(File.ReadAllBytes(f.Path));

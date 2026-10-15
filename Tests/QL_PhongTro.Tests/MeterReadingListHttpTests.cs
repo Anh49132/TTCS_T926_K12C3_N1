@@ -36,7 +36,7 @@ public sealed partial class MeterReadingListTests
          var rows=new List<string>{schema??""};foreach(var table in tables){cmd.CommandText="SELECT * FROM \""+table.Replace("\"","\"\"")+"\" ORDER BY rowid";using var reader=cmd.ExecuteReader();while(reader.Read()){var values=new object[reader.FieldCount];reader.GetValues(values);rows.Add(System.Text.Json.JsonSerializer.Serialize(values));}}return string.Join("\n",rows);}
         var before=Snapshot();var response=await manager.GetAsync("/ChiSoDienNuoc?toaNhaId=1");Assert.Equal(HttpStatusCode.OK,response.StatusCode);
         Assert.Contains("no-store",response.Headers.CacheControl!.ToString());var html=WebUtility.HtmlDecode(await response.Content.ReadAsStringAsync());
-        Assert.Equal(before,Snapshot());Assert.Contains("Chốt chỉ số điện nước",html);Assert.Contains("10/2026",html);Assert.Contains("Chỉ số bàn giao",html);
+        Assert.Equal(before,Snapshot());Assert.Contains("id=\"meter-title\">Chỉ số điện nước",html);Assert.Contains("10/2026",html);Assert.Contains("Chỉ số bàn giao",html);
         Assert.Contains("Chưa có dữ liệu",html);Assert.Contains("Chưa chốt",html);Assert.Contains("<span>0</span>",html);
         Assert.DoesNotContain("Foreign building",html);Assert.DoesNotContain("SECRET",html);Assert.DoesNotContain("EMPTY",html);
         Assert.True(html.IndexOf("A001",StringComparison.Ordinal)<html.IndexOf("A002",StringComparison.Ordinal));

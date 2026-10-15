@@ -84,9 +84,13 @@ public sealed partial class ContractCreationTests
         using var db = Context();
         await AssignedContractService(db);
         var input = Valid(); input.Intent = "NHAP";
-        Assert.IsType<RedirectToActionResult>(await Controller(db).Create(input, default));
+        var controller = Controller(db);
+        var result = await controller.Create(input, default);
+        Assert.True(result is RedirectToActionResult, string.Join("; ", controller.ModelState.SelectMany(x => x.Value!.Errors).Select(x => x.ErrorMessage)));
         await db.Database.ExecuteSqlRawAsync("UPDATE dich_vu_phong SET don_gia_rieng=120000");
-        Assert.IsType<RedirectToActionResult>(await Controller(db).Create(input, default));
+        controller = Controller(db);
+        result = await controller.Create(input, default);
+        Assert.True(result is RedirectToActionResult, string.Join("; ", controller.ModelState.SelectMany(x => x.Value!.Errors).Select(x => x.ErrorMessage)));
         Assert.Single(await db.HopDongs.ToListAsync());
         Assert.Equal(120000, (await db.HopDongDichVus.SingleAsync()).DonGia);
     }

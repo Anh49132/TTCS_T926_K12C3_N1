@@ -28,8 +28,8 @@ public sealed partial class PermissionTests
         using var manager = await Login("QUAN_LY");
         var manageHtml = WebUtility.HtmlDecode(await manager.GetStringAsync("/TinDang/QuanLy"));
         Assert.Contains("href=\"/TinDang/QuanLy\"", manageHtml);
-        Assert.Contains($"phongId={assignedRoomId}", manageHtml);
-        Assert.DoesNotContain($"phongId={otherRoomId}", manageHtml);
+        Assert.Contains($"/TinDang/Sua/{assignedListingId}", manageHtml);
+        Assert.DoesNotContain($"/TinDang/Sua/{otherListingId}", manageHtml);
 
         var createHtml = await manager.GetStringAsync($"/TinDang/Tao?phongId={assignedRoomId}");
         var publish = await manager.PostAsync("/TinDang/Tao", new FormUrlEncodedContent(new Dictionary<string, string>
@@ -90,8 +90,8 @@ public sealed partial class PermissionTests
         using var owner = await Login("CHU_NHA");
 
         var manage = WebUtility.HtmlDecode(await owner.GetStringAsync("/TinDang/QuanLy"));
-        Assert.Contains("Quản lý tin đăng", manage);
-        Assert.Contains("Đăng lại", manage);
+        Assert.Contains("Tin đăng cho thuê", manage);
+        Assert.Contains("Đổi trạng thái tin phòng", manage);
 
         var createHtml = await owner.GetStringAsync($"/TinDang/Tao?phongId={roomId}");
         var publish = await owner.PostAsync("/TinDang/Tao", new FormUrlEncodedContent(new Dictionary<string, string>
@@ -148,8 +148,8 @@ public sealed partial class PermissionTests
 
         Assert.Equal("TAM_AN", Scalar("SELECT trang_thai FROM tin_dang WHERE id=$id", ("$id", listingId)));
         Assert.Contains("Đã hết hạn", manage);
-        Assert.Contains("tự động chuyển sang Tạm ẩn", manage);
-        Assert.Contains("Đăng lại", manage);
+        Assert.Contains("tự chuyển sang Tạm ẩn", manage);
+        Assert.Contains("Đổi trạng thái tin phòng", manage);
         using var guest = Client();
         Assert.Equal(HttpStatusCode.NotFound, (await guest.GetAsync($"/TinDang/ChiTiet/{listingId}")).StatusCode);
     }

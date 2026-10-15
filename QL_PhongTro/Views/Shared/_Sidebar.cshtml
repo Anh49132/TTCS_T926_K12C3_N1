@@ -1,10 +1,12 @@
 @inject QL_PhongTro.Authorization.PermissionService Permissions
 @{
     var allowed = (await Permissions.MenuAsync()).Select(x => x.Code).ToHashSet();
+    var unprocessed = await Permissions.UnprocessedRequestCountAsync();
     var admin = User.IsInRole("ADMIN");
     var owner = User.IsInRole("CHU_NHA");
     var name = string.IsNullOrWhiteSpace(User.Identity?.Name) ? "Tài khoản" : User.Identity.Name;
     var path = Context.Request.Path.Value ?? "/";
+    if(ViewContext.RouteData.Values["controller"]?.ToString() is "TatToan" or "TraPhong")path="/Modules/HOP_DONG";
     var section = Context.Request.Query["section"].ToString();
     var roleFilter = Context.Request.Query["role"].ToString();
     var items = new List<(string Group, string Title, string Url, string Module, string Icon)>();
@@ -26,6 +28,7 @@
             ("", "Cấu hình hệ thống", "/Permissions?section=cau-hinh", "TAI_KHOAN", "settings")
         });
     } else {
+        items.Add(("Tài khoản", "Thông tin tài khoản", "/Modules/TAI_KHOAN", "TAI_KHOAN", "users"));
         items.Add(("Vận hành", "Quản lý tòa nhà", "/PhongTro/ToaNha", "PHONG_TRO", "building"));
         items.Add(("Vận hành", "Quản lý phòng", "/PhongTro", "PHONG_TRO", "home"));
         if (owner) items.Add(("Vận hành", "Hồ sơ khách thuê", "/HoSo/DanhSach", "HOP_DONG", "users"));
@@ -72,7 +75,7 @@
     var selected = (path.Equals(target, StringComparison.OrdinalIgnoreCase) || (target == "/HoSo/DanhSach" && path.Equals("/HoSo/Xem", StringComparison.OrdinalIgnoreCase))) &&
         (item.Url.Contains("section=") ? item.Url.EndsWith("section=" + section) : string.IsNullOrEmpty(section)) &&
         (target != "/ManagedAccounts" || (item.Url.Contains("role=CHU_NHA") ? roleFilter == "CHU_NHA" : roleFilter != "CHU_NHA"));
-<a class="sidebar-link @(selected ? "is-active" : "")" href="@item.Url" data-menu-module="@item.Module" aria-current="@(selected ? "page" : null)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon(item.Icon)" /></svg><span>@item.Title</span></a>
+<a class="sidebar-link @(selected ? "is-active" : "")" href="@item.Url" data-menu-module="@item.Module" aria-current="@(selected ? "page" : null)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon(item.Icon)" /></svg><span>@item.Title</span>@if(item.Module == "YEU_CAU_THUE" && unprocessed > 0){<span class="badge rounded-pill" aria-label="@unprocessed yêu cầu chưa xử lý">@unprocessed</span>}</a>
 }
 </section>
 }

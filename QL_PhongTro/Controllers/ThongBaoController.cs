@@ -59,15 +59,16 @@ public sealed class ThongBaoController(
             }).ToListAsync(cancellationToken);
 
         var today = DateOnly.FromDateTime(clock.UtcNow.AddHours(7));
+        var offsets=await QL_PhongTro.Services.CanTruHoaDonQueries.LayAsync(db,invoices.Select(x=>x.Id));
         var summaries = invoices.Select(invoice =>
         {
-            var remaining = Math.Max(0L, checked(invoice.TongCong - invoice.DaThanhToan));
+            var remaining = Math.Max(0L, checked(invoice.TongCong - invoice.DaThanhToan-offsets.GetValueOrDefault(invoice.Id)));
             var overdue = remaining > 0 && today > invoice.HanThanhToan;
             var paymentStatus = remaining == 0
                 ? TrangThaiThanhToanHoaDon.DaThanhToan
                 : overdue
                     ? TrangThaiThanhToanHoaDon.QuaHan
-                    : invoice.DaThanhToan > 0
+                    : invoice.DaThanhToan > 0 || offsets.GetValueOrDefault(invoice.Id)>0
                         ? TrangThaiThanhToanHoaDon.ThanhToanMotPhan
                         : TrangThaiThanhToanHoaDon.ChuaThanhToan;
             var lateDays = overdue ? today.DayNumber - invoice.HanThanhToan.DayNumber : 0;
@@ -163,7 +164,9 @@ public sealed class ThongBaoController(
         var paid = await db.ThanhToans.AsNoTracking()
             .Where(x => x.HoaDonId == invoice.Id && x.TrangThai == "DA_XAC_NHAN")
             .SumAsync(x => (long?)x.SoTien) ?? 0L;
-        var remaining = Math.Max(0L, checked(total - paid));
+        var offsets=await QL_PhongTro.Services.CanTruHoaDonQueries.LayAsync(db,[invoice.Id]);
+        var offset=offsets.GetValueOrDefault(invoice.Id);
+        var remaining = Math.Max(0L, checked(total - paid-offset));
         var today = DateOnly.FromDateTime(clock.UtcNow.AddHours(7));
         var overdue = invoice.TrangThai == "DA_PHAT_HANH" && remaining > 0 && today > invoice.HanThanhToan;
         var model = new ChiTietHoaDonViewModel
@@ -175,7 +178,7 @@ public sealed class ThongBaoController(
             TenToaNha = context.TenToaNha,
             TenKhach = tenant ?? "",
             TongCong = total,
-            SoDaThanhToan = paid,
+            SoDaThanhToan = paid,SoDaCanTru=offset,
             SoConPhaiTra = remaining,
             QuaHan = overdue,
             SoNgayTre = overdue ? today.DayNumber - invoice.HanThanhToan.DayNumber : 0
@@ -229,7 +232,9 @@ public sealed class ThongBaoController(
         var paid = await db.ThanhToans.AsNoTracking()
             .Where(x => x.HoaDonId == invoice.Bill.Id && x.TrangThai == "DA_XAC_NHAN")
             .SumAsync(x => (long?)x.SoTien, cancellationToken) ?? 0L;
-        var remaining = Math.Max(0L, checked(total - paid));
+        var offsets=await QL_PhongTro.Services.CanTruHoaDonQueries.LayAsync(db,[invoice.Bill.Id]);
+        var offset=offsets.GetValueOrDefault(invoice.Bill.Id);
+        var remaining = Math.Max(0L, checked(total - paid-offset));
         var today = DateOnly.FromDateTime(clock.UtcNow.AddHours(7));
         var overdue = invoice.Bill.TrangThai == "DA_PHAT_HANH"
             && remaining > 0

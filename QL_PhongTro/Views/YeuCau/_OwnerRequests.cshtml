@@ -1,4 +1,4 @@
-﻿@model QL_PhongTro.ViewModels.DanhSachYeuCauViewModel
+@model QL_PhongTro.ViewModels.DanhSachYeuCauViewModel
 @using QL_PhongTro.Models
 @using QL_PhongTro.Services
 @{
@@ -28,7 +28,7 @@
 <tr data-request-id="@item.Id" data-month="@item.NgayTao.AddHours(7).ToString("yyyy-MM")" data-type="@item.LoaiYeuCau" tabindex="0" aria-label="Xem yêu cầu của @item.TenKhach">
 <td><div class="or-table-person"><span class="or-avatar">@(string.IsNullOrWhiteSpace(item.TenKhach)?"KT":string.Concat(item.TenKhach.Split(' ',StringSplitOptions.RemoveEmptyEntries).TakeLast(2).Select(x=>x[0])))</span><div><strong>@item.TenKhach</strong><small>@item.SoDienThoai</small></div></div></td>
 <td><strong>Phòng @item.MaPhong</strong><small>@item.TenToaNha</small></td><td>@item.NgayTao.AddHours(7).ToString("dd/MM/yyyy")<small>@item.NgayTao.AddHours(7).ToString("HH:mm")</small></td>
-<td><span class="or-tag @(item.TrangThai=="MOI"?"amber":"")">• @(item.TrangThai=="MOI"?"Chờ xử lý":TrangThaiYeuCau.Labels.GetValueOrDefault(item.TrangThai,item.TrangThai))</span></td><td><a class="or-button" asp-controller="LichHen" asp-action="ChiTiet" asp-route-id="@item.Id" aria-label="Chi tiết yêu cầu @item.MaYeuCau">Chi tiết</a></td></tr>
+<td>@if(item.QuaHanChuaXuLy){<small class="or-tag amber">Quá 24 giờ, chưa xử lý</small>}<span class="or-tag @(item.TrangThai=="MOI"?"amber":"")">• @(item.TrangThai=="MOI"?"Chờ xử lý":TrangThaiYeuCau.Labels.GetValueOrDefault(item.TrangThai,item.TrangThai))</span></td><td><a class="or-button" asp-controller="LichHen" asp-action="ChiTiet" asp-route-id="@item.Id" aria-label="Chi tiết yêu cầu @item.MaYeuCau">Chi tiết</a></td></tr>
 }
 </tbody></table></div><p id="or-empty" class="or-empty" hidden="@(Model.YeuCaus.Count > 0)">Không có yêu cầu phù hợp. Thử bỏ bộ lọc.</p><footer class="or-pagination"><span id="or-count">@Model.YeuCaus.Count yêu cầu</span><nav id="or-pages" aria-label="Phân trang yêu cầu"></nav></footer>
 </section><aside class="or-detail-panel">

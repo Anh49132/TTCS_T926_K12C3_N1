@@ -117,7 +117,11 @@ public sealed partial class MeterReadingListTests
     [Fact] public async Task UsageInvalidDraftForeignHistoryAndHandoverNotCounted()
     {
         UsageFixture(count:0);LegacyUsage(1,5,null,10);LegacyUsage(2,7,20,10);LegacyUsage(3,9,0,10,"NHAP");
+        // Synthetic history was issued while the foreign contract was active.
+        // Keep v33's prohibition on creating invoices after contract closure.
+        Execute("UPDATE hop_dong SET trang_thai='DANG_HIEU_LUC' WHERE id=6");
         LegacyUsage(4,8,0,10,contract:6);
+        Execute("UPDATE hop_dong SET trang_thai='DA_KET_THUC' WHERE id=6");
         Assert.Empty(await Save(await UsageInput(100,100)));Assert.Equal(new[]{false,false},await ConfirmationFlags());
     }
     [Fact] public async Task UsageLatestThreeValidNonConsecutivePeriodsOnly()

@@ -1,0 +1,21 @@
+@model QL_PhongTro.ViewModels.ChamDutEditor
+@using QL_PhongTro.Services
+@{var i=Model.Input;var info=Model.Info;var vi=System.Globalization.CultureInfo.GetCultureInfo("vi-VN");}
+<section class="st-termination" data-end="@info.NgayKetThuc.ToString("yyyy-MM-dd")" data-day="@info.NgayTraPhong.ToString("yyyy-MM-dd")">
+    <h2>Chấm dứt trước hạn <span class="st-badge" id="termination-status">@(info.TruocHan?"Trả trước hạn":"Trả đúng hạn hoặc sau hạn")</span></h2>
+    <p class="st-muted">Đối chiếu với ngày kết thúc kỳ cuối cùng (kể cả gia hạn): <strong>@info.NgayKetThuc.ToString("dd/MM/yyyy")</strong>.</p>
+    <div id="termination-fields">
+        <label for="Input_LyDo">Lý do chấm dứt <span class="text-danger">*</span></label>
+        <select id="Input_LyDo" name="Input.LyDo" class="form-select" required="@info.TruocHan">
+            <option value="">Chọn lý do chấm dứt</option>
+            @foreach(var reason in ChamDutHopDongPolicy.LyDos){<option value="@reason.Key" selected="@(i.LyDo==reason.Key)">@reason.Value</option>}
+        </select>
+        <div id="termination-other"><label for="Input_LyDoKhac">Ghi rõ lý do khác *</label><textarea id="Input_LyDoKhac" name="Input.LyDoKhac" class="form-control" maxlength="500" rows="2">@i.LyDoKhac</textarea></div>
+        <fieldset class="st-penalty-choice"><legend>Áp dụng phạt cọc?</legend>
+            <label><input type="radio" name="Input.ApDungPhat" value="true" checked="@i.ApDungPhat"/> Có</label>
+            <label><input type="radio" name="Input.ApDungPhat" value="false" checked="@(!i.ApDungPhat)"/> Không</label>
+        </fieldset>
+        <div id="termination-amount"><label for="Input_TienPhat">Mức phạt cọc (đ) *</label><input id="Input_TienPhat" name="Input.TienPhat" value="@i.TienPhat?.ToString(System.Globalization.CultureInfo.InvariantCulture)" type="number" min="1" max="@info.CocThoaThuan" step="1" class="form-control"/>
+            <p class="st-muted">Số nguyên đồng, lớn hơn 0 và tối đa @info.CocThoaThuan.ToString("N0",vi) đ (cọc thỏa thuận). Khoản phạt được tính riêng trong bảng tất toán.</p></div>
+    </div>
+</section>
