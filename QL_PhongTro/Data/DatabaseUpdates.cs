@@ -7,7 +7,7 @@ namespace QL_PhongTro.Data;
 // Append new versions; never rewrite an update already shared with the team.
 public static class DatabaseUpdates
 {
-    internal const int CurrentVersion = 34;
+    internal const int CurrentVersion = 35;
     private static SqliteConnection Open(string path, bool readOnly)
     {
         var c = new SqliteConnection(new SqliteConnectionStringBuilder
@@ -138,6 +138,7 @@ public static class DatabaseUpdates
         if(schemaVersion>=34 || HasTable(c,"thanh_ly_hop_dong"))TatToanSchema.Validate(c);
         if(schemaVersion>=32)ChamDutHopDongSchema.Validate(c);
         if(schemaVersion>=33)XacNhanTatToanSchema.Validate(c);
+        if (schemaVersion >= 35) ReportPerformanceSchema.Validate(c);
         if (problems.Count != 0)
             throw new InvalidOperationException("Database schema is not ready: " + string.Join("; ", problems) +
                 "\nStop the app, then run: dotnet run --project QL_PhongTro -- --update-database" +
@@ -484,6 +485,7 @@ public static class DatabaseUpdates
         if (version < 32) ChamDutHopDongSchema.Upgrade(c);
         if (version < 33) XacNhanTatToanSchema.Upgrade(c);
         if (version < 34) BranchSchemaReconciliation.Upgrade(c);
+        if (version < 35) ReportPerformanceSchema.Upgrade(c);
         Check(path);
         Console.WriteLine($"Database updated to version {CurrentVersion}. Existing business rows preserved.");
     }

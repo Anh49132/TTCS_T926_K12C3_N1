@@ -1,9 +1,17 @@
 using System.Diagnostics;
+using System.Net;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 using QL_PhongTro.Controllers;
 using QL_PhongTro.Data;
 using QL_PhongTro.Models;
@@ -55,6 +63,8 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
                 id INTEGER PRIMARY KEY, hoa_don_id INTEGER NOT NULL, so_tien INTEGER NOT NULL,
                 ngay_thanh_toan TEXT NOT NULL, trang_thai TEXT NOT NULL
             );
+            CREATE INDEX ix_hoa_don_report_status_period_contract ON hoa_don(trang_thai,nam,thang,hop_dong_id);
+            CREATE INDEX ix_thanh_toan_hoa_don_trang_thai ON thanh_toan(hoa_don_id,trang_thai);
 
             INSERT INTO tai_khoan(id, ho_ten, email, so_dien_thoai, mat_khau, vai_tro, dang_hoat_dong, email_confirmed, ngay_tao, ngay_cap_nhat)
             VALUES(10, 'Chủ nhà 1', 'chunha1@test.vn', '0901000001', 'hash', 'CHU_NHA', 1, 1, '2026-01-01', '2026-01-01'),
@@ -72,6 +82,9 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
             """;
         cmd.ExecuteNonQuery();
     }
+
+    private static string AntiForgeryToken(string html) => WebUtility.HtmlDecode(
+        Regex.Match(html, "name=\"__RequestVerificationToken\"[^>]*value=\"([^\"]*)\"").Groups[1].Value);
 
     public void Dispose()
     {
@@ -541,6 +554,23 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
     }
 
     [Fact]
+    public void ReportIndexes_AreInstalledAndValidated()
+    {
+        using var connection = new SqliteConnection(new SqliteConnectionStringBuilder
+        {
+            DataSource = _dbPath,
+            ForeignKeys = true,
+            Pooling = false
+        }.ToString());
+        connection.Open();
+
+        using var command = connection.CreateCommand();
+        command.CommandText = "SELECT MAX(version) FROM app_schema_version";
+        Assert.Equal(35L, command.ExecuteScalar());
+        ReportPerformanceSchema.Validate(connection);
+    }
+
+    [Fact]
     public async Task PerformanceBenchmark_500Rooms12Months_LoadsUnder3Seconds()
     {
         using var db = CreateContext();
@@ -631,6 +661,14 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
         Assert.Null(result.ErrorMessage);
         Assert.Equal(12, result.ChiTietTheoThang.Count);
         Assert.Equal(6, result.BieuDo6Thang.Count);
+        Assert.Equal(400, result.ChiTietTheoThang[^1].SoPhongDangThue);
+        Assert.Equal(500, result.ChiTietTheoThang[^1].TongPhongChoThue);
+        Assert.Equal(80m, result.ChiTietTheoThang[^1].TiLeLapDay);
+        Assert.All(result.BieuDo6Thang, chart => Assert.Equal(1_800_000_000, chart.TongPhatHanh));
+        var occupancy = Assert.Single(result.LapDayTheoToaNha);
+        Assert.Equal(400, occupancy.SoPhongDangThue);
+        Assert.Equal(500, occupancy.TongPhongChoThue);
+        Assert.Equal(80m, occupancy.TiLeLapDay);
 
         // Kiểm tra số liệu tổng quát
         // 400 phòng * 12 tháng * 4.500.000 = 21.600.000.000 đ
@@ -639,7 +677,48 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
         Assert.Equal(19_200_000_000, result.TongDaThu);
         Assert.Equal(2_400_000_000, result.TongConPhaiThu);
 
-        // Tiêu chí chấp nhận: Trang tải xong dưới 3 giây với dữ liệu 12 tháng của 500 phòng
+        // HTTP acceptance check includes authentication, controller, aggregation, and Razor rendering.
+        var password = "ReportPerf2026Aa1";
+        var passwordHash = BCrypt.Net.BCrypt.HashPassword(password, 4);
+        await db.Database.ExecuteSqlInterpolatedAsync($"UPDATE tai_khoan SET mat_khau={passwordHash},must_change_password=0 WHERE id=10");
+
+        var root = Directory.GetCurrentDirectory();
+        while (!Directory.Exists(Path.Combine(root, "QL_PhongTro", "Data")))
+            root = Directory.GetParent(root)!.FullName;
+        using var web = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
+        {
+            builder.UseContentRoot(Path.Combine(root, "QL_PhongTro"));
+            builder.UseSetting("DatabasePath", _dbPath);
+            builder.UseSetting("RoomImagesPath", _dbPath + ".room-images");
+            builder.UseEnvironment("Development");
+            builder.ConfigureLogging(logging => logging.ClearProviders());
+            builder.ConfigureServices(services =>
+                services.AddDataProtection().UseEphemeralDataProtectionProvider());
+        });
+
+        using var client = web.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+        var loginPage = await client.GetStringAsync("/Account/Login");
+        var loginResponse = await client.PostAsync("/Account/Login", new FormUrlEncodedContent(new Dictionary<string, string>
+        {
+            ["TaiKhoanDangNhap"] = "chunha1@test.vn",
+            ["MatKhau"] = password,
+            ["__RequestVerificationToken"] = AntiForgeryToken(loginPage)
+        }));
+        Assert.Equal(HttpStatusCode.Redirect, loginResponse.StatusCode);
+
+        const string reportUrl = "/BaoCao?toaNhaId=1&tuThang=1&tuNam=2026&denThang=12&denNam=2026";
+        using (var warmup = await client.GetAsync(reportUrl))
+            Assert.Equal(HttpStatusCode.OK, warmup.StatusCode);
+        var pageTimer = Stopwatch.StartNew();
+        using var pageResponse = await client.GetAsync(reportUrl);
+        var page = await pageResponse.Content.ReadAsStringAsync();
+        pageTimer.Stop();
+        Assert.Equal(HttpStatusCode.OK, pageResponse.StatusCode);
+        Assert.Contains("Doanh thu 6 tháng gần nhất", page);
+        Assert.Contains("Tỷ lệ lấp đầy", page);
+        Assert.True(pageTimer.ElapsedMilliseconds < 3000, $"Full report page: {pageTimer.ElapsedMilliseconds}ms (target < 3000ms)");
+
+        // Service-only timing remains useful for identifying query regressions separately.
         Assert.True(sw.ElapsedMilliseconds < 3000, $"Thời gian xử lý: {sw.ElapsedMilliseconds}ms (yêu cầu < 3000ms)");
     }
 }

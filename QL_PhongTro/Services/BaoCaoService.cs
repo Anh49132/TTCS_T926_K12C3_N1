@@ -286,16 +286,9 @@ public sealed class BaoCaoService(AppDbContext db, ITimeProvider clock)
             ? new List<int> { toaNhaId.Value }
             : visibleBuildings.Select(b => b.Id).ToList();
 
-        var buildingRows = visibleBuildings.Select(x => (x.Id, x.TenToaNha)).ToArray();
-        model.LapDayTheoToaNha = await TinhLapDayTheoToaNhaAsync(
-            buildingRows, targetBuildingIds.ToArray(), denThang.Value, denNam.Value, ct);
-        model.TiLeLapDayHienTai = toaNhaId.HasValue
-            ? model.LapDayTheoToaNha.FirstOrDefault()?.TiLeLapDay
-            : null;
-
         // 3. Chuẩn bị khoảng thời gian cho cả bảng (12 tháng tối đa) và biểu đồ (6 tháng gần nhất tính đến denNam/denThang)
         var chartStart = endDate.AddMonths(-5); // 6 tháng gần nhất
-        var earliestDate = startDate < chartStart ? startDate : chartStart;
+        var invoiceStartDate = startDate < chartStart ? startDate : chartStart;
         var latestDate = endDate;
 
         // 4. Tải dữ liệu phòng
@@ -311,14 +304,15 @@ public sealed class BaoCaoService(AppDbContext db, ITimeProvider clock)
             })
             .ToListAsync(ct);
 
-        var roomIds = rooms.Select(r => r.Id).ToList();
+        var roomIds = rooms.Select(r => r.Id).ToArray();
+
         // 5. Tải hoá đơn đã phát hành trong phạm vi thời gian mở rộng
         var invoices = await (
             from h in db.HoaDons.AsNoTracking()
             join c in db.HopDongs.AsNoTracking() on h.HopDongId equals c.Id
             where roomIds.Contains(c.PhongId)
                   && h.TrangThai == "DA_PHAT_HANH"
-                  && (h.Nam > earliestDate.Year || (h.Nam == earliestDate.Year && h.Thang >= earliestDate.Month))
+                  && (h.Nam > invoiceStartDate.Year || (h.Nam == invoiceStartDate.Year && h.Thang >= invoiceStartDate.Month))
                   && (h.Nam < latestDate.Year || (h.Nam == latestDate.Year && h.Thang <= latestDate.Month))
             select new
             {
@@ -334,14 +328,15 @@ public sealed class BaoCaoService(AppDbContext db, ITimeProvider clock)
         var invoiceIds = invoices.Select(i => i.Id).ToList();
 
         // 6. Tải các khoản thanh toán đã xác nhận
-        var payments = invoiceIds.Count == 0 ? [] : await db.ThanhToans.AsNoTracking()
-            .Where(t => invoiceIds.Contains(t.HoaDonId) && t.TrangThai == "DA_XAC_NHAN")
-            .Select(t => new { t.HoaDonId, t.SoTien })
-            .ToListAsync(ct);
-
-        var paymentsByInvoice = payments
-            .GroupBy(t => t.HoaDonId)
-            .ToDictionary(g => g.Key, g => g.Sum(x => x.SoTien));
+        Dictionary<int, long> paymentsByInvoice = [];
+        if (invoiceIds.Count > 0)
+        {
+            paymentsByInvoice = await db.ThanhToans.AsNoTracking()
+                .Where(t => invoiceIds.Contains(t.HoaDonId) && t.TrangThai == "DA_XAC_NHAN")
+                .GroupBy(t => t.HoaDonId)
+                .Select(g => new { HoaDonId = g.Key, SoTien = g.Sum(x => x.SoTien) })
+                .ToDictionaryAsync(x => x.HoaDonId, x => x.SoTien, ct);
+        }
 
         // 7. Tải cấn cọc nếu có sổ cọc
         var hasGiaoDichCoc = await db.Database.SqlQueryRaw<int>(
@@ -351,17 +346,14 @@ public sealed class BaoCaoService(AppDbContext db, ITimeProvider clock)
         Dictionary<int, long> offsetsByInvoice = [];
         if (hasGiaoDichCoc && invoiceIds.Count > 0)
         {
-            var offsets = await db.GiaoDichCocs.AsNoTracking()
+            offsetsByInvoice = await db.GiaoDichCocs.AsNoTracking()
                 .Where(g => g.HoaDonId.HasValue
                             && invoiceIds.Contains(g.HoaDonId.Value)
                             && g.Loai == "CAN_TRU"
                             && g.TrangThai == "DA_XAC_NHAN")
-                .Select(g => new { HoaDonId = g.HoaDonId!.Value, g.SoTien })
-                .ToListAsync(ct);
-
-            offsetsByInvoice = offsets
-                .GroupBy(g => g.HoaDonId)
-                .ToDictionary(g => g.Key, g => g.Sum(x => x.SoTien));
+                .GroupBy(g => g.HoaDonId!.Value)
+                .Select(g => new { HoaDonId = g.Key, SoTien = g.Sum(x => x.SoTien) })
+                .ToDictionaryAsync(x => x.HoaDonId, x => x.SoTien, ct);
         }
 
         // 8. Tải lịch sử trạng thái phòng nếu có bảng lich_su_trang_thai_phong
@@ -369,11 +361,21 @@ public sealed class BaoCaoService(AppDbContext db, ITimeProvider clock)
             "SELECT COUNT(*) AS Value FROM sqlite_master WHERE type='table' AND name='lich_su_trang_thai_phong'"
         ).SingleAsync(ct) == 1;
 
+        var firstReportMonthEnd = new DateOnly(startDate.Year, startDate.Month, DateTime.DaysInMonth(startDate.Year, startDate.Month));
+        var lastReportMonthEnd = new DateOnly(endDate.Year, endDate.Month, DateTime.DaysInMonth(endDate.Year, endDate.Month));
+        var historyStartUtc = TimeZoneInfo.ConvertTimeToUtc(
+            new DateTime(firstReportMonthEnd.Year, firstReportMonthEnd.Month, firstReportMonthEnd.Day, 23, 59, 59, DateTimeKind.Unspecified)
+                .AddTicks(TimeSpan.TicksPerSecond - 1), VnZone);
+        var historyEndUtc = TimeZoneInfo.ConvertTimeToUtc(
+            new DateTime(lastReportMonthEnd.Year, lastReportMonthEnd.Month, lastReportMonthEnd.Day, 23, 59, 59, DateTimeKind.Unspecified)
+                .AddTicks(TimeSpan.TicksPerSecond - 1), VnZone);
         List<LichSuTrangThaiPhong> roomHistories = [];
-        if (hasLichSuPhong && roomIds.Count > 0)
+        if (hasLichSuPhong && roomIds.Length > 0)
         {
             roomHistories = await db.LichSuTrangThaiPhongs.AsNoTracking()
-                .Where(h => roomIds.Contains(h.PhongId))
+                .Where(h => roomIds.Contains(h.PhongId)
+                            && h.TuThoiDiem <= historyEndUtc
+                            && (!h.DenThoiDiem.HasValue || h.DenThoiDiem.Value > historyStartUtc))
                 .ToListAsync(ct);
         }
         var roomHistoriesByRoom = roomHistories
@@ -385,9 +387,9 @@ public sealed class BaoCaoService(AppDbContext db, ITimeProvider clock)
             from c in db.HopDongs.AsNoTracking()
             join k in db.KyHopDongs.AsNoTracking() on c.Id equals k.HopDongId
             where roomIds.Contains(c.PhongId)
-                  && c.TrangThai != "NHAP" && c.TrangThai != "DA_HUY"
+                  && (c.TrangThai == "DANG_HIEU_LUC" || c.TrangThai == "DA_KET_THUC")
                   && k.NgayBatDau <= new DateOnly(latestDate.Year, latestDate.Month, DateTime.DaysInMonth(latestDate.Year, latestDate.Month))
-                  && (!c.NgayTraPhong.HasValue || c.NgayTraPhong.Value >= earliestDate)
+                  && (!c.NgayTraPhong.HasValue || c.NgayTraPhong.Value >= firstReportMonthEnd)
             select new
             {
                 c.Id,
@@ -401,6 +403,53 @@ public sealed class BaoCaoService(AppDbContext db, ITimeProvider clock)
         var contractPeriodsByRoom = contractPeriods
             .GroupBy(c => c.PhongId)
             .ToDictionary(g => g.Key, g => g.ToArray());
+
+        var occupancyRows = visibleBuildings.Select(x => new BaoCaoLapDayToaNhaRow
+        {
+            ToaNhaId = x.Id,
+            TenToaNha = x.TenToaNha
+        }).ToDictionary(x => x.ToaNhaId);
+        foreach (var room in rooms)
+        {
+            if (room.NgayTao > historyEndUtc)
+                continue;
+
+            var roomHistory = roomHistoriesByRoom.GetValueOrDefault(room.Id, [])
+                .FirstOrDefault(x => x.TuThoiDiem <= historyEndUtc
+                                     && (!x.DenThoiDiem.HasValue || x.DenThoiDiem.Value > historyEndUtc));
+            var isUnderContract = contractPeriodsByRoom.GetValueOrDefault(room.Id, []).Any(c =>
+                c.NgayBatDau <= lastReportMonthEnd
+                && c.NgayKetThuc >= lastReportMonthEnd
+                && (!c.NgayTraPhong.HasValue || c.NgayTraPhong.Value >= lastReportMonthEnd));
+            var state = roomHistory?.TrangThai
+                        ?? (isUnderContract ? "DANG_THUE"
+                            : room.TrangThai == "NGUNG_CHO_THUE" ? "NGUNG_CHO_THUE" : "TRONG");
+
+            var row = occupancyRows[room.ToaNhaId];
+            if (state == "DANG_THUE")
+            {
+                row.SoPhongDangThue++;
+                row.TongPhongChoThue++;
+            }
+            else if (state is "TRONG" or "DA_DAT_COC")
+            {
+                row.TongPhongChoThue++;
+                if (state == "TRONG")
+                    row.SoPhongTrong++;
+            }
+        }
+
+        foreach (var row in occupancyRows.Values)
+        {
+            row.TiLeLapDay = row.TongPhongChoThue == 0
+                ? null
+                : Math.Round((decimal)row.SoPhongDangThue / row.TongPhongChoThue * 100m, 1, MidpointRounding.AwayFromZero);
+        }
+        model.LapDayTheoToaNha = occupancyRows.Values.OrderBy(x => x.TenToaNha).ToList();
+        model.TiLeLapDayHienTai = toaNhaId.HasValue
+            ? model.LapDayTheoToaNha.FirstOrDefault()?.TiLeLapDay
+            : null;
+
         var invoicesByMonth = invoices
             .GroupBy(i => (i.Nam, i.Thang))
             .ToDictionary(g => g.Key, g => g.ToArray());
@@ -522,18 +571,13 @@ public sealed class BaoCaoService(AppDbContext db, ITimeProvider clock)
         var chartMonth = chartStart;
         while (chartMonth <= endDate)
         {
-            var row = model.ChiTietTheoThang.FirstOrDefault(r => r.Nam == chartMonth.Year && r.Thang == chartMonth.Month)
-                      ?? TinhThang(chartMonth.Year, chartMonth.Month);
+            var monthInvoices = invoicesByMonth.GetValueOrDefault((chartMonth.Year, chartMonth.Month)) ?? [];
 
             model.BieuDo6Thang.Add(new BaoCaoChartItem
             {
-                Nam = row.Nam,
-                Thang = row.Thang,
-                TongPhatHanh = row.TongPhatHanh,
-                TongDaThu = row.TongDaThu,
-                SoConPhaiThu = row.SoConPhaiThu,
-                TiLeThu = row.TiLeThu,
-                TiLeLapDay = row.TiLeLapDay
+                Nam = chartMonth.Year,
+                Thang = chartMonth.Month,
+                TongPhatHanh = monthInvoices.Sum(i => i.TongTien)
             });
 
             chartMonth = chartMonth.AddMonths(1);

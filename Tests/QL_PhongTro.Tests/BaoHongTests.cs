@@ -146,7 +146,7 @@ public sealed partial class BaoHongTests
         var root=Directory.GetCurrentDirectory();while(!File.Exists(System.IO.Path.Combine(root,"QL_PhongTro","Data","permissions.seed.json")))root=Directory.GetParent(root)!.FullName;
         var seed=System.IO.Path.Combine(root,"QL_PhongTro","Data","permissions.seed.json");
         DatabaseUpdates.Update(f.Path,seed); DatabaseUpdates.Update(f.Path,seed);DatabaseUpdates.Check(f.Path);
-        Assert.Equal(accounts,f.Scalar("SELECT COUNT(*) FROM tai_khoan"));Assert.Equal(34,f.Scalar("SELECT MAX(version) FROM app_schema_version"));
+        Assert.Equal(accounts,f.Scalar("SELECT COUNT(*) FROM tai_khoan"));Assert.Equal(35,f.Scalar("SELECT MAX(version) FROM app_schema_version"));
         Assert.Equal(3,f.Scalar("SELECT COUNT(*) FROM hop_dong"));
         using var c=new SqliteConnection($"Data Source={f.Path}");c.Open();using var cmd=c.CreateCommand();cmd.CommandText="PRAGMA foreign_key_check";using var reader=cmd.ExecuteReader();Assert.False(reader.Read());
     }
