@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
 using QL_PhongTro.Authorization;
 using QL_PhongTro.Data;
+using QL_PhongTro.Models;
+using QL_PhongTro.ViewModels;
 
 namespace QL_PhongTro.Controllers;
 
@@ -32,8 +35,69 @@ public class ModulesController(AppDbContext db) : Controller
             return View("BaoHong");
         }
         if (code == "BAO_CAO") return RedirectToAction("Index", "BaoCao");
+        if (code == "TAI_CHINH" && section == "cong-no")
+            return await CongNo(null, null, null, null, null);
         if (code is "PHONG_TRO" or "TAI_KHOAN" or "TIN_DANG") return Redirect(PermissionService.Url(code));
         return View(module);
+    }
+
+    [HttpGet("/CongNo")]
+    [ModuleAccess]
+    public Task<IActionResult> CongNo(int? toaNhaId, int? quaHanTu, int? quaHanDen, long? tienTu, long? tienDen)
+        => CongNoPage(toaNhaId, quaHanTu, quaHanDen, tienTu, tienDen);
+
+    private async Task<IActionResult> CongNoPage(int? toaNhaId, int? quaHanTu, int? quaHanDen, long? tienTu, long? tienDen)
+    {
+        var buildings = await db.ToaNhas.AsNoTracking().OrderBy(x => x.TenToaNha)
+            .Select(x => new CongNoIndexViewModel.BuildingOption(x.Id, x.TenToaNha)).ToListAsync();
+        var invoiceRows = await (from invoice in db.HoaDons.AsNoTracking()
+                                 join contract in db.HopDongs.AsNoTracking() on invoice.HopDongId equals contract.Id
+                                 join room in db.PhongTros.AsNoTracking() on contract.PhongId equals room.Id
+                                 join building in db.ToaNhas.AsNoTracking() on room.ToaNhaId equals building.Id
+                                 join account in db.TaiKhoans.AsNoTracking() on contract.KhachDungTenId equals account.Id into accounts
+                                 from account in accounts.DefaultIfEmpty()
+                                 where invoice.TrangThai == "DA_PHAT_HANH" && (!toaNhaId.HasValue || building.Id == toaNhaId.Value)
+                                 select new { RoomId = room.Id, room.MaPhong, Building = building.TenToaNha, Name = account == null ? "Chưa có người đứng tên" : account.HoTen, InvoiceId = invoice.Id, invoice.TongTien, invoice.HanThanhToan }).ToListAsync();
+        var paid = await db.ThanhToans.AsNoTracking().Where(x => x.TrangThai == "DA_XAC_NHAN")
+            .GroupBy(x => x.HoaDonId).Select(x => new { Id = x.Key, Total = x.Sum(y => y.SoTien) }).ToDictionaryAsync(x => x.Id, x => x.Total);
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var rows = invoiceRows.GroupBy(x => new { x.RoomId, x.MaPhong, x.Building, x.Name }).Select(g =>
+        {
+            var outstanding = g.Where(x => x.TongTien - (paid.TryGetValue(x.InvoiceId, out var p) ? p : 0) > 0).ToList();
+            return new CongNoRowViewModel(g.Key.RoomId, g.Key.MaPhong, g.Key.Building, g.Key.Name, outstanding.Count,
+                outstanding.Sum(x => Math.Max(0, x.TongTien - (paid.TryGetValue(x.InvoiceId, out var p) ? p : 0))),
+                outstanding.Count == 0 ? 0 : outstanding.Max(x => Math.Max(0, today.DayNumber - x.HanThanhToan.DayNumber)));
+        }).Where(x => x.TongConThieu > 0)
+          .Where(x => !quaHanTu.HasValue || x.SoNgayQuaHanDaiNhat >= Math.Max(0, quaHanTu.Value))
+          .Where(x => !quaHanDen.HasValue || x.SoNgayQuaHanDaiNhat <= Math.Max(0, quaHanDen.Value))
+          .Where(x => !tienTu.HasValue || x.TongConThieu >= Math.Max(0, tienTu.Value))
+          .Where(x => !tienDen.HasValue || x.TongConThieu <= Math.Max(0, tienDen.Value))
+          .OrderBy(x => x.TenToaNha).ThenBy(x => x.MaPhong).ToList();
+        return View("CongNo", new CongNoIndexViewModel { ToaNhaId = toaNhaId, QuaHanTu = quaHanTu, QuaHanDen = quaHanDen, TienTu = tienTu, TienDen = tienDen, Buildings = buildings, Rows = rows });
+    }
+
+    [HttpGet("/CongNo/ExportCsv")]
+    [ModuleAccess]
+    public async Task<IActionResult> ExportCsv(int? toaNhaId, int? quaHanTu, int? quaHanDen, long? tienTu, long? tienDen)
+    {
+        var invoiceRows = await (from invoice in db.HoaDons.AsNoTracking()
+                                 join contract in db.HopDongs.AsNoTracking() on invoice.HopDongId equals contract.Id
+                                 join room in db.PhongTros.AsNoTracking() on contract.PhongId equals room.Id
+                                 join building in db.ToaNhas.AsNoTracking() on room.ToaNhaId equals building.Id
+                                 join account in db.TaiKhoans.AsNoTracking() on contract.KhachDungTenId equals account.Id into accounts
+                                 from account in accounts.DefaultIfEmpty()
+                                 where invoice.TrangThai == "DA_PHAT_HANH" && (!toaNhaId.HasValue || building.Id == toaNhaId.Value)
+                                 select new { RoomId = room.Id, room.MaPhong, Building = building.TenToaNha, Name = account == null ? "Chưa có người đứng tên" : account.HoTen, InvoiceId = invoice.Id, invoice.TongTien, invoice.HanThanhToan }).ToListAsync();
+        var paid = await db.ThanhToans.AsNoTracking().Where(x => x.TrangThai == "DA_XAC_NHAN").GroupBy(x => x.HoaDonId).Select(x => new { Id = x.Key, Total = x.Sum(y => y.SoTien) }).ToDictionaryAsync(x => x.Id, x => x.Total);
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var rows = invoiceRows.GroupBy(x => new { x.RoomId, x.MaPhong, x.Building, x.Name }).Select(g => {
+            var outstanding = g.Where(x => x.TongTien - (paid.TryGetValue(x.InvoiceId, out var p) ? p : 0) > 0).ToList();
+            return new CongNoRowViewModel(g.Key.RoomId, g.Key.MaPhong, g.Key.Building, g.Key.Name, outstanding.Count, outstanding.Sum(x => Math.Max(0, x.TongTien - (paid.TryGetValue(x.InvoiceId, out var p) ? p : 0))), outstanding.Count == 0 ? 0 : outstanding.Max(x => Math.Max(0, today.DayNumber - x.HanThanhToan.DayNumber)));
+        }).Where(x => x.TongConThieu > 0).Where(x => !quaHanTu.HasValue || x.SoNgayQuaHanDaiNhat >= Math.Max(0, quaHanTu.Value)).Where(x => !quaHanDen.HasValue || x.SoNgayQuaHanDaiNhat <= Math.Max(0, quaHanDen.Value)).Where(x => !tienTu.HasValue || x.TongConThieu >= Math.Max(0, tienTu.Value)).Where(x => !tienDen.HasValue || x.TongConThieu <= Math.Max(0, tienDen.Value)).OrderBy(x => x.TenToaNha).ThenBy(x => x.MaPhong).ToList();
+        static string Csv(string value) => "\"" + value.Replace("\"", "\"\"") + "\"";
+        var csv = new StringBuilder("Phòng,Tòa nhà,Người đứng tên,HĐ chưa trả hết,Tổng còn thiếu,Quá hạn dài nhất\r\n");
+        foreach (var row in rows) csv.AppendLine(string.Join(',', Csv(row.MaPhong), Csv(row.TenToaNha), Csv(row.NguoiDungTen), row.SoHoaDonChuaTraHet, row.TongConThieu, row.SoNgayQuaHanDaiNhat));
+        return File(Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(csv.ToString())).ToArray(), "text/csv; charset=utf-8", $"cong-no-{DateTime.Now:yyyyMMdd-HHmmss}.csv");
     }
 
     [HttpGet("/api/modules/{code}")]
