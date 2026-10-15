@@ -182,6 +182,27 @@ public sealed partial class HoaDonDichVuService(AppDbContext db, DichVuService s
             invoice.TrangThai = "DA_PHAT_HANH"; invoice.NgayPhatHanh = (clock ?? new SystemTimeProvider()).UtcNow; invoice.NguoiPhatHanhId = accountId;
         }
         await db.SaveChangesAsync(); await sqlite.CommitAsync();
+            // Create email log for notification
+            var recipient = await (from kt in db.KhachThues
+                               join tk in db.TaiKhoans on kt.TaiKhoanId equals tk.Id
+                               where kt.Id == contract.HopDong.KhachDungTenId
+                               && tk.DangHoatDong && tk.EmailConfirmed
+                               select new { kt.Id, tk.Email, tk.HoTen })
+                               .FirstOrDefaultAsync();
+            if (recipient != null && !string.IsNullOrWhiteSpace(recipient.Email))
+            {
+                var emailLog = new EmailGuiLog
+                {
+                    HoaDonId = invoice.Id,
+                    LoaiThongBao = LoaiThongBaoHoaDon.HoaDonMoi,
+                    NguoiNhanId = recipient.Id,
+                    EmailNguoiNhan = recipient.Email,
+                    TrangThai = TrangThaiEmail.ChoGui,
+                    SoLanThu = 0,
+                    NgayGui = (clock ?? new SystemTimeProvider()).UtcNow
+                };
+                db.EmailGuiLogs.Add(emailLog);
+            }
         return invoice.Id;
     }
 
