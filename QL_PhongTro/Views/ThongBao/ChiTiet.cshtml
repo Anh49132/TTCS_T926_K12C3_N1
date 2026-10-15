@@ -9,6 +9,8 @@
        asp-route-page="@(Model.Page > 1 ? Model.Page : null)"
        class="btn btn-outline-secondary mb-3">← Danh sách hóa đơn</a>
     <h1 class="h3">Chi tiết hóa đơn</h1>
+    @if (TempData["PaymentReportSuccess"] is string paymentSuccess) { <div class="alert alert-success" role="status">@paymentSuccess</div> }
+    @if (TempData["PaymentReportError"] is string paymentError) { <div class="alert alert-danger" role="alert">@paymentError</div> }
     <div id="tenant-invoice-loading" class="alert alert-info" role="status" aria-live="polite">
         Đang tải chi tiết hóa đơn…
     </div>
@@ -45,6 +47,11 @@
                     </div>
                 </dl>
                 <div id="tenant-payment-report-pending" class="alert alert-info mt-3 mb-0" role="status" hidden></div>
+                <form asp-controller="ThongBao" asp-action="HuyBaoCaoThanhToan" method="post" id="tenant-payment-report-cancel-form" hidden>
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="hoaDonId" id="tenant-payment-report-cancel-invoice-id" />
+                    <button type="submit" class="btn btn-outline-danger btn-sm" id="tenant-payment-report-cancel-button">Hủy báo cáo</button>
+                </form>
                 <form asp-controller="ThongBao" asp-action="BaoCaoThanhToan" method="post" enctype="multipart/form-data" id="tenant-payment-report-form" class="mt-4" hidden>
                     @Html.AntiForgeryToken()
                     <input type="hidden" name="hoaDonId" id="tenant-payment-report-invoice-id" />
