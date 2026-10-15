@@ -1,3 +1,10 @@
+## 15/10/2026 — S4-05 phần 4: phòng trống chưa có tin hiển thị
+
+- Nhánh `feature/S4-05/04-vacant-rooms-without-listings`, nền `cf499a6`. Hoàn thiện khung trang chủ Chủ nhà (bốn dòng/tổng số), thêm danh sách đầy đủ 15 phòng/trang, bộ lọc tòa và làm mới; liên kết đúng Nháp/tin gần nhất hoặc tạo tin nếu chưa có.
+- Chỉ phòng Trống tại tòa hoạt động của chủ nhà, không có bất kỳ tin công khai còn hiệu lực. Sửa điều kiện ngày hết hạn NULL; không nhân dòng khi nhiều tin, ưu tiên mốc vừa trả phòng. Đây là cách hiểu đã thông báo, chưa có PO xác nhận riêng chỉ liệt kê phòng vừa trả.
+- Kiểm tra quyền đọc PHONG_TRO/TIN_DANG; chỉ đọc không có thao tác sửa/tạo. Đăng tin xong phòng biến mất, tạm ẩn lại xuất hiện; không đổi schema33/dữ liệu gốc hay logic tất toán/đăng tin trước đó.
+- Lượt cuối 23/23 ca mới PASS; bộ gộp hồi quy 208/208 PASS, tích hợp 39/39 PASS; tổng không trùng 219/219 PASS. Edge desktop/360px đạt luồng trang chủ → danh sách → Nháp → đăng → biến mất. Bộ hồi quy cuối và hướng dẫn: [S4-05 phần 4](s4054-phong-trong-chua-dang-tin.md). Demo riêng cổng5254; chưa commit/push.
+
 ## 15/10/2026 — S4-05 phần 3: đăng tin Nháp một nút
 
 - Nhánh `feature/S4-05/03-publish-draft-listing`, kế thừa `ed0100a`. Nút Đăng tin ngay trên Nháp, hiển thị ở 360px; bật trên cùng bản ghi, ghi ngày/hết hạn và cập nhật danh sách.

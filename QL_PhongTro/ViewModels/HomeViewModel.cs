@@ -47,10 +47,30 @@ public sealed class HomeDashboardViewModel
     public List<HomeVacantRoom> UnlistedRooms { get; set; } = [];
     public List<string> InterestedVacantRoomCodes { get; set; } = [];
     public int UnlistedRoomCount { get; set; }
+    public bool UnlistedRoomsAvailable { get; set; }
+    public bool CanManageUnlistedRooms { get; set; }
 }
 
 public sealed record HomeRoomItem(int Id, string Code, string Building, string Status, long Rent);
-public sealed record HomeVacantRoom(int Id, string Code, string Building, long Rent, decimal Area);
+public sealed record HomeVacantRoom(int Id, string Code, string Building, long Rent, decimal Area)
+{
+    public int? ListingId { get; init; }
+    public string? ListingStatus { get; init; }
+    public DateTime? VacantSince { get; init; }
+    public string ActionLabel => ListingId is null ? "Tạo tin" : ListingStatus == "NHAP" ? "Kiểm tra Nháp" : "Kiểm tra tin";
+    public string StatusLabel => ListingStatus switch { "NHAP" => "Có tin Nháp", "TAM_AN" => "Tin tạm ẩn", "DA_CHO_THUE" => "Tin cũ đã cho thuê", "DANG_HIEN_THI" => "Tin đã hết hạn", _ => "Chưa có tin" };
+}
+
+public sealed class HomeVacantRoomsViewModel
+{
+    public List<HomeVacantRoom> Rooms { get; set; } = [];
+    public List<HomeBuildingOption> Buildings { get; set; } = [];
+    public int? BuildingId { get; set; }
+    public int Total { get; set; }
+    public int Page { get; set; } = 1;
+    public int TotalPages { get; set; } = 1;
+    public bool CanManage { get; set; }
+}
 public sealed record HomeRequestItem(int Id, string Code, string Room, string Name, string Status, DateTime Created);
 public sealed record HomeRoleItem(string Name, int Count);
 public sealed record HomeBuildingItem(int Id, string Name, string Address, int Rooms, int Occupied);

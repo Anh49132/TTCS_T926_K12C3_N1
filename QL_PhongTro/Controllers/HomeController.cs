@@ -9,7 +9,7 @@ using QL_PhongTro.ViewModels;
 
 namespace QL_PhongTro.Controllers;
 
-public class HomeController(
+public partial class HomeController(
     RegistrationSettings settings,
     AppDbContext? db = null,
     YeuCauThueService? requests = null,
@@ -171,20 +171,7 @@ public class HomeController(
                             if (role == "CHU_NHA")
                             {
                                 var dashboardNow = clock?.UtcNow ?? DateTime.UtcNow;
-                                var unlisted = rooms.Where(r => r.TrangThai == "TRONG" && !db.TinDangs.Any(t =>
-                                    t.PhongId == r.Id && t.TrangThai == "DANG_HIEN_THI" &&
-                                    t.NgayHetHan != null && t.NgayHetHan >= dashboardNow));
-                                model.Dashboard.UnlistedRoomCount = await unlisted.CountAsync();
-                                model.Dashboard.UnlistedRooms = await (from room in unlisted
-                                    join building in db.ToaNhas on room.ToaNhaId equals building.Id
-                                    orderby room.MaPhong
-                                    select new HomeVacantRoom(room.Id, room.MaPhong, building.TenToaNha, room.GiaThue, room.DienTich))
-                                    .Take(2).ToListAsync();
-                                model.Dashboard.InterestedVacantRoomCodes = await (from request in db.YeuCauThues.AsNoTracking()
-                                    join listing in db.TinDangs on request.TinDangId equals listing.Id
-                                    join room in unlisted on listing.PhongId equals room.Id
-                                    where request.TrangThai == TrangThaiYeuCau.Moi || request.TrangThai == TrangThaiYeuCau.DaHenLich
-                                    select room.MaPhong).Distinct().OrderBy(x => x).Take(2).ToListAsync();
+                                await LoadUnlistedRoomsAsync(model.Dashboard, accountId, toaNhaId, dashboardNow);
                                 var pendingRequests = from request in db.YeuCauThues.AsNoTracking()
                                     join tenant in db.KhachThues on request.KhachThueId equals tenant.Id
                                     join listing in db.TinDangs on request.TinDangId equals listing.Id
