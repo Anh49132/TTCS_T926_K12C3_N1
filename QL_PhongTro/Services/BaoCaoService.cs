@@ -67,6 +67,12 @@ public sealed class BaoCaoService(AppDbContext db, ITimeProvider clock)
         if (buildingIds.Length == 0)
             return model;
 
+        var buildingRows = buildings.Select(x => (x.Id, x.TenToaNha)).ToArray();
+        model.LapDayTheoToaNha = await TinhLapDayTheoToaNhaAsync(buildingRows, buildingIds, thang, nam, ct);
+        model.TiLeLapDayHienTai = toaNhaId.HasValue
+            ? model.LapDayTheoToaNha.FirstOrDefault()?.TiLeLapDay
+            : null;
+
         var invoices = await (
             from invoice in db.HoaDons.AsNoTracking()
             join contract in db.HopDongs.AsNoTracking() on invoice.HopDongId equals contract.Id
@@ -103,6 +109,94 @@ public sealed class BaoCaoService(AppDbContext db, ITimeProvider clock)
             ? 0m
             : Math.Round((decimal)model.TongDaThu / model.TongPhatHanh * 100m, 1, MidpointRounding.AwayFromZero);
         return model;
+    }
+
+    private async Task<List<BaoCaoLapDayToaNhaRow>> TinhLapDayTheoToaNhaAsync(
+        IReadOnlyCollection<(int Id, string TenToaNha)> buildings,
+        int[] buildingIds,
+        int month,
+        int year,
+        CancellationToken ct)
+    {
+        var lastDay = DateTime.DaysInMonth(year, month);
+        var lastDate = new DateOnly(year, month, lastDay);
+        var cutoffLocal = new DateTime(year, month, lastDay, 23, 59, 59, DateTimeKind.Unspecified)
+            .AddTicks(TimeSpan.TicksPerSecond - 1);
+        var cutoffUtc = TimeZoneInfo.ConvertTimeToUtc(cutoffLocal, VnZone);
+        var rooms = await db.PhongTros.AsNoTracking()
+            .Where(x => buildingIds.Contains(x.ToaNhaId))
+            .Select(x => new { x.Id, x.ToaNhaId, x.TrangThai, x.NgayTao })
+            .ToListAsync(ct);
+        var roomIds = rooms.Select(x => x.Id).ToArray();
+
+        var hasHistory = await db.Database.SqlQueryRaw<int>(
+            "SELECT COUNT(*) AS Value FROM sqlite_master WHERE type='table' AND name='lich_su_trang_thai_phong'")
+            .SingleAsync(ct) == 1;
+        var historiesByRoom = new Dictionary<int, LichSuTrangThaiPhong[]>();
+        if (hasHistory && roomIds.Length > 0)
+        {
+            var histories = await db.LichSuTrangThaiPhongs.AsNoTracking()
+                .Where(x => roomIds.Contains(x.PhongId) && x.TuThoiDiem <= cutoffUtc)
+                .ToListAsync(ct);
+            historiesByRoom = histories.GroupBy(x => x.PhongId)
+                .ToDictionary(x => x.Key, x => x.OrderByDescending(h => h.TuThoiDiem).ToArray());
+        }
+
+        var activePeriodsByRoom = new Dictionary<int, bool>();
+        if (roomIds.Length > 0)
+        {
+            var periods = await (
+                from contract in db.HopDongs.AsNoTracking()
+                join period in db.KyHopDongs.AsNoTracking() on contract.Id equals period.HopDongId
+                where roomIds.Contains(contract.PhongId)
+                      && (contract.TrangThai == "DANG_HIEU_LUC" || contract.TrangThai == "DA_KET_THUC")
+                      && period.NgayBatDau <= lastDate && period.NgayKetThuc >= lastDate
+                      && (!contract.NgayTraPhong.HasValue || contract.NgayTraPhong.Value >= lastDate)
+                select new { contract.PhongId }
+            ).ToListAsync(ct);
+            activePeriodsByRoom = periods.Select(x => x.PhongId)
+                .Distinct().ToDictionary(x => x, _ => true);
+        }
+
+        var rows = buildings.Select(x => new BaoCaoLapDayToaNhaRow
+        {
+            ToaNhaId = x.Id,
+            TenToaNha = x.TenToaNha
+        }).ToDictionary(x => x.ToaNhaId);
+
+        foreach (var room in rooms)
+        {
+            if (room.NgayTao > cutoffUtc)
+                continue;
+
+            var state = historiesByRoom.TryGetValue(room.Id, out var roomHistory)
+                ? roomHistory.FirstOrDefault(x => x.DenThoiDiem == null || x.DenThoiDiem > cutoffUtc)?.TrangThai
+                : null;
+            state ??= activePeriodsByRoom.ContainsKey(room.Id)
+                ? "DANG_THUE"
+                : room.TrangThai == "DANG_THUE" ? "TRONG" : room.TrangThai;
+
+            var row = rows[room.ToaNhaId];
+            if (state == "DANG_THUE")
+            {
+                row.SoPhongDangThue++;
+                row.TongPhongChoThue++;
+            }
+            else if (state is "TRONG" or "DA_DAT_COC")
+            {
+                row.TongPhongChoThue++;
+                if (state == "TRONG")
+                    row.SoPhongTrong++;
+            }
+        }
+
+        foreach (var row in rows.Values)
+        {
+            row.TiLeLapDay = row.TongPhongChoThue == 0
+                ? null
+                : Math.Round((decimal)row.SoPhongDangThue / row.TongPhongChoThue * 100m, 1, MidpointRounding.AwayFromZero);
+        }
+        return rows.Values.OrderBy(x => x.TenToaNha).ToList();
     }
 
     public async Task<BaoCaoDoanhThuViewModel> LayBaoCaoAsync(
