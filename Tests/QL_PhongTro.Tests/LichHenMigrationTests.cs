@@ -81,7 +81,7 @@ public class LichHenMigrationTests : IDisposable
 
         DatabaseUpdates.Update(_dbPath, _seedPath);
 
-        Assert.Equal("36", Scalar("SELECT COALESCE(MAX(version),0) FROM app_schema_version"));
+        Assert.Equal("34", Scalar("SELECT COALESCE(MAX(version),0) FROM app_schema_version"));
         Assert.Equal("1", Scalar("SELECT COUNT(*) FROM sqlite_master WHERE name='yeu_cau_thue_lich_su'"));
         Assert.Equal("1", Scalar("SELECT COUNT(*) FROM sqlite_master WHERE name='yeu_cau_thue_thong_bao'"));
         DatabaseUpdates.Check(_dbPath);

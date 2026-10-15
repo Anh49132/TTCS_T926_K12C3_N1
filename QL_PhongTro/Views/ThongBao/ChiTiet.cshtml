@@ -44,6 +44,30 @@
                         <dd><span id="tenant-invoice-due"></span><span id="tenant-invoice-overdue" class="tenant-invoice-overdue" role="status" hidden></span></dd>
                     </div>
                 </dl>
+                <div id="tenant-payment-report-pending" class="alert alert-info mt-3 mb-0" role="status" hidden></div>
+                <form asp-controller="ThongBao" asp-action="BaoCaoThanhToan" method="post" id="tenant-payment-report-form" class="mt-4" hidden>
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="hoaDonId" id="tenant-payment-report-invoice-id" />
+                    <h4 class="h6">Báo cáo thanh toán</h4>
+                    <div class="mb-3">
+                        <label for="tenant-payment-report-amount" class="form-label">Số tiền đã thanh toán (đồng)</label>
+                        <input id="tenant-payment-report-amount" name="soTien" type="number" class="form-control" min="1" step="1" required />
+                        <div class="form-text" id="tenant-payment-report-limit"></div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="tenant-payment-report-date" class="form-label">Ngày thanh toán</label>
+                        <input id="tenant-payment-report-date" name="ngayThanhToan" type="date" class="form-control" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="tenant-payment-report-method" class="form-label">Hình thức thanh toán</label>
+                        <select id="tenant-payment-report-method" name="hinhThucThanhToan" class="form-select" required>
+                            <option value="">Chọn hình thức</option>
+                            <option value="TIEN_MAT">Tiền mặt</option>
+                            <option value="CHUYEN_KHOAN">Chuyển khoản</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-dark">Gửi báo cáo thanh toán</button>
+                </form>
             </section>
         </div>
     </section>

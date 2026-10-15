@@ -13,6 +13,7 @@ public static class TrangThaiThanhToanHoaDon
     public const string ThanhToanMotPhan = "THANH_TOAN_MOT_PHAN";
     public const string DaThanhToan = "DA_THANH_TOAN";
     public const string QuaHan = "QUA_HAN";
+    public const string ChoXacNhan = "CHO_XAC_NHAN";
 }
 
 public sealed record HoaDonKhachDanhSachPageViewModel(
@@ -51,7 +52,14 @@ public sealed record ChiTietHoaDonKhachViewModel(
     long SoConPhaiTra,
     string HanThanhToan,
     bool QuaHan,
-    int SoNgayTre);
+    int SoNgayTre,
+    int HoaDonId,
+    bool ChoPhepBaoCaoThanhToan,
+    bool ChoXacNhan,
+    long? SoTienBaoCaoChoXacNhan,
+    string? NgayBaoCaoChoXacNhan,
+    string? HinhThucBaoCaoChoXacNhan,
+    string HomNay);
 
 public sealed record ChiTietHoaDonKhachLineViewModel(
     string TenKhoan,

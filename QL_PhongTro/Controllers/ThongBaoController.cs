@@ -14,7 +14,8 @@ namespace QL_PhongTro.Controllers;
 public sealed class ThongBaoController(
     AppDbContext db,
     QL_PhongTro.Services.HoaDonDichVuService invoices,
-    QL_PhongTro.Services.ITimeProvider clock) : Controller
+    QL_PhongTro.Services.ITimeProvider clock,
+    QL_PhongTro.Services.IBaoCaoThanhToanService paymentReports) : Controller
 {
     private int Actor => int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : 0;
 
@@ -55,7 +56,9 @@ public sealed class ThongBaoController(
                     .Sum(line => (long?)(line.LoaiKhoan == "GIAM_TRU" ? -line.ThanhTien : line.ThanhTien)) ?? 0L,
                 DaThanhToan = db.ThanhToans.AsNoTracking()
                     .Where(payment => payment.HoaDonId == bill.Id && payment.TrangThai == "DA_XAC_NHAN")
-                    .Sum(payment => (long?)payment.SoTien) ?? 0L
+                    .Sum(payment => (long?)payment.SoTien) ?? 0L,
+                ChoXacNhan = db.ThanhToans.AsNoTracking()
+                    .Any(payment => payment.HoaDonId == bill.Id && payment.TrangThai == "CHO_XAC_NHAN")
             }).ToListAsync(cancellationToken);
 
         var today = DateOnly.FromDateTime(clock.UtcNow.AddHours(7));
@@ -64,7 +67,9 @@ public sealed class ThongBaoController(
         {
             var remaining = Math.Max(0L, checked(invoice.TongCong - invoice.DaThanhToan-offsets.GetValueOrDefault(invoice.Id)));
             var overdue = remaining > 0 && today > invoice.HanThanhToan;
-            var paymentStatus = remaining == 0
+            var paymentStatus = invoice.ChoXacNhan
+                ? TrangThaiThanhToanHoaDon.ChoXacNhan
+                : remaining == 0
                 ? TrangThaiThanhToanHoaDon.DaThanhToan
                 : overdue
                     ? TrangThaiThanhToanHoaDon.QuaHan
@@ -74,6 +79,7 @@ public sealed class ThongBaoController(
             var lateDays = overdue ? today.DayNumber - invoice.HanThanhToan.DayNumber : 0;
             var paymentStatusLabel = paymentStatus switch
             {
+                TrangThaiThanhToanHoaDon.ChoXacNhan => "Chờ xác nhận",
                 TrangThaiThanhToanHoaDon.DaThanhToan => "Đã thanh toán",
                 TrangThaiThanhToanHoaDon.QuaHan => "Quá hạn",
                 TrangThaiThanhToanHoaDon.ThanhToanMotPhan => "Thanh toán một phần",
@@ -90,7 +96,7 @@ public sealed class ThongBaoController(
                 SoConPhaiTra = remaining,
                 TrangThai = paymentStatus,
                 TenTrangThai = paymentStatusLabel,
-                QuaHan = overdue,
+                QuaHan = overdue && !invoice.ChoXacNhan,
                 SoNgayTre = lateDays
             };
         }).ToList();
@@ -151,19 +157,19 @@ public sealed class ThongBaoController(
         return RedirectToAction(nameof(Index));
     }
 
-    public async Task<IActionResult> HoaDon(int id)
+    public async Task<IActionResult> HoaDon(int id, CancellationToken cancellationToken)
     {
-        if (!await QL_PhongTro.Services.InvoiceNotificationDispatcher.IsInstalledAsync(db)) return NotFound();
-        if (!await db.ThongBaoHoaDons.AnyAsync(x => x.HoaDonId == id && x.NguoiNhanId == Actor)) return Forbid();
-        var invoice = await db.HoaDons.AsNoTracking().Include(x => x.ChiTiet).SingleOrDefaultAsync(x => x.Id == id && (x.TrangThai == "DA_PHAT_HANH" || x.TrangThai == "DA_HUY"));
+        if (!await QL_PhongTro.Services.InvoiceNotificationDispatcher.IsInstalledAsync(db, cancellationToken)) return NotFound();
+        if (!await db.ThongBaoHoaDons.AnyAsync(x => x.HoaDonId == id && x.NguoiNhanId == Actor, cancellationToken)) return Forbid();
+        var invoice = await db.HoaDons.AsNoTracking().Include(x => x.ChiTiet).SingleOrDefaultAsync(x => x.Id == id && (x.TrangThai == "DA_PHAT_HANH" || x.TrangThai == "DA_HUY"), cancellationToken);
         if (invoice is null) return NotFound();
         var context = await (from h in db.HopDongs join p in db.PhongTros on h.PhongId equals p.Id join t in db.ToaNhas on p.ToaNhaId equals t.Id
-            where h.Id == invoice.HopDongId select new { p.MaPhong, p.ToaNhaId, t.TenToaNha, h.KhachDungTenId }).SingleAsync();
-        var tenant = await db.KhachThues.Where(x => x.Id == context.KhachDungTenId).Select(x => x.HoTen).SingleOrDefaultAsync();
+            where h.Id == invoice.HopDongId select new { p.MaPhong, p.ToaNhaId, t.TenToaNha, h.KhachDungTenId }).SingleAsync(cancellationToken);
+        var tenant = await db.KhachThues.Where(x => x.Id == context.KhachDungTenId).Select(x => x.HoTen).SingleOrDefaultAsync(cancellationToken);
         var total = QL_PhongTro.Services.HoaDonDichVuService.TongCong(invoice.ChiTiet);
         var paid = await db.ThanhToans.AsNoTracking()
             .Where(x => x.HoaDonId == invoice.Id && x.TrangThai == "DA_XAC_NHAN")
-            .SumAsync(x => (long?)x.SoTien) ?? 0L;
+            .SumAsync(x => (long?)x.SoTien, cancellationToken) ?? 0L;
         var offsets=await QL_PhongTro.Services.CanTruHoaDonQueries.LayAsync(db,[invoice.Id]);
         var offset=offsets.GetValueOrDefault(invoice.Id);
         var remaining = Math.Max(0L, checked(total - paid-offset));
@@ -180,11 +186,35 @@ public sealed class ThongBaoController(
             TongCong = total,
             SoDaThanhToan = paid,SoDaCanTru=offset,
             SoConPhaiTra = remaining,
+            HomNay = DateOnly.FromDateTime(clock.UtcNow.AddHours(7)),
             QuaHan = overdue,
-            SoNgayTre = overdue ? today.DayNumber - invoice.HanThanhToan.DayNumber : 0
+            SoNgayTre = overdue ? today.DayNumber - invoice.HanThanhToan.DayNumber : 0,
+            BaoCaoChoXacNhan = await paymentReports.LayBaoCaoChoXacNhanAsync(Actor, invoice.Id, cancellationToken)
         };
         await invoices.FillRelationsAsync(model, Actor);
         return View("~/Views/HoaDonDichVu/Details.cshtml", model);
+    }
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> BaoCaoThanhToan(int hoaDonId, decimal? soTien, DateOnly? ngayThanhToan,
+        string? hinhThucThanhToan, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await paymentReports.GuiAsync(Actor, hoaDonId, soTien, ngayThanhToan, hinhThucThanhToan, cancellationToken);
+            TempData["PaymentReportSuccess"] = "Đã gửi báo cáo thanh toán. Hóa đơn đang chờ chủ nhà xác nhận.";
+        }
+        catch (GhiThuValidationException ex)
+        {
+            TempData["PaymentReportError"] = ex.Errors.Values.SelectMany(x => x).FirstOrDefault()
+                ?? "Thông tin báo cáo thanh toán chưa hợp lệ.";
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+
+        return RedirectToAction(nameof(HoaDon), new { id = hoaDonId });
     }
 
     [HttpGet]
@@ -240,6 +270,7 @@ public sealed class ThongBaoController(
             && remaining > 0
             && today > invoice.Bill.HanThanhToan;
         var daysLate = overdue ? today.DayNumber - invoice.Bill.HanThanhToan.DayNumber : 0;
+        var pendingReport = await paymentReports.LayBaoCaoChoXacNhanAsync(Actor, invoice.Bill.Id, cancellationToken);
 
         return Ok(new ChiTietHoaDonKhachViewModel(
             invoice.Bill.MaHoaDon,
@@ -262,7 +293,14 @@ public sealed class ThongBaoController(
             remaining,
             invoice.Bill.HanThanhToan.ToString("dd/MM/yyyy", culture),
             overdue,
-            daysLate));
+            daysLate,
+            invoice.Bill.Id,
+            invoice.Bill.TrangThai == "DA_PHAT_HANH" && remaining > 0 && pendingReport is null,
+            pendingReport is not null,
+            pendingReport?.SoTien,
+            pendingReport?.NgayThanhToan.ToString("dd/MM/yyyy"),
+            pendingReport?.HinhThucBaoCao,
+            today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)));
     }
 
     private static string? ValidateInvoiceFilters(
@@ -287,7 +325,8 @@ public sealed class ThongBaoController(
             or TrangThaiThanhToanHoaDon.ChuaThanhToan
             or TrangThaiThanhToanHoaDon.ThanhToanMotPhan
             or TrangThaiThanhToanHoaDon.DaThanhToan
-            or TrangThaiThanhToanHoaDon.QuaHan))
+            or TrangThaiThanhToanHoaDon.QuaHan
+            or TrangThaiThanhToanHoaDon.ChoXacNhan))
             return "Trạng thái thanh toán không hợp lệ.";
 
         if (page < 1) return "Số trang phải lớn hơn 0.";

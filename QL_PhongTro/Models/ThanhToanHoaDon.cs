@@ -10,4 +10,5 @@ public sealed class ThanhToanHoaDon
     [Column("so_tien")] public long SoTien { get; set; }
     [Column("ngay_thanh_toan")] public DateOnly NgayThanhToan { get; set; }
     [Column("trang_thai")] public string TrangThai { get; set; } = "DA_XAC_NHAN";
+    [Column("hinh_thuc_bao_cao")] public string? HinhThucBaoCao { get; set; }
 }

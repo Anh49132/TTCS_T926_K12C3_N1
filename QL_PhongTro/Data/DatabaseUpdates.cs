@@ -97,6 +97,8 @@ public static class DatabaseUpdates
             var store = StoreObjectIdentifier.Table(table, entity.GetSchema());
             var columns = entity.GetProperties().Select(p => p.GetColumnName(store)!)
                 .Where(column => requireAccountSecurity || table != "tai_khoan" || column is not ("email_confirmed" or "is_deleted"));
+            if (schemaVersion < 35 && table == "thanh_toan")
+                columns = columns.Where(column => column != "hinh_thuc_bao_cao");
             if(schemaVersion<32 && table=="thanh_ly_hop_dong")columns=columns.Where(column=>column!="tien_phat");
             if(schemaVersion<32 && table=="chi_tiet_khau_tru")columns=columns.Where(column=>column!="loai_khoan");
             if (schemaVersion < 30 && table == "bao_hong") columns = columns.Where(column => column != "phien_ban");
