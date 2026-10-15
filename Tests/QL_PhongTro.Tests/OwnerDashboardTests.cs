@@ -24,13 +24,14 @@ public sealed partial class PermissionTests
 
         using var owner = await Login("CHU_NHA");
         var html = WebUtility.HtmlDecode(await owner.GetStringAsync("/"));
-        var buildings = Regex.Match(html, "<section class=\"owner-buildings\"[\\s\\S]*?</section>").Value;
+        var buildings = Regex.Match(html, "<select[^>]*name=\"toaNhaId\"[^>]*>[\\s\\S]*?</select>").Value;
         Assert.Contains("Cơ sở đã thuê", buildings);
         Assert.Contains("Cơ sở đã cọc", buildings);
         Assert.DoesNotContain("Cơ sở người khác", buildings);
         Assert.DoesNotContain("Cơ sở ngừng hoạt động", buildings);
-        Assert.Contains("1 / 1 phòng đang thuê", buildings);
-        Assert.Contains("0 / 1 phòng đang thuê", buildings);
+        var rented = Regex.Match(html, "<a[^>]*href=\"/PhongTro\\?trangThaiFilter=DANG_THUE\"[^>]*>[\\s\\S]*?</a>").Value;
+        Assert.Contains("Phòng đang thuê", rented);
+        Assert.Contains("1 <small>/ 2 phòng</small>", rented);
         Assert.Contains("50%", html);
         Assert.Contains("Chưa có dữ liệu thanh toán", html);
     }

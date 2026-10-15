@@ -56,6 +56,7 @@ public class LichHenMigrationTests : IDisposable
 
     private void HaVeBanV9()
     {
+        SchemaTestFixture.RemoveRoomExtensions(_dbPath);
         Chay("DROP TABLE yeu_cau_thue_lich_su; DROP TABLE yeu_cau_thue_thong_bao; DROP TABLE yeu_cau;"
             + " DELETE FROM app_schema_version WHERE version >= 10;");
         SqliteConnection.ClearAllPools();
@@ -66,7 +67,7 @@ public class LichHenMigrationTests : IDisposable
     {
         LocalDatabaseInitializer.Create(_dbPath, _seedPath);
 
-        Assert.Equal("23", Scalar("SELECT COALESCE(MAX(version),0) FROM app_schema_version"));
+        Assert.Equal("34", Scalar("SELECT COALESCE(MAX(version),0) FROM app_schema_version"));
         Assert.Equal("2", Scalar("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name IN"
             + " ('yeu_cau_thue_lich_su','yeu_cau_thue_thong_bao')"));
         DatabaseUpdates.Check(_dbPath);
@@ -80,7 +81,7 @@ public class LichHenMigrationTests : IDisposable
 
         DatabaseUpdates.Update(_dbPath, _seedPath);
 
-        Assert.Equal("23", Scalar("SELECT COALESCE(MAX(version),0) FROM app_schema_version"));
+        Assert.Equal("34", Scalar("SELECT COALESCE(MAX(version),0) FROM app_schema_version"));
         Assert.Equal("1", Scalar("SELECT COUNT(*) FROM sqlite_master WHERE name='yeu_cau_thue_lich_su'"));
         Assert.Equal("1", Scalar("SELECT COUNT(*) FROM sqlite_master WHERE name='yeu_cau_thue_thong_bao'"));
         DatabaseUpdates.Check(_dbPath);

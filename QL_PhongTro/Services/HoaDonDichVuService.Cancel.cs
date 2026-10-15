@@ -84,6 +84,7 @@ public sealed partial class HoaDonDichVuService
         if (existing.HasValue) return existing.Value; // Same request is safe to retry.
         if (await db.HoaDons.AnyAsync(x => x.HopDongId == old.HopDongId && x.Nam == old.Nam && x.Thang == old.Thang && x.TrangThai != "DA_HUY"))
             throw new InvalidOperationException("Kỳ này đã có hóa đơn khác chưa hủy. Hãy mở bản hiện có.");
+        await ValidateRepairSnapshotsAsync(old);
         var bill = new HoaDon { MaHoaDon = $"HD-{old.Nam}{old.Thang:00}-{Guid.NewGuid().ToString("N")[..12]}",
             HopDongId = old.HopDongId, Nam = old.Nam, Thang = old.Thang, TuNgay = old.TuNgay, DenNgay = old.DenNgay,
             NgayChot = old.NgayChot, SoNguoiTinhPhi = old.SoNguoiTinhPhi, LoaiHoaDon = old.LoaiHoaDon,

@@ -36,7 +36,8 @@ public sealed class QuanLyBaoHongService(AppDbContext db, ITimeProvider clock, B
         join p in db.PhongTros on b.PhongId equals p.Id
         join t in db.ToaNhas on p.ToaNhaId equals t.Id where t.QuanLyId == managerId
         join h in db.HopDongs on b.HopDongId equals h.Id
-        select new BaoHongChiTiet { BaoHong = b, MaPhong = p.MaPhong, TenToaNha = t.TenToaNha, MaHopDong = h.MaHopDong };
+        join a in db.TaiKhoans on b.NguoiBaoId equals a.Id
+        select new BaoHongChiTiet { BaoHong = b, ToaNhaId = t.Id, MaPhong = p.MaPhong, TenToaNha = t.TenToaNha, MaHopDong = h.MaHopDong, TenNguoiBao = a.HoTen };
 
     private async Task<BaoHongChiTiet?> ScopedAsync(int managerId, int id, CancellationToken ct)
     {
@@ -45,11 +46,31 @@ public sealed class QuanLyBaoHongService(AppDbContext db, ITimeProvider clock, B
         return result;
     }
 
-    public async Task<List<BaoHongChiTiet>> DanhSachAsync(int managerId, int page, CancellationToken ct = default)
+    public Task<List<BaoHongChiTiet>> DanhSachAsync(int managerId, int page, CancellationToken ct = default) =>
+        DanhSachLocAsync(managerId, new BaoHongBoLoc { Page = page }, ct);
+
+    public async Task<List<ToaNhaBaoHongLoc>> ToaNhaLocAsync(int managerId, BaoHongBoLoc filter, CancellationToken ct = default)
     {
         await ActorAsync(managerId, false, ct);
-        return await Rows(managerId).OrderByDescending(x => x.BaoHong.Id)
-            .Skip((Math.Clamp(page, 1, 100000) - 1) * 20).Take(21).ToListAsync(ct);
+        filter.ChuanHoa();
+        var buildings = await db.ToaNhas.AsNoTracking().Where(x => x.QuanLyId == managerId)
+            .OrderBy(x => x.TenToaNha).ThenBy(x => x.Id).Select(x => new ToaNhaBaoHongLoc(x.Id, x.TenToaNha)).ToListAsync(ct);
+        if (filter.ToaNhaId.HasValue && !buildings.Any(x => x.Id == filter.ToaNhaId)) throw new UnauthorizedAccessException();
+        return buildings;
+    }
+
+    public async Task<List<BaoHongChiTiet>> DanhSachLocAsync(int managerId, BaoHongBoLoc filter, CancellationToken ct = default)
+    {
+        await ToaNhaLocAsync(managerId, filter, ct);
+        var query = Rows(managerId);
+        if (filter.ToaNhaId.HasValue) query = query.Where(x => x.ToaNhaId == filter.ToaNhaId.Value);
+        if (filter.TrangThai is not null) query = query.Where(x => x.BaoHong.TrangThai == filter.TrangThai);
+        if (filter.MucDo is not null) query = query.Where(x => x.BaoHong.MucDo == filter.MucDo);
+        var rows = await query.OrderByDescending(x => x.BaoHong.Id)
+            .Skip((filter.Page - 1) * 20).Take(21).ToListAsync(ct);
+        var now = clock.UtcNow;
+        foreach (var row in rows) row.CanhBaoQuaHan = BaoHongCanhBaoService.DanhGia(row.BaoHong, now);
+        return rows;
     }
 
     public async Task<BaoHongChiTiet?> ChiTietAsync(int managerId, int id, CancellationToken ct = default)
@@ -58,6 +79,7 @@ public sealed class QuanLyBaoHongService(AppDbContext db, ITimeProvider clock, B
         var result = await ScopedAsync(managerId, id, ct);
         if (result is null) return null;
         await tenantService.LoadExtrasAsync(result, ct);
+        result.CanhBaoQuaHan = BaoHongCanhBaoService.DanhGia(result.BaoHong, clock.UtcNow);
         result.LaQuanLy = true; result.ChoPhepXuLy = actor.CanWrite;
         result.TrangThaiTiepTheo = TrangThaiTiepTheo(result.BaoHong.TrangThai);
         result.CapNhat.PhienBan = result.BaoHong.PhienBan;

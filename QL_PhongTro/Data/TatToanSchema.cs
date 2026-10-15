@@ -3,7 +3,9 @@ namespace QL_PhongTro.Data;
 
 public static class TatToanSchema
 {
-    public static void Upgrade(SqliteConnection connection)
+    public static void Upgrade(SqliteConnection connection) => Install(connection, true);
+    internal static void InstallForReconciliation(SqliteConnection connection) => Install(connection, false);
+    private static void Install(SqliteConnection connection, bool recordVersion)
     {
         using var tx = connection.BeginTransaction();
         using var cmd = connection.CreateCommand(); cmd.Transaction = tx;
@@ -15,7 +17,7 @@ public static class TatToanSchema
         {
             if(existing!=3)throw new InvalidOperationException("Đã có schema cọc/tất toán không đầy đủ từ nhánh khác; cần đối chiếu thủ công trước khi nâng v31.");
             Validate(connection,tx);
-            cmd.CommandText="INSERT INTO app_schema_version(version,applied_at) VALUES(31,strftime('%Y-%m-%dT%H:%M:%fZ','now'))";cmd.ExecuteNonQuery();tx.Commit();return;
+            cmd.CommandText="INSERT INTO app_schema_version(version,applied_at) VALUES(31,strftime('%Y-%m-%dT%H:%M:%fZ','now'))";if(recordVersion)cmd.ExecuteNonQuery();tx.Commit();return;
         }
         cmd.CommandText = """
             CREATE TABLE giao_dich_coc (
@@ -74,9 +76,13 @@ public static class TatToanSchema
                 BEGIN SELECT RAISE(ABORT,'Chi sua khau tru ban nhap'); END;
             CREATE TRIGGER khau_tru_chot_delete BEFORE DELETE ON chi_tiet_khau_tru WHEN (SELECT trang_thai FROM thanh_ly_hop_dong WHERE id=OLD.thanh_ly_id)<>'NHAP'
                 BEGIN SELECT RAISE(ABORT,'Chi sua khau tru ban nhap'); END;
-            INSERT INTO app_schema_version(version,applied_at) VALUES(31,strftime('%Y-%m-%dT%H:%M:%fZ','now'));
             """;
         cmd.ExecuteNonQuery();
+        if (recordVersion)
+        {
+            cmd.CommandText="INSERT INTO app_schema_version(version,applied_at) VALUES(31,strftime('%Y-%m-%dT%H:%M:%fZ','now'))";
+            cmd.ExecuteNonQuery();
+        }
         EnsureInvoiceGuard(connection,tx);
         cmd.CommandText = "PRAGMA integrity_check";
         if (cmd.ExecuteScalar()?.ToString() != "ok") throw new InvalidOperationException("Integrity check thất bại khi nâng tất toán.");

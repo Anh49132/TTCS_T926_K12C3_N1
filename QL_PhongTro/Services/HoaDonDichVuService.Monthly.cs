@@ -20,7 +20,7 @@ public sealed partial class HoaDonDichVuService
     public static string ReviewFingerprint(HoaDonThangDuKien row) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(new
     {
         row.HoaDon.HopDongId, row.PhienBanPhong, row.HoaDon.SoNguoiTinhPhi, row.HoaDon.NgayChot, row.HoaDon.TongTien,
-        Lines = row.HoaDon.ChiTiet.Select(x => new { x.DichVuId, x.CauHinhDichVuId, x.KyHopDongId, x.TenKhoan, x.CachTinhApDung, x.DonViTinh, x.DonGia, x.SoLuong, x.ChiSoDau, x.ChiSoCuoi, x.ThanhTien }),
+        Lines = row.HoaDon.ChiTiet.Select(x => new { x.BaoHongId, x.DichVuId, x.CauHinhDichVuId, x.KyHopDongId, x.TenKhoan, x.CachTinhApDung, x.DonViTinh, x.DonGia, x.SoLuong, x.ChiSoDau, x.ChiSoCuoi, x.ThanhTien }),
         Meters = row.ChiSo.Select(x => new { x.Id, x.PhienBan })
     }))));
 

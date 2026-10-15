@@ -36,6 +36,8 @@ public static class DichVuSchemaInitializer
         if(Convert.ToInt32(check.ExecuteScalar())>=31)TatToanSchema.EnsureInvoiceGuard(connection,tx);
         check.CommandText="SELECT MAX(version) FROM app_schema_version";
         if(Convert.ToInt32(check.ExecuteScalar())>=33)XacNhanTatToanSchema.EnsureInvoiceGuards(connection,tx);
+        check.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='chi_phi_bao_hong'";
+        if (Convert.ToInt32(check.ExecuteScalar()) == 1) BaoHongChiPhiSchema.InstallForNewInvoiceModule(connection, tx);
         check.CommandText = "PRAGMA foreign_key_check";
         using (var reader = check.ExecuteReader()) if (reader.Read()) throw new InvalidOperationException("Khóa ngoại không hợp lệ; hãy thay đổi.");
         tx.Commit(); Console.WriteLine("Đã thêm schema hóa đơn/dịch vụ. Bản sao lưu: " + backupPath);

@@ -66,9 +66,11 @@
 
 (() => {
     document.querySelectorAll('[data-app-toast]').forEach(toast => {
-        const timer = window.setTimeout(() => toast.remove(), 3000);
+        const timer = toast.dataset.toastPersistent === 'true'
+            ? null
+            : window.setTimeout(() => toast.remove(), 3000);
         toast.querySelector('[data-toast-close]')?.addEventListener('click', () => {
-            window.clearTimeout(timer);
+            if (timer !== null) window.clearTimeout(timer);
             toast.remove();
         });
     });

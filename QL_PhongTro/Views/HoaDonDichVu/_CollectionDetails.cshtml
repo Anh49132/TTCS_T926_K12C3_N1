@@ -1,6 +1,7 @@
 @model QL_PhongTro.ViewModels.ChiTietHoaDonViewModel
 @using System.Globalization
 @using QL_PhongTro.Services
+@using QL_PhongTro.Models
 @inject QL_PhongTro.Authorization.PermissionService Permissions
 @{
     var bill = Model.HoaDon;
@@ -32,7 +33,16 @@
 </div>
 <div class="ic-columns"><div class="ic-main">
 <section class="ic-card"><h2>Chi tiết hóa đơn</h2><div class="ic-table-wrap"><table class="ic-table"><thead><tr><th>STT</th><th>Khoản mục</th><th class="money">Đơn giá</th><th>Số lượng</th><th class="money">Thành tiền</th></tr></thead><tbody>
-@foreach(var line in bill.ChiTiet.OrderBy(x=>x.SoThuTu)){<tr><td>@line.SoThuTu</td><td>@line.TenKhoan@if(!string.IsNullOrEmpty(line.GhiChu)){<small>@line.GhiChu</small>}@if(line.ChiSoDau.HasValue){<small>Chỉ số: @line.ChiSoDau?.ToString("0.###",vn) → @line.ChiSoCuoi?.ToString("0.###",vn) @line.DonViTinh</small>}@if(line.SoNgayTinhTien.HasValue){<small>@line.SoNgayTinhTien/@line.SoNgayTrongThang ngày</small>}</td><td class="money">@line.DonGia.ToString("N0",vn) đ</td><td>@line.SoLuong.ToString("0.###",vn)</td><td class="money">@(line.LoaiKhoan=="GIAM_TRU" ? "−" : "")@line.ThanhTien.ToString("N0",vn) đ</td></tr>}
+@foreach(var line in bill.ChiTiet.OrderBy(x=>x.SoThuTu)){
+<tr><td>@line.SoThuTu</td><td>@line.TenKhoan
+@if(!string.IsNullOrEmpty(line.GhiChu)){<small>@line.GhiChu</small>}
+@if(line.LoaiKhoan == "DICH_VU" && line.CachTinhApDung == CachTinhDichVu.CoDinh){<small>Cố định theo phòng</small>}
+else if(line.LoaiKhoan == "DICH_VU" && line.CachTinhApDung == CachTinhDichVu.TheoNguoi){<small>Khoán theo đầu người</small>}
+@if(line.ChiSoDau.HasValue){<small>Chỉ số: @line.ChiSoDau?.ToString("0.###",vn) → @line.ChiSoCuoi?.ToString("0.###",vn) @line.DonViTinh</small>}
+@if(line.SoNgayTinhTien.HasValue){<small>@line.SoNgayTinhTien/@line.SoNgayTrongThang ngày</small>}
+</td><td class="money">@line.DonGia.ToString("N0",vn) đ</td>
+<td>@(line.SoNgayTinhTien.HasValue ? $"{line.SoNgayTinhTien}/{line.SoNgayTrongThang} ngày" : $"{line.SoLuong.ToString("0.###",vn)} {(line.CachTinhApDung == CachTinhDichVu.TheoNguoi ? "người" : line.LoaiKhoan == "TIEN_PHONG" ? "tháng" : line.CachTinhApDung == CachTinhDichVu.CoDinh ? "phòng" : line.DonViTinh)}")</td>
+<td class="money">@(line.LoaiKhoan=="GIAM_TRU" ? "−" : "")@line.ThanhTien.ToString("N0",vn) đ</td></tr>}
 </tbody><tfoot><tr><th colspan="4">Tổng cộng</th><td class="money">@summary.TongHoaDon.ToString("N0",vn) đ</td></tr></tfoot></table></div></section>
 <section class="ic-card"><h2>Lịch sử thu tiền <span id="ic-count">(@summary.LanThus.Count)</span></h2>
 <div id="ic-empty" class="ic-empty" hidden="@(summary.LanThus.Count != 0)"><span class="ic-icon neutral"><svg><use href="#ic-receipt"/></svg></span><strong>Chưa có lần thu nào được ghi nhận.</strong><p>Các lần thu sẽ hiển thị tại đây sau khi xác nhận.</p></div>

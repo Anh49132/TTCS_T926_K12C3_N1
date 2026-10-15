@@ -11,7 +11,7 @@ public sealed partial class PermissionTests
         using var guest = Client();
 
         var register = await guest.GetStringAsync("/Account/Register");
-        Assert.Contains("class=\"password-field\"", register);
+        Assert.Matches("class=\"[^\"]*\\bpassword-field\\b[^\"]*\"", register);
         Assert.Contains("data-target=\"MatKhau\"", register);
 
         var confirmation = WebUtility.HtmlDecode(await guest.GetStringAsync("/Account/ConfirmEmail?email=khach%40example.test"));

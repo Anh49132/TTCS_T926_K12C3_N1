@@ -23,15 +23,29 @@ public sealed class TaoBaoHongViewModel
 }
 public sealed class BaoHongChiTiet
 {
+    public BaoHongCanhBao? CanhBaoQuaHan { get; set; }
+    public ChiPhiBaoHong? ChiPhi { get; set; }
+    public BaoHongChiPhiInput ChiPhiInput { get; set; } = new();
+    public bool ChiPhiDaKhoa { get; set; }
+    public string TrangThaiChiPhi { get; set; } = "";
+    public List<LichSuChiPhiBaoHong> LichSuChiPhi { get; set; } = [];
     public List<AnhBaoHong> Images { get; set; } = [];
     public List<BaoHongTraoDoi> TraoDois { get; set; } = [];
     public bool LaQuanLy { get; set; }
+    public bool LaChuNha { get; set; }
     public bool ChoPhepXuLy { get; set; }
     public List<string> TrangThaiTiepTheo { get; set; } = [];
     public BaoHongPhanHoiInput PhanHoi { get; set; } = new();
     public BaoHongTrangThaiInput CapNhat { get; set; } = new();
     public BaoHong BaoHong { get; init; } = null!;
+    public int ToaNhaId { get; init; }
     public string MaPhong { get; init; } = "";
     public string TenToaNha { get; init; } = "";
     public string MaHopDong { get; init; } = "";
+    public string TenNguoiBao { get; init; } = "";
+}
+
+public sealed record BaoHongCanhBao(TimeSpan ThoiGianCho)
+{
+    public string ThoiGianChoHienThi => $"{(long)ThoiGianCho.Days * 24 + ThoiGianCho.Hours} giờ {ThoiGianCho.Minutes} phút";
 }

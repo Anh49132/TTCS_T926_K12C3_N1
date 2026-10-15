@@ -20,18 +20,20 @@ public sealed partial class PermissionTests
         var html = WebUtility.HtmlDecode(await owner.GetStringAsync("/YeuCau"));
 
         Assert.Contains("aria-label=\"2 yêu cầu chưa xử lý\"", html);
-        foreach (var code in new[] { "YC-UNPROCESSED-NEW", "YC-UNPROCESSED-SCHEDULED" })
+        foreach (var requestId in new[] { moi, scheduled })
         {
-            var row = Regex.Match(html, $"(?s)<tr[^>]*>.*?{code}.*?</tr>").Value;
+            var row = Regex.Match(html, $"(?s)<tr data-request-id=\"{requestId}\"[^>]*>.*?</tr>").Value;
+            Assert.NotEmpty(row);
             Assert.Contains("Quá 24 giờ, chưa xử lý", row);
         }
-        var closedRow = Regex.Match(html, "(?s)<tr[^>]*>.*?YC-UNPROCESSED-CLOSED.*?</tr>").Value;
+        var closedRow = Regex.Match(html, $"(?s)<tr data-request-id=\"{closed}\"[^>]*>.*?</tr>").Value;
+        Assert.NotEmpty(closedRow);
         Assert.DoesNotContain("Quá 24 giờ, chưa xử lý", closedRow);
-        Assert.Contains("Lịch hẹn hôm nay", html);
+        Assert.Contains("lịch hẹn hôm nay", html, StringComparison.OrdinalIgnoreCase);
         Assert.Contains("owner-requests.js", html);
         var detail = WebUtility.HtmlDecode(await owner.GetStringAsync($"/LichHen/ChiTiet/{moi}"));
-        Assert.Contains("Thông tin yêu cầu", detail);
-        Assert.Contains("Phòng được yêu cầu", detail);
+        Assert.Contains("Thông tin khách & nhu cầu thuê", detail);
+        Assert.Contains("Phòng quan tâm", detail);
         Assert.Contains("XacNhanLich", detail);
         Assert.Contains("TuChoi", detail);
         Execute("UPDATE yeu_cau_thue SET loai_yeu_cau='THUE_NGAY' WHERE id=$id", ("$id", moi));

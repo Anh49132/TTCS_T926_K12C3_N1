@@ -237,10 +237,10 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
         string code;
         try { code = await new HopDongService(db).SinhMaAsync(now.AddHours(7).Year, ct); }
         catch (ArgumentException ex) { ModelState.AddModelError("", ex.Message); return View(vm); }
-        int? storedContractId = null;
         try
         {
         var contract = await db.HopDongs.SingleOrDefaultAsync(h => h.YeuCauThueId == y.Id && h.TrangThai == "NHAP", ct);
+        var replacingDraft = contract is not null;
         if (contract is null)
         {
             contract = new HopDongThamChieu { YeuCauThueId = y.Id, NguoiLapId = AccountId, NgayTao = now };
@@ -271,9 +271,9 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
             await db.Database.ExecuteSqlInterpolatedAsync($"UPDATE tin_dang SET trang_thai='DA_CHO_THUE' WHERE phong_id={room.Id} AND trang_thai<>'DA_CHO_THUE'", ct);
         }
         await db.SaveChangesAsync(ct);
-        await Documents.WriteAsync(contract.Id, vm.DieuKhoanBoSung ?? "", vm.TaiLieus, ct);
-        storedContractId = contract.Id;
+        using var documentWrite = await Documents.PrepareWriteAsync(contract.Id, vm.DieuKhoanBoSung ?? "", vm.TaiLieus, replacingDraft, ct);
         await sqliteTransaction.CommitAsync(ct);
+        documentWrite.Complete();
         await transaction!.DisposeAsync();
         if (vm.TaoHoaDonKyDau && !luuNhap)
         {
@@ -299,7 +299,6 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
         catch (Exception ex) when (ex is DbUpdateException or SqliteException or IOException or UnauthorizedAccessException)
         {
             await sqliteTransaction.RollbackAsync(ct);
-            if (storedContractId.HasValue) Documents.Delete(storedContractId.Value);
             db.ChangeTracker.Clear();
             ModelState.AddModelError("", "Không thể lưu hợp đồng. Không có thay đổi nào được ghi nhận. Vui lòng tải lại trang và thử lại.");
             return View(vm);

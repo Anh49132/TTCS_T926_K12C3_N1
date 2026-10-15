@@ -31,8 +31,10 @@ public sealed partial class PermissionTests
     }
     [Fact] public async Task TenantHomeInvoicesExcludeCancelledButKeepDebtAfterContractEnds()
     {
-        TenantHomeFixture(state:"DA_KET_THUC",start:"2000-01-01",end:"2001-01-01");HomeInvoice(80,80,"BILL-OLD-DEBT",10,100000);HomeInvoice(81,80,"BILL-CANCELLED",9,800000);
+        // Build invoice history before closing the contract, as required by v33.
+        TenantHomeFixture(start:"2000-01-01",end:"2001-01-01");HomeInvoice(80,80,"BILL-OLD-DEBT",10,100000);HomeInvoice(81,80,"BILL-CANCELLED",9,800000);
         Execute("UPDATE hoa_don SET trang_thai='DA_HUY',ly_do_huy='Kiểm thử',nguoi_huy_id=$owner,ngay_huy='2026-01-03',phien_ban=phien_ban+1 WHERE id=81",("$owner",accounts["CHU_NHA"]));
+        Execute("UPDATE hop_dong SET trang_thai='DA_KET_THUC' WHERE id=80");
         using var tenant=await Login("KHACH_THUE");var html=WebUtility.HtmlDecode(await tenant.GetStringAsync("/"));Assert.Contains("BILL-OLD-DEBT",html);Assert.Contains("100.000 đ",html);Assert.DoesNotContain("BILL-CANCELLED",html);
     }
     [Fact] public async Task TenantHomeInvoicesDoNotChargeRoommate()

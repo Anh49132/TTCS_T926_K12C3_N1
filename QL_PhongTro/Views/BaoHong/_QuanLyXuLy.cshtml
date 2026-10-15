@@ -4,7 +4,7 @@
 <h2 id="repair-status-title">Cập nhật trạng thái</h2>
 @if (Model.TrangThaiTiepTheo.Count == 0) { <p>Báo hỏng đã ở trạng thái cuối. Bạn vẫn có thể gửi phản hồi bên dưới.</p> }
 else {
-<form asp-controller="QuanLyBaoHong" asp-action="CapNhat" asp-route-id="@Model.BaoHong.Id" method="post" class="repair-management-form">
+<form asp-controller="QuanLyBaoHong" asp-action="CapNhat" asp-all-route-data="@((ViewData["BaoHongBoLoc"] as QL_PhongTro.ViewModels.BaoHongBoLoc ?? new()).RouteValues(id: Model.BaoHong.Id))" method="post" class="repair-management-form">
     <input asp-for="CapNhat.PhienBan" type="hidden" />
     <input asp-for="CapNhat.KhoaChongTrung" type="hidden" />
     <label asp-for="CapNhat.TrangThai">Trạng thái tiếp theo <span>*</span></label>
@@ -23,7 +23,7 @@ else {
 </section>
 <section class="repairs-card" aria-labelledby="repair-reply-title">
 <h2 id="repair-reply-title">Gửi phản hồi cho khách</h2>
-<form asp-controller="QuanLyBaoHong" asp-action="PhanHoi" asp-route-id="@Model.BaoHong.Id" method="post" class="repair-management-form">
+<form asp-controller="QuanLyBaoHong" asp-action="PhanHoi" asp-all-route-data="@((ViewData["BaoHongBoLoc"] as QL_PhongTro.ViewModels.BaoHongBoLoc ?? new()).RouteValues(id: Model.BaoHong.Id))" method="post" class="repair-management-form">
     <input asp-for="PhanHoi.KhoaChongTrung" type="hidden" />
     <label asp-for="PhanHoi.NoiDung">Nội dung phản hồi <span>*</span></label>
     <textarea asp-for="PhanHoi.NoiDung" rows="4" maxlength="5000" required placeholder="Thông tin kiểm tra, lịch xử lý hoặc hướng dẫn cho khách"></textarea>

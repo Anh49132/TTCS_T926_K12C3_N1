@@ -159,12 +159,13 @@ public sealed partial class PermissionTests : IDisposable
     [Fact]
     public void UpdateV13_ChoQuanLyQuyenDangTinNhungKhongMoLaiQuyenDaThuHoi()
     {
+        SchemaTestFixture.RemoveRoomExtensions(database);
         Execute("DELETE FROM app_schema_version WHERE version>=13");
         Execute("UPDATE role_permission SET AccessLevel='READ' WHERE RoleCode='QUAN_LY' AND ModuleCode='TIN_DANG'");
 
         DatabaseUpdates.Update(database, Path.Combine(appPath, "Data", "permissions.seed.json"));
 
-        Assert.Equal(23L, Scalar("SELECT MAX(version) FROM app_schema_version"));
+        Assert.Equal(34L, Scalar("SELECT MAX(version) FROM app_schema_version"));
         Assert.Equal("WRITE", Scalar("SELECT AccessLevel FROM role_permission WHERE RoleCode='QUAN_LY' AND ModuleCode='TIN_DANG'"));
 
         Execute("UPDATE role_permission SET AccessLevel='NONE' WHERE RoleCode='QUAN_LY' AND ModuleCode='TIN_DANG'");
