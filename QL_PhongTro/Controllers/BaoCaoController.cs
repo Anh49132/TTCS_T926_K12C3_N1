@@ -26,17 +26,28 @@ public sealed class BaoCaoController(BaoCaoService service) : Controller
         int? nam = null,
         CancellationToken ct = default)
     {
-        ViewData["Title"] = "Báo cáo tài chính theo tháng";
-        thang ??= denThang ?? tuThang ?? service.GioHienTaiVn.Month;
-        nam ??= denNam ?? tuNam ?? service.GioHienTaiVn.Year;
+        ViewData["Title"] = "B\u00E1o c\u00E1o doanh thu v\u00E0 l\u1EA5p \u0111\u1EA7y";
+        if (thang.HasValue)
+        {
+            tuThang ??= thang;
+            denThang ??= thang;
+        }
+        if (nam.HasValue)
+        {
+            tuNam ??= nam;
+            denNam ??= nam;
+        }
+
         try
         {
-            var model = await service.LayBaoCaoThangAsync(
+            var model = await service.LayBaoCaoAsync(
                 ActorId,
                 ActorRole,
                 toaNhaId,
-                thang.Value,
-                nam.Value,
+                tuThang,
+                tuNam,
+                denThang,
+                denNam,
                 ct);
             return View(model);
         }

@@ -286,8 +286,12 @@ public sealed class BaoCaoService(AppDbContext db, ITimeProvider clock)
             ? new List<int> { toaNhaId.Value }
             : visibleBuildings.Select(b => b.Id).ToList();
 
-        if (targetBuildingIds.Count == 0)
-            return model;
+        var buildingRows = visibleBuildings.Select(x => (x.Id, x.TenToaNha)).ToArray();
+        model.LapDayTheoToaNha = await TinhLapDayTheoToaNhaAsync(
+            buildingRows, targetBuildingIds.ToArray(), denThang.Value, denNam.Value, ct);
+        model.TiLeLapDayHienTai = toaNhaId.HasValue
+            ? model.LapDayTheoToaNha.FirstOrDefault()?.TiLeLapDay
+            : null;
 
         // 3. Chuẩn bị khoảng thời gian cho cả bảng (12 tháng tối đa) và biểu đồ (6 tháng gần nhất tính đến denNam/denThang)
         var chartStart = endDate.AddMonths(-5); // 6 tháng gần nhất
@@ -308,9 +312,6 @@ public sealed class BaoCaoService(AppDbContext db, ITimeProvider clock)
             .ToListAsync(ct);
 
         var roomIds = rooms.Select(r => r.Id).ToList();
-        if (roomIds.Count == 0)
-            return model;
-
         // 5. Tải hoá đơn đã phát hành trong phạm vi thời gian mở rộng
         var invoices = await (
             from h in db.HoaDons.AsNoTracking()

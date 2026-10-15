@@ -563,3 +563,16 @@
     }
 }
 
+
+.bc-chart-value {
+    min-height: 1.25rem;
+    max-width: 100%;
+    overflow: hidden;
+    color: var(--bc-muted);
+    font-size: 0.65rem;
+    font-variant-numeric: tabular-nums;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+

@@ -1,34 +1,46 @@
 @model QL_PhongTro.ViewModels.BaoCaoDoanhThuViewModel
 @using System.Globalization
 @{
-    ViewData["Title"] = "Báo cáo tài chính theo tháng";
+    ViewData["Title"] = "Báo cáo doanh thu và lấp đầy";
     var vn = CultureInfo.GetCultureInfo("vi-VN");
+    var chartMax = Model.BieuDo6Thang.Count == 0 ? 0L : Model.BieuDo6Thang.Max(x => x.TongPhatHanh);
 }
 
 <article class="bc-page" data-revenue-report>
     <header class="bc-heading">
         <div>
             <p class="bc-eyebrow">TÀI CHÍNH · BÁO CÁO</p>
-            <h1>Báo cáo tài chính theo tháng</h1>
-            <p class="bc-subtitle">Theo dõi tiền đã phát hành, đã thu và còn phải thu theo kỳ hóa đơn.</p>
+            <h1>Báo cáo doanh thu và tỷ lệ lấp đầy</h1>
+            <p class="bc-subtitle">So sánh tiền phát hành, tiền đã thu, công nợ và tình hình phòng theo tháng.</p>
         </div>
         <form asp-controller="BaoCao" asp-action="Index" method="get" class="bc-filter-form">
             <div class="bc-filter-group">
                 <label for="toaNhaId" class="bc-label">Tòa nhà</label>
                 <select name="toaNhaId" id="toaNhaId" class="bc-select" asp-for="ToaNhaId" asp-items="Model.DanhSachToaNha"></select>
             </div>
-            <div class="bc-filter-group">
-                <label for="thang" class="bc-label">Tháng</label>
-                <select name="thang" id="thang" class="bc-select">
-                    @for (var month = 1; month <= 12; month++)
-                    {
-                        <option value="@month" selected="@(Model.DenThang == month)">Tháng @month.ToString("D2")</option>
-                    }
-                </select>
+            <div class="bc-filter-group bc-range-group">
+                <span class="bc-label">Từ tháng</span>
+                <div class="bc-inline-inputs">
+                    <select name="tuThang" id="tuThang" class="bc-select-small" aria-label="Từ tháng">
+                        @for (var month = 1; month <= 12; month++)
+                        {
+                            <option value="@month" selected="@(Model.TuThang == month)">T@month.ToString("D2")</option>
+                        }
+                    </select>
+                    <input name="tuNam" id="tuNam" type="number" min="1900" max="9999" value="@Model.TuNam" class="bc-input-year" aria-label="Từ năm" required />
+                </div>
             </div>
-            <div class="bc-filter-group">
-                <label for="nam" class="bc-label">Năm</label>
-                <input name="nam" id="nam" type="number" min="1900" max="9999" value="@Model.DenNam" class="bc-input-year" required />
+            <div class="bc-filter-group bc-range-group">
+                <span class="bc-label">Đến tháng</span>
+                <div class="bc-inline-inputs">
+                    <select name="denThang" id="denThang" class="bc-select-small" aria-label="Đến tháng">
+                        @for (var month = 1; month <= 12; month++)
+                        {
+                            <option value="@month" selected="@(Model.DenThang == month)">T@month.ToString("D2")</option>
+                        }
+                    </select>
+                    <input name="denNam" id="denNam" type="number" min="1900" max="9999" value="@Model.DenNam" class="bc-input-year" aria-label="Đến năm" required />
+                </div>
             </div>
             <button type="submit" class="bc-button">Xem báo cáo</button>
         </form>
@@ -40,12 +52,12 @@
     }
     else
     {
-        <p class="bc-subtitle">Kỳ @Model.DenThang.ToString("D2")/@Model.DenNam · @Model.TenToaNhaDangChon</p>
-        <section class="bc-kpi-grid" aria-label="Tổng hợp tài chính tháng">
+        <p class="bc-subtitle">Từ @Model.TuThang.ToString("D2")/@Model.TuNam đến @Model.DenThang.ToString("D2")/@Model.DenNam · @Model.TenToaNhaDangChon</p>
+        <section class="bc-kpi-grid" aria-label="Tổng hợp tài chính khoảng tháng">
             <article class="bc-kpi-card">
                 <span class="bc-kpi-label">Tổng tiền đã phát hành</span>
                 <strong class="bc-kpi-value">@Model.TongPhatHanh.ToString("N0", vn) <small>đ</small></strong>
-                <p class="bc-kpi-hint">Tổng hóa đơn đã phát hành trong kỳ</p>
+                <p class="bc-kpi-hint">Trong khoảng tháng đã chọn</p>
             </article>
             <article class="bc-kpi-card bc-kpi-success">
                 <span class="bc-kpi-label">Tổng tiền đã thu</span>
@@ -60,14 +72,99 @@
             <article class="bc-kpi-card bc-kpi-info">
                 <span class="bc-kpi-label">Tỷ lệ thu</span>
                 <strong class="bc-kpi-value">@Model.TiLeThuTongThe.ToString("0.#", vn)%</strong>
-                <p class="bc-kpi-hint">Tiền đã thu / tổng tiền đã phát hành</p>
+                <p class="bc-kpi-hint">Đã thu / đã phát hành</p>
             </article>
         </section>
+
+        <section class="bc-card" aria-labelledby="revenue-chart-heading">
+            <header class="bc-card-header">
+                <div>
+                    <h2 id="revenue-chart-heading">Doanh thu 6 tháng gần nhất</h2>
+                    <p>Tổng tiền hóa đơn đã phát hành theo tháng · @Model.TenToaNhaDangChon</p>
+                </div>
+                <div class="bc-chart-legend" aria-label="Chỉ số biểu đồ">
+                    <span class="bc-legend-item"><span class="bc-color-dot dot-issued" aria-hidden="true"></span>Đã phát hành</span>
+                </div>
+            </header>
+            <div class="bc-chart-wrapper">
+                @if (Model.BieuDo6Thang.Count == 0)
+                {
+                    <p class="bc-empty-chart">Chưa có dữ liệu báo cáo cho phạm vi này.</p>
+                }
+                else
+                {
+                    <div class="bc-bars-container" role="group" aria-label="Biểu đồ cột tổng tiền hóa đơn đã phát hành trong 6 tháng gần nhất">
+                        @foreach (var item in Model.BieuDo6Thang)
+                        {
+                            var barHeight = chartMax == 0 ? 0m : (decimal)item.TongPhatHanh / chartMax * 100m;
+                            var barHeightText = barHeight.ToString("0.#", CultureInfo.InvariantCulture);
+                            var revenueText = item.TongPhatHanh.ToString("N0", vn) + " đ";
+                            <div class="bc-bar-group">
+                                <span class="bc-chart-value">@revenueText</span>
+                                <div class="bc-bar-track" aria-hidden="true">
+                                    <div class="bc-bar-column col-issued" style="height: @barHeightText%" title="@item.NhanDayDu: @revenueText"></div>
+                                </div>
+                                <span class="bc-bar-label">@item.NhanThang</span>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </section>
+
+        <section class="bc-card" aria-labelledby="monthly-report-heading">
+            <header class="bc-card-header">
+                <div>
+                    <h2 id="monthly-report-heading">Doanh thu và lấp đầy theo tháng</h2>
+                    <p>Số liệu được tổng hợp theo kỳ hóa đơn; tỷ lệ lấp đầy chốt tại ngày cuối mỗi tháng.</p>
+                </div>
+                <div class="bc-table-meta">Số tháng: <strong>@Model.ChiTietTheoThang.Count</strong> / tối đa 12</div>
+            </header>
+            <div class="bc-table-container">
+                <table class="bc-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Tháng</th>
+                            <th scope="col" class="text-end">Đã phát hành</th>
+                            <th scope="col" class="text-end">Đã thu</th>
+                            <th scope="col" class="text-end">Còn phải thu</th>
+                            <th scope="col" class="text-center">Tỷ lệ thu</th>
+                            <th scope="col" class="text-center">Phòng đang thuê</th>
+                            <th scope="col" class="text-center">Tổng phòng cho thuê</th>
+                            <th scope="col" class="text-center">Tỷ lệ lấp đầy</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.ChiTietTheoThang.Count == 0)
+                        {
+                            <tr><td colspan="8" class="bc-empty-cell">Không có dữ liệu trong khoảng tháng đã chọn.</td></tr>
+                        }
+                        else
+                        {
+                            @foreach (var row in Model.ChiTietTheoThang)
+                            {
+                                <tr>
+                                    <th scope="row">@row.NhanThang</th>
+                                    <td class="text-end">@row.TongPhatHanh.ToString("N0", vn) đ</td>
+                                    <td class="text-end bc-cell-success">@row.TongDaThu.ToString("N0", vn) đ</td>
+                                    <td class="text-end @(row.SoConPhaiThu > 0 ? "bc-cell-warning" : "")">@row.SoConPhaiThu.ToString("N0", vn) đ</td>
+                                    <td class="text-center">@row.TiLeThu.ToString("0.#", vn)%</td>
+                                    <td class="text-center">@row.SoPhongDangThue</td>
+                                    <td class="text-center">@row.TongPhongChoThue</td>
+                                    <td class="text-center">@(row.TiLeLapDay.HasValue ? row.TiLeLapDay.Value.ToString("0.#", vn) + "%" : "—")</td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
         <section class="bc-card" aria-labelledby="occupancy-heading">
             <header class="bc-card-header">
                 <div>
-                    <h2 id="occupancy-heading">Tỷ lệ lấp đầy theo tòa</h2>
-                    <p>Số phòng được tính theo trạng thái tại ngày cuối tháng; phòng ngừng cho thuê không tính vào tổng phòng cho thuê.</p>
+                    <h2 id="occupancy-heading">Tỷ lệ lấp đầy theo tòa nhà</h2>
+                    <p>Số phòng tại ngày cuối tháng @Model.DenThang.ToString("D2")/@Model.DenNam; phòng ngừng cho thuê không tính vào tổng phòng cho thuê.</p>
                 </div>
             </header>
             <div class="bc-table-container">
@@ -95,9 +192,7 @@
                                     <td class="text-center">@building.SoPhongDangThue</td>
                                     <td class="text-center">@building.TongPhongChoThue</td>
                                     <td class="text-center">@building.SoPhongTrong</td>
-                                    <td class="text-center">
-                                        @(building.TiLeLapDay.HasValue ? building.TiLeLapDay.Value.ToString("0.#", vn) + "%" : "—")
-                                    </td>
+                                    <td class="text-center">@(building.TiLeLapDay.HasValue ? building.TiLeLapDay.Value.ToString("0.#", vn) + "%" : "—")</td>
                                 </tr>
                             }
                         }
@@ -105,10 +200,6 @@
                 </table>
             </div>
         </section>
-        @if (Model.TongPhatHanh == 0)
-        {
-            <p class="bc-table-footer">Kỳ này chưa có hóa đơn đã phát hành. Tỷ lệ thu được tính là 0%.</p>
-        }
     }
 </article>
 
