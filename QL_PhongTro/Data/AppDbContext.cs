@@ -47,6 +47,7 @@ public partial class AppDbContext(DbContextOptions<AppDbContext> options, IHttpC
     public DbSet<AppRole> AppRoles { get; set; } = null!;
     public DbSet<AppModule> AppModules { get; set; } = null!;
     public DbSet<RolePermission> RolePermissions { get; set; } = null!;
+    public DbSet<EmailGuiLog> EmailGuiLogs { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -138,6 +139,11 @@ public partial class AppDbContext(DbContextOptions<AppDbContext> options, IHttpC
         modelBuilder.Entity<HopDongDichVu>().HasOne<DichVu>().WithMany().HasForeignKey(x => x.DichVuId).OnDelete(DeleteBehavior.Restrict);
         modelBuilder.Entity<HopDongDichVu>().HasOne<CauHinhDichVu>().WithMany().HasForeignKey(x => x.CauHinhDichVuId).OnDelete(DeleteBehavior.Restrict);
         modelBuilder.Entity<HoaDon>().HasIndex(x => new { x.HopDongId, x.Nam, x.Thang }).IsUnique().HasFilter("trang_thai <> 'DA_HUY'");
+        modelBuilder.Entity<HopDongThamChieu>().HasOne<PhongTro>().WithMany().HasForeignKey(x => x.PhongId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<HopDongThamChieu>().HasOne<KhachThue>().WithMany().HasForeignKey(x => x.KhachDungTenId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<HopDongThamChieu>().HasOne<TaiKhoan>().WithMany().HasForeignKey(x => x.NguoiLapId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<KyHopDongThamChieu>().HasOne<HopDongThamChieu>().WithMany().HasForeignKey(x => x.HopDongId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<KyHopDongThamChieu>().HasOne<TaiKhoan>().WithMany().HasForeignKey(x => x.NguoiLapId).OnDelete(DeleteBehavior.Restrict);
         modelBuilder.Entity<HoaDon>().Property(x => x.PhienBan).IsConcurrencyToken();
         modelBuilder.Entity<HoaDon>().HasIndex(x => x.ThayTheHoaDonId).IsUnique();
         modelBuilder.Entity<HoaDon>().HasOne<HoaDon>().WithMany().HasForeignKey(x => x.ThayTheHoaDonId).OnDelete(DeleteBehavior.Restrict);

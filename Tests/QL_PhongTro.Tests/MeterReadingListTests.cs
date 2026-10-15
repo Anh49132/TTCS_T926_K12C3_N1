@@ -144,12 +144,21 @@ public sealed partial class MeterReadingListTests : IDisposable
             var row = Assert.Single((await new ChiSoDienNuocService(db,clock,meterProtection).DanhSachAsync(2,1)).Phongs);
             Assert.Equal(0,row.Dien.GiaTri);Assert.True(row.Dien.LaBanGiao);Assert.False(row.DaChot);
         }
-        finally { SqliteConnection.ClearAllPools();File.Delete(optionalPath); }
+        finally { DeleteDatabaseArtifacts(optionalPath); }
     }
     [Fact] public async Task UnassignedInactiveAndReturnedContractsExcluded()
     { Execute("UPDATE hop_dong SET ngay_tra_phong='2026-09-30' WHERE id=1");Assert.DoesNotContain((await List()).Phongs,x=>x.PhongId==1);Execute("UPDATE toa_nha SET dang_hoat_dong=0 WHERE id=1");Assert.Empty((await List(building:null)).ToaNhas);await Assert.ThrowsAsync<UnauthorizedAccessException>(()=>List()); }
     [Theory][InlineData(2026,9,30,16,59,2026,9)][InlineData(2026,9,30,17,0,2026,10)][InlineData(2026,12,31,17,0,2027,1)]
     public async Task VietnamCalendarMonth(int year,int month,int day,int hour,int minute,int expectedYear,int expectedMonth)
     {clock.UtcNow=new(year,month,day,hour,minute,0,DateTimeKind.Utc);Assert.Equal(new DateOnly(expectedYear,expectedMonth,1),(await List()).DauKy);}
-    public void Dispose() { SqliteConnection.ClearAllPools(); File.Delete(path); }
+    public void Dispose() => DeleteDatabaseArtifacts(path);
+
+    private static void DeleteDatabaseArtifacts(string databasePath)
+    {
+        SqliteConnection.ClearAllPools();
+        var directory = Path.GetDirectoryName(databasePath)!;
+        var prefix = Path.GetFileName(databasePath);
+        foreach (var file in Directory.EnumerateFiles(directory, prefix + "*"))
+            File.Delete(file);
+    }
 }

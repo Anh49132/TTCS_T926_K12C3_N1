@@ -45,6 +45,7 @@ builder.Services.AddScoped<QL_PhongTro.Services.HoSoAccess>();
 builder.Services.AddScoped<QL_PhongTro.Services.LichHenService>();
 builder.Services.AddScoped<QL_PhongTro.Services.TienDoChiSoService>();
 builder.Services.AddScoped<QL_PhongTro.Services.ICredentialValidationService, QL_PhongTro.Services.CredentialValidationService>();
+builder.Services.AddScoped<IInvoiceEmailSender, InvoiceEmailSender>();
 builder.Services.AddScoped<HopDongPdfService>();
 
 var dataDir = Path.Combine(builder.Environment.ContentRootPath, "Data");
@@ -185,7 +186,7 @@ builder.Services.AddScoped<IPasswordEmailSender, PasswordEmailSender>();
 builder.Services.AddScoped<ITemporaryPasswordEmailSender, PasswordEmailSender>();
 builder.Services.AddScoped<IRegistrationEmailSender, PasswordEmailSender>();
 builder.Services.AddScoped<IAppointmentEmailSender, PasswordEmailSender>();
-builder.Services.AddScoped<IInvoiceEmailSender, PasswordEmailSender>();
+builder.Services.AddScoped<IQueuedInvoiceEmailSender, PasswordEmailSender>();
 builder.Services.AddScoped<InvoiceNotificationDispatcher>();
 builder.Services.AddHostedService<InvoiceNotificationHostedService>();
 builder.Services.AddScoped<PasswordResetService>();
@@ -202,10 +203,13 @@ builder.Services.AddScoped<QuanLyBaoHongService>();
 builder.Services.AddScoped<BaoHongChiPhiService>();
 builder.Services.AddScoped<ChuNhaBaoHongService>();
 builder.Services.AddScoped<ChiSoDienNuocService>();
+builder.Services.AddScoped<NhacHanService>();
 builder.Services.AddScoped<RoomImageDeletionService>();
 builder.Services.AddHostedService<RoomImageCleanupHostedService>();
 builder.Services.AddScoped<TinDangExpirationService>();
 builder.Services.AddHostedService<TinDangExpirationHostedService>();
+builder.Services.AddHostedService<NhacHanHostedService>();
+builder.Services.AddScoped<BaoCaoService>();
 builder.Services.Configure<DichVuMacDinhOptions>(builder.Configuration.GetSection("DichVuMacDinh"));
 
 builder.Services.AddAuthentication()
@@ -218,12 +222,12 @@ builder.Services.AddAuthentication()
             var id = context.Principal?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var version = context.Principal?.FindFirst(SessionVersionStore.ClaimType)?.Value;
             if (!int.TryParse(id, out var accountId) || !context.HttpContext.RequestServices.GetRequiredService<SessionVersionStore>().IsValid(accountId, version))
-                context.Fail("Phiên đăng nhập đã bị vô hiệu hóa.");
+                context.Fail("PhiÃªn Ä‘Äƒng nháº­p Ä‘Ã£ bá»‹ vÃ´ hiá»‡u hÃ³a.");
             if (int.TryParse(id, out var currentId))
             {
                 var account = await context.HttpContext.RequestServices.GetRequiredService<AppDbContext>().TaiKhoans.AsNoTracking().SingleOrDefaultAsync(a => a.Id == currentId);
                 if (account is null || account.IsDeleted || !account.EmailConfirmed || !account.DangHoatDong || account.MustChangePassword)
-                    context.Fail("Tài khoản chưa được phép sử dụng phiên này.");
+                    context.Fail("TÃ i khoáº£n chÆ°a Ä‘Æ°á»£c phÃ©p sá»­ dá»¥ng phiÃªn nÃ y.");
             }
         }
     };

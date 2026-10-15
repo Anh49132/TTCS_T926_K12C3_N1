@@ -1,4 +1,4 @@
-@inject QL_PhongTro.Authorization.PermissionService HeaderPermissions
+﻿@inject QL_PhongTro.Authorization.PermissionService HeaderPermissions
 @{
     var isPropertyPage = ViewContext.RouteData.Values["controller"]?.ToString() == "PhongTro";
     var isListingPage = ViewContext.RouteData.Values["controller"]?.ToString() is "TinDang" or "TimTin";
@@ -11,7 +11,7 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>@ViewData["Title"] - Nhà Trọ</title>
+<title>@ViewData["Title"] - NhÃ  Trá»</title>
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 <link rel="stylesheet" href="~/css/theme.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/layout.css" asp-append-version="true" />
@@ -22,12 +22,13 @@
 @if (isPropertyPage) { <link rel="stylesheet" href="~/css/room-images.css" asp-append-version="true" /> }
 @await RenderSectionAsync("Styles", required: false)
 <link rel="stylesheet" href="~/css/champagne-theme.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/tenant-notification-bell.css" asp-append-version="true" />
 @if (isTenant) { <link rel="stylesheet" href="~/css/tenant-header.css" asp-append-version="true" /> }
 @if (User.IsInRole("CHU_NHA")) { <link rel="stylesheet" href="~/css/owner-dashboard.css" asp-append-version="true" /> }
 @if (useHomepageTheme && !isTenant) { <link rel="stylesheet" href="~/css/dashboard-spacing.css" asp-append-version="true" /> }
 </head>
 <body class="@(useHomepageTheme ? "homepage-dashboard-theme" : "") @roleClass">
-<a class="skip-link" href="#main-content">Đến nội dung chính</a>
+<a class="skip-link" href="#main-content">Äáº¿n ná»™i dung chÃ­nh</a>
 @if (isTenant)
 {
 <partial name="_TenantHeader" />
@@ -40,119 +41,128 @@
 }
 else
 {
-<aside id="app-sidebar" class="dashboard-sidebar" aria-label="Điều hướng ứng dụng">
+<aside id="app-sidebar" class="dashboard-sidebar" aria-label="Äiá»u hÆ°á»›ng á»©ng dá»¥ng">
 <partial name="_Sidebar" />
 </aside>
-<button type="button" class="sidebar-backdrop" id="sidebar-backdrop" aria-label="Đóng thanh điều hướng" hidden></button>
+<button type="button" class="sidebar-backdrop" id="sidebar-backdrop" aria-label="ÄÃ³ng thanh Ä‘iá»u hÆ°á»›ng" hidden></button>
 <div class="dashboard-main" id="dashboard-main">
 <header class="dashboard-header">
 @if (ViewContext.RouteData.Values["controller"]?.ToString() == "HoSo")
 {
-<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
-<nav class="op-header-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index">⌂</a><span>/</span>@if (ViewContext.RouteData.Values["action"]?.ToString() == "Xem") { <a asp-controller="HoSo" asp-action="DanhSach">Hồ sơ khách thuê</a><span>/</span><strong>@((Model as QL_PhongTro.ViewModels.XemHoSoViewModel)?.HoTen)</strong> } else { <strong>@ViewData["Title"]</strong> }</nav>
+<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Má»Ÿ thanh Ä‘iá»u hÆ°á»›ng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
+<nav class="op-header-breadcrumb" aria-label="ÄÆ°á»ng dáº«n Ä‘iá»u hÆ°á»›ng"><a asp-controller="Home" asp-action="Index">âŒ‚</a><span>/</span>@if (ViewContext.RouteData.Values["action"]?.ToString() == "Xem") { <a asp-controller="HoSo" asp-action="DanhSach">Há»“ sÆ¡ khÃ¡ch thuÃª</a><span>/</span><strong>@((Model as QL_PhongTro.ViewModels.XemHoSoViewModel)?.HoTen)</strong> } else { <strong>@ViewData["Title"]</strong> }</nav>
 }
 else if (ViewContext.RouteData.Values["controller"]?.ToString() == "PhongTro" && ViewContext.RouteData.Values["action"]?.ToString() == "ChiTietToaNha")
 {
-<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
-<nav class="dashboard-building-breadcrumb" aria-label="Đường dẫn điều hướng">
-<a asp-controller="Home" asp-action="Index" aria-label="Về trang chủ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10Z"/><path d="M9 20v-7h6v7"/></svg></a>
-<span aria-hidden="true">/</span><a asp-controller="PhongTro" asp-action="ToaNha">Quản lý tòa nhà</a><span aria-hidden="true">›</span><strong aria-current="page">Chi tiết tòa nhà</strong>
+<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Má»Ÿ thanh Ä‘iá»u hÆ°á»›ng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
+<nav class="dashboard-building-breadcrumb" aria-label="ÄÆ°á»ng dáº«n Ä‘iá»u hÆ°á»›ng">
+<a asp-controller="Home" asp-action="Index" aria-label="Vá» trang chá»§"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10Z"/><path d="M9 20v-7h6v7"/></svg></a>
+<span aria-hidden="true">/</span><a asp-controller="PhongTro" asp-action="ToaNha">Quáº£n lÃ½ tÃ²a nhÃ </a><span aria-hidden="true">â€º</span><strong aria-current="page">Chi tiáº¿t tÃ²a nhÃ </strong>
 </nav>
 }
 else if (ViewContext.RouteData.Values["controller"]?.ToString() == "PhongTro" && ViewContext.RouteData.Values["action"]?.ToString() == "SuaToaNha")
 {
-<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
-<nav class="be-header-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index" aria-label="Về tổng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10Z"/><path d="M9 20v-7h6v7"/></svg></a><span aria-hidden="true">/</span><a asp-controller="PhongTro" asp-action="ToaNha">Quản lý tòa nhà</a><span>›</span><a asp-controller="PhongTro" asp-action="ChiTietToaNha" asp-route-id="@Context.Request.RouteValues["id"]">@((Model as QL_PhongTro.ViewModels.TaoToaNhaViewModel)?.TenToaNha)</a><span>›</span><strong aria-current="page">Chỉnh sửa</strong></nav>
+<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Má»Ÿ thanh Ä‘iá»u hÆ°á»›ng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
+<nav class="be-header-breadcrumb" aria-label="ÄÆ°á»ng dáº«n Ä‘iá»u hÆ°á»›ng"><a asp-controller="Home" asp-action="Index" aria-label="Vá» tá»•ng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10Z"/><path d="M9 20v-7h6v7"/></svg></a><span aria-hidden="true">/</span><a asp-controller="PhongTro" asp-action="ToaNha">Quáº£n lÃ½ tÃ²a nhÃ </a><span>â€º</span><a asp-controller="PhongTro" asp-action="ChiTietToaNha" asp-route-id="@Context.Request.RouteValues["id"]">@((Model as QL_PhongTro.ViewModels.TaoToaNhaViewModel)?.TenToaNha)</a><span>â€º</span><strong aria-current="page">Chá»‰nh sá»­a</strong></nav>
 }
 else if (ViewContext.RouteData.Values["controller"]?.ToString() == "PhongTro" && ViewContext.RouteData.Values["action"]?.ToString() == "TaoToaNha")
 {
-<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
-<nav class="rc-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10Z"/><path d="M9 20v-7h6v7"/></svg></a><span aria-hidden="true">/</span><a asp-controller="PhongTro" asp-action="ToaNha">Tòa nhà</a><span aria-hidden="true">/</span><strong aria-current="page">Thêm tòa nhà</strong></nav>
+<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Má»Ÿ thanh Ä‘iá»u hÆ°á»›ng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
+<nav class="rc-breadcrumb" aria-label="ÄÆ°á»ng dáº«n Ä‘iá»u hÆ°á»›ng"><a asp-controller="Home" asp-action="Index"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10Z"/><path d="M9 20v-7h6v7"/></svg></a><span aria-hidden="true">/</span><a asp-controller="PhongTro" asp-action="ToaNha">TÃ²a nhÃ </a><span aria-hidden="true">/</span><strong aria-current="page">ThÃªm tÃ²a nhÃ </strong></nav>
 }
 else if (ViewContext.RouteData.Values["controller"]?.ToString() == "PhongTro" && ViewContext.RouteData.Values["action"]?.ToString() == "CreateBulk")
 {
-<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
-<nav class="rc-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index" aria-label="Về tổng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10Z"/><path d="M9 20v-7h6v7"/></svg></a><span aria-hidden="true">/</span><a asp-controller="PhongTro" asp-action="Index">Phòng cho thuê</a><span aria-hidden="true">/</span><strong aria-current="page">Tạo nhanh phòng</strong></nav>
+<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Má»Ÿ thanh Ä‘iá»u hÆ°á»›ng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
+<nav class="rc-breadcrumb" aria-label="ÄÆ°á»ng dáº«n Ä‘iá»u hÆ°á»›ng"><a asp-controller="Home" asp-action="Index" aria-label="Vá» tá»•ng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10Z"/><path d="M9 20v-7h6v7"/></svg></a><span aria-hidden="true">/</span><a asp-controller="PhongTro" asp-action="Index">PhÃ²ng cho thuÃª</a><span aria-hidden="true">/</span><strong aria-current="page">Táº¡o nhanh phÃ²ng</strong></nav>
 }
 else if (ViewContext.RouteData.Values["controller"]?.ToString() == "PhongTro" && ViewContext.RouteData.Values["action"]?.ToString() == "Create")
 {
-<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
-<nav class="rc-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index" aria-label="Về tổng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10Z"/><path d="M9 20v-7h6v7"/></svg></a><span aria-hidden="true">/</span><a asp-controller="PhongTro" asp-action="Index">Phòng cho thuê</a><span aria-hidden="true">/</span><strong aria-current="page">Thêm phòng</strong></nav>
+<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Má»Ÿ thanh Ä‘iá»u hÆ°á»›ng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
+<nav class="rc-breadcrumb" aria-label="ÄÆ°á»ng dáº«n Ä‘iá»u hÆ°á»›ng"><a asp-controller="Home" asp-action="Index" aria-label="Vá» tá»•ng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10Z"/><path d="M9 20v-7h6v7"/></svg></a><span aria-hidden="true">/</span><a asp-controller="PhongTro" asp-action="Index">PhÃ²ng cho thuÃª</a><span aria-hidden="true">/</span><strong aria-current="page">ThÃªm phÃ²ng</strong></nav>
 }
 else if (ViewContext.RouteData.Values["controller"]?.ToString() == "PhongTro" && ViewContext.RouteData.Values["action"]?.ToString() == "Details")
 {
-<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
-<nav class="rd-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index" aria-label="Về trang chủ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10ZM9 20v-7h6v7" /></svg></a><span aria-hidden="true">/</span><a asp-controller="PhongTro" asp-action="Index" asp-route-toaNhaId="@((Model as QL_PhongTro.ViewModels.ChiTietPhongViewModel)?.Phong.ToaNhaId)">Phòng cho thuê</a><span aria-hidden="true">/</span><strong aria-current="page">@((Model as QL_PhongTro.ViewModels.ChiTietPhongViewModel)?.Phong.MaPhong)</strong></nav>
+<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Má»Ÿ thanh Ä‘iá»u hÆ°á»›ng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
+<nav class="rd-breadcrumb" aria-label="ÄÆ°á»ng dáº«n Ä‘iá»u hÆ°á»›ng"><a asp-controller="Home" asp-action="Index" aria-label="Vá» trang chá»§"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10ZM9 20v-7h6v7" /></svg></a><span aria-hidden="true">/</span><a asp-controller="PhongTro" asp-action="Index" asp-route-toaNhaId="@((Model as QL_PhongTro.ViewModels.ChiTietPhongViewModel)?.Phong.ToaNhaId)">PhÃ²ng cho thuÃª</a><span aria-hidden="true">/</span><strong aria-current="page">@((Model as QL_PhongTro.ViewModels.ChiTietPhongViewModel)?.Phong.MaPhong)</strong></nav>
 }
 else if (ViewContext.RouteData.Values["controller"]?.ToString() == "PhongTro" && ViewContext.RouteData.Values["action"]?.ToString() == "Edit")
 {
-<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
-<nav class="re-header-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index" aria-label="Về trang chủ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10ZM9 20v-7h6v7" /></svg></a><span>/</span><a asp-controller="PhongTro" asp-action="Index" asp-route-toaNhaId="@((Model as QL_PhongTro.ViewModels.TaoPhongViewModel)?.ToaNhaId)">Phòng cho thuê</a><span>/</span><a asp-controller="PhongTro" asp-action="Details" asp-route-id="@ViewData["RoomId"]">@((Model as QL_PhongTro.ViewModels.TaoPhongViewModel)?.MaPhong)</a><span>/</span><strong aria-current="page">Chỉnh sửa</strong></nav>
+<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Má»Ÿ thanh Ä‘iá»u hÆ°á»›ng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
+<nav class="re-header-breadcrumb" aria-label="ÄÆ°á»ng dáº«n Ä‘iá»u hÆ°á»›ng"><a asp-controller="Home" asp-action="Index" aria-label="Vá» trang chá»§"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10ZM9 20v-7h6v7" /></svg></a><span>/</span><a asp-controller="PhongTro" asp-action="Index" asp-route-toaNhaId="@((Model as QL_PhongTro.ViewModels.TaoPhongViewModel)?.ToaNhaId)">PhÃ²ng cho thuÃª</a><span>/</span><a asp-controller="PhongTro" asp-action="Details" asp-route-id="@ViewData["RoomId"]">@((Model as QL_PhongTro.ViewModels.TaoPhongViewModel)?.MaPhong)</a><span>/</span><strong aria-current="page">Chá»‰nh sá»­a</strong></nav>
 }
 else if (ViewContext.RouteData.Values["controller"]?.ToString() == "TinDang" && (ViewContext.RouteData.Values["action"]?.ToString() is "Tao" or "Sua"))
 {
-<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
-<nav class="lc-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index" aria-label="Về tổng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10Z"/><path d="M9 20v-7h6v7"/></svg></a><span>/</span><a asp-controller="TinDang" asp-action="QuanLy">Tin đăng cho thuê</a><span>/</span><strong aria-current="page">@ViewData["Title"]</strong></nav>
+<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Má»Ÿ thanh Ä‘iá»u hÆ°á»›ng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
+<nav class="lc-breadcrumb" aria-label="ÄÆ°á»ng dáº«n Ä‘iá»u hÆ°á»›ng"><a asp-controller="Home" asp-action="Index" aria-label="Vá» tá»•ng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10Z"/><path d="M9 20v-7h6v7"/></svg></a><span>/</span><a asp-controller="TinDang" asp-action="QuanLy">Tin Ä‘Äƒng cho thuÃª</a><span>/</span><strong aria-current="page">@ViewData["Title"]</strong></nav>
 }
 else if (ViewContext.RouteData.Values["controller"]?.ToString() == "DichVu" && ViewContext.RouteData.Values["action"]?.ToString() == "DienNuoc")
 {
-<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
-<nav class="uc-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index" aria-label="Về tổng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10Z"/><path d="M9 20v-7h6v7"/></svg></a><span aria-hidden="true">/</span><a asp-controller="PhongTro" asp-action="ToaNha">Tòa nhà</a><span aria-hidden="true">/</span><strong aria-current="page">Cấu hình điện nước</strong></nav>
+<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Má»Ÿ thanh Ä‘iá»u hÆ°á»›ng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
+<nav class="uc-breadcrumb" aria-label="ÄÆ°á»ng dáº«n Ä‘iá»u hÆ°á»›ng"><a asp-controller="Home" asp-action="Index" aria-label="Vá» tá»•ng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10Z"/><path d="M9 20v-7h6v7"/></svg></a><span aria-hidden="true">/</span><a asp-controller="PhongTro" asp-action="ToaNha">TÃ²a nhÃ </a><span aria-hidden="true">/</span><strong aria-current="page">Cáº¥u hÃ¬nh Ä‘iá»‡n nÆ°á»›c</strong></nav>
 }
 else if (ViewContext.RouteData.Values["controller"]?.ToString() == "DichVu" && ViewContext.RouteData.Values["action"]?.ToString() == "Create")
 {
-<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
-<nav class="sc-header-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index" aria-label="Về tổng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10ZM9 20v-7h6v7" /></svg></a><span aria-hidden="true">/</span><a asp-controller="DichVu" asp-action="Index" asp-route-toaNhaId="@((Model as QL_PhongTro.ViewModels.TaoDichVuViewModel)?.ToaNhaId)">Dịch vụ &amp; đơn giá</a><span aria-hidden="true">/</span><strong aria-current="page">Thêm dịch vụ</strong></nav>
+<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Má»Ÿ thanh Ä‘iá»u hÆ°á»›ng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
+<nav class="sc-header-breadcrumb" aria-label="ÄÆ°á»ng dáº«n Ä‘iá»u hÆ°á»›ng"><a asp-controller="Home" asp-action="Index" aria-label="Vá» tá»•ng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10ZM9 20v-7h6v7" /></svg></a><span aria-hidden="true">/</span><a asp-controller="DichVu" asp-action="Index" asp-route-toaNhaId="@((Model as QL_PhongTro.ViewModels.TaoDichVuViewModel)?.ToaNhaId)">Dá»‹ch vá»¥ &amp; Ä‘Æ¡n giÃ¡</a><span aria-hidden="true">/</span><strong aria-current="page">ThÃªm dá»‹ch vá»¥</strong></nav>
 }
 else if (ViewContext.RouteData.Values["controller"]?.ToString() == "DichVu" && ViewContext.RouteData.Values["action"]?.ToString() == "Manage")
 {
 var serviceModel = Model as QL_PhongTro.ViewModels.QuanLyDichVuViewModel;
-<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
-<nav class="sp-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index" aria-label="Về tổng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10ZM9 20v-7h6v7" /></svg></a><span aria-hidden="true">/</span><a asp-controller="DichVu" asp-action="Index" asp-route-toaNhaId="@serviceModel?.ToaNhaId">Dịch vụ &amp; đơn giá</a><span>/</span><strong aria-current="page">Sửa đơn giá</strong></nav>
+<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Má»Ÿ thanh Ä‘iá»u hÆ°á»›ng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
+<nav class="sp-breadcrumb" aria-label="ÄÆ°á»ng dáº«n Ä‘iá»u hÆ°á»›ng"><a asp-controller="Home" asp-action="Index" aria-label="Vá» tá»•ng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10ZM9 20v-7h6v7" /></svg></a><span aria-hidden="true">/</span><a asp-controller="DichVu" asp-action="Index" asp-route-toaNhaId="@serviceModel?.ToaNhaId">Dá»‹ch vá»¥ &amp; Ä‘Æ¡n giÃ¡</a><span>/</span><strong aria-current="page">Sá»­a Ä‘Æ¡n giÃ¡</strong></nav>
 }
 else if (User.IsInRole("CHU_NHA") && (ViewContext.RouteData.Values["controller"]?.ToString() == "YeuCau" || ViewContext.RouteData.Values["controller"]?.ToString() == "LichHen"))
 {
 var requestModel = Model as QL_PhongTro.ViewModels.LichHenChiTietViewModel;
-<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
-<nav class="or-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index" aria-label="Về tổng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10ZM9 20v-7h6v7" /></svg></a><span aria-hidden="true">/</span><a asp-controller="YeuCau" asp-action="Index">Yêu cầu thuê &amp; lịch xem</a>@if(requestModel is not null){<span>/</span><strong aria-current="page">@requestModel.YeuCau.MaYeuCau</strong>}</nav>
+<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Má»Ÿ thanh Ä‘iá»u hÆ°á»›ng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
+<nav class="or-breadcrumb" aria-label="ÄÆ°á»ng dáº«n Ä‘iá»u hÆ°á»›ng"><a asp-controller="Home" asp-action="Index" aria-label="Vá» tá»•ng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10ZM9 20v-7h6v7" /></svg></a><span aria-hidden="true">/</span><a asp-controller="YeuCau" asp-action="Index">YÃªu cáº§u thuÃª &amp; lá»‹ch xem</a>@if(requestModel is not null){<span>/</span><strong aria-current="page">@requestModel.YeuCau.MaYeuCau</strong>}</nav>
 }
 else if (ViewContext.RouteData.Values["controller"]?.ToString() == "HopDong" && ViewContext.RouteData.Values["action"]?.ToString() == "LichSuNguoiO")
 {
 var historyRoom = Model as QL_PhongTro.ViewModels.LichSuNguoiOViewModel;
-<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
-<nav class="oh-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index" aria-label="Về tổng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10ZM9 20v-7h6v7"/></svg></a><span aria-hidden="true">/</span><a asp-controller="PhongTro" asp-action="Index">Phòng cho thuê</a><span aria-hidden="true">/</span><a asp-controller="PhongTro" asp-action="Details" asp-route-id="@historyRoom?.PhongId">@historyRoom?.Phong</a><span aria-hidden="true">/</span><strong aria-current="page">Lịch sử</strong></nav>
+<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Má»Ÿ thanh Ä‘iá»u hÆ°á»›ng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
+<nav class="oh-breadcrumb" aria-label="ÄÆ°á»ng dáº«n Ä‘iá»u hÆ°á»›ng"><a asp-controller="Home" asp-action="Index" aria-label="Vá» tá»•ng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10ZM9 20v-7h6v7"/></svg></a><span aria-hidden="true">/</span><a asp-controller="PhongTro" asp-action="Index">PhÃ²ng cho thuÃª</a><span aria-hidden="true">/</span><a asp-controller="PhongTro" asp-action="Details" asp-route-id="@historyRoom?.PhongId">@historyRoom?.Phong</a><span aria-hidden="true">/</span><strong aria-current="page">Lá»‹ch sá»­</strong></nav>
 }
 else if (ViewContext.RouteData.Values["controller"]?.ToString() == "PhongTro" && ViewContext.RouteData.Values["action"]?.ToString() == "NhatKyPhong")
 {
-<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
-<nav class="rj-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index" aria-label="Về tổng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10ZM9 20v-7h6v7"/></svg></a><span aria-hidden="true">/</span><a asp-controller="PhongTro" asp-action="Index">Phòng cho thuê</a><span aria-hidden="true">/</span><strong aria-current="page">Nhật ký phòng</strong></nav>
+<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Má»Ÿ thanh Ä‘iá»u hÆ°á»›ng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
+<nav class="rj-breadcrumb" aria-label="ÄÆ°á»ng dáº«n Ä‘iá»u hÆ°á»›ng"><a asp-controller="Home" asp-action="Index" aria-label="Vá» tá»•ng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10ZM9 20v-7h6v7"/></svg></a><span aria-hidden="true">/</span><a asp-controller="PhongTro" asp-action="Index">PhÃ²ng cho thuÃª</a><span aria-hidden="true">/</span><strong aria-current="page">Nháº­t kÃ½ phÃ²ng</strong></nav>
 }
 else if (ViewContext.RouteData.Values["controller"]?.ToString() == "HopDong" && ViewContext.RouteData.Values["action"]?.ToString() == "Create")
 {
-<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
-<nav class="create-header-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index" aria-label="Về trang chủ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10ZM9 20v-7h6v7" /></svg></a><span aria-hidden="true">/</span><a asp-controller="HopDong" asp-action="Index">Hợp đồng &amp; người ở ghép</a><span aria-hidden="true">/</span><strong aria-current="page">Lập hợp đồng thuê</strong></nav>
+<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Má»Ÿ thanh Ä‘iá»u hÆ°á»›ng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
+<nav class="create-header-breadcrumb" aria-label="ÄÆ°á»ng dáº«n Ä‘iá»u hÆ°á»›ng"><a asp-controller="Home" asp-action="Index" aria-label="Vá» trang chá»§"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10ZM9 20v-7h6v7" /></svg></a><span aria-hidden="true">/</span><a asp-controller="HopDong" asp-action="Index">Há»£p Ä‘á»“ng &amp; ngÆ°á»i á»Ÿ ghÃ©p</a><span aria-hidden="true">/</span><strong aria-current="page">Láº­p há»£p Ä‘á»“ng thuÃª</strong></nav>
 }
 else if (ViewContext.RouteData.Values["controller"]?.ToString() == "HopDong" && ViewContext.RouteData.Values["action"]?.ToString() == "Details")
 {
-<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
-<nav class="contract-detail-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index" aria-label="Về tổng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10ZM9 20v-7h6v7" /></svg></a><span aria-hidden="true">/</span><a asp-controller="HopDong" asp-action="Index">Hợp đồng &amp; người ở ghép</a><span aria-hidden="true">/</span><strong aria-current="page">@((Model as QL_PhongTro.ViewModels.HopDongDetailsViewModel)?.HopDong.MaHopDong ?? "Chi tiết hợp đồng")</strong></nav>
+<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Má»Ÿ thanh Ä‘iá»u hÆ°á»›ng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
+<nav class="contract-detail-breadcrumb" aria-label="ÄÆ°á»ng dáº«n Ä‘iá»u hÆ°á»›ng"><a asp-controller="Home" asp-action="Index" aria-label="Vá» tá»•ng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10ZM9 20v-7h6v7" /></svg></a><span aria-hidden="true">/</span><a asp-controller="HopDong" asp-action="Index">Há»£p Ä‘á»“ng &amp; ngÆ°á»i á»Ÿ ghÃ©p</a><span aria-hidden="true">/</span><strong aria-current="page">@((Model as QL_PhongTro.ViewModels.HopDongDetailsViewModel)?.HopDong.MaHopDong ?? "Chi tiáº¿t há»£p Ä‘á»“ng")</strong></nav>
 }
 else if (User.IsInRole("CHU_NHA"))
 {
-<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
-<a class="owner-header-home" href="/" aria-label="Về tổng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v11H3ZM9 21v-8h6v8" /></svg></a>
+<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Má»Ÿ thanh Ä‘iá»u hÆ°á»›ng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
+<a class="owner-header-home" href="/" aria-label="Vá» tá»•ng quan"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v11H3ZM9 21v-8h6v8" /></svg></a>
 <span class="owner-header-divider" aria-hidden="true">/</span>
-<span class="page-title">@(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "Tổng quan" : ViewData["Title"])</span>
+<span class="page-title">@(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "Tá»•ng quan" : ViewData["Title"])</span>
 }
 else
 {
-<button type="button" id="sidebar-toggle" class="icon-button" aria-label="Thu gọn thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg></button>
+<button type="button" id="sidebar-toggle" class="icon-button" aria-label="Thu gá»n thanh Ä‘iá»u hÆ°á»›ng" aria-controls="app-sidebar" aria-expanded="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg></button>
 <span class="page-title">@ViewData["Title"]</span>
 }
-<form class="latte-header-search" action="/TimTin" method="get"><button aria-label="Tìm kiếm" type="submit"><svg class="header-search-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.3" /><path d="m15.5 15.5 4.2 4.2" /></svg></button><input name="TuKhoa" aria-label="Tìm kiếm phòng, tin đăng" placeholder="Tìm kiếm phòng, tòa nhà, tin đăng..." /></form>
+<form class="latte-header-search" action="/TimTin" method="get"><button aria-label="TÃ¬m kiáº¿m" type="submit"><svg class="header-search-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.3" /><path d="m15.5 15.5 4.2 4.2" /></svg></button><input name="TuKhoa" aria-label="TÃ¬m kiáº¿m phÃ²ng, tin Ä‘Äƒng" placeholder="TÃ¬m kiáº¿m phÃ²ng, tÃ²a nhÃ , tin Ä‘Äƒng..." /></form>
 @if (showNotificationBell)
 {
-<a class="header-notification-bell" href="/Modules/YEU_CAU_THUE?section=thong-bao" aria-label="Thông báo" title="Thông báo"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" /></svg></a>
+<a class="header-notification-bell" href="/Modules/YEU_CAU_THUE?section=thong-bao" aria-label="ThÃ´ng bÃ¡o" title="ThÃ´ng bÃ¡o"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" /></svg></a>
+}
+@if (isTenant)
+{
+    <a class="header-notification-bell" id="notification-bell" href="javascript:void(0);" aria-label="Thông báo hóa đơn" title="Thông báo hóa đơn"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1-.9 2-2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5 .67-1.5 1.5v.68C7.64 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm2 10H8v-6c0-2 4-3.1 6-3.1s4 1.1 6 3.1v6z"></path></svg><span class="notification-badge" id="notification-badge">0</span></a>
+    <div class="notification-dropdown" id="notification-dropdown">
+        <div class="dropdown-header">Thông báo hóa đơn</div>
+        <div id="notification-list" class="notification-list"></div>
+        <button id="mark-all-read-btn" class="btn btn-sm btn-block mark-all-read-btn">Đánh dấu tất cả đã đọc</button>
+    </div>
 }
 <div class="latte-header-user"><partial name="_AccountMenu" /></div>
 </header>
@@ -166,6 +176,7 @@ else
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/tenant-notification-bell.js" asp-append-version="true"></script>
 <script src="~/js/logout-confirm.js" asp-append-version="true"></script>
 <script src="~/js/auth-interceptor.js" asp-append-version="true"></script>
 <script src="~/js/password-toggle.js" asp-append-version="true"></script>
@@ -179,3 +190,5 @@ else
 }
 </body>
 </html>
+
+

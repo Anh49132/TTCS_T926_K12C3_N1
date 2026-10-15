@@ -16,7 +16,7 @@ public sealed partial class MeterReadingListTests
         Assert.Equal(new[]{false,false},await ConfirmationFlags());
         using(var c=Open())using(var cmd=c.CreateCommand())
         {
-            cmd.CommandText="SELECT max(version) FROM app_schema_version";Assert.Equal(35L,cmd.ExecuteScalar());
+            cmd.CommandText="SELECT max(version) FROM app_schema_version";Assert.Equal(36L,cmd.ExecuteScalar());
             cmd.CommandText="PRAGMA integrity_check";Assert.Equal("ok",cmd.ExecuteScalar());
             cmd.CommandText="PRAGMA foreign_key_check";using(var r=cmd.ExecuteReader())Assert.False(r.Read());
         }
