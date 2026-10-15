@@ -20,12 +20,23 @@ public sealed class BaoCaoDoanhThuViewModel
     public long TongConPhaiThu { get; set; }
     public decimal TiLeThuTongThe { get; set; }
     public decimal? TiLeLapDayHienTai { get; set; }
+    public List<BaoCaoLapDayToaNhaRow> LapDayTheoToaNha { get; set; } = [];
 
     // Monthly breakdown table
     public List<BaoCaoThangRow> ChiTietTheoThang { get; set; } = [];
 
     // 6-month bar chart
     public List<BaoCaoChartItem> BieuDo6Thang { get; set; } = [];
+}
+
+public sealed class BaoCaoLapDayToaNhaRow
+{
+    public int ToaNhaId { get; set; }
+    public string TenToaNha { get; set; } = "";
+    public int SoPhongDangThue { get; set; }
+    public int TongPhongChoThue { get; set; }
+    public int SoPhongTrong { get; set; }
+    public decimal? TiLeLapDay { get; set; }
 }
 
 public sealed class BaoCaoThangRow
