@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
 
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.FileProviders;
@@ -45,6 +45,8 @@ builder.Services.AddScoped<QL_PhongTro.Services.HoSoAccess>();
 builder.Services.AddScoped<QL_PhongTro.Services.LichHenService>();
 builder.Services.AddScoped<QL_PhongTro.Services.TienDoChiSoService>();
 builder.Services.AddScoped<QL_PhongTro.Services.ICredentialValidationService, QL_PhongTro.Services.CredentialValidationService>();
+builder.Services.AddScoped<IInvoiceEmailSender, InvoiceEmailSender>();
+builder.Services.AddScoped<EmailGuiService>();
 builder.Services.AddScoped<HopDongPdfService>();
 
 var dataDir = Path.Combine(builder.Environment.ContentRootPath, "Data");
@@ -217,12 +219,12 @@ builder.Services.AddAuthentication()
             var id = context.Principal?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             var version = context.Principal?.FindFirst(SessionVersionStore.ClaimType)?.Value;
             if (!int.TryParse(id, out var accountId) || !context.HttpContext.RequestServices.GetRequiredService<SessionVersionStore>().IsValid(accountId, version))
-                context.Fail("PhiÃªn Ä‘Äƒng nháº­p Ä‘Ã£ bá»‹ vÃ´ hiá»‡u hÃ³a.");
+                context.Fail("PhiÃƒÂªn Ã„â€˜Ã„Æ’ng nhÃ¡ÂºÂ­p Ã„â€˜ÃƒÂ£ bÃ¡Â»â€¹ vÃƒÂ´ hiÃ¡Â»â€¡u hÃƒÂ³a.");
             if (int.TryParse(id, out var currentId))
             {
                 var account = await context.HttpContext.RequestServices.GetRequiredService<AppDbContext>().TaiKhoans.AsNoTracking().SingleOrDefaultAsync(a => a.Id == currentId);
                 if (account is null || account.IsDeleted || !account.EmailConfirmed || !account.DangHoatDong || account.MustChangePassword)
-                    context.Fail("TÃ i khoáº£n chÆ°a Ä‘Æ°á»£c phÃ©p sá»­ dá»¥ng phiÃªn nÃ y.");
+                    context.Fail("TÃƒÂ i khoÃ¡ÂºÂ£n chÃ†Â°a Ã„â€˜Ã†Â°Ã¡Â»Â£c phÃƒÂ©p sÃ¡Â»Â­ dÃ¡Â»Â¥ng phiÃƒÂªn nÃƒÂ y.");
             }
         }
     };
