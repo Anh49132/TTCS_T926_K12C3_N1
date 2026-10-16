@@ -1,4 +1,6 @@
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using QL_PhongTro.Data;
 using QL_PhongTro.Models;
 
@@ -132,6 +134,23 @@ public sealed class NhacHanService(IServiceScopeFactory scopeFactory, ITimeProvi
 
         var conPhaiTra = invoice - tongThanhToan - tongCanTru;
         return conPhaiTra > 0 ? conPhaiTra : 0;
+    }
+
+    public static async Task<NhacHanResult> ChayTuCommandLine(string databasePath, DateOnly? ngayGiaLap = null)
+    {
+        var services = new ServiceCollection();
+        services.AddDbContext<AppDbContext>(options =>
+            options.UseSqlite(new SqliteConnectionStringBuilder
+            {
+                DataSource = databasePath,
+                Mode = SqliteOpenMode.ReadWrite,
+                ForeignKeys = true
+            }.ToString()));
+        services.AddScoped<ITimeProvider, SystemTimeProvider>();
+        var provider = services.BuildServiceProvider();
+        using var scope = provider.CreateScope();
+        var service = scope.ServiceProvider.GetRequiredService<NhacHanService>();
+        return await service.ChayNhacHanAsync(ngayGiaLap);
     }
 }
 
