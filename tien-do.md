@@ -1,3 +1,48 @@
+### 17/10/2026 – Thu giãn dòng thẻ phòng trang chủ và footer
+- Giảm khoảng cách tiêu đề/giá/khu vực/metadata, gutter hàng thẻ và padding section; thu dòng liên kết/liên hệ cùng padding bản quyền footer công khai.
+- Edge 360/768/1440px không tràn ngang; form tìm kiếm vẫn đạt. Chỉ đổi CSS, demo có hiệu lực ngay.
+
+### 17/10/2026 – Giảm khoảng trắng cuối trang Tìm phòng
+- Bỏ padding đáy cộng dồn của public-main-timtin, giảm khoảng đệm cuối danh sách còn 20px và khoảng cách phân trang. Không đổi nội dung.
+
+### 17/10/2026 – Thu khoảng cách dọc header công khai
+- Header desktop 68px, logo 40px, mục menu và hai nút 40px; mobile giảm khoảng cách hai hàng. Căn giữa các nhóm, giữ chiều rộng hai mép.
+
+### 17/10/2026 – Căn giãn dòng thông tin thẻ phòng
+- Thu khoảng cách dòng giá/tiêu đề/địa chỉ/diện tích/footer, giảm gap giữa các thẻ và hàng kết quả. Giữ chiều cao tiêu đề hai dòng trên desktop để thẻ thẳng hàng; mobile co theo nội dung.
+
+### 17/10/2026 – Thu khoảng cách hàng lọc nhanh và kết quả
+- Bỏ padding dọc bị cộng dồn giữa timtin-top và kết quả; giảm margin dòng lọc nhanh/chip, còn 16px trước kết quả. Chỉ đổi CSS.
+
+### 17/10/2026 – Căn khoảng cách dọc khung bộ lọc
+- Đồng bộ khoảng cách nhóm lọc, giảm khoảng đệm tiêu đề/input/nút; input 40px, nút 42px. Chỉ đổi CSS, giữ chức năng lọc.
+
+### 17/10/2026 – Đồng bộ dropdown sắp xếp, phường/xã và mức giá
+- Bootstrap dropdown thay giao diện select native của ba ô; bo góc, giãn dòng gọn, nền champagne và dấu tích. Giữ select làm nguồn giá trị gửi form và phát sự kiện change để sắp xếp vẫn hoạt động; không đổi backend.
+- JS syntax và Edge 360/1440px đạt: ba menu mở/đóng Escape, chọn phường/giá gửi đúng tham số, sắp xếp gia-tang hoạt động; không tràn ngang. CSS/JS cập nhật trực tiếp trên demo, không cần build.
+
+### 17/10/2026 – Hoàn thiện khung bộ lọc và dropdown sức chứa
+- Căn đều input, thu khoảng cách nhóm lọc, ghi đơn vị giá; dropdown Bootstrap sức chứa có trạng thái chọn champagne thay select native. Giữ giá trị SoNguoiToiDa khi gửi/tải lại, không đổi logic lọc.
+- Build/JS syntax đạt; Edge 360/1440px chọn 2 người, Escape, gửi và giữ lựa chọn đạt, không tràn ngang. Đã xem ảnh data/filter-capacity-1440.png. Demo đã chạy lại.
+
+### 17/10/2026 – Thu gọn giãn cách dòng dropdown khu vực Tìm phòng
+- Giảm padding, line-height và chiều cao tối thiểu mỗi mục còn 30px; giữ nguyên chức năng chọn khu vực.
+
+### 17/10/2026 – Đồng bộ thanh tìm kiếm với trang chủ
+- Dropdown Bootstrap khu vực có dấu chọn, nhãn từ khóa và ô/nút 60px giống trang chủ; mobile xếp dọc. Tái sử dụng home-district.js, giữ QuanHuyen và các bộ lọc hiện có.
+- Build đạt; Edge 360/768/1440px không tràn ngang; dropdown, lọc nâng cao mobile, sắp xếp giá và phân trang đạt. Demo đã chạy lại.
+
+### 17/10/2026 – Đồng bộ header công khai với trang chủ
+- Tách CSS header dùng chung cho layout công khai: logo/menu/nút và gutter hai mép giống trang chủ, giữ active đúng trang. Không đổi tenant header.
+- Build đạt; Edge đối chiếu tọa độ/kích thước header, logo, menu và hai nút trên trang chủ/Tìm phòng giống nhau tại 360/1440px, không tràn ngang. Ảnh data/shared-header-360.png và data/shared-header-1440.png. Demo đã chạy lại.
+
+### 17/10/2026 – Bỏ breadcrumb trang Tìm phòng
+- Gỡ riêng dòng Trang chủ › Tìm phòng theo ảnh. Build/HTTP đạt, demo đã chạy lại.
+
+### 17/10/2026 – Làm mới trang Tìm phòng bằng Bootstrap
+- Chỉnh tiêu đề/mô tả, form tìm kiếm, lọc nhanh/nâng cao, sidebar, card-body, nút Bootstrap và phân trang. CSS giới hạn trong timtin-page, bố cục 3/2/1 cột; bỏ biểu tượng tim trang trí không có chức năng.
+- Build đạt; Edge 360/768/1440px không tràn ngang, lọc nâng cao mobile, chọn quận, sắp xếp giá và phân trang đạt. Đã xem ảnh data/room-search-1440.png và data/room-search-360.png; demo đã chạy lại. Chưa push lần chỉnh này.
+
 ### 17/10/2026 – Căn đều hai nút đăng nhập/đăng ký
 - Đặt cùng kích thước 108×44px desktop và 84×38px mobile, căn giữa chữ bằng inline-flex. Edge 360/768/1440px không tràn ngang; demo CSS đã cập nhật.
 

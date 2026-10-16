@@ -13,6 +13,7 @@
 <link rel="stylesheet" href="~/css/champagne-theme.css" asp-append-version="true" />
 @if (User.IsInRole("KHACH_THUE")) { <link rel="stylesheet" href="~/css/tenant-header.css" asp-append-version="true" /> }
 @await RenderSectionAsync("Styles", required: false)
+<link rel="stylesheet" href="~/css/public-header.css" asp-append-version="true" />
 </head>
 <body class="public-site @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "public-home" : "")">
     @{

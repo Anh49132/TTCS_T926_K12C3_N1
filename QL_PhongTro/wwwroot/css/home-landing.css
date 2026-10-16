@@ -89,3 +89,13 @@ body.public-home{height:auto;min-height:100vh;display:block;overflow:auto;backgr
 /* Equal dimensions for the two authentication buttons. */
 .public-home .nhatot-header .nhatot-auth .public-auth-login,.public-home .nhatot-header .nhatot-auth .public-auth-register{width:108px;min-width:108px;height:44px;min-height:44px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;padding:.65rem .75rem!important}
 @media(max-width:575px){.public-home .nhatot-header .nhatot-auth .public-auth-login,.public-home .nhatot-header .nhatot-auth .public-auth-register{width:84px;min-width:84px;height:38px;min-height:38px;padding:.5rem .4rem!important}}
+/* Compact homepage room section and consistent text rhythm. */
+.public-home .home-content-section{padding-top:2rem!important;padding-bottom:2rem!important}
+.public-home .home-content-section>.d-flex{margin-bottom:1.1rem!important}
+.public-home .home-content-section>.row{--bs-gutter-x:1.1rem;--bs-gutter-y:1.1rem}
+.public-home .home-listing-card .card-body{padding:1rem}
+.public-home .home-listing-card h3{line-height:1.4;min-height:2.8rem;margin-bottom:.6rem}
+.public-home .home-room-price{line-height:1.35}
+.public-home .home-listing-card p{margin:.5rem 0 0;line-height:1.4}
+.public-home .home-room-meta{margin-top:.65rem!important;padding-top:.65rem!important;line-height:1.4}
+@media(max-width:575px){.public-home .home-listing-card h3{min-height:0}.public-home .home-content-section{padding-top:1.5rem!important;padding-bottom:1.5rem!important}}
