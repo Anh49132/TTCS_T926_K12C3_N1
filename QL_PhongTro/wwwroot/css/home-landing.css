@@ -1,0 +1,91 @@
+/* Bootstrap grid, forms and cards with the NhàTốt palette. */
+body.public-home{height:auto;min-height:100vh;display:block;overflow:auto;background:#F5F5F4}
+.public-home .public-main-home{min-height:0;overflow:visible;position:static}
+.public-main-home .nhatot-landing{height:auto;display:block}
+.home-welcome{background:linear-gradient(90deg,rgba(25,35,37,.92),rgba(25,35,37,.65) 55%,rgba(25,35,37,.22)),url('/images/hero-clean.jpg') center 55%/cover;color:#fff;padding:2rem 0 1.5rem}
+.home-eyebrow{font-size:.72rem;font-weight:700;letter-spacing:.16em;color:#e3d4b9;border:1px solid #ffffff40;border-radius:100px;padding:.6rem 1rem;background:#ffffff0d}
+.home-welcome h1{font-size:clamp(2.5rem,4.5vw,4.5rem);line-height:1.12;letter-spacing:-.045em}
+.home-welcome h1 span{color:#e3d4b9}
+.home-welcome .lead{max-width:570px;font-size:1.05rem;line-height:1.8;color:#ebedeb}
+.home-highlights{font-size:.85rem;color:#ece8df}
+.home-search-card{border-radius:18px;color:#25282D;text-align:left}
+.home-search-card .form-label{font-size:.8rem;margin-bottom:.65rem}
+.home-search-card .form-control,.home-search-card .form-select{font-size:.95rem;min-height:54px;border:1px solid #e3e5e7;background-color:#fafaf9;border-radius:9px}
+.home-search-card .form-control:focus,.home-search-card .form-select:focus{border-color:#BFA77A;box-shadow:0 0 0 .2rem #bfa77a33}
+.home-search-card .btn{min-height:54px;font-size:1rem;border-radius:9px;background:#30343B;border-color:#30343B}
+.home-search-card .btn:hover{background:#25282D}
+.home-search-hint{font-size:.8rem;color:#e0e3df;text-align:center}
+.home-section-label{color:#82704f;font-size:.7rem;font-weight:700;letter-spacing:.15em}
+.home-listing-card{border-radius:16px;overflow:hidden;color:#25282D;transition:transform .2s,box-shadow .2s}
+.home-listing-card:hover{transform:translateY(-4px);box-shadow:0 12px 28px #25282d18!important;color:#25282D}
+.home-listing-card .card-body{padding:1.5rem}.home-listing-card h3{font-size:1.1rem;line-height:1.45}.home-listing-card strong{color:#82704f}.home-listing-card p{color:#656A73;margin:1rem 0 .5rem}
+@media(max-width:767px){.home-welcome{padding:0}.home-welcome>.container{padding-top:2.5rem!important;padding-bottom:2rem!important}.home-welcome h1{font-size:2.6rem}.home-welcome .lead{font-size:.95rem}.home-highlights{gap:.75rem!important;font-size:.75rem}.home-search-card{margin-top:2rem!important}.home-content-section{padding-block:2rem!important}.home-eyebrow{font-size:.65rem;letter-spacing:.1em}}
+@media(prefers-reduced-motion:reduce){.home-listing-card{transition:none}.home-listing-card:hover{transform:none}}
+.home-search-card .home-district-toggle{display:flex;align-items:center;justify-content:space-between;gap:.75rem;min-height:54px;padding:.75rem 1rem;border:1px solid #e3e5e7;border-radius:9px;background:#fafaf9;color:#25282D;font-size:.95rem;text-align:left}
+.home-district-toggle:focus-visible,.home-district-toggle[aria-expanded="true"]{outline:0;border-color:#BFA77A;box-shadow:0 0 0 .2rem #bfa77a33}
+.home-district-dropdown .dropdown-menu{padding:.5rem;margin-top:.5rem!important;border:1px solid #E9EAEC;border-radius:12px;box-shadow:0 12px 32px #25282d24;max-height:280px;overflow-y:auto;min-width:0}
+.home-district-dropdown .dropdown-item{position:relative;padding:.75rem 2rem .75rem .875rem;border-radius:7px;color:#30343B;font-size:.9rem;white-space:normal}
+.home-district-dropdown .dropdown-item:hover,.home-district-dropdown .dropdown-item:focus{background:#F5F5F4;color:#25282D}
+.home-district-dropdown .dropdown-item.active{background:#BFA77A26;color:#665332;font-weight:600}
+.home-district-dropdown .dropdown-item.active::after{content:'✓';position:absolute;right:.75rem}
+/* Final homepage composition: one spacing scale and clear responsive hierarchy. */
+.public-home{--home-ink:#25282D;--home-muted:#656A73;--home-gold:#BFA77A}
+.public-home .nhatot-header{position:relative;border-bottom:1px solid #E9EAEC}
+.public-home .nhatot-header-inner{width:100%;max-width:1320px;margin:auto;padding:1rem 1.5rem;min-height:88px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:2rem}
+.public-home .nhatot-brand{justify-self:start}.public-home .nhatot-brand img{height:46px}
+.public-home .nhatot-nav{width:auto;order:initial;display:flex;justify-content:center;gap:1.75rem;overflow:visible;padding:0}
+.public-home .nhatot-nav a{font-size:.9rem;padding:.5rem 0;white-space:nowrap}
+.public-home .nhatot-auth{justify-self:end;display:flex;align-items:center;gap:.6rem;white-space:nowrap}
+.public-home .nhatot-auth .public-auth-login,.public-home .nhatot-auth .public-auth-register{font-size:.85rem!important;padding:.65rem 1.15rem!important;min-height:42px;display:inline-flex;align-items:center;justify-content:center}
+.public-home .home-welcome{margin:0 1.5rem;border-radius:24px;padding:1rem 0;background-position:center 60%;box-shadow:inset 0 0 0 1px #ffffff12}
+.public-home .home-welcome>.container{padding:3rem 2rem!important;max-width:1240px}
+.public-home .home-welcome h1{font-size:clamp(2.75rem,4.2vw,4.1rem);font-weight:750!important;letter-spacing:-.04em;margin-bottom:1.5rem!important}
+.public-home .home-welcome .lead{max-width:540px;font-size:1rem;line-height:1.8}
+.public-home .home-eyebrow{font-size:.65rem;letter-spacing:.14em}
+.public-home .home-search-card{background:#fff;border-radius:16px;box-shadow:0 12px 40px #00000020!important;margin-top:2.5rem!important;overflow:visible}
+.home-search-card .form-label{color:#4b5158}.home-search-card .form-control{box-shadow:none}
+.home-search-card button[type="submit"]{font-weight:600;transition:background-color .2s}
+.home-popular{color:#e3e5e4;font-size:.8rem;min-height:32px}
+.home-popular .badge{font-size:.75rem;font-weight:500;background:#ffffff12;border:1px solid #ffffff40;color:#fff;padding:.55rem .8rem}
+.home-popular .badge:hover{background:#fff;color:#30343B}.home-popular .badge span{margin-left:.3rem}
+.public-home .home-content-section{max-width:1296px;padding:4rem 1.5rem!important}
+.home-content-section h2{font-size:clamp(1.65rem,2.5vw,2rem);letter-spacing:-.025em}
+.public-home .home-listing-card{background:#fff;border:1px solid #E9EAEC!important;border-radius:18px;box-shadow:0 3px 12px #25282d06!important}
+.home-listing-card .card-img-top{height:220px;width:100%;object-fit:cover;background:#eef0ea}
+.public-home .home-listing-card .card-body{padding:1.25rem;display:flex;flex-direction:column}
+.home-listing-card h3{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:3rem;margin-bottom:1rem;font-weight:650}
+.public-home .home-room-price{font-size:1.2rem;color:#6f5d3c;letter-spacing:-.02em}.home-room-price small{font-weight:400;font-size:.78rem;color:#656A73;letter-spacing:0}
+.public-home .home-listing-card p{font-size:.83rem;margin:.75rem 0 0;line-height:1.5}
+.home-room-meta{border-top:1px solid #eceeed;color:#656A73;font-size:.78rem;gap:.5rem}.home-room-detail{color:#30343B;font-weight:600}
+.home-empty{background:#fff}
+.public-home .nhatot-footer{margin-top:0;padding-top:3rem;background:#30343B;color:#fff}
+.public-home .nhatot-footer-inner{max-width:1296px;width:100%;padding:0 1.5rem;margin:auto}
+.public-home .footer-top{gap:3rem}.public-home .footer-links{gap:2rem}.public-home .footer-col h4{font-size:.85rem;margin-bottom:1.25rem}.public-home .footer-col a{font-size:.8rem;line-height:1.7}
+.public-home .footer-brand p,.public-home .footer-contact{font-size:.8rem;line-height:1.8}.public-home .footer-newsletter{border-top:1px solid #ffffff18;margin-top:2rem;padding:1.75rem 0}
+.public-home .footer-bottom{max-width:1248px;width:calc(100% - 3rem);padding:1.5rem 0;border-top:1px solid #ffffff18}.public-home .footer-legal{color:#c5c9cf}
+.public-home a:focus-visible,.public-home button:focus-visible{outline:3px solid #BFA77A;outline-offset:4px}
+@media(max-width:991px){.public-home .nhatot-header-inner{gap:1rem;grid-template-columns:1fr auto;padding:.875rem 1.25rem}.public-home .nhatot-nav{grid-column:1/-1;grid-row:2;justify-content:center;border-top:1px solid #f0f0ee;padding-top:.6rem;gap:2rem}.public-home .home-welcome{margin:0 1rem}.public-home .home-welcome>.container{padding:2.5rem 1.5rem!important}.public-home .footer-top{grid-template-columns:1fr;gap:2rem}.public-home .footer-brand{max-width:100%}.public-home .footer-links{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:575px){.public-home .nhatot-header-inner{padding:.75rem 1rem;gap:.6rem}.public-home .nhatot-brand img{height:36px}.public-home .nhatot-auth{gap:.35rem}.public-home .nhatot-auth .public-auth-login,.public-home .nhatot-auth .public-auth-register{font-size:.72rem!important;padding:.5rem .7rem!important;min-height:36px}.public-home .nhatot-nav{gap:1.5rem}.public-home .nhatot-nav a{font-size:.8rem}.public-home .home-welcome{margin:0 .75rem;border-radius:18px;background-position:62% center}.public-home .home-welcome>.container{padding:2rem 1rem!important}.public-home .home-welcome h1{font-size:2.4rem;line-height:1.15}.public-home .home-welcome .lead{font-size:.88rem}.home-highlights{line-height:1.6}.public-home .home-search-card{margin-top:1.75rem!important}.home-search-card .row{--bs-gutter-y:1.25rem}.home-popular{gap:.5rem!important;line-height:1.5}.home-popular>span{flex-basis:100%;font-size:.75rem}.public-home .home-content-section{padding:2.5rem 1rem!important}.home-content-section .row{--bs-gutter-y:1.25rem}.home-content-section .btn{font-size:.8rem}.home-listing-card .card-img-top{height:200px}.public-home .footer-top{gap:1.5rem}.public-home .footer-links{grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5rem}.public-home .footer-links .footer-col:last-child{grid-column:1/-1}.public-home .footer-newsletter{padding:1.5rem 0;margin-top:1.5rem}.public-home .footer-bottom{display:flex;flex-direction:column;align-items:center;gap:1rem;text-align:center}.public-home .footer-bottom p{margin:0}.public-home .footer-legal{font-size:.7rem}}
+@media(max-width:575px){.public-home .nhatot-header-inner{grid-template-columns:minmax(0,1fr) auto}.public-home .nhatot-brand{min-width:0;max-width:125px}.public-home .nhatot-brand img{max-width:100%;height:auto;max-height:36px}.public-home .nhatot-nav{width:100%;min-width:0;gap:1.25rem}.public-home .nhatot-auth .public-auth-register{padding:.5rem .7rem!important;font-size:.72rem!important}}
+.public-home .footer-bottom{margin-left:auto;margin-right:auto}
+/* Bootstrap header alignment: balanced columns and consistent touch targets. */
+.public-home .nhatot-header.navbar{padding:0;background:#fff;border-bottom:1px solid #e9eaec;box-shadow:0 2px 12px #25282d04}
+.public-home .nhatot-header .nhatot-header-inner{max-width:1320px;min-height:80px;padding:.875rem 1.5rem;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:1.5rem}
+.public-home .nhatot-header .nhatot-brand img{height:44px;max-width:100%}
+.public-home .nhatot-header .nhatot-nav{gap:.4rem}
+.public-home .nhatot-header .nhatot-nav a{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:44px;padding:.65rem 1.05rem;border-radius:10px;color:#656A73;font-size:.9rem;font-weight:600;opacity:1;text-decoration:none;transition:background-color .15s,color .15s}
+.public-home .nhatot-header .nhatot-nav a.active{background:#BFA77A16;color:#8a7045}
+.public-home .nhatot-header .nhatot-nav a:hover{background:#F5F5F4;color:#25282D}
+.public-home .nhatot-header .header-home-icon{width:17px;height:17px}
+.public-home .nhatot-header .nhatot-auth{gap:.65rem}
+.public-home .nhatot-header .nhatot-auth .public-auth-login,.public-home .nhatot-header .nhatot-auth .public-auth-register{min-height:44px;padding:.65rem 1.2rem!important;font-size:.85rem!important;font-weight:600;line-height:1.2;box-shadow:none}
+.public-home .nhatot-header .nhatot-auth .public-auth-login{border-color:#e5e7e9;background:#fff}
+.public-home .nhatot-header .nhatot-auth .public-auth-login:hover{border-color:#BFA77A;background:#faf8f4}
+@media(max-width:991px){.public-home .nhatot-header .nhatot-header-inner{grid-template-columns:minmax(0,1fr) auto;gap:.75rem;padding:.875rem 1.25rem}.public-home .nhatot-header .nhatot-nav{grid-column:1/-1;grid-row:2;width:100%;padding-top:.6rem;border-top:1px solid #f0f0ee;justify-content:center}}
+@media(max-width:575px){.public-home .nhatot-header .nhatot-header-inner{padding:.75rem 1rem;gap:.65rem}.public-home .nhatot-header .nhatot-brand{max-width:120px}.public-home .nhatot-header .nhatot-brand img{height:auto;max-height:36px}.public-home .nhatot-header .nhatot-auth{gap:.4rem}.public-home .nhatot-header .nhatot-auth .public-auth-login,.public-home .nhatot-header .nhatot-auth .public-auth-register{min-height:38px;padding:.55rem .8rem!important;font-size:.75rem!important}.public-home .nhatot-header .nhatot-nav{gap:.25rem}.public-home .nhatot-header .nhatot-nav a{font-size:.8rem;padding:.55rem .85rem;min-height:40px}}
+@media(prefers-reduced-motion:reduce){.public-home .nhatot-header .nhatot-nav a{transition:none}}
+/* Full-width header with equal screen-edge gutters. */
+.public-home .nhatot-header .nhatot-header-inner{width:100%;max-width:none;margin-inline:0;padding-inline:clamp(1rem,2.5vw,3rem)}
+/* Equal dimensions for the two authentication buttons. */
+.public-home .nhatot-header .nhatot-auth .public-auth-login,.public-home .nhatot-header .nhatot-auth .public-auth-register{width:108px;min-width:108px;height:44px;min-height:44px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;padding:.65rem .75rem!important}
+@media(max-width:575px){.public-home .nhatot-header .nhatot-auth .public-auth-login,.public-home .nhatot-header .nhatot-auth .public-auth-register{width:84px;min-width:84px;height:38px;min-height:38px;padding:.5rem .4rem!important}}

@@ -19,7 +19,6 @@
         var path = Context.Request.Path.Value?.ToLowerInvariant() ?? "";
         var isHome = path == "" || path == "/" || path == "/home" || path == "/home/index";
         var isTimTin = path.StartsWith("/timtin");
-        var isTinDang = path.StartsWith("/tindang");
         var isGioiThieu = path.StartsWith("/home/gioithieu") || path.StartsWith("/gioithieu");
     }
     @if (User.IsInRole("KHACH_THUE"))
@@ -28,18 +27,17 @@
     }
     else
     {
-    <header class="public-header nhatot-header">
-        <div class="nhatot-header-inner">
+    <header class="public-header nhatot-header navbar">
+        <div class="nhatot-header-inner container align-items-center">
             <a class="public-brand nhatot-brand" href="/" aria-label="NhàTốt, về trang chủ">
                 <img src="~/images/nhatot-logo.svg" alt="NhàTốt - SỐNG ĐÚNG NƠI" height="38" />
             </a>
-            <nav class="public-nav nhatot-nav" aria-label="Điều hướng chính">
+            <nav class="public-nav nhatot-nav nav align-items-center" aria-label="Điều hướng chính">
                 <a href="/" class="header-home-link @(isHome ? "active" : "")"><svg class="header-home-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 10.5 12 3l9 7.5M5.5 9v12h13V9M9.5 21v-7h5v7" /></svg>Trang Chủ</a>
                 <a href="/TimTin" class="@(isTimTin ? "active" : "")">Tìm Phòng</a>
-                <a href="/TinDang" class="@(isTinDang ? "active" : "")">Tin Đăng Cho Thuê</a>
                 <a href="/Home/GioiThieu" class="@(isGioiThieu ? "active" : "")">Giới Thiệu</a>
             </nav>
-            <div class="public-auth nhatot-auth">
+            <div class="public-auth nhatot-auth d-flex align-items-center">
                 @if (User.Identity?.IsAuthenticated == true)
                 {
                     <span class="public-user-greeting">Chào, <strong>@User.Identity.Name</strong></span>
@@ -48,8 +46,8 @@
                 }
                 else
                 {
-                    <a href="/Account/Login" class="public-auth-login">Đăng nhập</a>
-                    <a class="public-register public-auth-register" href="/Account/Register">Đăng ký</a>
+                    <a href="/Account/Login" class="public-auth-login btn btn-outline-dark rounded-pill">Đăng nhập</a>
+                    <a class="public-register public-auth-register btn btn-dark rounded-pill" href="/Account/Register">Đăng ký</a>
                 }
             </div>
         </div>
@@ -58,8 +56,6 @@
     <main class="public-main @(isHome ? "public-main-home" : "") @(isTimTin ? "public-main-timtin" : "")">
         @RenderBody()
     </main>
-    @if (!isHome)
-    {
         <footer class="public-footer nhatot-footer">
             <div class="nhatot-footer-inner">
                 <div class="footer-top">
@@ -82,16 +78,16 @@
                         <div class="footer-col">
                             <h4>Khám phá</h4>
                             <a href="/TimTin">Tìm phòng</a>
-                            <a href="/TinDang">Căn hộ cho thuê</a>
-                            <a href="/TinDang">Nhà nguyên căn</a>
-                            <a href="/TinDang">Ở ghép</a>
+                            <a href="/TimTin">Căn hộ cho thuê</a>
+                            <a href="/TimTin">Nhà nguyên căn</a>
+                            <a href="/TimTin">Ở ghép</a>
                             <a href="/TimTin">Khu vực phổ biến</a>
                         </div>
                         <div class="footer-col">
                             <h4>Dành cho chủ nhà</h4>
                             <a href="/Account/Login">Đăng tin miễn phí</a>
                             <a href="/Account/Login">Quản lý tin đăng</a>
-                            <a href="/TinDang">Bảng giá dịch vụ</a>
+                            <a href="/TimTin">Bảng giá dịch vụ</a>
                             <a href="/Home/GioiThieu">Kinh nghiệm cho thuê</a>
                             <a href="/Home/GioiThieu">Trung tâm trợ giúp</a>
                         </div>
@@ -105,15 +101,7 @@
                         </div>
                     </nav>
                 </div>
-                <div class="footer-newsletter">
-                    <div>
-                        <strong>Nhận tin thuê mới phù hợp mỗi tuần</strong>
-                        <span>Cập nhật gợi ý hữu ích, không làm phiền bạn.</span>
-                    </div>
-                    <a href="mailto:hotro@nhatot.vn?subject=Đăng%20ký%20nhận%20tin" class="footer-newsletter-link">
-                        Liên hệ qua email <span aria-hidden="true">→</span>
-                    </a>
-                </div>
+
             </div>
             <div class="footer-bottom">
                 <p>&copy; @DateTime.Now.Year NhàTốt. Bảo lưu mọi quyền.</p>
@@ -126,7 +114,7 @@
                 <span class="footer-legal">Minh bạch · An toàn · Tin cậy</span>
             </div>
         </footer>
-    }
+    @if (User.IsInRole("KHACH_THUE")) { <script src="~/js/tenant-sidebar.js" asp-append-version="true"></script> }
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

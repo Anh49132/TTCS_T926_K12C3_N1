@@ -3,8 +3,8 @@
 .tenant-header *{box-sizing:border-box}.tenant-header svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
 .tenant-header .tenant-menu,.tenant-header .tenant-account{position:relative;margin:0}
 .tenant-header summary{list-style:none;cursor:pointer}.tenant-header summary::-webkit-details-marker{display:none}
-.tenant-header .tenant-menu>summary,.tenant-header .tenant-brand-mark{display:grid;place-items:center;width:44px;height:44px;border:1px solid #30343B;border-radius:8px;background:linear-gradient(145deg,#30343B,#25282D);color:#fff;box-shadow:0 2px 5px #25282d12}
-.tenant-header .tenant-menu>summary svg{width:23px;height:23px}
+.tenant-header .tenant-menu-toggle,.tenant-header .tenant-brand-mark{display:grid;place-items:center;width:44px;height:44px;border:1px solid #30343B;border-radius:8px;background:linear-gradient(145deg,#30343B,#25282D);color:#fff;box-shadow:0 2px 5px #25282d12}
+.tenant-header .tenant-menu-toggle svg{width:23px;height:23px}
 .tenant-header .tenant-brand{display:flex;align-items:center;gap:0.875rem;margin-left:2rem;color:#25282D;text-decoration:none;white-space:nowrap}
 .tenant-header .tenant-brand-mark svg{width:21px;height:21px}.tenant-header .tenant-brand strong,.tenant-header .tenant-brand small{display:block;line-height:1.15}
 .tenant-header .tenant-brand strong{font-size:1.3125rem;font-weight:750;letter-spacing:-0.03125rem}.tenant-header .tenant-brand small{font-size:0.625rem;color:#738097;margin-top:0.125rem}
@@ -27,4 +27,14 @@
 .tenant-header a:focus-visible,.tenant-header summary:focus-visible,.tenant-header button:focus-visible{outline:3px solid #BFA77A;outline-offset:3px}
 @media(max-width:1150px){.tenant-header{gap:1.125rem}.tenant-header .tenant-brand{margin-left:0.625rem}.tenant-header .tenant-primary-nav{gap:1.125rem}.tenant-header .tenant-account-name{max-width:8.4375rem}}
 @media(max-width:1000px){.tenant-header{grid-template-columns:44px minmax(0,1fr) auto}.tenant-header .tenant-primary-nav{display:none}.tenant-header .tenant-brand{margin-left:0}}
-@media(max-width:560px){.tenant-header{grid-template-columns:40px minmax(0,1fr) auto;gap:0.625rem;padding:0.5625rem 0.75rem;min-height:4rem}.tenant-header .tenant-menu>summary,.tenant-header .tenant-brand-mark{width:38px;height:38px;border-radius:7px}.tenant-header .tenant-brand{gap:0.5rem}.tenant-header .tenant-brand strong{font-size:1.125rem}.tenant-header .tenant-brand small{display:block;font-size:0.5rem}.tenant-header-actions{gap:0.5625rem}.tenant-header .tenant-header-bell{min-width:3rem;min-height:2.375rem;padding:0.4375rem;gap:0.25rem}.tenant-header .tenant-header-bell svg{width:18px;height:18px}.tenant-header .tenant-account{padding-left:0.5625rem}.tenant-header .tenant-account-name{display:none}.tenant-header .tenant-account>summary{gap:0.25rem}.tenant-header .tenant-avatar{width:34px;height:34px;font-size:0.9375rem}.tenant-header .tenant-account-chevron{width:12px;height:12px}}
+@media(max-width:560px){.tenant-header{grid-template-columns:40px minmax(0,1fr) auto;gap:0.625rem;padding:0.5625rem 0.75rem;min-height:4rem}.tenant-header .tenant-menu-toggle,.tenant-header .tenant-brand-mark{width:38px;height:38px;border-radius:7px}.tenant-header .tenant-brand{gap:0.5rem}.tenant-header .tenant-brand strong{font-size:1.125rem}.tenant-header .tenant-brand small{display:block;font-size:0.5rem}.tenant-header-actions{gap:0.5625rem}.tenant-header .tenant-header-bell{min-width:3rem;min-height:2.375rem;padding:0.4375rem;gap:0.25rem}.tenant-header .tenant-header-bell svg{width:18px;height:18px}.tenant-header .tenant-account{padding-left:0.5625rem}.tenant-header .tenant-account-name{display:none}.tenant-header .tenant-account>summary{gap:0.25rem}.tenant-header .tenant-avatar{width:34px;height:34px;font-size:0.9375rem}.tenant-header .tenant-account-chevron{width:12px;height:12px}}
+
+/* Tenant navigation opens as a full-height modal sidebar. */
+.tenant-header .tenant-menu-toggle{padding:0;cursor:pointer}
+.tenant-header .tenant-sidebar{position:fixed;inset:0 auto 0 0;margin:0;width:min(300px,calc(100vw - 48px));max-width:none;height:100vh;height:100dvh;max-height:none;padding:0;border:0;border-right:1px solid #E9EAEC;border-radius:0;background:#fff;color:#25282D;box-shadow:8px 0 32px #25282d26;overflow-y:auto;overscroll-behavior:contain}
+.tenant-sidebar::backdrop{background:rgb(37 40 45 / 45%)}
+.tenant-header .tenant-sidebar-heading{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem;border-bottom:1px solid #E9EAEC;min-height:4.5rem}
+.tenant-header .tenant-sidebar-close{display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:8px;background:#F5F5F4;color:#25282D;font-size:1.75rem;cursor:pointer}
+.tenant-header .tenant-sidebar .tenant-menu-panel{position:static;width:100%;max-width:none;padding:0.75rem;border:0;border-radius:0;box-shadow:none}
+.tenant-header .tenant-sidebar .tenant-menu-panel a{min-height:48px;white-space:normal}
+body.tenant-sidebar-open{overflow:hidden}

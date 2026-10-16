@@ -14,68 +14,60 @@
 }
 else
 {
-    @* Giao diện NhàTốt khi chưa đăng nhập: đúng theo ảnh mẫu *@
     <div class="nhatot-landing">
-        <!-- 1. HERO SECTION CHUẨN THEO ẢNH MẪU -->
-        <section class="nhatot-hero" aria-label="Tìm kiếm phòng trọ NhàTốt">
-            <div class="nhatot-hero-overlay"></div>
-            <div class="nhatot-hero-content">
-                <h1 class="nhatot-hero-title">
-                    Tìm chốn ở phù hợp, bắt<br />đầu cuộc sống mới.
-                </h1>
-                <p class="nhatot-hero-desc">
-                    Khám phá nhà trọ, căn hộ và phòng ở minh bạch tại khu vực bạn yêu thích. Giá thật, ảnh thật, liên hệ trực tiếp.
-                </p>
-            </div>
-        </section>
-        <section class="home-room-search-section" aria-label="Tìm phòng">
-            <form asp-controller="TimTin" asp-action="Index" method="get" class="home-room-search-form">
-                <div class="listing-search-grid timtin-search-grid home-room-search-grid">
-                    <input type="hidden" name="GiaToiDa" value="" />
-                    <div class="timtin-location-field">
-                        <svg class="timtin-location-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                            <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z" />
-                            <circle cx="12" cy="10" r="2.5" />
-                        </svg>
-                        <label for="home-room-district">Khu vực</label>
-                        <select id="home-room-district" name="QuanHuyen" class="form-select" aria-label="Chọn khu vực">
-                            <option value="">Chọn khu vực</option>
-                            @foreach (var district in Model.QuanHuyens)
-                            {
-                                <option value="@district">@district</option>
-                            }
-                        </select>
+        <section class="home-welcome home-reference-hero" aria-labelledby="home-welcome-title">
+            <div class="container py-5">
+                <div class="row align-items-center">
+                    <div class="col-12 col-lg-8 col-xl-7">
+                        <div class="home-copy"><span class="home-copy-eyebrow d-inline-flex align-items-center gap-2 mb-3"><span class="home-copy-line" aria-hidden="true"></span> KHÔNG GIAN MỚI, KHỞI ĐẦU MỚI</span><h1 id="home-welcome-title" class="display-4 fw-bold mb-4">Chọn nơi bạn thích.<br /><span class="home-copy-accent">Sống theo cách bạn muốn.</span></h1>
+                        <p class="lead mb-0">Một căn phòng vừa ý, một hành trình mới bắt đầu. Khám phá không gian phù hợp với ngân sách và nhịp sống của bạn, rồi hẹn xem phòng ngay trên NhàTốt.</p></div>
                     </div>
-                    <div class="timtin-keyword-field">
-                        <label for="home-room-keyword" class="visually-hidden">Từ khóa tìm kiếm</label>
-                        <input id="home-room-keyword" name="TuKhoa" class="form-control" maxlength="200"
-                               placeholder="Nhập tên đường, phường, dự án hoặc từ khóa..." />
-                    </div>
-                    <button type="submit" class="listing-search-submit btn-nhatot-search">
-                        <svg class="timtin-search-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                            <circle cx="10.8" cy="10.8" r="6.3" />
-                            <path d="m15.5 15.5 4.2 4.2" />
-                        </svg>
-                        <span>Tìm phòng</span>
-                    </button>
                 </div>
-            </form>
-        </section>
-        <section class="container py-4" aria-labelledby="featured-listings-title">
-            <h2 id="featured-listings-title">Tin đăng mới nhất</h2>
-            <div class="row g-3">
-            @foreach (var item in Model.TinMoiNhat) {
-                <div class="col-12 col-md-6 col-lg-4"><a class="card h-100 text-decoration-none" asp-controller="TinDang" asp-action="ChiTiet" asp-route-id="@item.Id">
-                    <img class="card-img-top" src="@(item.AnhDaiDien ?? Url.Content("~/room-placeholder.svg"))" alt="Phòng @item.TieuDe" loading="lazy" style="height:180px;object-fit:cover" />
-                    <div class="card-body"><h3 class="h5">@item.TieuDe</h3><strong>@item.GiaThue.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")) đ/tháng</strong><p>@(item.QuanHuyen ?? item.DiaChi ?? item.TenToaNha)</p><span>@item.DienTich.ToString("0.#") m² · @item.SoNguoiToiDa người</span></div>
-                </a></div>
-            }
-            @if(Model.TinMoiNhat.Count == 0){<p>Chưa có tin đăng đang hiển thị.</p>}
+                <form asp-controller="TimTin" asp-action="Index" method="get" class="home-search-card card border-0 shadow-lg mt-5" aria-label="Tìm phòng">
+                    <div class="card-body p-3 p-lg-4">
+                        <div class="row g-2 align-items-center">
+                            <div class="col-12 col-md-3">
+                                <label for="home-room-district" class="form-label fw-semibold home-location-label">Khu vực</label>
+                                <div class="dropdown home-district-dropdown">
+                                    <input type="hidden" name="QuanHuyen" value="" />
+                                    <button id="home-room-district" class="home-district-toggle dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false"><span data-district-label>Tất cả khu vực</span></button>
+                                    <ul class="dropdown-menu w-100" aria-labelledby="home-room-district">
+                                        <li><button type="button" class="dropdown-item active" data-district="" aria-pressed="true">Tất cả khu vực</button></li>
+                                        @foreach (var district in Model.QuanHuyens) { <li><button type="button" class="dropdown-item" data-district="@district" aria-pressed="false">@district</button></li> }
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6 col-lg-7 home-keyword-column">
+                                <label for="home-room-keyword" class="form-label home-keyword-label">Bạn đang tìm phòng ở đâu?</label>
+                                <input id="home-room-keyword" name="TuKhoa" class="form-control form-control-lg" maxlength="200" placeholder="Nhập tên đường, phường hoặc từ khóa..." />
+                            </div>
+                            <div class="col-12 col-md-3 col-lg-2"><button type="submit" class="btn btn-dark btn-lg w-100 d-flex align-items-center justify-content-center gap-2"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg>Tìm phòng</button></div>
+                        </div>
+                    </div>
+                </form>
+
             </div>
         </section>
-        <section class="container py-4" aria-labelledby="home-values-title">
-            <h2 id="home-values-title">Tại sao nên chọn NhàTốt?</h2>
-            <div class="row g-3"><div class="col-12 col-md-4"><h3 class="h5">Giá thật minh bạch</h3><p>Xem giá thuê và các khoản dịch vụ trước khi gửi yêu cầu.</p></div><div class="col-12 col-md-4"><h3 class="h5">Ảnh thật xác thực</h3><p>Xem ảnh phòng do bên cho thuê cung cấp.</p></div><div class="col-12 col-md-4"><h3 class="h5">Liên hệ trực tiếp</h3><p>Gửi yêu cầu thuê hoặc hẹn xem phòng với bên quản lý.</p></div></div>
+        <section class="container py-5 home-content-section" aria-labelledby="featured-listings-title">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4"><div><span class="home-section-label">KHÁM PHÁ KHÔNG GIAN MỚI</span><h2 id="featured-listings-title" class="h2 fw-bold mt-2 mb-0">Phòng mới dành cho bạn</h2></div><a class="btn btn-outline-dark rounded-pill px-4" href="/TimTin">Xem tất cả →</a></div>
+            <div class="row g-4">
+            @foreach (var item in Model.TinMoiNhat) {
+                <div class="col-12 col-md-6 col-lg-4"><a class="card h-100 text-decoration-none home-listing-card border-0 shadow-sm" asp-controller="TinDang" asp-action="ChiTiet" asp-route-id="@item.Id">
+                    <img class="card-img-top" src="@(item.AnhDaiDien ?? Url.Content("~/room-placeholder.svg"))" alt="Phòng @item.TieuDe" loading="lazy" width="640" height="400" />
+                    <div class="card-body"><h3 class="h5">@item.TieuDe</h3><strong class="home-room-price">@item.GiaThue.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")) đ <small>/ tháng</small></strong><p>@(item.QuanHuyen ?? item.DiaChi ?? item.TenToaNha)</p><div class="home-room-meta d-flex align-items-center justify-content-between mt-3 pt-3"><span>@item.DienTich.ToString("0.#") m² <span aria-hidden="true">·</span> @item.SoNguoiToiDa người</span><span class="home-room-detail">Xem phòng <span aria-hidden="true">↗</span></span></div></div>                </a></div>
+            }
+            @if(Model.TinMoiNhat.Count == 0){<div class="col-12"><div class="home-empty text-center border rounded-3 p-5"><h3 class="h5">Chưa có phòng đang cho thuê</h3><p class="text-muted mb-3">Bạn có thể khám phá khu vực và quay lại xem tin mới sau.</p><a href="/TimTin" class="btn btn-outline-dark">Khám phá khu vực</a></div></div>}
+            </div>
         </section>
     </div>
+}
+
+@section Styles {
+    @if (!signedIn) { <link rel="stylesheet" href="~/css/home-landing.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/home-reference-hero.css" asp-append-version="true" /> }
+}
+@section Scripts {
+    @if (!signedIn) {
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="~/js/home-district.js" asp-append-version="true"></script>
+    }
 }

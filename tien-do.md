@@ -1,3 +1,76 @@
+### 17/10/2026 – Căn đều hai nút đăng nhập/đăng ký
+- Đặt cùng kích thước 108×44px desktop và 84×38px mobile, căn giữa chữ bằng inline-flex. Edge 360/768/1440px không tràn ngang; demo CSS đã cập nhật.
+
+### 17/10/2026 – Giảm khoảng cách mục khu vực
+- Thu padding danh sách và từng mục dropdown khu vực, chiều cao mục khoảng 34px. Edge desktop/mobile: chọn, Escape và gửi bộ lọc đạt.
+
+### 17/10/2026 – Thu gọn chiều cao thanh tìm kiếm
+- Giảm padding khung còn 12px, ô nhập và nút desktop 60px thay cho 74px; nút mobile 48px. Giữ nhãn và chức năng.
+- Edge 360/768/1440px không tràn ngang; dropdown/tìm kiếm đạt. CSS có hiệu lực trên demo đang chạy.
+
+### 17/10/2026 – Giãn header về hai mép màn hình
+- Bỏ giới hạn 1320px của header trang chủ, dùng chiều rộng 100% và khoảng đệm hai bên bằng nhau; logo trái, menu giữa, tài khoản phải.
+- Edge 360/768/1440px không tràn ngang; CSS phục vụ HTTP 200. Không cần build lại cho thay đổi CSS.
+
+### 17/10/2026 – Bỏ khối nhận tin trong footer
+- Gỡ lời mời nhận tin tuần và nút liên hệ email theo ảnh; giữ liên hệ, các nhóm liên kết và bản quyền. Build/HTTP đạt, demo đã chạy lại.
+
+### 17/10/2026 – Căn chỉnh thanh header trang chủ bằng Bootstrap
+- Bootstrap navbar/container/nav/button; căn ba nhóm logo/menu/tài khoản, đồng bộ kích thước nút và nền active nhẹ. Mobile hai hàng gọn. Không đổi nội dung banner, thẻ phòng hay footer.
+- Build đạt; Edge 360/768/1440px không tràn ngang, đã xem ảnh header desktop; tìm kiếm vẫn hoạt động. Demo đã chạy lại.
+
+### 17/10/2026 – Đổi nội dung tiêu đề banner
+- Nội dung mới: Chọn nơi bạn thích. Sống theo cách bạn muốn. Thêm dòng dẫn ngắn, nhấn champagne và căn kiểu chữ/khoảng cách bằng Bootstrap; chỉ sửa khối tiêu đề/mô tả, giữ form và phần dưới.
+- Build đạt; Edge 360/768/1440px không tràn ngang, tìm kiếm hoạt động; đã xem ảnh data/hero-refined-1440.png. Demo đã chạy lại.
+
+### 17/10/2026 – Khôi phục phiên bản theo ảnh 02:52
+- Hoàn tác lần làm mới thẻ phòng gần nhất; khôi phục banner và form hai ô theo ảnh, chiều cao desktop 650px. Giữ dropdown, footer và trạng thái không có lối tắt khu vực.
+- Build/HTTP đạt, demo đã chạy lại.
+
+### 17/10/2026 – Làm mới đồng bộ banner, tìm kiếm và thẻ phòng Bootstrap
+- Banner giảm chiều cao, form nhãn rõ; thẻ phòng gọn có nhãn khu vực trên ảnh, địa chỉ, giá thuê và metadata. Grid 1/2/3 cột theo màn hình; giữ footer và không thêm lại lối tắt khu vực.
+- Build đạt; Edge 360/768/1440px không tràn ngang, chọn khu vực/từ khóa và tìm kiếm đạt. Ảnh QA data/home-refresh-360.png, data/home-refresh-768.png, data/home-refresh-1440.png. Demo đã chạy lại.
+
+### 17/10/2026 – Tinh chỉnh riêng banner/tìm kiếm Bootstrap
+- Cân đối chữ và nền ảnh, form có hai ô cùng chiều cao/nhãn, nút và trạng thái focus/hover rõ hơn. CSS giới hạn trong home-reference-hero; không sửa thẻ phòng/footer, không đưa lại lối tắt khu vực.
+- Build đạt; Edge 360/768/1440px không tràn ngang; dropdown và gửi khu vực/từ khóa đạt. Đã xem ảnh data/hero-refined-360.png và data/hero-refined-1440.png. Demo đã chạy lại.
+
+### 17/10/2026 – Bỏ riêng dòng Khám phá khu vực
+- Gỡ nhãn và các nút lối tắt theo ảnh; giữ bộ chọn khu vực trong tìm kiếm, danh sách phòng và footer. Build/HTTP đạt; demo đã chạy lại.
+
+### 17/10/2026 – Banner trang chủ trở về bố cục ảnh tham chiếu
+- Chỉ chỉnh khối đầu: ảnh nền tràn ngang, tiêu đề/mô tả gốc, thanh tìm kiếm Bootstrap gần chân ảnh. Giữ dropdown Bootstrap và lối tắt khu vực ở ngay dưới banner. Đối chiếu mã danh sách phòng không đổi; footer giữ nguyên.
+- Build đạt; Edge 360/768/1440px không tràn ngang, dropdown/tìm kiếm/liên kết hoạt động. Đã xem ảnh data/home-final-1440.png; demo chạy tại localhost:5247.
+
+### 17/10/2026 – Khôi phục giao diện trước lần xóa vừa rồi
+- Khôi phục lối tắt khu vực và danh sách thẻ phòng theo yêu cầu; giữ nguyên các thay đổi giao diện trước đó. Build/HTTP đạt, demo đã chạy lại.
+
+### 17/10/2026 – Bỏ lối tắt khu vực và danh sách thẻ phòng trang chủ
+- Gỡ hai phần theo yêu cầu; giữ banner, tìm kiếm và footer. Build/HTTP đạt, demo đã chạy lại.
+
+### 17/10/2026 – Hoàn thiện trang chủ Bootstrap lần hai
+- Thống nhất khoảng cách, header responsive hai hàng trên mobile, banner bo góc, form Bootstrap, khu vực phổ biến lấy từ dữ liệu thật, thẻ phòng có giá/diện tích/sức chứa/liên kết và trạng thái rỗng. Căn footer và cải thiện độ tương phản. Giữ phần lợi ích đã gỡ, không đổi dashboard sau đăng nhập hay dữ liệu.
+- Build đạt (cảnh báo NU1900/ImageSharp/CS8601 có sẵn). Edge 360px/768px/1440px không tràn ngang; dropdown, tìm kiếm hai tham số, lối tắt khu vực và chi tiết phòng đạt. Đã xem ảnh data/home-final-360.png và data/home-final-1440.png; ảnh tablet data/home-final-768.png. Demo đã chạy lại tại localhost:5247. Chưa thử thiết bị cảm ứng vật lý.
+### 17/10/2026 – Dropdown khu vực Bootstrap trên trang chủ
+- Thay select native bằng Bootstrap dropdown, bo góc, nền chọn champagne và dấu tích; giữ tham số QuanHuyen qua hidden input, hỗ trợ bàn phím Bootstrap.
+- Build và JS syntax đạt; Edge 360px/1440px chọn Quận 1, đóng bằng Escape, gửi lọc đúng và không tràn ngang. Ảnh data/district-360.png và data/district-1440.png. Demo đã chạy lại.
+
+### 17/10/2026 – Bỏ mục Tại sao nên chọn NhàTốt?
+- Gỡ khối ba lợi ích và CSS riêng khỏi trang chủ theo yêu cầu. Build/HTTP đạt, footer vẫn hiển thị; demo đã chạy lại.
+
+### 17/10/2026 – Hiển thị footer ở cuối trang chủ công khai
+- Tái sử dụng footer hiện có đúng nội dung mẫu: thông tin NhàTốt, liên hệ, ba nhóm liên kết, email và bản quyền. Gỡ điều kiện ẩn footer ở trang chủ; không thêm đăng ký email giả.
+- Build đạt; Edge 1440px/360px footer hiển thị, không tràn ngang; ảnh data/home-footer-1440.png và data/home-footer-360.png. Demo đã chạy lại tại localhost:5247.
+### 17/10/2026 – Làm mới trang chủ công khai bằng Bootstrap
+- Dùng Bootstrap container/row/col, card, form-select/form-control và button cho hero, tìm phòng và danh sách phòng. Tông than/champagne; banner gọn, form có nhãn rõ, thẻ phòng responsive. Bỏ khóa chiều cao/cuộn trang chủ để nội dung bên dưới truy cập được; CSS chỉ tải ở trang chủ chưa đăng nhập.
+- Build đạt; Edge 1440px/360px không tràn ngang, đã xem ảnh data/home-bootstrap-1440.png và data/home-bootstrap-360.png. Form chuyển đúng khu vực/từ khóa sang TimTin. Demo đang chạy tại localhost:5247. Không đổi schema hay dữ liệu.
+### 17/10/2026 – Bỏ trang danh sách tin cho thuê trùng Tìm phòng
+- Gỡ mục Tin đăng cho thuê khỏi header công khai và header/sidebar khách thuê. Liên kết tìm tin ở giới thiệu, yêu cầu và footer chuyển sang TimTin. URL TinDang/Index chuyển hướng TimTin, giữ query string; không đổi quản lý, chi tiết tin hay dữ liệu.
+- Bổ sung script sidebar cho layout công khai khi khách thuê đăng nhập.
+- Build đạt; HTTP xác minh /TinDang?SapXep=gia-tang chuyển sang /TimTin?SapXep=gia-tang (200), chi tiết tin 1 trả 200, menu công khai không còn liên kết trang cũ. Demo đang chạy tại localhost:5247.
+### 17/10/2026 – Menu khách thuê dạng sidebar ẩn
+- Đổi menu nổi thành sidebar modal sát trái, cao toàn màn hình; nút ba gạch mở, nút đóng/Escape/bấm nền/chọn liên kết đóng. Giữ nguyên các mục và điều kiện phân quyền; hỗ trợ focus bàn phím, aria-expanded và khóa cuộn nền.
+- Build đạt, JS syntax đạt; Edge 360px/1440px kiểm tra trạng thái ẩn, mở và đóng bằng nút/Escape/nền đạt. Ảnh QA: data/tenant-sidebar-360.png và data/tenant-sidebar-1440.png. Trang tổng quan khách có phần hóa đơn tràn ngang sẵn ở 360px (scrollWidth 450); ngoài phạm vi sửa menu. Demo đã khởi động lại tại localhost:5247.
 ### 16/10/2026 – Sửa chuông thông báo quản lý dẫn tới trang giữ chỗ
 - Bổ sung hộp xổ ngay tại chuông giống các vai trò khác: tối đa 6 báo hỏng trong phạm vi quyền, liên kết chi tiết/xem tất cả, đóng bằng Escape hoặc bấm ngoài, tự làm mới 30 giây. Số trên chuông là số cần tiếp nhận (có nhãn trợ năng), không giả lập số chưa đọc; không đổi schema. Endpoint tóm tắt no-store, có kiểm thử chặn chéo vai trò và thu hồi quyền. Build/test liên quan đạt; Edge desktop/360px mở/đóng hộp đạt, đã xem ảnh `data/repair-upgrade-qa/browser-check-eca68ce3`. Server QA đã dừng.
 - Chuông quản lý mở `/ThongBaoQuanLy`, đường dẫn cũ chuyển hướng về đây. Trang hiển thị báo hỏng thực tế trong phạm vi tòa được giao, tab cần tiếp nhận/Gấp quá 24 giờ, thời gian gửi/cập nhật và liên kết chi tiết xử lý. Kiểm tra quyền BAO_HONG ở backend và khi hiện chuông; không cấp TAI_CHINH cho quản lý.

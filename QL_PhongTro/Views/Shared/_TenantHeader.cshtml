@@ -17,12 +17,13 @@
     }
 }
 <header class="tenant-header">
-    <details class="tenant-menu">
-        <summary aria-label="Mở menu"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14M5 12h14M5 18h14" /></svg></summary>
+    <div class="tenant-menu">
+        <button type="button" class="tenant-menu-toggle" aria-label="Mở menu" aria-controls="tenant-sidebar" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14M5 12h14M5 18h14" /></svg></button>
+        <dialog id="tenant-sidebar" class="tenant-sidebar" aria-labelledby="tenant-sidebar-title">
+        <div class="tenant-sidebar-heading"><strong id="tenant-sidebar-title">Menu khách thuê</strong><button type="button" class="tenant-sidebar-close" aria-label="Đóng menu">×</button></div>
         <nav class="tenant-menu-panel" aria-label="Menu khách thuê">
             <a class="@Active("Home")" asp-controller="Home" asp-action="Index">⌂ <span>Tổng quan</span></a>
             <a class="@Active("TimTin")" asp-controller="TimTin" asp-action="Index">⌕ <span>Tìm phòng</span></a>
-            <a class="@Active("TinDang")" asp-controller="TinDang" asp-action="Index">▤ <span>Tin đăng cho thuê</span></a>
             <a class="@Active("HopDongCuaToi")" asp-controller="HopDongCuaToi" asp-action="Index">▧ <span>Hợp đồng của tôi</span></a>
             @if (showRepairs) {
                 <a class="@Active("BaoHong")" asp-controller="BaoHong" asp-action="Index"><span aria-hidden="true">⚒</span> <span>Báo hỏng của tôi</span></a>
@@ -32,7 +33,8 @@
             @if (showNotifications) { <a asp-controller="ThongBao" asp-action="DanhSach">Hóa đơn của tôi</a> }
             @if (showNotifications) { <a asp-controller="ThongBao" asp-action="Index">Thông báo hóa đơn (@unread)</a> }
         </nav>
-    </details>
+        </dialog>
+    </div>
     <a class="tenant-brand" asp-controller="Home" asp-action="Index" aria-label="NhàTốt, về trang chủ">
         <span class="tenant-brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m4 10 8-7 8 7v11h-6v-7h-4v7H4Z" /></svg></span>
         <span><strong>NhàTốt</strong><small>Sống đúng nơi</small></span>
@@ -40,7 +42,6 @@
     <nav class="tenant-primary-nav" aria-label="Điều hướng chính">
         <a class="@Active("Home")" asp-controller="Home" asp-action="Index">Trang chủ</a>
         <a class="@Active("TimTin")" asp-controller="TimTin" asp-action="Index">Tìm phòng</a>
-        <a class="@Active("TinDang")" asp-controller="TinDang" asp-action="Index">Tin đăng cho thuê</a>
         @if (showNotifications) { <a class="@Active("ThongBao")" asp-controller="ThongBao" asp-action="DanhSach">Hóa đơn</a> }
         <a class="@(controller == "Home" && action == "GioiThieu" ? "is-active" : "")" asp-controller="Home" asp-action="GioiThieu">Giới thiệu</a>
     </nav>
