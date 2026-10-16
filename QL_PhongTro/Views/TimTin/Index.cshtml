@@ -10,10 +10,8 @@
 }
 <div class="timtin-page">
     <div class="timtin-top nhatot-container">
-        <nav class="listing-breadcrumb" aria-label="Đường dẫn">
-            <a href="/" class="breadcrumb-home"><svg class="breadcrumb-home-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M3 10.5 12 3l9 7.5M5.5 9v12h13V9M9.5 21v-7h5v7" /></svg>Trang chủ</a><span aria-hidden="true">›</span><span>Tìm phòng</span>
-        </nav>
-        <h1>Phòng trọ/ Căn hộ</h1>
+
+        <div class="mb-4"><h1 class="fw-bold mb-2">Tìm căn phòng phù hợp với bạn</h1><p class="timtin-intro mb-0">Khám phá phòng trọ và căn hộ theo khu vực, ngân sách và nhu cầu của bạn.</p></div>
 
         <form asp-controller="TimTin" asp-action="Index" method="get" class="listing-search-form timtin-search-form" id="tim-tin-form">
             <div class="listing-search-grid timtin-search-grid">
@@ -22,25 +20,21 @@
                 <input type="hidden" name="DienTichToiDa" value="@Model.DienTichToiDa?.ToString(CultureInfo.InvariantCulture)" />
                 <input type="hidden" name="SoNguoiToiDa" value="@Model.SoNguoiToiDa" />
                 <input id="timtin-sort-value" type="hidden" name="SapXep" value="@Model.SapXep" />
-                <div class="timtin-location-field">
-                    <svg class="timtin-location-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                        <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z" />
-                        <circle cx="12" cy="10" r="2.5" />
-                    </svg>
-                    <label asp-for="QuanHuyen">Khu vực</label>
-                    <select asp-for="QuanHuyen" class="form-select" aria-label="Chọn quận huyện">
-                        <option value="">Chọn khu vực</option>
-                        @foreach (var district in Model.QuanHuyens)
-                        {
-                            <option value="@district">@district</option>
+                <div class="timtin-location-field home-district-dropdown dropdown">
+                    <label for="search-district-toggle">Khu vực</label>
+                    <input type="hidden" name="QuanHuyen" value="@Model.QuanHuyen" />
+                    <button id="search-district-toggle" class="home-district-toggle dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false"><span data-district-label>@(string.IsNullOrWhiteSpace(Model.QuanHuyen) ? "Tất cả khu vực" : Model.QuanHuyen)</span></button>
+                    <ul class="dropdown-menu w-100" aria-labelledby="search-district-toggle">
+                        <li><button type="button" class="dropdown-item @(string.IsNullOrWhiteSpace(Model.QuanHuyen) ? "active" : "")" data-district="" aria-pressed="@(string.IsNullOrWhiteSpace(Model.QuanHuyen) ? "true" : "false")">Tất cả khu vực</button></li>
+                        @foreach (var district in Model.QuanHuyens) {
+                            <li><button type="button" class="dropdown-item @(Model.QuanHuyen == district ? "active" : "")" data-district="@district" aria-pressed="@(Model.QuanHuyen == district ? "true" : "false")">@district</button></li>
                         }
-                    </select>
+                    </ul>
+                </div>                <div class="timtin-keyword-field">
+                    <label asp-for="TuKhoa" class="timtin-keyword-label">Bạn đang tìm phòng ở đâu?</label>
+                    <input asp-for="TuKhoa" class="form-control" maxlength="200" placeholder="Nhập tên đường, phường hoặc từ khóa..." />
                 </div>
-                <div class="timtin-keyword-field">
-                    <label asp-for="TuKhoa" class="visually-hidden">Từ khóa tìm kiếm</label>
-                    <input asp-for="TuKhoa" class="form-control" maxlength="200" placeholder="Nhập tên đường, phường, dự án hoặc từ khóa..." />
-                </div>
-                <button type="submit" class="listing-search-submit btn-nhatot-search">
+                <button type="submit" class="listing-search-submit btn-nhatot-search btn btn-dark">
                     <svg class="timtin-search-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
                         <circle cx="10.8" cy="10.8" r="6.3" />
                         <path d="m15.5 15.5 4.2 4.2" />
@@ -76,7 +70,7 @@
                         <option value="20000000" selected="@(Model.GiaToiDa == 20000000)">Dưới 20 triệu</option>
                     </select>
                 </label>
-                <button type="button" class="timtin-advanced-toggle" aria-expanded="false" aria-controls="timtin-sidebar">
+                <button type="button" class="timtin-advanced-toggle btn btn-outline-secondary" aria-expanded="false" aria-controls="timtin-sidebar">
                     <span aria-hidden="true">☷</span> Bộ lọc nâng cao
                 </button>
             </div>
@@ -142,7 +136,7 @@
                     <input type="hidden" name="SapXep" value="@Model.SapXep" />
                     <div class="timtin-sidebar-title"><strong>☷ &nbsp;Bộ lọc</strong><a asp-action="Index">Đặt lại</a></div>
                     <section class="timtin-filter-group">
-                        <h2>Khoảng giá <span>⌃</span></h2>
+                        <h2>Khoảng giá <small>đ / tháng</small></h2>
                         <div class="timtin-range-inputs">
                             <label><span class="visually-hidden">Giá tối thiểu</span><input asp-for="GiaToiThieu" type="number" min="0" step="500000" class="form-control" placeholder="Từ" /></label>
                             <label><span class="visually-hidden">Giá tối đa</span><input asp-for="GiaToiDa" type="number" min="0" step="500000" class="form-control" placeholder="Đến" /></label>
@@ -151,7 +145,7 @@
                         <span asp-validation-for="GiaToiDa" class="text-danger"></span>
                     </section>
                     <section class="timtin-filter-group">
-                        <h2>Diện tích (m²) <span>⌃</span></h2>
+                        <h2>Diện tích (m²)</h2>
                         <div class="timtin-range-inputs">
                             <label><span class="visually-hidden">Diện tích tối thiểu</span><input asp-for="DienTichToiThieu" type="number" min="0" step="1" class="form-control" placeholder="Từ" /></label>
                             <label><span class="visually-hidden">Diện tích tối đa</span><input asp-for="DienTichToiDa" type="number" min="0" step="1" class="form-control" placeholder="Đến" /></label>
@@ -160,17 +154,20 @@
                         <span asp-validation-for="DienTichToiDa" class="text-danger"></span>
                     </section>
                     <section class="timtin-filter-group">
-                        <h2>Số người ở <span>⌃</span></h2>
-                        <select asp-for="SoNguoiToiDa" class="form-select">
-                            <option value="">Tất cả sức chứa</option>
-                            @foreach (var capacity in Model.SoNguoiOptions)
-                            {
-                                <option value="@capacity">@capacity người</option>
-                            }
-                        </select>
+                        <h2>Số người ở</h2>
+                        <div class="dropdown capacity-dropdown">
+                            <input type="hidden" name="SoNguoiToiDa" value="@Model.SoNguoiToiDa" />
+                            <button type="button" id="capacity-toggle" class="form-select text-start" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Số người ở"><span data-capacity-label>@(Model.SoNguoiToiDa.HasValue ? $"{Model.SoNguoiToiDa} người" : "Tất cả sức chứa")</span></button>
+                            <ul class="dropdown-menu w-100" aria-labelledby="capacity-toggle">
+                                <li><button type="button" class="dropdown-item @(!Model.SoNguoiToiDa.HasValue ? "active" : "")" data-capacity="" aria-pressed="@(!Model.SoNguoiToiDa.HasValue ? "true" : "false")">Tất cả sức chứa</button></li>
+                                @foreach (var capacity in Model.SoNguoiOptions) {
+                                    <li><button type="button" class="dropdown-item @(Model.SoNguoiToiDa == capacity ? "active" : "")" data-capacity="@capacity" aria-pressed="@(Model.SoNguoiToiDa == capacity ? "true" : "false")">@capacity người</button></li>
+                                }
+                            </ul>
+                        </div>
                         <span asp-validation-for="SoNguoiToiDa" class="text-danger"></span>
                     </section>
-                    <button type="submit" class="timtin-filter-apply">Áp dụng bộ lọc</button>
+                    <button type="submit" class="timtin-filter-apply btn btn-dark w-100">Áp dụng bộ lọc</button>
                 </form>
             </aside>
             <div class="timtin-results-section">
@@ -222,9 +219,9 @@
                             <a asp-controller="TinDang" asp-action="ChiTiet" asp-route-id="@tin.Id" class="card-image-wrap">
                                 <img src="@(tin.AnhDaiDien ?? Url.Content("~/room-placeholder.svg"))" alt="Ảnh đại diện: @tin.TieuDe" loading="lazy" />
                                 <span class="timtin-image-tag">Phòng trống</span>
-                                <span class="timtin-favorite" aria-hidden="true">♡</span>
+
                             </a>
-                            <div class="card-content">
+                            <div class="card-content card-body">
                                 <div class="timtin-card-heading">
                                     <span class="timtin-card-type">PHÒNG TRỌ</span>
                                     <span class="timtin-card-price">@tin.GiaThue.ToString("N0", culture)<small> đ/tháng</small></span>
@@ -283,5 +280,12 @@
     }
 </div>
 @section Scripts {
+    @if (User.Identity?.IsAuthenticated != true) { <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> }
+    <script src="~/js/home-district.js" asp-append-version="true"></script>
+    <script src="~/js/search-capacity.js" asp-append-version="true"></script>
     <script src="~/js/tim-tin.js" asp-append-version="true"></script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/room-search-bootstrap.css" asp-append-version="true" />
 }

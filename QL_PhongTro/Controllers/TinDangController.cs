@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,41 +17,11 @@ public partial class TinDangController(AppDbContext db, YeuCauThueService reques
     private int AccountId => int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : 0;
 
     [HttpGet]
-    public async Task<IActionResult> Index(string? sapXep = "moi-nhat", int trang = 1)
+    public IActionResult Index()
     {
-        await expiration.ExpireAsync();
-        sapXep = sapXep is "gia-tang" or "gia-giam" ? sapXep : "moi-nhat";
-        const int pageSize = 12;
-        var query = from post in requests.PublicListings()
-                    join room in db.PhongTros.AsNoTracking() on post.PhongId equals room.Id
-                    select new { Post = post, room.GiaThue };
-        var total = await query.CountAsync();
-        var pages = Math.Max(1, (int)Math.Ceiling(total / (double)pageSize));
-        trang = Math.Clamp(trang, 1, pages);
-        var ordered = sapXep switch
-        {
-            "gia-tang" => query.OrderBy(x => x.GiaThue).ThenByDescending(x => x.Post.Id),
-            "gia-giam" => query.OrderByDescending(x => x.GiaThue).ThenByDescending(x => x.Post.Id),
-            _ => query.OrderByDescending(x => x.Post.NgayDang).ThenByDescending(x => x.Post.Id)
-        };
-        var listings = await ordered.Skip((trang - 1) * pageSize).Take(pageSize)
-            .Select(x => new TinDangDanhSachViewModel
-            {
-                Id = x.Post.Id,
-                TieuDe = x.Post.TieuDe,
-                GiaThue = x.GiaThue,
-                AnhDaiDien = db.AnhPhongs.Where(image => image.PhongId == x.Post.PhongId)
-                    .OrderBy(image => image.ThuTu)
-                    .Select(image => image.DuongDanAnhNho)
-                    .FirstOrDefault()
-            }).ToListAsync();
-        ViewData["SapXep"] = sapXep;
-        ViewData["Trang"] = trang;
-        ViewData["TongTrang"] = pages;
-        ViewData["TongTin"] = total;
-        return View(listings);
+        var target = Url.Action("Index", "TimTin") ?? "/TimTin";
+        return Redirect(target + Request.QueryString);
     }
-
     [HttpGet]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
     public async Task<IActionResult> ChiTiet(int id)

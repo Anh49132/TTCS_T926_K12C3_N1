@@ -10,14 +10,14 @@
     var isHistorical = !Model.TinConCongKhai && !isDaChoThue;
 }
 <article class="ld-page" data-listing-id="@detail.Id" aria-labelledby="listing-title">
-    <nav class="ld-breadcrumb" aria-label="Đường dẫn"><a asp-controller="Home" asp-action="Index">Trang chủ</a><span>/</span><a asp-action="Index">Tin đăng cho thuê</a><span>/</span><span aria-current="page">Chi tiết tin</span></nav>
+
     @if(isDaChoThue){<div class="alert alert-warning" role="status">Tin đăng này đã cho thuê, không còn hiển thị công khai.</div>}
     else if(isHistorical){<div class="alert alert-warning" role="status">Tin đăng này không còn hiển thị công khai. Bạn đang xem lại thông tin gắn với yêu cầu đã gửi.</div>}
     <div class="ld-columns">
         <div class="ld-main">
             <header class="ld-heading">
                 <div><p class="ld-eyebrow">@(Model.TinConCongKhai ? "PHÒNG ĐANG CHO THUÊ" : isDaChoThue ? "PHÒNG ĐÃ CHO THUÊ" : "THÔNG TIN TIN ĐĂNG")</p><h1 id="listing-title">@detail.TieuDe</h1><p class="ld-address"><partial name="_ListingIcon" model='@("pin")' />@location</p></div>
-                <div class="ld-heading-actions"><button type="button" data-save-listing aria-pressed="false"><partial name="_ListingIcon" model='@("heart")' /><span>Lưu tin</span></button><button type="button" data-share-listing><partial name="_ListingIcon" model='@("share")' />Chia sẻ</button></div>
+                <div class="ld-heading-actions d-flex flex-wrap gap-2"><button type="button" class="btn btn-outline-secondary" data-save-listing aria-pressed="false"><partial name="_ListingIcon" model='@("heart")' /><span>Lưu tin</span></button><button type="button" class="btn btn-outline-secondary" data-share-listing><partial name="_ListingIcon" model='@("share")' />Chia sẻ</button></div>
             </header>
             <p class="ld-action-status" data-action-status role="status"></p>
             @if(detail.Anh.Count>0){
@@ -38,7 +38,7 @@
             <section class="ld-card" aria-labelledby="amenities-title"><h2 id="amenities-title"><partial name="_ListingIcon" model='@("home")' />Tiện nghi</h2>@if(detail.TienNghi.Count>0){<ul class="ld-amenities">@foreach(var amenity in detail.TienNghi){<li><partial name="_ListingIcon" model='@("home")' />@amenity</li>}</ul>}else{<p class="ld-muted">Tiện nghi chưa được cập nhật. Hãy trao đổi với chủ nhà khi xem phòng.</p>}</section>
             <section class="ld-card ld-services" aria-labelledby="services-title"><h2 id="services-title"><partial name="_ListingIcon" model='@("cost")' />Dịch vụ &amp; chi phí</h2>
                 @if(detail.DichVuTheoSuDung.Count==0 && detail.KhoanCoDinh.Count==0){<div class="ld-service-note"><span aria-hidden="true">i</span><div><strong data-testid="no-services">Tin này chưa có bảng giá dịch vụ.</strong><p>Hãy hỏi chủ nhà về điện, nước và các khoản phí trước khi gửi yêu cầu.</p></div></div><span class="visually-hidden" data-testid="no-usage-services">Chưa có đơn giá dịch vụ theo mức sử dụng.</span><span class="visually-hidden" data-testid="no-fixed-services">Tin này chưa có khoản phí cố định hàng tháng.</span>}
-                else{<div class="ld-table-wrap"><table class="ld-service-table"><caption class="visually-hidden">Bảng giá dịch vụ của phòng</caption><thead><tr><th scope="col">Dịch vụ</th><th scope="col">Cách tính</th><th scope="col">Đơn giá</th></tr></thead><tbody>@foreach(var service in detail.DichVuTheoSuDung){<tr data-testid="usage-service"><th scope="row">@service.TenDichVu</th><td>@QL_PhongTro.Models.CachTinhDichVu.Ten(service.CachTinh) · @service.DonViTinh</td><td>@service.DonGia.ToString("N0",culture) đ</td></tr>}@foreach(var service in detail.KhoanCoDinh){<tr data-testid="fixed-service"><th scope="row">@service.TenDichVu</th><td>@QL_PhongTro.Models.CachTinhDichVu.Ten(service.CachTinh) · @service.DonViTinh</td><td>@service.DonGia.ToString("N0",culture) đ</td></tr>}</tbody></table></div>}
+                else{<div class="ld-table-wrap table-responsive"><table class="ld-service-table table align-middle mb-0"><caption class="visually-hidden">Bảng giá dịch vụ của phòng</caption><thead><tr><th scope="col">Dịch vụ</th><th scope="col">Cách tính</th><th scope="col">Đơn giá</th></tr></thead><tbody>@foreach(var service in detail.DichVuTheoSuDung){<tr data-testid="usage-service"><th scope="row">@service.TenDichVu</th><td>@QL_PhongTro.Models.CachTinhDichVu.Ten(service.CachTinh) · @service.DonViTinh</td><td>@service.DonGia.ToString("N0",culture) đ</td></tr>}@foreach(var service in detail.KhoanCoDinh){<tr data-testid="fixed-service"><th scope="row">@service.TenDichVu</th><td>@QL_PhongTro.Models.CachTinhDichVu.Ten(service.CachTinh) · @service.DonViTinh</td><td>@service.DonGia.ToString("N0",culture) đ</td></tr>}</tbody></table></div>}
                 @if(detail.KhoanCoDinh.Count==0 && detail.DichVuTheoSuDung.Count>0){<p class="ld-muted" data-testid="no-fixed-services">Tin này chưa có khoản phí cố định hàng tháng.</p>}
                 <p class="ld-cost-note">Chi phí ước tính gồm tiền thuê và các khoản cố định; chưa gồm điện, nước theo sử dụng thực tế. Tiền cọc dự kiến @detail.TienCocDuKien.ToString("N0",culture) đ được thu riêng khi ký hợp đồng.</p>
             </section>
@@ -75,7 +75,7 @@
             <div class="mb-3"><label asp-for="Form.LoiNhan" class="form-label">Lời nhắn</label>
                 <textarea asp-for="Form.LoiNhan" class="form-control" rows="3" maxlength="2000"></textarea>
                 <span asp-validation-for="Form.LoiNhan" class="text-danger"></span></div>
-            <button class="ld-submit" type="submit" data-request-submit>Gửi yêu cầu xem phòng</button><p class="ld-request-note">Chủ nhà sẽ nhận yêu cầu và xác nhận lịch với bạn.</p>
+            <button class="ld-submit btn btn-dark" type="submit" data-request-submit>Gửi yêu cầu xem phòng</button><p class="ld-request-note">Chủ nhà sẽ nhận yêu cầu và xác nhận lịch với bạn.</p>
         </form>
     </section>
 }
@@ -85,7 +85,7 @@ else if (isDaChoThue)
 }
 else if (Model.TinConCongKhai && Model.RequestModuleInstalled && User.Identity?.IsAuthenticated != true)
 {
-    <a class="btn btn-primary" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("ChiTiet", new { id = Model.Tin.Id })">Đăng nhập để gửi yêu cầu</a>
+    <a class="btn btn-dark ld-login-button" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Url.Action("ChiTiet", new { id = Model.Tin.Id })">Đăng nhập để gửi yêu cầu</a>
 }
 else if (Model.TinConCongKhai && Model.RequestModuleInstalled) { <p>Chức năng gửi yêu cầu dành cho tài khoản Khách thuê.</p> }
 
@@ -94,7 +94,7 @@ else if (Model.TinConCongKhai && Model.RequestModuleInstalled) { <p>Chức năng
         </aside>
     </div>
 </article>
-@section Styles { <link rel="stylesheet" href="~/css/listing-detail.css" asp-append-version="true" /> }
+@section Styles { <link rel="stylesheet" href="~/css/listing-detail.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/listing-detail-bootstrap.css" asp-append-version="true" /> }
 @section Scripts {
     <script src="~/js/listing-detail.js" asp-append-version="true"></script>
     <script>

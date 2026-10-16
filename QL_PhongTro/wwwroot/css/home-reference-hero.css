@@ -1,0 +1,51 @@
+/* Only the reference banner and its search form; lower page keeps its styling. */
+.public-home .home-reference-hero{margin:0;border-radius:0;padding:0;background-image:linear-gradient(90deg,#202b30d9 0%,#202b3080 55%,#202b302b 100%),url('/images/hero-clean.jpg');background-position:center;background-size:cover;box-shadow:none}
+.public-home .home-reference-hero>.container{max-width:1380px;min-height:clamp(620px,calc(100svh - 88px),820px);padding:clamp(3rem,5vw,5rem) 2rem 2.5rem!important;display:flex;flex-direction:column;justify-content:space-between;gap:3rem}
+.public-home .home-reference-hero h1{max-width:720px;font-size:clamp(2.5rem,3.8vw,3.5rem);line-height:1.12;color:#fff;letter-spacing:-.035em;margin-bottom:1.5rem!important}
+.public-home .home-reference-hero .lead{max-width:570px;line-height:1.75;font-size:1.05rem;margin-bottom:0!important;color:#edf0f1}
+.public-home .home-reference-hero .home-search-card{margin:0 auto!important;width:100%;max-width:1140px;border-radius:14px;background:#fff;box-shadow:0 12px 36px #0000001f!important}
+.home-reference-hero .home-location-label{position:absolute;top:.4rem;left:1rem;z-index:1;margin:0;font-size:.75rem;font-weight:400!important;color:#656A73;pointer-events:none}
+.home-reference-hero .home-search-card .col-md-3:first-child{position:relative}
+.home-reference-hero .home-district-toggle{padding:1.65rem 1rem .45rem;min-height:68px;background:#F5F5F4;border-color:transparent;font-weight:600}
+.home-reference-hero .home-search-card .form-control{min-height:60px;border-color:transparent;background:#fff;font-size:.95rem;padding-left:1.25rem}
+.home-reference-hero .home-search-card .form-control:focus{border-color:#BFA77A;box-shadow:0 0 0 .15rem #bfa77a26}
+.home-reference-hero .home-search-card button[type=submit]{min-height:52px;font-size:.95rem}
+@media(max-width:767px){.public-home .home-reference-hero>.container{min-height:680px;padding:2.5rem 1.25rem 1.5rem!important;gap:2.5rem}.public-home .home-reference-hero h1{font-size:2.35rem;max-width:550px}.public-home .home-reference-hero .lead{font-size:.94rem}.home-reference-hero .home-search-card .row{--bs-gutter-y:.5rem}.home-reference-hero .home-search-card .form-control{padding-left:1rem;min-height:54px}.home-reference-hero .home-search-card button[type=submit]{min-height:50px}.home-reference-hero .home-location-label{top:.4rem}.home-reference-popular{padding-inline:1.25rem}}
+/* Refined Bootstrap hero: quieter backdrop and clearly grouped search fields. */
+.public-home .home-reference-hero{background-image:linear-gradient(90deg,rgba(22,34,38,.88),rgba(22,34,38,.57) 53%,rgba(22,34,38,.12)),url('/images/hero-clean.jpg');background-position:center 58%}
+.public-home .home-reference-hero>.container{max-width:1320px;min-height:clamp(610px,calc(100svh - 88px),790px);padding:clamp(3rem,5.5vw,5.5rem) 1.5rem 3rem!important;gap:4rem}
+.public-home .home-reference-hero h1{font-size:clamp(2.6rem,3.8vw,3.7rem);line-height:1.14;max-width:760px;font-weight:750!important;letter-spacing:-.035em;text-wrap:balance}
+.public-home .home-reference-hero .lead{max-width:580px;color:#e0e5e5;font-size:1.025rem;line-height:1.8}
+.public-home .home-reference-hero .home-search-card{max-width:1180px;border-radius:20px;box-shadow:0 16px 48px #101b2533!important;border:1px solid #ffffff80!important}
+.home-reference-hero .home-search-card .row{--bs-gutter-x:1rem}
+.home-reference-hero .home-search-card .col-md-3:first-child,.home-reference-hero .home-keyword-column{position:relative}
+.home-reference-hero .home-location-label,.home-reference-hero .home-keyword-label{position:absolute;top:.7rem;left:1.5rem;z-index:1;font-size:.72rem;font-weight:500!important;color:#737a80;line-height:1;margin:0;pointer-events:none}
+.home-reference-hero .home-search-card .home-district-toggle{min-height:74px;padding:2rem 1rem .65rem;border:1px solid #eceeed;border-radius:12px;background:#F5F5F4;font-size:.92rem;color:#30343B}
+.home-reference-hero .home-search-card .form-control{height:74px;padding:2rem 1rem .65rem;border:1px solid #eceeed;border-radius:12px;background:#fafaf9;font-size:.92rem}
+.home-reference-hero .home-search-card .form-control::placeholder{color:#90969a;font-size:.85rem}
+.home-reference-hero .home-search-card .home-district-toggle:hover{background:#f0f0ec;border-color:#c8bea9}
+.home-reference-hero .home-search-card button[type=submit]{min-height:74px;border-radius:12px;background:#30343B;border-color:#30343B;box-shadow:0 4px 10px #30343b15;font-size:.95rem}
+.home-reference-hero .home-search-card button[type=submit]:hover{background:#484d54;border-color:#484d54}
+.home-reference-hero .home-search-card button[type=submit]:active{background:#25282D}
+.home-reference-hero .home-district-dropdown .dropdown-menu{border-radius:12px;margin-top:.75rem!important}
+@media(min-width:768px) and (max-width:991px){.home-reference-hero .home-search-card .row{--bs-gutter-x:.75rem}.home-reference-hero .home-location-label,.home-reference-hero .home-keyword-label{left:1.35rem}}
+@media(max-width:767px){.public-home .home-reference-hero>.container{min-height:700px;padding:2.75rem 1.25rem 1.5rem!important;gap:2.5rem}.public-home .home-reference-hero h1{font-size:2.35rem;max-width:550px;text-wrap:pretty}.public-home .home-reference-hero .lead{font-size:.93rem}.public-home .home-reference-hero .home-search-card{border-radius:16px}.home-reference-hero .home-search-card .row{--bs-gutter-y:.75rem}.home-reference-hero .home-search-card .home-district-toggle,.home-reference-hero .home-search-card .form-control{height:68px;min-height:68px;padding-top:1.9rem}.home-reference-hero .home-search-card button[type=submit]{min-height:54px}.home-reference-hero .home-location-label,.home-reference-hero .home-keyword-label{top:.7rem;left:1.5rem}}
+
+@media(min-width:768px){.public-home .home-reference-hero>.container{min-height:650px}}
+/* Editorial treatment scoped to the requested headline and introduction. */
+.home-reference-hero .home-copy{max-width:760px}
+.home-reference-hero .home-copy-eyebrow{font-size:.7rem;font-weight:600;letter-spacing:.16em;color:#e1d4bc;line-height:1.6}
+.home-copy-line{width:28px;height:2px;background:#BFA77A;flex-shrink:0}
+.public-home .home-reference-hero .home-copy h1{font-size:clamp(2.5rem,3.6vw,3.5rem);line-height:1.16;letter-spacing:-.035em;text-wrap:initial;margin-bottom:1.5rem!important}
+.home-reference-hero .home-copy-accent{color:#e4cfaa}
+.public-home .home-reference-hero .home-copy .lead{font-size:1rem;line-height:1.85;max-width:560px;color:#e0e5e5}
+@media(max-width:767px){.home-reference-hero .home-copy-eyebrow{font-size:.6rem;letter-spacing:.12em}.public-home .home-reference-hero .home-copy h1{font-size:2.15rem;line-height:1.2}.public-home .home-reference-hero .home-copy .lead{font-size:.9rem;line-height:1.8}}
+/* Compact search bar while retaining readable labels and touch targets. */
+.home-reference-hero .home-search-card .card-body{padding:.75rem!important}
+.home-reference-hero .home-search-card .home-district-toggle,.home-reference-hero .home-search-card .form-control{height:60px;min-height:60px;padding:1.65rem 1rem .4rem;border-radius:10px}
+.home-reference-hero .home-location-label,.home-reference-hero .home-keyword-label{top:.55rem;font-size:.68rem}
+.home-reference-hero .home-search-card button[type=submit]{min-height:60px;border-radius:10px}
+@media(max-width:767px){.home-reference-hero .home-search-card .card-body{padding:.75rem!important}.home-reference-hero .home-search-card button[type=submit]{min-height:48px}}
+/* Tighter spacing for district choices. */
+.home-reference-hero .home-district-dropdown .dropdown-menu{padding:.35rem;margin-top:.4rem!important}
+.home-reference-hero .home-district-dropdown .dropdown-item{padding:.45rem 1.75rem .45rem .75rem;min-height:34px;font-size:.85rem;line-height:1.4}

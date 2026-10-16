@@ -1,0 +1,35 @@
+/* About page: Bootstrap grid, cards and buttons with the shared brand palette. */
+.public-main:has(.gioithieu-page){width:100%;max-width:none;padding:1.5rem 0 0;min-height:0}
+.gioithieu-page{color:#25282D;background:#F5F5F4;padding:0}
+.gioithieu-page .gioithieu-hero{max-width:1272px;width:calc(100% - 3rem);margin:0 auto;border-radius:22px;overflow:hidden;padding:0;background:#30343B;min-height:340px;text-align:left}
+.gioithieu-page .gioithieu-hero-content{padding:3.25rem;max-width:none;margin:0;align-items:flex-start;text-align:left}
+.gioithieu-page .gioithieu-tag{font-size:.68rem;font-weight:700;letter-spacing:.16em;color:#927c55;display:inline-block;margin-bottom:.75rem}
+.gioithieu-page .gioithieu-hero .gioithieu-tag{color:#dfcaa5}
+.gioithieu-page .gioithieu-hero h1{font-size:clamp(2.4rem,3.5vw,3.5rem);line-height:1.15;letter-spacing:-.04em;margin:0 0 1.25rem;color:#fff}
+.gioithieu-page .gioithieu-hero h1 span{color:#dfcaa5}
+.gioithieu-page .gioithieu-hero p{font-size:.95rem;line-height:1.8;color:#e1e4e6;max-width:540px;margin:0}
+.gioithieu-page .about-hero-image{background:linear-gradient(90deg,#30343b22,transparent),url('/images/hero-clean.jpg') center/cover;min-height:340px}
+.gioithieu-page>.nhatot-container{max-width:1272px;width:calc(100% - 3rem);padding-top:3rem!important;padding-bottom:1rem!important}
+.gioithieu-page .section-title{font-size:clamp(1.5rem,2.4vw,2rem);font-weight:700;letter-spacing:-.025em;line-height:1.3;margin:0 0 1rem}
+.gioithieu-page .gioithieu-mission p{font-size:.9rem;color:#6b737b;line-height:1.8;margin-bottom:.85rem}
+.gioithieu-page .gioithieu-mission .row{--bs-gutter-x:3rem;--bs-gutter-y:1.5rem}
+.gioithieu-page .btn{font-size:.85rem;min-height:44px;border-radius:9px;display:inline-flex;align-items:center;justify-content:center;padding:.65rem 1.15rem}
+.gioithieu-page .btn-dark{background:#30343B;border-color:#30343B}.gioithieu-page .btn-outline-dark{border-color:#d7dadd;color:#30343B}.gioithieu-page .btn-outline-dark:hover{background:#30343B;color:#fff}
+.gioithieu-page .gioithieu-stat-card{padding:1.75rem;border-radius:16px;background:#fff}
+.gioithieu-page .stat-item{display:grid;grid-template-columns:100px minmax(0,1fr);align-items:center;gap:1rem;padding:1rem 0;margin:0;border-bottom:1px solid #eceeed}
+.gioithieu-page .stat-item:first-child{padding-top:0}.gioithieu-page .stat-item:last-child{padding-bottom:0;border-bottom:0}
+.gioithieu-page .stat-number{font-size:2rem;font-weight:750;line-height:1.2;color:#927c55;letter-spacing:-.03em}
+.gioithieu-page .stat-label{font-size:.85rem;line-height:1.6;color:#525c65}
+.gioithieu-page .section-subtitle{color:#7b8288;font-size:.88rem;line-height:1.7;margin-bottom:0}
+.gioithieu-page .value-card{padding:1.6rem;border-radius:16px;text-align:left;background:#fff}
+.gioithieu-page .value-icon{width:46px;height:46px;display:grid;place-items:center;font-size:1.35rem;border-radius:12px;background:#BFA77A1c;margin:0 0 1.1rem}
+.gioithieu-page .value-card h3{font-size:1.05rem;font-weight:650;margin:0 0 .75rem;line-height:1.4}
+.gioithieu-page .value-card p,.gioithieu-page .step-card p{font-size:.85rem;line-height:1.8;color:#737b82;margin:0}
+.gioithieu-page .gioithieu-steps{scroll-margin-top:1.5rem;padding:2rem;background:#eeefeb;border-radius:18px}
+.gioithieu-page .step-card{padding:1.25rem;border-radius:12px;background:#fff;text-align:left}
+.gioithieu-page .step-num{display:block;font-size:1.5rem;font-weight:700;color:#BFA77A;margin-bottom:.75rem}
+.gioithieu-page .step-card h4{font-size:.95rem;font-weight:650;margin:0 0 .65rem;line-height:1.4}
+.gioithieu-page a:focus-visible{outline:3px solid #BFA77A;outline-offset:4px}
+@media(max-width:767px){.public-main:has(.gioithieu-page){padding-top:1rem}.gioithieu-page .gioithieu-hero,.gioithieu-page>.nhatot-container{width:calc(100% - 2rem)}.gioithieu-page .gioithieu-hero{min-height:0;border-radius:16px}.gioithieu-page .gioithieu-hero-content{padding:2rem 1.5rem}.gioithieu-page .gioithieu-hero h1{font-size:2.4rem}.gioithieu-page .gioithieu-hero p{font-size:.88rem}.gioithieu-page>.nhatot-container{padding-top:2rem!important}.gioithieu-page .gioithieu-mission,.gioithieu-page .gioithieu-values{margin-bottom:2rem!important}.gioithieu-page .gioithieu-stat-card{padding:1.25rem}.gioithieu-page .stat-item{grid-template-columns:80px minmax(0,1fr);gap:.75rem}.gioithieu-page .stat-number{font-size:1.75rem}.gioithieu-page .gioithieu-steps{padding:1.25rem;margin-bottom:1.5rem!important}.gioithieu-page .value-card{padding:1.25rem}}
+.gioithieu-page .gioithieu-mission>.row{margin-inline:0}.gioithieu-page .gioithieu-mission>.row>.col-lg-6:first-child{padding-left:0}.gioithieu-page .gioithieu-mission>.row>.col-lg-6:last-child{padding-right:0}
+@media(max-width:991px){.gioithieu-page .gioithieu-mission>.row{--bs-gutter-x:0}}
