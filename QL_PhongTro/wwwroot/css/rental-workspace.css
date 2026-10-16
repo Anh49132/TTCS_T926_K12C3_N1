@@ -1,0 +1,109 @@
+/* Room, contract and invoice refinements. Loaded only by the relevant modules. */
+.rental-workspace :is(.rc-building-trigger, .re-state-trigger)[aria-invalid="true"] {
+    border-color: #A32D2D; box-shadow: 0 0 0 .2rem rgba(163, 45, 45, .15);
+}
+.rental-workspace #draft-adjustments fieldset[hidden] { display: none; }
+.rental-workspace .draft-adjustment-field { min-width: 0; }
+.rental-workspace .draft-adjustment-field label { display: block; margin-bottom: .375rem; }
+.rental-workspace .draft-adjustment-note { grid-column: 1 / -1; }
+.rental-workspace .draft-adjustment-actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-bottom: 1rem; }
+.rental-workspace :is(.ic-dialog, #cancel-confirmation, #publish-confirmation) {
+    max-width: calc(100vw - 2rem); max-height: calc(100dvh - 2rem); overflow-y: auto;
+}
+.rental-workspace :is(.ref-person, .ref-facts, .rb-facts, .rd-info) { overflow-wrap: anywhere; }
+.rental-workspace .ref-add-resident { scroll-margin-top: 5rem; }
+.rental-workspace :is(.room-management, .contract-page, .monthly-invoices,
+    .room-create-page, .room-detail-page) { min-width: 0; }
+.rental-workspace :is(.rm-heading, .contract-heading, .mi-heading, .id-heading,
+    .rc-heading, .rd-heading) { gap: 1rem; flex-wrap: wrap; }
+.rental-workspace :is(.rm-heading, .contract-heading, .mi-heading, .id-heading,
+    .rc-heading, .rd-heading) h1 { overflow-wrap: anywhere; }
+.rental-workspace :is(.rm-header-actions, .contract-actions, .ref-heading-actions,
+    .flow-actions, .mi-footer, .rc-footer, .rd-actions, .lease-header-actions) { flex-wrap: wrap; gap: .75rem; }
+.rental-workspace :is(.rm-tabs, .lease-tabs, .flow-tabs, .ref-tabs) {
+    max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain;
+}
+.rental-workspace :is(.rm-tabs, .lease-tabs, .flow-tabs, .ref-tabs) > :is(a, button) { flex-shrink: 0; }
+.rental-workspace :is(.rm-table-scroll, .table-responsive) {
+    max-width: 100%; overscroll-behavior-x: contain;
+}
+.rental-workspace :is(.rm-table-scroll, .table-responsive):focus-visible {
+    outline: 2px solid #BFA77A; outline-offset: 2px;
+}
+.rental-workspace :is(.rm-table, .lease-table, .flow-table) th { color: #656A73; }
+.rental-workspace :is(.rm-table, .lease-table, .flow-table) td { font-size: .875rem; }
+.rental-workspace :is(.rm-table, .lease-table) small { font-size: .75rem; }
+.rental-workspace :is(.rm-pagination, .lease-table-footer, .flow-pagination) {
+    flex-wrap: wrap; gap: .75rem;
+}
+.rental-workspace :is(.rm-pagination, .lease-table-footer, .flow-pagination) :is(button, a, select) {
+    min-height: 2.5rem;
+}
+.rental-workspace :is(.rm-pagination, .lease-table-footer, .flow-pagination) button:disabled {
+    opacity: .45; cursor: not-allowed;
+}
+.rental-workspace .flow-metrics strong { font-size: clamp(1.125rem, 2vw, 1.75rem); overflow-wrap: anywhere; }
+.rental-workspace .flow-metrics .mi-card { min-width: 0; }
+.rental-workspace .flow-tabs .active { color: #30343B; border-bottom-color: #BFA77A; }
+.rental-workspace :is(.contract-field, .flow-fields, .mi-fields, .rc-fields) > div { min-width: 0; }
+.rental-workspace :is(.contract-field, .flow-fields, .mi-fields, .rc-fields) :is(input, select, textarea) { max-width: 100%; }
+.rental-workspace :is(.contract-field, .flow-fields, .mi-fields, .rc-fields) :is(input, select, textarea):focus-visible {
+    outline: 2px solid #BFA77A; outline-offset: 2px;
+}
+.rental-workspace .contract-field input[readonly] { background: #F5F5F4; color: #656A73; }
+.rental-workspace :is(.flow-confirm, .rm-create-choice, .create-preview-dialog) {
+    max-height: calc(100dvh - 2rem); overflow-y: auto;
+}
+.rental-workspace :is(.flow-empty, #rm-empty, #lease-empty) {
+    padding: 1.5rem 1rem; text-align: center; color: #656A73;
+}
+
+@media (max-width: 767.98px) {
+    .rental-workspace .lease-overview .lease-search-box { width: 100%; }
+    .rental-workspace .lease-overview .lease-tabs { flex-wrap: nowrap; }
+    .rental-workspace :is(.rm-heading, .contract-heading, .mi-heading, .id-heading,
+        .rc-heading, .rd-heading) { align-items: stretch; }
+    .rental-workspace :is(.rm-header-actions, .ref-heading-actions) { width: 100%; }
+    .rental-workspace .flow-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .rental-workspace .flow-filters > input[name="q"] { grid-column: 1 / -1; }
+}
+@media (max-width: 575.98px) {
+    .rental-workspace :is(.rb-fields, .ref-resident-fields) { grid-template-columns: minmax(0, 1fr); }
+    .rental-workspace :is(.rb-fields, .ref-resident-fields, .ref-account-search, .ic-field) :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]):not([type="hidden"]) {
+        font-size: 1rem; min-height: 2.75rem; max-width: 100%;
+    }
+    .rental-workspace :is(.rb-actions, .ref-resident-footer, .ic-dialog-footer, .ref-account-search > div) { display: flex; flex-wrap: wrap; gap: .75rem; }
+    .rental-workspace :is(.rb-actions, .ref-resident-footer, .ic-dialog-footer, .ref-account-search > div, .draft-adjustment-actions) > :is(a, button) { flex: 1 1 100%; min-height: 2.75rem; text-align: center; }
+    .rental-workspace .ref-account-search > div > input { flex: 1 1 100%; min-width: 0; width: 100%; }
+    .rental-workspace .rb-actions > small { display: none; }
+    .rental-workspace .ic-dialog-footer > small { flex-basis: 100%; }
+    .rental-workspace :is(.rm-heading, .contract-heading, .mi-heading, .id-heading,
+        .rc-heading, .rd-heading) { flex-direction: column; }
+    .rental-workspace :is(.rm-header-actions, .contract-actions, .ref-heading-actions,
+        .flow-actions, .mi-footer, .rc-footer, .rd-actions) > :is(a, button) { flex: 1 1 100%; text-align: center; }
+    .rental-workspace :is(.rm-header-actions, .contract-actions, .ref-heading-actions,
+        .flow-actions, .mi-footer, .rc-footer, .rd-actions) > form { flex: 1 1 100%; }
+    .rental-workspace :is(.rm-header-actions, .contract-actions, .ref-heading-actions,
+        .flow-actions, .mi-footer, .rc-footer, .rd-actions) > form > button { width: 100%; }
+    .rental-workspace :is(.rm-filters, .lease-filter-row, .flow-filters) { display: grid; grid-template-columns: minmax(0, 1fr); }
+    .rental-workspace .rm-filters > :is(.rm-search, .rm-filter-select, #rm-sort) { width: 100%; min-width: 0; }
+    .rental-workspace .rm-panel .rm-search { height: 2.875rem; }
+    .rental-workspace .rm-panel .rm-search input { height: 2.75rem; font-size: 1rem; }
+    .rental-workspace .rm-panel .rm-filter-select { height: 2.875rem; }
+    .rental-workspace .rm-panel .rm-filter-select :is(select, .rm-custom-trigger) { height: 2.75rem; font-size: 1rem; }
+    .rental-workspace :is(.contract-field, .flow-fields, .mi-fields, .rc-fields) :is(input, select, textarea):not([type="checkbox"]):not([type="radio"]):not([type="hidden"]) {
+        font-size: 1rem; min-height: 2.75rem;
+    }
+    .rental-workspace :is(.rm-detail, .rm-edit, .lease-row-menu-trigger, #rm-sort,
+        .lease-tabs button, .flow-tabs a, .ref-tabs a) { min-height: 2.75rem; }
+    .rental-workspace .draft-meter-inputs { flex-wrap: wrap; }
+    .rental-workspace .draft-meter-inputs input { flex: 1 1 7rem; width: 100%; min-width: 0; }
+    .rental-workspace .flow-confirm .flow-fields { grid-template-columns: minmax(0, 1fr); }
+    .rental-workspace .flow-confirm dl { padding: .75rem; gap: .75rem; }
+    .rental-workspace .flow-actions { align-items: stretch; }
+    .rental-workspace .lease-table-footer > small { flex-basis: 100%; }
+    .rental-workspace .lease-header-actions { width: 100%; }
+    .rental-workspace .lease-header-actions > :is(a, button) { flex: 1 1 100%; }
+    .rental-workspace .rc-footer > div { width: 100%; display: flex; flex-wrap: wrap; gap: .75rem; }
+    .rental-workspace .rc-footer > div > :is(a, button) { flex: 1 1 100%; min-height: 2.75rem; text-align: center; }
+}

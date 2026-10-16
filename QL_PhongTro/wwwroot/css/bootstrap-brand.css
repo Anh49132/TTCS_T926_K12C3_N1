@@ -1,0 +1,197 @@
+/* Shared Bootstrap component skin. Keep role/page layouts in their own stylesheets. */
+:root {
+    --bs-primary-bg-subtle: #E9EAEC;
+    --bs-primary-border-subtle: #BFA77A;
+    --bs-primary-text-emphasis: #25282D;
+    --bs-focus-ring-color: rgba(191, 167, 122, .35);
+}
+
+.pagination {
+    --bs-pagination-color: #30343B;
+    --bs-pagination-bg: #FFFFFF;
+    --bs-pagination-border-color: #E9EAEC;
+    --bs-pagination-hover-color: #25282D;
+    --bs-pagination-hover-bg: #F5F5F4;
+    --bs-pagination-hover-border-color: #BFA77A;
+    --bs-pagination-focus-color: #25282D;
+    --bs-pagination-focus-bg: #F5F5F4;
+    --bs-pagination-focus-box-shadow: 0 0 0 .2rem rgba(191, 167, 122, .3);
+    --bs-pagination-active-color: #FFFFFF;
+    --bs-pagination-active-bg: #30343B;
+    --bs-pagination-active-border-color: #30343B;
+    --bs-pagination-disabled-color: #656A73;
+    --bs-pagination-disabled-bg: #F5F5F4;
+    --bs-pagination-disabled-border-color: #E9EAEC;
+    flex-wrap: wrap;
+    gap: .25rem;
+}
+.pagination .page-link { border-radius: .375rem; }
+.nav-pills {
+    --bs-nav-pills-link-active-bg: #30343B;
+    --bs-nav-pills-link-active-color: #FFFFFF;
+}
+.dropdown-menu {
+    --bs-dropdown-link-active-bg: #30343B;
+    --bs-dropdown-link-hover-bg: #F5F5F4;
+    --bs-dropdown-link-color: #25282D;
+    --bs-dropdown-border-color: #E9EAEC;
+}
+.card {
+    --bs-card-bg: #FFFFFF;
+    --bs-card-border-color: #E9EAEC;
+    --bs-card-cap-bg: #F5F5F4;
+    --bs-card-color: #25282D;
+    min-width: 0;
+}
+.modal, .offcanvas {
+    --bs-modal-bg: #FFFFFF;
+    --bs-modal-color: #25282D;
+    --bs-modal-border-color: #E9EAEC;
+    --bs-modal-header-border-color: #E9EAEC;
+    --bs-modal-footer-border-color: #E9EAEC;
+    --bs-offcanvas-bg: #FFFFFF;
+    --bs-offcanvas-color: #25282D;
+}
+.modal-title { overflow-wrap: anywhere; }
+.modal-footer { gap: .5rem; }
+.form-range::-webkit-slider-thumb { background: #30343B; }
+.form-range::-moz-range-thumb { background: #30343B; }
+.form-control::file-selector-button { background: #E9EAEC; color: #25282D; }
+.form-control.input-validation-error,
+.form-select.input-validation-error { border-color: #A32D2D; }
+.form-control.input-validation-error:focus,
+.form-select.input-validation-error:focus { box-shadow: 0 0 0 .2rem rgba(163, 45, 45, .15); }
+.field-validation-error, .validation-summary-errors { color: #A32D2D; }
+textarea.form-control { height: auto; min-height: 6rem; }
+.table-responsive { max-width: 100%; }
+.table-responsive:focus-visible { outline: 2px solid #BFA77A; outline-offset: 2px; }
+.table { --bs-table-border-color: #E9EAEC; }
+.table > thead { --bs-table-bg: #F5F5F4; --bs-table-color: #25282D; }
+
+/* Standard management pages; custom room/contract/invoice layouts stay scoped. */
+.management-page { width: 100%; min-width: 0; }
+.management-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; }
+.management-heading > div { flex: 1 1 18rem; min-width: 0; }
+.management-heading h1 { margin-bottom: .5rem; font-size: 1.5rem; }
+.management-heading .eyebrow { margin-bottom: .5rem; letter-spacing: .08em; }
+.management-filters.row {
+    margin: 0 0 1.25rem;
+    padding: .25rem 1rem 1rem;
+    background: #FFFFFF;
+    border: 1px solid #E9EAEC;
+    border-radius: .75rem;
+}
+.management-filters label { margin-bottom: .375rem; font-weight: 500; }
+.management-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.management-table { border: 1px solid #E9EAEC; border-radius: .75rem; background: #FFFFFF; }
+.management-table > .table { margin-bottom: 0; }
+.management-table > .table > :not(caption) > * > * { padding: .875rem 1rem; }
+.management-table > .table > thead th { white-space: nowrap; font-size: .8125rem; }
+.management-table > .table > tbody > tr > td { min-width: 7rem; overflow-wrap: anywhere; }
+.management-table > .table > tbody > tr > td:first-child { min-width: 3rem; }
+.management-table > .table > tbody > tr > td:last-child { min-width: 13rem; }
+.management-table .btn-sm { white-space: normal; }
+.management-table td[colspan] { padding: 2rem 1rem; text-align: center; color: #656A73; }
+.management-form.auth-card { width: 100%; max-width: 38rem; margin: 0 auto; border-radius: .75rem; }
+.management-form h1, .management-form p { overflow-wrap: anywhere; }
+.notification-page { max-width: 900px; }
+.notification-page .card { border-radius: .75rem; }
+.notification-page .notification-unread { background: #BFA77A !important; color: #25282D !important; }
+.notification-page h2 { line-height: 1.5; }
+.tenant-invoice-detail .table-responsive > .table { min-width: 42rem; }
+.tenant-contract-tabs { max-width: 100%; overflow-x: auto; }
+.tenant-contract-tabs > button { flex-shrink: 0; }
+.tenant-contracts-page :is(.tenant-contract-main, .tenant-contract-fact, .tenant-ended-code) { min-width: 0; overflow-wrap: anywhere; }
+.tcd-page :is(.tcd-person, .tcd-fact, .tcd-file) { min-width: 0; overflow-wrap: anywhere; }
+.tcd-table-wrap:focus-visible { outline: 2px solid #BFA77A; outline-offset: 2px; }
+.tenant-invoice-pagination { flex-wrap: wrap; }
+/* Keep status distinctions visible where the old generic .badge rule flattened them. */
+:is(.management-page, .tenant-invoice-list, .notification-page) .badge.text-bg-primary {
+    background: #30343B !important; color: #FFFFFF !important; border-color: #30343B;
+}
+:is(.management-page, .tenant-invoice-list, .notification-page) .badge.text-bg-success {
+    background: #E9EAEC !important; color: #25282D !important; border-color: #656A73;
+}
+:is(.management-page, .tenant-invoice-list, .notification-page) .badge.text-bg-warning {
+    background: #BFA77A !important; color: #25282D !important; border-color: #BFA77A;
+}
+:is(.management-page, .tenant-invoice-list, .notification-page) .badge.text-bg-danger {
+    background: #FCEBEB !important; color: #A32D2D !important; border-color: #A32D2D;
+}
+:is(.management-page, .tenant-invoice-list, .notification-page) .badge.text-bg-secondary {
+    background: #F5F5F4 !important; color: #656A73 !important; border-color: #E9EAEC;
+}
+:is(.management-page, .tenant-invoice-list, .notification-page) .badge { white-space: normal; line-height: 1.5; text-align: left; }
+.toast-stack .app-toast { align-items: flex-start; }
+.toast-stack .app-toast > button { display: grid; place-items: center; flex: 0 0 2.75rem; min-height: 2.75rem; margin: -.375rem -.5rem -.375rem 0; }
+.login-page.auth-recovery-page { grid-template-columns: minmax(0, 1fr); }
+.auth-recovery-page .login-panel { min-height: 100svh; padding: 7rem 1.5rem 2.5rem; }
+.auth-recovery-page .login-card { margin: 0 auto; width: 100%; max-width: 28rem; }
+.auth-recovery-page .login-card h1 { overflow-wrap: anywhere; }
+.auth-recovery-page .login-field .form-control { padding-left: .875rem; padding-right: 3rem; }
+.login-page .password-field .toggle-password { width: 2.75rem; min-height: 2.75rem; }
+
+/* Public navigation uses the bundled Bootstrap collapse component. */
+.public-menu-toggle { display: none; }
+.public-nav-collapse.collapse, .public-nav-collapse.collapsing { display: contents; }
+.public-site .listing-index-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.public-site .listing-index-item { transition: border-color .15s ease; }
+.public-site .listing-index-item:hover { border-color: #BFA77A; }
+.public-home .home-hero-stage { position: relative; }
+.public-home .home-discovery { width: min(1200px, calc(100% - 3rem)); margin: 3rem auto; }
+.public-home .home-section-heading { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-bottom: 1.5rem; }
+.public-home .home-section-heading h2 { margin: 0; color: #25282D; font-size: 1.5rem; }
+.public-home .home-section-heading p { margin: .5rem 0 0; color: #656A73; }
+.public-home .home-discovery h3 { font-size: 1.125rem; line-height: 1.5; }
+.public-home .home-discovery h3 a { color: #25282D; text-decoration: none; }
+.public-home .home-listing-card .card-img-top { width: 100%; aspect-ratio: 4 / 3; object-fit: cover; background: #E9EAEC; }
+.public-home .home-listing-card:hover { border-color: #BFA77A; }
+.public-home .home-listing-price { color: #30343B; font-size: 1.125rem; font-weight: 700; }
+.public-home .home-values .card { border-top: 3px solid #BFA77A; }
+
+@media (max-width: 991.98px) {
+    .public-site .nhatot-header-inner { display: flex; flex-wrap: wrap; gap: .75rem; }
+    .public-menu-toggle { display: inline-flex; align-items: center; margin-left: auto; }
+    .public-nav-collapse { flex-basis: 100%; min-width: 0; }
+    .public-nav-collapse:not(.show):not(.collapsing) { display: none; }
+    .public-nav-collapse.collapse.show, .public-nav-collapse.collapsing { display: block; }
+    .public-nav-collapse.collapse.show { max-height: 70dvh; overflow-y: auto; overscroll-behavior-y: contain; }
+    .public-nav-collapse .public-nav { display: flex; flex-direction: column; align-items: stretch; gap: .25rem; }
+    .public-nav-collapse .public-nav a { padding: .75rem; border-radius: .375rem; }
+    .public-nav-collapse .public-nav a:first-child { display: block; }
+    .public-nav-collapse .public-nav a.active { background: #30343B; color: #FFFFFF; }
+    .public-nav-collapse .public-auth { display: flex; flex-wrap: wrap; margin-top: .75rem; padding-bottom: .75rem; }
+    .public-site .listing-index-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 575.98px) {
+    .public-home .home-discovery { width: calc(100% - 2rem); margin: 2rem auto; }
+    .public-home .home-section-heading > .btn { width: 100%; }
+    .login-page .login-card input.form-control { font-size: 1rem; min-height: 2.75rem; }
+    .login-page .login-options { flex-wrap: wrap; row-gap: .75rem; }
+    .login-page .login-options a { min-height: 2.75rem; display: inline-flex; align-items: center; }
+    .tenant-contract-tabs > button { min-height: 2.75rem; }
+    .tenant-contract-search :is(input, select), .tenant-invoice-filters :is(input, select) { min-height: 2.75rem; font-size: 1rem; max-width: 100%; }
+    .tenant-invoice-list-heading > .btn { width: 100%; }
+    .tenant-invoice-pagination { gap: .5rem; }
+    .tenant-invoice-pagination > span[aria-current] { flex-basis: 100%; order: -1; text-align: center; }
+    .tenant-invoice-pagination > :is(a, span[aria-disabled]) { flex: 1 1 0; text-align: center; }
+    .management-heading { align-items: stretch; }
+    .management-heading > .btn { width: 100%; }
+    .management-heading h1 { font-size: 1.25rem; }
+    .management-form.auth-card { padding: 1rem; }
+    .management-actions > .btn, .management-actions > form { flex: 1 1 100%; }
+    .management-actions > form > .btn { width: 100%; }
+    .management-table .btn-sm { min-height: 2.75rem; }
+    .notification-page.container { padding-left: 0; padding-right: 0; }
+    .public-site .listing-index-grid { grid-template-columns: minmax(0, 1fr); }
+    .form-control, .form-select { font-size: 1rem; min-height: 2.75rem; }
+    input.form-control, select.form-select { height: auto; }
+    .btn:not(.btn-sm), .page-link { min-height: 2.75rem; }
+    .input-group > .form-control, .input-group > .form-select { min-width: 0; }
+    .modal-dialog { margin: .75rem; }
+    .modal-footer > .btn { flex: 1 1 auto; }
+    .card-body { overflow-wrap: anywhere; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .public-site .listing-index-item { transition: none; }
+}

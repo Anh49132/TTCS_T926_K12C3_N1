@@ -34,7 +34,8 @@
     }
 
     function updateOrderPresentation() {
-        imageCards().forEach((card, index) => {
+        const cards = imageCards();
+        cards.forEach((card, index) => {
             card.draggable = !isSavingOrder && !isDeletingImage;
             const order = index + 1;
             const label = card.querySelector('[data-order-label]');
@@ -47,7 +48,26 @@
                 image.draggable = false;
             }
             if (primary) primary.hidden = index !== 0;
-            if (remove) remove.disabled = isSavingOrder || isDeletingImage;
+            if (remove) {
+                remove.disabled = isSavingOrder || isDeletingImage;
+                remove.setAttribute('aria-label', `Xóa ảnh ${order}`);
+            }
+            const controls = card.querySelector('.room-image-move-controls');
+            if (controls && !controls.querySelector('[data-move-image]')) {
+                for (const [direction, text] of [[-1, 'Trước'], [1, 'Sau']]) {
+                    const button = document.createElement('button');
+                    button.type = 'button';
+                    button.className = 'room-image-move-button';
+                    button.dataset.moveImage = String(direction);
+                    button.textContent = text;
+                    controls.insertBefore(button, remove);
+                }
+            }
+            controls?.querySelectorAll('[data-move-image]').forEach(button => {
+                const direction = Number(button.dataset.moveImage);
+                button.disabled = isSavingOrder || isDeletingImage || index + direction < 0 || index + direction >= cards.length;
+                button.setAttribute('aria-label', `Chuyển ảnh ${order} về ${direction < 0 ? 'trước' : 'sau'}`);
+            });
         });
     }
 
@@ -199,7 +219,26 @@
         });
     }
 
+    function moveImage(card, direction) {
+        if (isSavingOrder || isDeletingImage || ![-1, 1].includes(direction)) return;
+        const cards = imageCards();
+        const index = cards.indexOf(card);
+        const target = cards[index + direction];
+        if (index < 0 || !target) return;
+        const previousOrder = imageIds();
+        grid.insertBefore(card, direction < 0 ? target : target.nextSibling);
+        saveCurrentOrder(previousOrder);
+        card.tabIndex = -1;
+        card.focus();
+    }
+
     grid.addEventListener('click', event => {
+        const moveButton = event.target.closest('[data-move-image]');
+        if (moveButton) {
+            const card = moveButton.closest('.room-image-card[data-image-id]');
+            if (card) moveImage(card, Number(moveButton.dataset.moveImage));
+            return;
+        }
         const deleteButton = event.target.closest('[data-delete-image]');
         if (deleteButton) {
             const card = deleteButton.closest('.room-image-card[data-image-id]');

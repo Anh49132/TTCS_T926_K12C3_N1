@@ -33,6 +33,7 @@
     const picker = document.createElement('div'); picker.className = 're-state-picker';
     select.before(picker); picker.append(select); select.classList.add('re-state-native'); select.tabIndex = -1;
     const trigger = document.createElement('button'); trigger.type = 'button'; trigger.className = 're-state-trigger'; trigger.setAttribute('aria-label','Trạng thái hiện tại'); trigger.setAttribute('aria-expanded','false');
+    trigger.setAttribute('data-validation-for', select.name);
     const menu = document.createElement('div'); menu.className = 're-state-menu'; menu.hidden = true;
     const close = () => { menu.hidden = true; trigger.setAttribute('aria-expanded','false'); };
     const sync = () => { trigger.textContent = select.selectedOptions[0]?.textContent || 'Chọn trạng thái'; menu.querySelectorAll('button').forEach(button => button.setAttribute('aria-pressed',String(button.dataset.value === select.value))); };
@@ -42,7 +43,18 @@
     });
     picker.append(trigger,menu); sync(); select.addEventListener('change',sync);
     trigger.addEventListener('click',()=>{ const open=menu.hidden; menu.hidden=!open; trigger.setAttribute('aria-expanded',String(open)); if(open) (menu.querySelector('[aria-pressed="true"]') || menu.querySelector('button'))?.focus(); });
-    picker.addEventListener('keydown',event=>{ if(event.key==='Escape'){close();trigger.focus();} if(['ArrowDown','ArrowUp'].includes(event.key)){event.preventDefault(); const buttons=[...menu.querySelectorAll('button')]; if(menu.hidden){menu.hidden=false;trigger.setAttribute('aria-expanded','true');} const index=buttons.indexOf(document.activeElement); buttons[(index+(event.key==='ArrowDown'?1:-1)+buttons.length)%buttons.length]?.focus();} });
+    picker.addEventListener('keydown',event=>{
+        if(event.key==='Escape'){event.preventDefault();close();trigger.focus();}
+        if(['ArrowDown','ArrowUp','Home','End'].includes(event.key)){
+            event.preventDefault();
+            const buttons=[...menu.querySelectorAll('button')].filter(button=>!button.disabled);
+            if(menu.hidden){menu.hidden=false;trigger.setAttribute('aria-expanded','true');}
+            const index=buttons.indexOf(document.activeElement);
+            const selected=buttons.findIndex(button=>button.dataset.value===select.value);
+            const next=event.key==='Home'?0:event.key==='End'?buttons.length-1:index<0?Math.max(0,selected):(index+(event.key==='ArrowDown'?1:-1)+buttons.length)%buttons.length;
+            buttons[next]?.focus();
+        }
+    });
     document.addEventListener('click',event=>{if(!picker.contains(event.target))close();});
     picker.addEventListener('focusout',event=>{if(!picker.contains(event.relatedTarget))close();});
 })();
@@ -87,6 +99,7 @@
     const trigger = document.createElement('button');
     trigger.type = 'button';
     trigger.className = 'rc-building-trigger';
+    trigger.setAttribute('data-validation-for', select.name);
     trigger.setAttribute('aria-haspopup', 'listbox');
     trigger.setAttribute('aria-labelledby', 'rc-building-label rc-building-value');
     const label = document.querySelector('label[for="' + select.id + '"]');
@@ -130,18 +143,25 @@
     const setOpen = open => {
         list.hidden = !open;
         trigger.setAttribute('aria-expanded', String(open));
-        if (open) choices[Math.max(0, select.selectedIndex)]?.focus();
+        if (open) {
+            const selected = choices[select.selectedIndex];
+            (selected && !selected.disabled ? selected : choices.find(button => !button.disabled))?.focus();
+        }
     };
     trigger.addEventListener('click', () => setOpen(list.hidden));
     wrapper.addEventListener('keydown', event => {
         if (event.key === 'Escape') { setOpen(false); trigger.focus(); event.preventDefault(); }
         if (['ArrowDown', 'ArrowUp', 'Home', 'End'].includes(event.key)) {
             event.preventDefault();
-            if (list.hidden) { setOpen(true); return; }
-            const index = choices.indexOf(document.activeElement);
-            const next = event.key === 'Home' ? 0 : event.key === 'End' ? choices.length - 1
-                : Math.max(0, Math.min(choices.length - 1, index + (event.key === 'ArrowDown' ? 1 : -1)));
-            choices[next]?.focus();
+            if (list.hidden) {
+                setOpen(true);
+                if (event.key !== 'Home' && event.key !== 'End') return;
+            }
+            const enabled = choices.filter(button => !button.disabled);
+            const index = enabled.indexOf(document.activeElement);
+            const next = event.key === 'Home' ? 0 : event.key === 'End' ? enabled.length - 1
+                : Math.max(0, Math.min(enabled.length - 1, index + (event.key === 'ArrowDown' ? 1 : -1)));
+            enabled[next]?.focus();
         }
     });
     wrapper.addEventListener('focusout', event => { if (!wrapper.contains(event.relatedTarget)) setOpen(false); });

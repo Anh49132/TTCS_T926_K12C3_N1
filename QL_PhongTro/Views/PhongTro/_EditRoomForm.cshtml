@@ -46,7 +46,7 @@
             </div>
             <label for="room-image-files" class="re-photo-drop"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 17H5a4 4 0 0 1-1-8 6 6 0 0 1 12-1 4 4 0 0 1 3 8h-3M12 21V11m-3 3 3-3 3 3"/></svg><strong>Kéo thả ảnh hoặc <span>chọn ảnh</span></strong><small>JPG, PNG · Tối đa 5 MB / ảnh, 8 ảnh</small></label>
             <input id="room-image-files" class="visually-hidden" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" multiple />
-            <p class="re-photo-caption">Ảnh đầu tiên được dùng làm ảnh đại diện phòng.</p><div class="room-image-grid" data-image-grid aria-live="polite">
+            <p class="re-photo-caption">Ảnh đầu tiên được dùng làm ảnh đại diện phòng. Dùng nút Trước/Sau hoặc kéo thả để đổi thứ tự.</p><div class="room-image-grid" data-image-grid aria-live="polite">
                 @foreach (var image in Model.Anh)
                 {
                     <article class="room-image-card" data-image-id="@image.Id">

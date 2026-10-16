@@ -1,6 +1,6 @@
 @model QL_PhongTro.ViewModels.CreateManagedAccountViewModel
 @{ ViewData["Title"] = "Tạo tài khoản"; }
-<section class="auth-card">
+<section class="auth-card management-form">
 <h1>Tạo tài khoản</h1>
 <p>Mật khẩu tạm sẽ được gửi qua email. Người nhận phải đổi mật khẩu trước khi sử dụng hệ thống.</p>
 <form asp-action="Create" method="post">
@@ -9,7 +9,8 @@
 <div class="mb-3"><label asp-for="Email">Email</label><input asp-for="Email" type="email" class="form-control" maxlength="254" required /><span asp-validation-for="Email" class="text-danger"></span></div>
 <div class="mb-3"><label asp-for="SoDienThoai">Số điện thoại</label><input asp-for="SoDienThoai" type="tel" class="form-control" pattern="0[0-9]{9}" maxlength="10" required /><span asp-validation-for="SoDienThoai" class="text-danger"></span></div>
 <div class="mb-3"><label asp-for="VaiTro">Vai trò</label><select asp-for="VaiTro" class="form-select"><option value="CHU_NHA">Chủ nhà</option><option value="QUAN_LY">Quản lý toà nhà</option><option value="ADMIN">Quản trị viên (Admin)</option></select><span asp-validation-for="VaiTro" class="text-danger"></span></div>
-<button class="btn btn-primary" type="submit">Tạo và gửi email</button>
+<div class="management-actions"><button class="btn btn-primary" type="submit">Tạo và gửi email</button>
 <a asp-action="Index" class="btn btn-outline-secondary">Quay lại danh sách</a>
+</div>
 </form>
 </section>

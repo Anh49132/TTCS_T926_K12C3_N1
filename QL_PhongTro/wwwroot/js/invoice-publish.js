@@ -42,11 +42,12 @@
   const idx=document.createElement('input');idx.type='hidden';idx.name='Khoan.Index';idx.value=i;field.append(idx);
   const hidden=document.createElement('input');hidden.type='hidden';hidden.name='Khoan['+i+'].LoaiKhoan';hidden.value=type;field.append(hidden);
   [['TenKhoan','Nội dung','text'],['SoTien','Số tiền (đ)','number'],['GhiChu','Ghi chú bắt buộc','text']].forEach(([key,label,type])=>{
-   const l=document.createElement('label'),input=document.createElement('input');l.textContent=label;input.name='Khoan['+i+'].'+key;input.type=type;input.id='adjustment-'+i+'-'+key;l.htmlFor=input.id;input.className='form-control';input.required=true;
+   const group=document.createElement('div');group.className='draft-adjustment-field'+(key==='GhiChu'?' draft-adjustment-note':'');
+   const l=document.createElement('label'),input=document.createElement(key==='GhiChu'?'textarea':'input');l.textContent=label;input.name='Khoan['+i+'].'+key;if(key!=='GhiChu')input.type=type;input.id='adjustment-'+i+'-'+key;l.htmlFor=input.id;input.className='form-control';input.required=true;
    if(type==='number'){input.min='1';input.step='1';}else input.maxLength=key==='TenKhoan'?200:1000;
-   field.append(l,input);
+   group.append(l,input);field.append(group);
   });
-  const del=document.createElement('button');del.type='button';del.className='btn btn-outline-danger';del.textContent='Xóa khoản';remove(del);field.append(del);list.append(field);dirty();
+  const del=document.createElement('button');del.type='button';del.className='btn btn-outline-danger';del.textContent='Xóa khoản';remove(del);field.append(del);list.append(field);dirty();field.querySelector('input:not([type="hidden"])')?.focus();
  }));
  // Explicit collection indices keep model binding correct after removing any row.
  list.querySelectorAll('fieldset').forEach((field,i)=>{const input=document.createElement('input');input.type='hidden';input.name='Khoan.Index';input.value=i;field.append(input);});

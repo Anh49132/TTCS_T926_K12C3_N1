@@ -82,9 +82,12 @@
         </div>
         @if (tongTrang > 1)
         {
-            <nav aria-label="Phân trang tin đăng" class="d-flex flex-wrap gap-2 mt-3">
-                @if (trang > 1) { <a class="btn btn-outline-secondary" asp-action="Index" asp-route-sapXep="@sapXep" asp-route-trang="@(trang - 1)">Trang trước</a> }
-                @if (trang < tongTrang) { <a class="btn btn-outline-secondary" asp-action="Index" asp-route-sapXep="@sapXep" asp-route-trang="@(trang + 1)">Trang sau</a> }
+            <nav aria-label="Phân trang tin đăng" class="mt-3">
+                <ul class="pagination">
+                    @if (trang > 1) { <li class="page-item"><a class="page-link" asp-action="Index" asp-route-sapXep="@sapXep" asp-route-trang="@(trang - 1)">Trang trước</a></li> }
+                    <li class="page-item active"><span class="page-link" aria-current="page">Trang @trang / @tongTrang</span></li>
+                    @if (trang < tongTrang) { <li class="page-item"><a class="page-link" asp-action="Index" asp-route-sapXep="@sapXep" asp-route-trang="@(trang + 1)">Trang sau</a></li> }
+                </ul>
             </nav>
         }
     }

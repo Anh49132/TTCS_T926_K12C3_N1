@@ -8,7 +8,7 @@
 <input type="hidden" name="PhienBan" value="@Model.PhienBan" />
 <label for="draft-due">Hạn thanh toán</label><input id="draft-due" name="HanThanhToan" type="date" value="@Model.HanThanhToan.ToString("yyyy-MM-dd")" class="form-control mb-3" required/>
 @{ var readings = Model.ChiTiet.Where(x => x.CachTinhApDung == "THEO_CHI_SO").OrderBy(x => x.SoThuTu).ToList(); }
-<div class="table-responsive"><table class="table id-charges"><thead><tr><th>Khoản thu</th><th>Hình thức tính</th><th>Thông số / Chỉ số</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead><tbody>
+<div class="table-responsive" tabindex="0" role="region" aria-label="Các khoản thu trong bản nháp, cuộn ngang để xem thêm"><table class="table id-charges"><thead><tr><th>Khoản thu</th><th>Hình thức tính</th><th>Thông số / Chỉ số</th><th>Đơn giá</th><th>Thành tiền</th></tr></thead><tbody>
 @foreach(var line in Model.ChiTiet.Where(x=>x.LoaiKhoan is not ("PHAT_SINH" or "GIAM_TRU")).OrderBy(x=>x.SoThuTu)){
 var i=readings.FindIndex(x=>x.Id==line.Id);
 <tr><th>@line.TenKhoan</th><td>@(line.LoaiKhoan=="TIEN_PHONG" ? "Từ hợp đồng" : line.CachTinhApDung=="THEO_CHI_SO" ? "Theo chỉ số" : line.CachTinhApDung=="THEO_NGUOI" ? "Theo số người" : "Cố định")</td><td>
@@ -26,13 +26,13 @@ else{<span>@line.SoLuong.ToString("0.###",CultureInfo.GetCultureInfo("vi-VN")) @
 @for(var i=0;i<existing.Count;i++){
 <fieldset class="mb-3"><legend class="fs-6">@(existing[i].LoaiKhoan=="GIAM_TRU" ? "Giảm trừ" : "Phát sinh")</legend>
 <input type="hidden" name="Khoan[@i].Id" value="@existing[i].Id"/><input type="hidden" name="Khoan[@i].LoaiKhoan" value="@existing[i].LoaiKhoan"/>
-<label for="charge-name-@i">Nội dung</label><input id="charge-name-@i" name="Khoan[@i].TenKhoan" value="@existing[i].TenKhoan" maxlength="200" class="form-control" required/>
-<label for="charge-amount-@i">Số tiền (đ)</label><input id="charge-amount-@i" name="Khoan[@i].SoTien" value="@existing[i].ThanhTien" type="number" min="1" step="1" class="form-control" required/>
-<label for="charge-note-@i">Ghi chú bắt buộc</label><textarea id="charge-note-@i" name="Khoan[@i].GhiChu" maxlength="1000" class="form-control" required>@existing[i].GhiChu</textarea>
+<div class="draft-adjustment-field"><label for="charge-name-@i">Nội dung</label><input id="charge-name-@i" name="Khoan[@i].TenKhoan" value="@existing[i].TenKhoan" maxlength="200" class="form-control" required/></div>
+<div class="draft-adjustment-field"><label for="charge-amount-@i">Số tiền (đ)</label><input id="charge-amount-@i" name="Khoan[@i].SoTien" value="@existing[i].ThanhTien" type="number" min="1" step="1" class="form-control" required/></div>
+<div class="draft-adjustment-field draft-adjustment-note"><label for="charge-note-@i">Ghi chú bắt buộc</label><textarea id="charge-note-@i" name="Khoan[@i].GhiChu" maxlength="1000" class="form-control" required>@existing[i].GhiChu</textarea></div>
 <button type="button" class="btn btn-outline-danger" data-remove-adjustment="@existing[i].Id">Xóa khoản</button></fieldset>
 }
 </div>
-<p><button type="button" data-add-adjustment="PHAT_SINH" class="btn btn-outline-secondary">＋ Thêm khoản phát sinh</button> <button type="button" data-add-adjustment="GIAM_TRU" class="btn btn-outline-secondary">＋ Thêm khoản giảm trừ</button></p>
+<div class="draft-adjustment-actions"><button type="button" data-add-adjustment="PHAT_SINH" class="btn btn-outline-secondary">＋ Thêm khoản phát sinh</button> <button type="button" data-add-adjustment="GIAM_TRU" class="btn btn-outline-secondary">＋ Thêm khoản giảm trừ</button></div>
 <p class="mi-muted">Đơn giá từ dữ liệu nguồn được giữ nguyên. Tổng tiền được tính lại khi lưu.</p>
 <button class="btn btn-dark">Lưu nháp và tính lại tổng</button>
 </form></section>

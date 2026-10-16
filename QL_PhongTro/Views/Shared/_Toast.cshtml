@@ -14,7 +14,7 @@
         </div>
     }
     @if (!string.IsNullOrEmpty(error)) {
-        <div class="app-toast app-toast-error" role="alert" data-app-toast>
+        <div class="app-toast app-toast-error" role="alert" aria-atomic="true" data-app-toast>
             <span>@error</span><button type="button" data-toast-close aria-label="Đóng thông báo">×</button>
         </div>
     }

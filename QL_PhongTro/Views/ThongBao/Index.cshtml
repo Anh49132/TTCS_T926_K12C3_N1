@@ -1,20 +1,20 @@
 @model List<QL_PhongTro.Models.ThongBaoHoaDon>
 @{ ViewData["Title"] = "Thông báo hóa đơn"; }
-<div class="container py-4" style="max-width:900px">
+<div class="container py-4 notification-page">
 <h1 class="h3">Thông báo hóa đơn</h1>
 <p>Hóa đơn xuất hiện tại đây sau khi Chủ nhà phát hành.</p>
 @if (Model.Count == 0) { <div class="alert alert-light">Chưa có thông báo hóa đơn.</div> }
 @foreach (var item in Model) {
 <article class="card mb-3"><div class="card-body">
-<h2 class="h5">@item.TieuDe @if (item.NgayDoc == null) { <span class="badge bg-dark">Mới</span> }</h2>
+<h2 class="h5">@item.TieuDe @if (item.NgayDoc == null) { <span class="badge notification-unread">Mới</span> }</h2>
 @if (ViewData["CancelledIds"] is HashSet<int> cancelled && cancelled.Contains(item.HoaDonId)) { <p class="alert alert-warning">Hóa đơn này đã hủy. Mở bản cũ để xem lý do và bản thay thế đã phát hành (nếu có).</p> }
 <p>@item.NoiDung</p><p class="text-muted">@item.NgayTao.AddHours(7).ToString("dd/MM/yyyy HH:mm")</p>
-<div class="d-flex flex-wrap gap-2"><a asp-action="HoaDon" asp-route-id="@item.HoaDonId" class="btn btn-dark">Xem hóa đơn</a>
+<div class="management-actions"><a asp-action="HoaDon" asp-route-id="@item.HoaDonId" class="btn btn-primary">Xem hóa đơn</a>
 @if (item.NgayDoc == null) { <form asp-action="Read" method="post"><input type="hidden" name="id" value="@item.Id" /><button class="btn btn-outline-secondary">Đánh dấu đã đọc</button></form> }
 </div></div></article>
 }
-<nav aria-label="Phân trang thông báo" class="d-flex gap-2 align-items-center">
-@if ((int)ViewData["Page"]! > 1) { <a asp-route-page="@((int)ViewData["Page"]! - 1)" class="btn btn-outline-secondary">Trước</a> }
-<span>Trang @ViewData["Page"] / @ViewData["Pages"]</span>
-@if ((int)ViewData["Page"]! < (int)ViewData["Pages"]!) { <a asp-route-page="@((int)ViewData["Page"]! + 1)" class="btn btn-outline-secondary">Sau</a> }
-</nav></div>
+<nav aria-label="Phân trang thông báo"><ul class="pagination">
+@if ((int)ViewData["Page"]! > 1) { <li class="page-item"><a asp-route-page="@((int)ViewData["Page"]! - 1)" class="page-link">Trước</a></li> }
+<li class="page-item active"><span class="page-link" aria-current="page">Trang @ViewData["Page"] / @ViewData["Pages"]</span></li>
+@if ((int)ViewData["Page"]! < (int)ViewData["Pages"]!) { <li class="page-item"><a asp-route-page="@((int)ViewData["Page"]! + 1)" class="page-link">Sau</a></li> }
+</ul></nav></div>

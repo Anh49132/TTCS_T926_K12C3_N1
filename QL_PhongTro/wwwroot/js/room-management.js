@@ -18,6 +18,7 @@ if(buildingSelect){
  const options=[...buildingSelect.options];
  const buttons=options.map(option=>{const item=document.createElement('button');item.type='button';item.setAttribute('role','option');item.setAttribute('aria-selected',String(option.selected));item.textContent=option.text;item.addEventListener('click',()=>{buildingSelect.value=option.value;close();buildingSelect.form.requestSubmit();});menu.append(item);return item;});
  trigger.textContent=buildingSelect.selectedOptions[0]?.text||'Tất cả cơ sở';
+ trigger.setAttribute('aria-label',(buildingSelect.getAttribute('aria-label')||'Bộ lọc')+': '+trigger.textContent);
  buildingSelect.hidden=true;wrapper.append(trigger,menu);wrapper.classList.add('rm-custom-select');
  function close(){menu.hidden=true;trigger.setAttribute('aria-expanded','false');}
  function open(){menu.hidden=false;trigger.setAttribute('aria-expanded','true');buttons[Math.max(0,buildingSelect.selectedIndex)].focus();}
@@ -30,7 +31,23 @@ if(buildingSelect){
 });
 const body=document.querySelector('.rm-table tbody'); if(!body)return;
 let rows=[...body.rows],page=1;const size=document.getElementById('rm-page-size'),pages=document.getElementById('rm-pages');
-function render(){const n=Number(size.value),count=Math.max(1,Math.ceil(rows.length/n));page=Math.min(page,count);rows.forEach((row,i)=>row.hidden=i<(page-1)*n||i>=page*n);document.getElementById('rm-count').textContent=`Hiển thị ${rows.length? (page-1)*n+1:0}–${Math.min(page*n,rows.length)} trong ${rows.length} phòng`;document.getElementById('rm-empty').hidden=rows.length>0;pages.replaceChildren();for(let i=1;i<=count;i++){const b=document.createElement('button');b.type='button';b.textContent=i;if(i===page)b.setAttribute('aria-current','page');b.addEventListener('click',()=>{page=i;render();});pages.append(b);}}
+function render(){
+ const n=Number(size.value),count=Math.max(1,Math.ceil(rows.length/n));page=Math.max(1,Math.min(page,count));
+ rows.forEach((row,i)=>row.hidden=i<(page-1)*n||i>=page*n);
+ document.getElementById('rm-count').textContent=`Hiển thị ${rows.length? (page-1)*n+1:0}–${Math.min(page*n,rows.length)} trong ${rows.length} phòng`;
+ document.getElementById('rm-empty').hidden=rows.length>0;
+ const restoreFocus=pages.contains(document.activeElement);
+ pages.replaceChildren();
+ const visible=[...new Set([1,page-1,page,page+1,count])].filter(i=>i>=1&&i<=count).sort((a,b)=>a-b);
+ let previous=0;
+ for(const i of visible){
+  if(previous && i>previous+1){const gap=document.createElement('span');gap.textContent='…';pages.append(gap);}
+  const b=document.createElement('button');b.type='button';b.textContent=i;b.setAttribute('aria-label','Trang '+i);
+  if(i===page)b.setAttribute('aria-current','page');
+  b.addEventListener('click',()=>{page=i;render();});pages.append(b);previous=i;
+ }
+ if(restoreFocus)pages.querySelector('[aria-current="page"]')?.focus();
+}
 size.addEventListener('change',()=>{page=1;render();});document.getElementById('rm-sort').addEventListener('click',()=>{rows.sort((a,b)=>a.dataset.code.localeCompare(b.dataset.code,'vi',{numeric:true}));rows.forEach(row=>body.append(row));page=1;render();});
 document.querySelectorAll('[data-view]').forEach(button=>button.addEventListener('click',()=>{document.querySelector('.rm-panel').classList.toggle('rm-grid',button.dataset.view==='grid');document.querySelectorAll('[data-view]').forEach(item=>item.setAttribute('aria-pressed',String(item===button)));}));
 document.addEventListener('click',e=>document.querySelectorAll('.rm-actions details[open]').forEach(menu=>{if(!menu.contains(e.target))menu.open=false;}));

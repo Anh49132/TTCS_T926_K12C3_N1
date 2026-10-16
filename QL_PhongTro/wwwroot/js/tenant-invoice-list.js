@@ -5,6 +5,7 @@
     const form = page.querySelector(".tenant-invoice-filters");
     const loading = document.getElementById("tenant-invoice-list-loading");
     const error = document.getElementById("tenant-invoice-list-error");
+    const retry = document.getElementById("tenant-invoice-list-retry");
     const empty = document.getElementById("tenant-invoice-list-empty");
     const noMatch = document.getElementById("tenant-invoice-list-no-match");
     const results = document.getElementById("tenant-invoice-list-results");
@@ -35,13 +36,14 @@
         return url.toString();
     };
 
-    const setError = (message) => {
+    const setError = (message, canRetry = true) => {
         loading.hidden = true;
         results.hidden = true;
         empty.hidden = true;
         noMatch.hidden = true;
         error.textContent = message;
         error.hidden = false;
+        if (retry) retry.hidden = !canRetry;
     };
 
     const buildPagination = (current, pages) => {
@@ -69,6 +71,7 @@
         };
         addLink("Trước", current - 1, current <= 1, "Trang trước");
         const indicator = document.createElement("span");
+        indicator.setAttribute("aria-current", "page");
         indicator.textContent = `Trang ${current} / ${pages}`;
         list.append(indicator);
         addLink("Sau", current + 1, current >= pages, "Trang sau");
@@ -116,7 +119,7 @@
             due.textContent = invoice.hanThanhToan;
             const status = document.createElement("td");
             const badge = document.createElement("span");
-            badge.className = `badge ${invoice.trangThai === "CHO_XAC_NHAN" ? "text-bg-warning" : invoice.quaHan ? "text-bg-danger" : invoice.trangThai === "DA_THANH_TOAN" ? "text-bg-success" : "text-bg-secondary"}`;
+            badge.className = `badge ${invoice.trangThai === "CHO_XAC_NHAN" ? "text-bg-warning" : invoice.quaHan ? "text-bg-danger" : invoice.trangThai === "DA_THANH_TOAN" ? "text-bg-success" : invoice.trangThai === "THANH_TOAN_MOT_PHAN" ? "text-bg-warning" : "text-bg-secondary"}`;
             badge.textContent = statusLabels[invoice.trangThai] || invoice.tenTrangThai;
             status.append(badge);
             if (invoice.quaHan) {
@@ -149,7 +152,9 @@
         if (submit) submit.disabled = true;
     });
 
-    (async () => {
+    const load = async () => {
+        if (retry) { retry.disabled = true; retry.hidden = true; }
+        error.hidden = true;
         loading.hidden = false;
         try {
             const period = params.get("ky") || "";
@@ -164,13 +169,17 @@
             });
             if (!response.ok) {
                 const body = await response.json().catch(() => null);
-                setError(body?.message || "Không thể tải danh sách hóa đơn. Vui lòng thử lại.");
+                setError(body?.message || "Không thể tải danh sách hóa đơn. Vui lòng thử lại.", response.status !== 401 && response.status !== 403 && response.status !== 404);
                 return;
             }
             render(await response.json());
         } catch (requestError) {
             console.error("Không tải được danh sách hóa đơn.", requestError);
             setError("Không thể tải danh sách hóa đơn. Vui lòng thử lại.");
+        } finally {
+            if (retry) retry.disabled = false;
         }
-    })();
+    };
+    retry?.addEventListener("click", load);
+    load();
 })();

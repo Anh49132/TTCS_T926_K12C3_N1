@@ -4,6 +4,7 @@
 
     const loading = document.getElementById("tenant-invoice-loading");
     const error = document.getElementById("tenant-invoice-error");
+    const retry = document.getElementById("tenant-invoice-retry");
     const content = document.getElementById("tenant-invoice-content");
     const body = document.querySelector("#tenant-invoice-lines tbody");
     const period = document.getElementById("tenant-invoice-period");
@@ -73,14 +74,16 @@
         return element;
     };
 
-    const showError = (message) => {
+    const showError = (message, canRetry = true) => {
         loading.hidden = true;
         content.hidden = true;
         error.textContent = message;
         error.hidden = false;
+        if (retry) retry.hidden = !canRetry;
     };
 
     const load = async () => {
+        if (retry) { retry.disabled = true; retry.hidden = true; }
         loading.hidden = false;
         content.hidden = true;
         error.hidden = true;
@@ -91,7 +94,11 @@
                 credentials: "same-origin"
             });
             if (response.status === 404) {
-                showError("Không tìm thấy hóa đơn.");
+                showError("Không tìm thấy hóa đơn.", false);
+                return;
+            }
+            if (response.status === 401 || response.status === 403) {
+                showError("Phiên đăng nhập đã hết hạn hoặc bạn không có quyền xem hóa đơn. Vui lòng đăng nhập lại.", false);
                 return;
             }
             if (!response.ok) throw new Error("Invoice request failed.");
@@ -141,8 +148,11 @@
             content.hidden = false;
         } catch {
             showError("Không thể tải hóa đơn. Vui lòng thử lại.");
+        } finally {
+            if (retry) retry.disabled = false;
         }
     };
 
+    retry?.addEventListener("click", load);
     load();
 })();

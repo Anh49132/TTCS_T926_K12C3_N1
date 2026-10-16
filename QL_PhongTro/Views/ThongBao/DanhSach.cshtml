@@ -49,6 +49,7 @@
             Đang tải danh sách hóa đơn…
         </div>
         <div id="tenant-invoice-list-error" class="alert alert-danger" role="alert" hidden></div>
+        <button type="button" id="tenant-invoice-list-retry" class="btn btn-outline-secondary mb-3" hidden>Tải lại danh sách</button>
         <div id="tenant-invoice-list-empty" class="alert alert-light" role="status" hidden>
             Bạn chưa có hóa đơn nào.
         </div>
@@ -57,7 +58,7 @@
         </div>
         <section id="tenant-invoice-list-results" hidden aria-label="Danh sách hóa đơn">
             <p id="tenant-invoice-list-count" class="text-muted"></p>
-            <div class="table-responsive tenant-invoice-list-table-wrap">
+            <div class="table-responsive tenant-invoice-list-table-wrap" tabindex="0" role="region" aria-label="Danh sách hóa đơn của bạn, cuộn ngang để xem thêm">
                 <table class="table table-hover align-middle tenant-invoice-list-table">
                     <caption class="visually-hidden">Hóa đơn đã phát hành của bạn</caption>
                     <thead>

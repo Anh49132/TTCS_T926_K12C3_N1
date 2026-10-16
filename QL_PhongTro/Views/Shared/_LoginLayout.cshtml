@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/login.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/champagne-theme.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/bootstrap-brand.css" asp-append-version="true" />
 </head>
 <body>
     <a class="skip-link" href="#auth-content">Đến biểu mẫu</a>
@@ -14,5 +15,6 @@
     <script src="~/js/auth-interceptor.js" asp-append-version="true"></script>
     <script src="~/js/password-toggle.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+    <script src="~/js/form-feedback.js" asp-append-version="true"></script>
 </body>
 </html>

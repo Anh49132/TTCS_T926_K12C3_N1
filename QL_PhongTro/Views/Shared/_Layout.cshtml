@@ -1,6 +1,11 @@
-﻿@inject QL_PhongTro.Authorization.PermissionService HeaderPermissions
+@inject QL_PhongTro.Authorization.PermissionService HeaderPermissions
 @{
     var isPropertyPage = ViewContext.RouteData.Values["controller"]?.ToString() == "PhongTro";
+    var useRentalWorkspace = ViewContext.RouteData.Values["controller"]?.ToString() is "PhongTro" or "HopDong" or "HopDongCuaToi" or "HoaDonDichVu";
+    var printController = ViewContext.RouteData.Values["controller"]?.ToString();
+    var printAction = ViewContext.RouteData.Values["action"]?.ToString();
+    var useDocumentPrint = (printController is "HopDong" or "HoaDonDichVu" && printAction == "Details")
+        || (printController == "ThongBao" && printAction == "HoaDon");
     var isListingPage = ViewContext.RouteData.Values["controller"]?.ToString() is "TinDang" or "TimTin";
     var useHomepageTheme = User.IsInRole("KHACH_THUE") || User.IsInRole("CHU_NHA") || User.IsInRole("QUAN_LY") || User.IsInRole("ADMIN");
     var isTenant = User.IsInRole("KHACH_THUE");
@@ -11,7 +16,7 @@
 <html lang="vi">
 <head>
 <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>@ViewData["Title"] - NhÃ  Trá»</title>
+<title>@ViewData["Title"] - NhàTốt</title>
 <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
 <link rel="stylesheet" href="~/css/theme.css" asp-append-version="true" />
 <link rel="stylesheet" href="~/css/layout.css" asp-append-version="true" />
@@ -26,9 +31,12 @@
 @if (isTenant) { <link rel="stylesheet" href="~/css/tenant-header.css" asp-append-version="true" /> }
 @if (User.IsInRole("CHU_NHA")) { <link rel="stylesheet" href="~/css/owner-dashboard.css" asp-append-version="true" /> }
 @if (useHomepageTheme && !isTenant) { <link rel="stylesheet" href="~/css/dashboard-spacing.css" asp-append-version="true" /> }
+<link rel="stylesheet" href="~/css/bootstrap-brand.css" asp-append-version="true" />
+@if (useRentalWorkspace) { <link rel="stylesheet" href="~/css/rental-workspace.css" asp-append-version="true" /> }
+@if (useDocumentPrint) { <link rel="stylesheet" href="~/css/document-print.css" media="print" asp-append-version="true" /> }
 </head>
-<body class="@(useHomepageTheme ? "homepage-dashboard-theme" : "") @roleClass">
-<a class="skip-link" href="#main-content">Äáº¿n ná»™i dung chÃ­nh</a>
+<body class="@(useHomepageTheme ? "homepage-dashboard-theme" : "") @roleClass @(useRentalWorkspace ? "rental-workspace" : "") @(useDocumentPrint ? "document-print" : "")">
+<a class="skip-link" href="#main-content">Đến nội dung chính</a>
 @if (isTenant)
 {
 <partial name="_TenantHeader" />
@@ -181,6 +189,7 @@ else
 <script src="~/js/auth-interceptor.js" asp-append-version="true"></script>
 <script src="~/js/password-toggle.js" asp-append-version="true"></script>
 @await RenderSectionAsync("Scripts", required: false)
+<script src="~/js/form-feedback.js" asp-append-version="true"></script>
 @if (isPropertyPage) {
 <partial name="_PropertyConfirm" />
 <script src="~/js/property-management.js" asp-append-version="true"></script>

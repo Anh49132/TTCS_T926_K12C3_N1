@@ -3,10 +3,11 @@
 @{
     ViewData["Title"] = "Nhật ký hoạt động";
 }
-<p class="eyebrow">HỆ THỐNG</p>
-<h1>Nhật ký hoạt động</h1>
-<p>Xem ai đã thêm, sửa hoặc xóa thông tin. Thời gian hiển thị theo giờ Việt Nam; tên và vai trò là thông tin tại lúc thực hiện.</p>
-<form method="get" class="row g-3 mb-4">
+<section class="management-page" aria-labelledby="audit-title">
+<header class="management-heading"><div><p class="eyebrow">HỆ THỐNG</p>
+<h1 id="audit-title">Nhật ký hoạt động</h1>
+<p class="text-secondary mb-0">Xem ai đã thêm, sửa hoặc xóa thông tin. Thời gian hiển thị theo giờ Việt Nam; tên và vai trò là thông tin tại lúc thực hiện.</p></div></header>
+<form method="get" class="row g-3 management-filters" aria-label="Lọc nhật ký hoạt động">
     <div class="col-md-3"><label asp-for="TuNgay" class="form-label">Từ ngày</label><input asp-for="TuNgay" type="date" class="form-control" /></div>
     <div class="col-md-3"><label asp-for="DenNgay" class="form-label">Đến ngày</label><input asp-for="DenNgay" type="date" class="form-control" /></div>
     <div class="col-md-3"><label asp-for="NguoiThucHienId" class="form-label">Người thực hiện</label><select asp-for="NguoiThucHienId" class="form-select"><option value="">Tất cả</option>
@@ -15,10 +16,10 @@
     <div class="col-md-3"><label asp-for="LoaiDoiTuong" class="form-label">Nhóm thông tin</label><select asp-for="LoaiDoiTuong" class="form-select"><option value="">Tất cả</option>
     @foreach (var type in NhatKyViewModel.Types) { <option value="@type.Key">@type.Value</option> }
     </select></div>
-    <div><button class="btn btn-primary" type="submit">Lọc nhật ký</button> <a asp-action="Index" class="btn btn-outline-secondary">Xóa bộ lọc</a></div>
+    <div class="management-actions"><button class="btn btn-primary" type="submit">Lọc nhật ký</button> <a asp-action="Index" class="btn btn-outline-secondary">Xóa bộ lọc</a></div>
 </form>
 <p>@Model.Total hoạt động · Trang @Model.Page/@Model.Pages</p>
-<div class="table-responsive"><table class="table align-top"><thead><tr><th>STT</th><th>Thời điểm</th><th>Người thực hiện</th><th>Vai trò</th><th>Thao tác</th><th>Thông tin liên quan</th><th>Nội dung thay đổi</th></tr></thead><tbody>
+<div class="table-responsive management-table" tabindex="0" role="region" aria-label="Danh sách nhật ký, cuộn ngang để xem thêm"><table class="table align-top"><thead><tr><th>STT</th><th>Thời điểm</th><th>Người thực hiện</th><th>Vai trò</th><th>Thao tác</th><th>Thông tin liên quan</th><th>Nội dung thay đổi</th></tr></thead><tbody>
 @{ var auditStt = (Model.Page - 1) * 50; }
 @foreach (var row in Model.Rows) {
 auditStt++;
@@ -50,8 +51,9 @@ var display = AuditDisplay.Describe(row);
 }
 @if (Model.Rows.Count == 0) { <tr><td colspan="7">Không có nhật ký phù hợp.</td></tr> }
 </tbody></table></div>
-<nav aria-label="Phân trang nhật ký">
+<nav aria-label="Phân trang nhật ký" class="mt-3"><ul class="pagination">
 @foreach (var pageNumber in new[] { Model.Page - 1, Model.Page + 1 }.Where(p => p >= 1 && p <= Model.Pages)) {
-<a class="btn btn-outline-primary" asp-action="Index" asp-route-page="@pageNumber" asp-route-tuNgay="@Model.TuNgay?.ToString("yyyy-MM-dd")" asp-route-denNgay="@Model.DenNgay?.ToString("yyyy-MM-dd")" asp-route-nguoiThucHienId="@Model.NguoiThucHienId" asp-route-loaiDoiTuong="@Model.LoaiDoiTuong">@(pageNumber < Model.Page ? "Trang trước" : "Trang sau")</a>
+<li class="page-item"><a class="page-link" asp-action="Index" asp-route-page="@pageNumber" asp-route-tuNgay="@Model.TuNgay?.ToString("yyyy-MM-dd")" asp-route-denNgay="@Model.DenNgay?.ToString("yyyy-MM-dd")" asp-route-nguoiThucHienId="@Model.NguoiThucHienId" asp-route-loaiDoiTuong="@Model.LoaiDoiTuong">@(pageNumber < Model.Page ? "Trang trước" : "Trang sau")</a></li>
 }
-</nav>
+</ul></nav>
+</section>

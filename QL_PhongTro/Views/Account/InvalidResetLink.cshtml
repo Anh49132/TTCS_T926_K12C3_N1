@@ -1,2 +1,10 @@
-@{ ViewData["Title"] = "Liên kết không hợp lệ"; }
-<section class="auth-card"><h1>Liên kết không hợp lệ</h1><p role="alert">Liên kết đặt lại mật khẩu không hợp lệ, đã hết hạn hoặc đã được sử dụng.</p><a asp-action="ForgotPassword">Yêu cầu liên kết mới</a></section>
+@{ ViewData["Title"] = "Liên kết không hợp lệ"; Layout = "~/Views/Shared/_LoginLayout.cshtml"; }
+<main class="login-page auth-recovery-page">
+<section class="login-panel" aria-labelledby="invalid-reset-title">
+<a class="login-brand" href="/" aria-label="NhàTốt, về trang chủ"><img src="~/images/nhatot-logo.svg" alt="NhàTốt - SỐNG ĐÚNG NƠI" height="38" /></a>
+<div class="login-card" id="auth-content" tabindex="-1">
+<h1 id="invalid-reset-title">Liên kết không hợp lệ</h1>
+<p class="login-description" role="alert">Liên kết đặt lại mật khẩu không hợp lệ, đã hết hạn hoặc đã được sử dụng.</p>
+<a asp-action="ForgotPassword" class="btn login-submit">Yêu cầu liên kết mới</a>
+<p class="login-bottom"><a asp-action="Login">← Quay lại đăng nhập</a></p>
+</div></section></main>

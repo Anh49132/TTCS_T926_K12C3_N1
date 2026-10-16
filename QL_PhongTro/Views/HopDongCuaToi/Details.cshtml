@@ -43,7 +43,7 @@
             <section class="tcd-card">
                 <h2><partial name="_DetailIcon" model='@("file")' />Dịch vụ và đơn giá áp dụng</h2>
                 @if(Model.DichVus.Count == 0){<div class="tcd-empty"><span class="tcd-empty-icon"><partial name="_DetailIcon" model='@("file")' /></span><strong>Chưa có dịch vụ được ghi nhận cho hợp đồng này.</strong><p>Đơn giá phát sinh sẽ hiển thị tại đây khi được cập nhật.</p></div>}
-                else{<div class="tcd-table-wrap"><table class="tcd-table"><thead><tr><th>Dịch vụ</th><th>Cách tính</th><th>Đơn vị</th><th>Đơn giá</th></tr></thead><tbody>@foreach(var service in Model.DichVus){<tr><th scope="row">@service.TenDichVu</th><td>@QL_PhongTro.Models.CachTinhDichVu.Ten(service.CachTinh)</td><td>@service.DonViTinh</td><td>@service.DonGia.ToString("N0",vn) đ</td></tr>}</tbody></table></div>}
+                else{<div class="tcd-table-wrap" tabindex="0" role="region" aria-label="Dịch vụ trong hợp đồng, cuộn ngang để xem thêm"><table class="tcd-table"><thead><tr><th>Dịch vụ</th><th>Cách tính</th><th>Đơn vị</th><th>Đơn giá</th></tr></thead><tbody>@foreach(var service in Model.DichVus){<tr><th scope="row">@service.TenDichVu</th><td>@QL_PhongTro.Models.CachTinhDichVu.Ten(service.CachTinh)</td><td>@service.DonViTinh</td><td>@service.DonGia.ToString("N0",vn) đ</td></tr>}</tbody></table></div>}
             </section>
             @if(Model.CacKy.Count>1){<section class="tcd-card"><h2><partial name="_DetailIcon" model='@("calendar")' />Các kỳ hợp đồng</h2>@foreach(var period in Model.CacKy){<div class="tcd-period"><span>@period.NgayBatDau.ToString("dd/MM/yyyy") — @period.NgayKetThuc.ToString("dd/MM/yyyy")</span><strong>@period.GiaThue.ToString("N0",vn) đ/tháng</strong></div>}</section>}
         </div>

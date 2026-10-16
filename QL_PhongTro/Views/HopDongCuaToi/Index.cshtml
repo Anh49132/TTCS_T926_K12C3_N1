@@ -56,7 +56,7 @@
             </div>
         </div>
 
-        <p class="tenant-contracts-no-results" id="tenant-contracts-no-results" hidden>Không tìm thấy hợp đồng phù hợp.</p>
+        <p class="tenant-contracts-no-results" id="tenant-contracts-no-results" role="status" hidden>Không tìm thấy hợp đồng phù hợp.</p>
         <div class="tenant-contracts-list">
             @foreach (var contract in Model.Contracts.Where(x => x.Category != "ended"))
             {
@@ -135,7 +135,7 @@
         (() => {
             const cards = [...document.querySelectorAll("[data-contract-card]")];
             const endedRows = [...document.querySelectorAll("[data-ended-row]")];
-            if (cards.length === 0) return;
+            if (cards.length === 0 && endedRows.length === 0) return;
 
             const query = document.getElementById("tenant-contract-query");
             const role = document.getElementById("tenant-contract-role");
@@ -157,26 +157,31 @@
                     if (matches) visible++;
                 }
 
+                let visibleEnded = 0;
                 for (const row of endedRows) {
                     const matches = (filter === "all" || filter === "ended") &&
                         (!role.value || row.dataset.role === role.value) &&
                         (!text || row.dataset.search.includes(text));
                     row.hidden = !matches;
-                    if (matches && filter !== "ended") visible++;
+                    if (matches) { visible++; visibleEnded++; }
                 }
 
-                if (endedGroup) endedGroup.hidden = filter !== "all" && filter !== "ended";
+                if (endedGroup) endedGroup.hidden = visibleEnded === 0;
                 empty.hidden = visible !== 0;
             };
 
             for (const button of document.querySelectorAll("[data-contract-filter]")) {
                 button.addEventListener("click", () => {
                     filter = button.dataset.contractFilter;
-                    document.querySelectorAll("[data-contract-filter]").forEach(item =>
-                        item.classList.toggle("is-selected", item === button));
+                    document.querySelectorAll("[data-contract-filter]").forEach(item => {
+                        item.classList.toggle("is-selected", item === button);
+                        item.setAttribute("aria-pressed", String(item === button));
+                    });
                     apply();
                 });
             }
+            document.querySelectorAll("[data-contract-filter]").forEach(item =>
+                item.setAttribute("aria-pressed", String(item.dataset.contractFilter === filter)));
             query.addEventListener("input", apply);
             role.addEventListener("change", apply);
             apply();

@@ -37,7 +37,7 @@ else
 @if (!Model.XemTruoc && invoice.TrangThai == "DA_PHAT_HANH") { <div class="alert alert-light">Hóa đơn đã phát hành. Chỉ số, các khoản tiền và tổng tiền đã được khóa.</div> }
 @if(Model.XemTruoc || invoice.TrangThai!="NHAP" || !write || invoice.LoaiHoaDon=="KY_CUOI"){
 <section class="mi-card"><h2>Chi tiết các khoản thu</h2>
-<div class="table-responsive"><table class="table id-charges"><thead><tr><th>Khoản thu</th><th>Cách tính</th><th>Số lượng</th><th class="text-end">Đơn giá</th><th class="text-end">Thành tiền</th></tr></thead><tbody>
+<div class="table-responsive" tabindex="0" role="region" aria-label="Chi tiết hóa đơn, cuộn ngang để xem thêm"><table class="table id-charges"><thead><tr><th>Khoản thu</th><th>Cách tính</th><th>Số lượng</th><th class="text-end">Đơn giá</th><th class="text-end">Thành tiền</th></tr></thead><tbody>
 @foreach (var line in invoice.ChiTiet.OrderBy(x => x.SoThuTu))
 {
     <tr><th scope="row">@line.TenKhoan @if (!string.IsNullOrEmpty(line.GhiChu)) { <small class="d-block">@line.GhiChu</small> }</th><td>
@@ -117,7 +117,7 @@ else
 }
 </section>
 }
-<section class="mi-card"><h2>Chỉ số sử dụng</h2><div class="table-responsive"><table class="table id-readings"><thead><tr><th>Dịch vụ</th><th>Chỉ số kỳ trước</th><th>Chỉ số kỳ này</th><th>Sản lượng tiêu thụ</th><th>Trạng thái</th></tr></thead><tbody>
+<section class="mi-card"><h2>Chỉ số sử dụng</h2><div class="table-responsive" tabindex="0" role="region" aria-label="Chi tiết hóa đơn, cuộn ngang để xem thêm"><table class="table id-readings"><thead><tr><th>Dịch vụ</th><th>Chỉ số kỳ trước</th><th>Chỉ số kỳ này</th><th>Sản lượng tiêu thụ</th><th>Trạng thái</th></tr></thead><tbody>
 @foreach (var line in meters) { <tr><th scope="row">@line.TenKhoan</th><td>@line.ChiSoDau?.ToString("0.###", vn) @line.DonViTinh</td><td>@line.ChiSoCuoi?.ToString("0.###", vn) @line.DonViTinh</td><td><strong>@line.SoLuong.ToString("0.###", vn) @line.DonViTinh</strong></td><td><span class="id-status">✓ @(Model.XemTruoc ? "Đã chốt" : "Đã lưu trên hóa đơn")</span></td></tr> }
 </tbody></table></div><p class="mi-muted">Ngày chốt kỳ: <strong>@invoice.NgayChot.ToString("dd/MM/yyyy")</strong>. @(Model.XemTruoc ? "Chỉ số sẽ được khóa khi phát hành." : invoice.TrangThai == "NHAP" ? "Chỉ số lưu trên bản nháp; chưa khóa bản chỉ số gốc." : "Chỉ số và đơn giá đã được lưu tại thời điểm phát hành.")</p></section>
 <section class="mi-card"><h2>Số người tính phí</h2><p class="id-people"><strong>@invoice.SoNguoiTinhPhi người</strong> trong kỳ tháng @invoice.Thang/@invoice.Nam</p><p class="mi-muted">Gồm người đứng tên và người ở ghép bắt đầu tính phí từ tháng sau ngày vào. Người chuyển đi vẫn tính hết tháng rời phòng.</p></section>

@@ -15,11 +15,12 @@
         Đang tải chi tiết hóa đơn…
     </div>
     <div id="tenant-invoice-error" class="alert alert-danger" role="alert" hidden></div>
+    <button type="button" id="tenant-invoice-retry" class="btn btn-outline-secondary mb-3" hidden>Tải lại hóa đơn</button>
     <section id="tenant-invoice-content" class="card" hidden>
         <div class="card-body">
             <h2 class="h5 mb-1">Hóa đơn tháng <span id="tenant-invoice-period"></span></h2>
             <p class="text-muted" id="tenant-invoice-room"></p>
-            <div class="table-responsive">
+            <div class="table-responsive" tabindex="0" role="region" aria-label="Chi tiết các khoản tiền, cuộn ngang để xem thêm">
                 <table class="table table-striped align-middle mb-0" id="tenant-invoice-lines">
                     <caption class="visually-hidden">Các khoản mục của hóa đơn</caption>
                     <thead>

@@ -1,7 +1,7 @@
 @model QL_PhongTro.ViewModels.ChangeAccountRoleViewModel
 @using QL_PhongTro.ViewModels
 @{ ViewData["Title"] = "Đổi vai trò tài khoản"; }
-<section class="auth-card">
+<section class="auth-card management-form">
 <h1>Đổi vai trò tài khoản</h1>
 <p>Tài khoản: <strong>@Model.HoTen</strong></p>
 <p>Sau khi đổi vai trò, mọi phiên đăng nhập cũ sẽ mất hiệu lực. Người dùng cần đăng nhập lại.</p>
@@ -17,7 +17,8 @@
 }
 </select>
 </div>
-<button class="btn btn-primary" type="submit">Lưu vai trò</button>
+<div class="management-actions"><button class="btn btn-primary" type="submit">Lưu vai trò</button>
 <a asp-action="Index" class="btn btn-outline-secondary">Quay lại danh sách</a>
+</div>
 </form>
 </section>

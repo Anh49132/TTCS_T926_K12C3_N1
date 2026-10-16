@@ -1,4 +1,4 @@
-﻿(() => {
+(() => {
     const sidebar = document.getElementById('app-sidebar');
     const toggle = document.getElementById('sidebar-toggle');
     const backdrop = document.getElementById('sidebar-backdrop');
@@ -66,13 +66,29 @@
 
 (() => {
     document.querySelectorAll('[data-app-toast]').forEach(toast => {
-        const timer = toast.dataset.toastPersistent === 'true'
-            ? null
-            : window.setTimeout(() => toast.remove(), 3000);
+        let timer;
+        let hovering = false;
+        let focused = false;
+        const stop = () => window.clearTimeout(timer);
+        const schedule = () => {
+            stop();
+            // Errors stay available until dismissed so users can read and act on them.
+            if (toast.dataset?.toastPersistent !== 'true' && !toast.classList.contains('app-toast-error') && !hovering && !focused) {
+                timer = window.setTimeout(() => toast.remove(), 6000);
+            }
+        };
+        toast.addEventListener('mouseenter', () => { hovering = true; stop(); });
+        toast.addEventListener('mouseleave', () => { hovering = false; schedule(); });
+        toast.addEventListener('focusin', () => { focused = true; stop(); });
+        toast.addEventListener('focusout', event => {
+            focused = toast.contains(event.relatedTarget);
+            schedule();
+        });
         toast.querySelector('[data-toast-close]')?.addEventListener('click', () => {
-            if (timer !== null) window.clearTimeout(timer);
+            stop();
             toast.remove();
         });
+        schedule();
     });
 })();
 
@@ -86,7 +102,20 @@
     });
     document.addEventListener('keydown', event => {
         if (event.key !== 'Escape') return;
-        dropdowns.forEach(item => item.open = false);
+        dropdowns.forEach(item => {
+            if (!item.open) return;
+            const restoreFocus = item.contains(document.activeElement);
+            item.open = false;
+            if (restoreFocus) {
+                event.preventDefault();
+                item.querySelector('summary')?.focus();
+            }
+        });
+    });
+    document.addEventListener('focusin', event => {
+        dropdowns.forEach(item => {
+            if (item.open && !item.contains(event.target)) item.open = false;
+        });
     });
     dropdowns.forEach(item => item.addEventListener('toggle', () => {
         if (!item.open) return;

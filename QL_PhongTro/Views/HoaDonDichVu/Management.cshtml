@@ -23,7 +23,7 @@
 <input type="number" name="nam" value="@Model.Nam" min="1900" max="9998" class="form-control" placeholder="Năm" aria-label="Năm"/>
 <select name="trangThai" class="form-select" aria-label="Trạng thái">@foreach(var tab in new[]{("","Tất cả trạng thái"),("NHAP","Nháp"),("DA_PHAT_HANH","Đã phát hành"),("DA_HUY","Đã hủy"),("QUA_HAN","Quá hạn")}){<option value="@tab.Item1" selected="@(Model.TrangThai==tab.Item1)">@tab.Item2</option>}</select><button class="btn btn-dark">Lọc</button>
 </form>
-<form asp-action="PublishMonthlyDrafts" method="post" id="management-batch"><div class="table-responsive"><table class="table flow-table"><thead><tr><th><input type="checkbox" data-management-all aria-label="Chọn các bản nháp trên trang"/></th><th>Mã hóa đơn</th><th>Phòng / Khách thuê</th><th>Kỳ</th><th>Ngày phát hành</th><th>Hạn thanh toán</th><th>Tổng tiền</th><th>Đã thu</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>
+<form asp-action="PublishMonthlyDrafts" method="post" id="management-batch"><div class="table-responsive" tabindex="0" role="region" aria-label="Danh sách hóa đơn, cuộn ngang để xem thêm"><table class="table flow-table"><thead><tr><th><input type="checkbox" data-management-all aria-label="Chọn các bản nháp trên trang"/></th><th>Mã hóa đơn</th><th>Phòng / Khách thuê</th><th>Kỳ</th><th>Ngày phát hành</th><th>Hạn thanh toán</th><th>Tổng tiền</th><th>Đã thu</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>
 @foreach(var row in Model.Rows){<tr><td>@if(write && row.TrangThai=="NHAP"){<input type="checkbox" name="selectedInvoiceIds" value="@row.Id" data-building="@row.ToaNhaId" data-year="@row.Nam" data-month="@row.Thang" data-total="@row.TongTien" aria-label="Chọn hóa đơn @row.MaHoaDon"/><input name="versions[@row.Id]" value="@row.PhienBan" type="hidden"/>}</td><th>@row.MaHoaDon</th><td><strong>@row.MaPhong</strong><small>@row.TenKhach</small></td><td>@row.Thang.ToString("00")/@row.Nam</td><td>@(row.NgayPhatHanh?.ToString("dd/MM/yyyy") ?? "—")</td><td>@row.HanThanhToan.ToString("dd/MM/yyyy")</td><td>@row.TongTien.ToString("N0",vn) đ</td><td>@row.DaThu.ToString("N0",vn) đ</td><td><span class="flow-badge @(row.QuaHan ? "danger" : row.TrangThai=="NHAP" ? "warning" : "")">@row.HienThi</span></td><td><a asp-action="Details" asp-route-id="@row.Id" class="btn btn-outline-secondary">@(row.TrangThai=="NHAP" ? "Kiểm tra" : "Xem")</a>@if(row.TrangThai=="NHAP"){<a asp-action="Monthly" asp-route-toaNhaId="@row.ToaNhaId" asp-route-nam="@row.Nam" asp-route-thang="@row.Thang" class="d-block mt-1">Phát hành theo kỳ</a>}</td></tr>}
 </tbody></table></div>
 @if(write){<div class="flow-actions"><span data-management-count>Đã chọn 0 hóa đơn</span><button type="button" data-management-open class="btn btn-dark">Phát hành hàng loạt</button></div>
@@ -37,5 +37,19 @@
 <div class="flow-actions"><button type="button" data-management-close class="btn btn-outline-secondary">Quay lại kiểm tra</button><button type="submit" class="btn btn-dark">Xác nhận phát hành</button></div></dialog>}
 </form>
 @if(Model.Rows.Count==0){<p class="flow-empty">Không có hóa đơn phù hợp bộ lọc.</p>}
-<footer class="flow-pagination"><span>@Model.Total hóa đơn · Trang @Model.Page</span><div>@for(var p=1;p<=Math.Max(1,(Model.Total+9)/10);p++){<a class="btn @(p==Model.Page ? "btn-dark" : "btn-outline-secondary")" asp-route-page="@p" asp-route-q="@Model.Q" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-nam="@Model.Nam" asp-route-thang="@Model.Thang" asp-route-trangThai="@Model.TrangThai">@p</a>}</div></footer>
+@{
+    var totalPages = Math.Max(1, (Model.Total + 9) / 10);
+    var visiblePages = new[] { 1, Model.Page - 1, Model.Page, Model.Page + 1, totalPages }
+        .Where(p => p >= 1 && p <= totalPages).Distinct().OrderBy(p => p).ToList();
+    var previousPage = 0;
+}
+<footer class="flow-pagination"><span>@Model.Total hóa đơn · Trang @Model.Page / @totalPages</span>
+<nav aria-label="Phân trang hóa đơn"><ul class="pagination mb-0">
+@foreach (var p in visiblePages)
+{
+    if (previousPage > 0 && p > previousPage + 1) { <li class="page-item disabled"><span class="page-link">…</span></li> }
+    <li class="page-item @(p == Model.Page ? "active" : "")"><a class="page-link" aria-label="Trang @p" aria-current="@(p == Model.Page ? "page" : null)" asp-route-page="@p" asp-route-q="@Model.Q" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-nam="@Model.Nam" asp-route-thang="@Model.Thang" asp-route-trangThai="@Model.TrangThai">@p</a></li>
+    previousPage = p;
+}
+</ul></nav></footer>
 </section></div>

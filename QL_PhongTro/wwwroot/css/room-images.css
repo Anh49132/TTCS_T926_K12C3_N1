@@ -236,12 +236,23 @@
     color: #FFFFFF;
 }
 
+.room-image-card-footer { flex-wrap: wrap; gap: .5rem; }
+.room-image-move-controls { display: flex; flex-wrap: wrap; gap: .375rem; }
+.room-image-move-button {
+    min-height: 2.5rem; padding: .375rem .5rem; border: 1px solid #E9EAEC;
+    border-radius: .375rem; background: #FFFFFF; color: #30343B; font: inherit;
+}
+.room-image-move-button:hover:not(:disabled) { background: #F5F5F4; border-color: #BFA77A; }
+.room-image-move-button:disabled { opacity: .45; cursor: not-allowed; }
+.room-image-card:focus-visible { outline: 2px solid #BFA77A; outline-offset: 3px; }
+
 @keyframes room-image-in {
     from { opacity: 0; transform: translateY(5px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 480px) {
+    .room-image-move-controls button { min-height: 2.75rem; }
     .room-image-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }

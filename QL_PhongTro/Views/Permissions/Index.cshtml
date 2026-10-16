@@ -2,12 +2,13 @@
 @{
     ViewData["Title"] = "Bảng phân quyền";
 }
-<h1 class="h3">Bảng phân quyền theo vai trò</h1>
+<section class="management-page" aria-labelledby="permissions-title">
+<header class="management-heading"><div><p class="eyebrow">QUẢN TRỊ HỆ THỐNG</p><h1 id="permissions-title">Bảng phân quyền theo vai trò</h1>
 <p class="text-secondary">Cấu hình quyền hiện tại được lưu trong cơ sở dữ liệu.</p>
-<p>F: toàn quyền · W: ghi trong phạm vi được giao · R: chỉ xem · —: không truy cập · *: chỉ dữ liệu của mình.</p>
-<div class="table-responsive">
+<p class="mb-0">F: toàn quyền · W: ghi trong phạm vi được giao · R: chỉ xem · —: không truy cập · *: chỉ dữ liệu của mình.</p></div></header>
+<div class="table-responsive management-table" tabindex="0" role="region" aria-label="Bảng phân quyền, cuộn ngang để xem thêm">
     <table class="table table-bordered align-middle" id="permission-matrix">
-        <thead><tr><th scope="col">Module</th>
+        <thead><tr><th scope="col">Chức năng</th>
         @foreach (var role in Model.Roles)
         {
             <th scope="col" data-role="@role.Code">@role.Name</th>
@@ -28,4 +29,5 @@
         </tbody>
     </table>
 </div>
+</section>
 
