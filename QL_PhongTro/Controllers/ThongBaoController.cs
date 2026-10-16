@@ -218,6 +218,23 @@ public sealed class ThongBaoController(
         return RedirectToAction(nameof(HoaDon), new { id = hoaDonId });
     }
 
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> HuyBaoCaoThanhToan(int hoaDonId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await paymentReports.HuyAsync(Actor, hoaDonId, cancellationToken);
+            TempData[result.DaHuy ? "PaymentReportSuccess" : "PaymentReportError"] = result.DaHuy
+                ? "Đã hủy báo cáo thanh toán. Bạn có thể gửi báo cáo mới."
+                : "Báo cáo không còn ở trạng thái chờ xác nhận nên không thể hủy.";
+            return RedirectToAction(nameof(ChiTiet), new { maHoaDon = result.MaHoaDon });
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
+    }
+
     [HttpGet]
     public IActionResult ChiTiet(string maHoaDon, string? ky = null, string? trangThai = null, int page = 1)
     {

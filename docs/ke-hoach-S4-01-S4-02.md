@@ -168,6 +168,8 @@ Ghi quyết định PO có ngày và cập nhật AC/test trước triển khai 
 | Retry gửi/xác nhận, hai request đồng thời | Một báo/một lần thu đúng khóa; không tăng tiền lần hai |
 | Hai báo khác nhau hoặc báo và thu trực tiếp cùng xác nhận | Không thu vượt; thao tác thua nhận xung đột/tải lại |
 | Hủy/từ chối báo chờ | Giữ lịch sử; tiền không đổi; không xác nhận tiếp |
+| Khách hủy báo cáo đang chờ | Đổi báo cáo sang `DA_HUY` trong transaction; không xóa lịch sử, hóa đơn vẫn phát hành và form gửi báo cáo mở lại |
+| Hủy báo cáo sau khi đã xác nhận | Bị từ chối; khoản thanh toán đã xác nhận không đổi |
 | Hủy báo đối đầu xác nhận | Chỉ một trạng thái cuối; không có báo hủy mà vẫn sinh thu |
 | Hủy lần thu ghi nhầm 1.000.000 sau trả đủ | Có lý do/người/thời điểm; đã thu giảm còn 2.000.000, nợ lại 1.000.000; báo nguồn không xác nhận lại |
 | Tiền 0, âm, lẻ đồng, vượt nợ; ngày tương lai | Backend từ chối, không tạo báo/thu/tệp mồ côi |

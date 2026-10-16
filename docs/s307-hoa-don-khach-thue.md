@@ -29,7 +29,9 @@ Các dòng đã lưu tiếp tục là snapshot bất biến của hóa đơn. Kh
 - Updater schema v35 thêm cột tùy chọn `hinh_thuc_bao_cao`, giới hạn hai hình thức trên; v36 thêm metadata ảnh tùy chọn và giữ nguyên các dòng thanh toán lịch sử.
 - Chuyển khoản bắt buộc có ảnh chứng từ; tiền mặt cho phép bỏ trống. Chỉ nhận JPG/JPEG/PNG tối đa 5 MiB (5.242.880 byte); backend xác thực định dạng thực tế và lưu ngoài thư mục public.
 - Chủ nhà sở hữu hóa đơn và Quản trị hệ thống có thể yêu cầu liên kết xem ảnh được ký bảo mật, gắn với tài khoản hiện tại và hết hạn sau 15 phút. Server kiểm tra lại quyền ở mỗi lần tải ảnh; phản hồi không lưu cache.
-- Chưa có hủy báo cáo, hoặc thao tác chủ nhà xác nhận/từ chối báo cáo trong phạm vi này.
+- Khi báo cáo còn `CHO_XAC_NHAN`, khách thuê có thể hủy. Báo cáo được giữ lại với trạng thái `DA_HUY`; hóa đơn vẫn giữ trạng thái phát hành gốc và trạng thái thanh toán hiển thị được suy ra lại từ số tiền đã xác nhận/cấn trừ. Nếu báo cáo đã được xác nhận hoặc không còn chờ, yêu cầu hủy bị từ chối.
+- Sau khi hủy thành công, giao diện tải lại trạng thái hóa đơn và mở form cho phép khách gửi báo cáo mới; lịch sử báo cáo đã hủy vẫn được bảo toàn.
+- Chưa có thao tác chủ nhà từ chối báo cáo trong phạm vi này.
 
 ### Bổ sung quyết định PO: không phát hành dịch vụ khoán theo người
 

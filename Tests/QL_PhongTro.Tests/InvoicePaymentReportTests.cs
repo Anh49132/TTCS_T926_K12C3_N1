@@ -98,6 +98,90 @@ public sealed partial class RoomServicesTests
     }
 
     [Fact]
+    public async Task TenantCanCancelPendingReportAndCanSubmitAgain()
+    {
+        int invoiceId;
+        using (var db = Context())
+        {
+            var fixture = await BillingAsync(db);
+            await LinkTenantsAsync(db, fixture.B);
+            invoiceId = await AddPublishedTenantInvoiceAsync(db, fixture.A, "PAYMENT-REPORT-CANCEL", false);
+            await new BaoCaoThanhToanService(db).GuiAsync(3, invoiceId, 250_000, new(2026, 10, 12), "TIEN_MAT");
+        }
+
+        using var factory = BillingWeb(new MockTimeProvider { UtcNow = new(2026, 10, 12, 17, 30, 0, DateTimeKind.Utc) });
+        using var tenant = factory.CreateClient(new() { AllowAutoRedirect = false });
+        await Login(tenant, "tenant");
+        var pendingPage = WebUtility.HtmlDecode(await tenant.GetStringAsync($"/ThongBao/HoaDon/{invoiceId}"));
+        Assert.Contains("Chờ xác nhận", pendingPage);
+        Assert.Contains("Hủy báo cáo", pendingPage);
+        Assert.DoesNotContain("name=\"soTien\"", pendingPage);
+
+        var cancelled = await Post(tenant, "/ThongBao/HuyBaoCaoThanhToan",
+            new() { ["hoaDonId"] = invoiceId.ToString() });
+        Assert.Equal(HttpStatusCode.Redirect, cancelled.StatusCode);
+        Assert.Contains("/ThongBao/ChiTiet?maHoaDon=PAYMENT-REPORT-CANCEL", cancelled.Headers.Location!.ToString());
+        var returnedPage = WebUtility.HtmlDecode(await tenant.GetStringAsync(cancelled.Headers.Location));
+        Assert.Contains("Đã hủy báo cáo thanh toán", returnedPage);
+
+        using (var verify = Context())
+        {
+            var report = await verify.ThanhToans.SingleAsync(x => x.HoaDonId == invoiceId);
+            Assert.Equal("DA_HUY", report.TrangThai);
+            Assert.Equal("DA_PHAT_HANH", (await verify.HoaDons.SingleAsync(x => x.Id == invoiceId)).TrangThai);
+        }
+        using (var data = JsonDocument.Parse(await tenant.GetStringAsync(
+                   "/ThongBao/ChiTietDuLieu?maHoaDon=PAYMENT-REPORT-CANCEL")))
+        {
+            Assert.False(data.RootElement.GetProperty("choXacNhan").GetBoolean());
+            Assert.True(data.RootElement.GetProperty("choPhepBaoCaoThanhToan").GetBoolean());
+        }
+        var resubmitted = await Post(tenant, "/ThongBao/BaoCaoThanhToan", new()
+        {
+            ["hoaDonId"] = invoiceId.ToString(),
+            ["soTien"] = "100000",
+            ["ngayThanhToan"] = "2026-10-13",
+            ["hinhThucThanhToan"] = "TIEN_MAT"
+        });
+        Assert.Equal(HttpStatusCode.Redirect, resubmitted.StatusCode);
+        using (var verify = Context())
+        {
+            Assert.Equal(2, await verify.ThanhToans.CountAsync(x => x.HoaDonId == invoiceId));
+            Assert.Equal(1, await verify.ThanhToans.CountAsync(x => x.HoaDonId == invoiceId && x.TrangThai == "DA_HUY"));
+            Assert.Equal(1, await verify.ThanhToans.CountAsync(x => x.HoaDonId == invoiceId && x.TrangThai == "CHO_XAC_NHAN"));
+        }
+    }
+
+    [Fact]
+    public async Task TenantCannotCancelReportAfterOwnerConfirmation()
+    {
+        int invoiceId;
+        using (var db = Context())
+        {
+            var fixture = await BillingAsync(db);
+            await LinkTenantsAsync(db, fixture.B);
+            invoiceId = await AddPublishedTenantInvoiceAsync(db, fixture.A, "PAYMENT-REPORT-CONFIRMED", false);
+            await new BaoCaoThanhToanService(db).GuiAsync(3, invoiceId, 250_000, new(2026, 10, 12), "TIEN_MAT");
+            await db.ThanhToans.Where(x => x.HoaDonId == invoiceId)
+                .ExecuteUpdateAsync(update => update.SetProperty(x => x.TrangThai, "DA_XAC_NHAN"));
+        }
+
+        using var factory = BillingWeb(new MockTimeProvider { UtcNow = new(2026, 10, 12, 17, 30, 0, DateTimeKind.Utc) });
+        using var tenant = factory.CreateClient(new() { AllowAutoRedirect = false });
+        await Login(tenant, "tenant");
+        var confirmedPage = WebUtility.HtmlDecode(await tenant.GetStringAsync($"/ThongBao/HoaDon/{invoiceId}"));
+        Assert.DoesNotContain("Hủy báo cáo", confirmedPage);
+
+        var rejected = await Post(tenant, "/ThongBao/HuyBaoCaoThanhToan",
+            new() { ["hoaDonId"] = invoiceId.ToString() });
+        Assert.Equal(HttpStatusCode.Redirect, rejected.StatusCode);
+        var resultPage = WebUtility.HtmlDecode(await tenant.GetStringAsync(rejected.Headers.Location));
+        Assert.Contains("không thể hủy", resultPage, StringComparison.OrdinalIgnoreCase);
+        using var verify = Context();
+        Assert.Equal("DA_XAC_NHAN", (await verify.ThanhToans.SingleAsync(x => x.HoaDonId == invoiceId)).TrangThai);
+    }
+
+    [Fact]
     public async Task TenantPaymentReportHttpRejectsInvalidAmountsAndReturnsPendingStatus()
     {
         int invoiceId;

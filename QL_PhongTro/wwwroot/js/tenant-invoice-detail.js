@@ -23,6 +23,9 @@
     const reportProofError = document.getElementById("tenant-payment-report-proof-error");
     const reportProofRequirement = document.getElementById("tenant-payment-report-proof-requirement");
     const pendingReport = document.getElementById("tenant-payment-report-pending");
+    const cancelReportForm = document.getElementById("tenant-payment-report-cancel-form");
+    const cancelReportInvoiceId = document.getElementById("tenant-payment-report-cancel-invoice-id");
+    const cancelReportButton = document.getElementById("tenant-payment-report-cancel-button");
     const vnd = new Intl.NumberFormat("vi-VN");
 
     const updateProofRequirement = () => {
@@ -58,6 +61,9 @@
             event.preventDefault();
             reportProof.focus();
         }
+    });
+    cancelReportButton.addEventListener("click", event => {
+        if (!window.confirm("Bạn có chắc muốn hủy báo cáo thanh toán này?")) event.preventDefault();
     });
 
     const cell = (value, className) => {
@@ -114,6 +120,8 @@
             overdue.textContent = invoice.quaHan ? `Quá hạn ${invoice.soNgayTre} ngày` : "";
             overdue.hidden = !invoice.quaHan;
             reportForm.hidden = !invoice.choPhepBaoCaoThanhToan;
+            cancelReportForm.hidden = !invoice.choXacNhan;
+            cancelReportInvoiceId.value = invoice.hoaDonId;
             if (invoice.choPhepBaoCaoThanhToan) {
                 reportInvoiceId.value = invoice.hoaDonId;
                 reportAmount.max = invoice.soConPhaiTra;
@@ -123,7 +131,11 @@
             pendingReport.hidden = !invoice.choXacNhan;
             if (invoice.choXacNhan) {
                 const method = invoice.hinhThucBaoCaoChoXacNhan === "TIEN_MAT" ? "Tiền mặt" : "Chuyển khoản";
-                pendingReport.textContent = `Báo cáo thanh toán ${vnd.format(invoice.soTienBaoCaoChoXacNhan)} đ, ngày ${invoice.ngayBaoCaoChoXacNhan}, hình thức ${method} đang chờ xác nhận. Bạn không thể sửa báo cáo đã gửi.`;
+                pendingReport.replaceChildren();
+                const summary = document.createElement("p");
+                summary.className = "mb-2";
+                summary.textContent = `Báo cáo thanh toán ${vnd.format(invoice.soTienBaoCaoChoXacNhan)} đ, ngày ${invoice.ngayBaoCaoChoXacNhan}, hình thức ${method} đang chờ xác nhận. Bạn không thể sửa báo cáo đã gửi.`;
+                pendingReport.append(summary, cancelReportForm);
             }
             loading.hidden = true;
             content.hidden = false;
