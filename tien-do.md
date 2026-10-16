@@ -1,3 +1,8 @@
+### 16/10/2026 – Sửa tiếng Việt lỗi mã hóa trên giao diện dùng chung
+- Khôi phục chuỗi tiếng Việt trong `Views/Shared/_Layout.cshtml`: tiêu đề tab (thống nhất NhàTốt), ô tìm kiếm, breadcrumb, nút menu, nhãn trợ năng và thông báo. Sửa hai thông báo lỗi phiên đăng nhập trong `Program.cs`. Chỉ thay chuỗi hiển thị, giữ nguyên markup, route và kiểm tra quyền.
+- Quét 551 tệp mã nguồn/giao diện/script/style/cấu hình: không còn ký tự thay thế hoặc C1 control do lỗi mã hóa; các chuỗi nghi ngờ còn lại là chữ đúng “ĐÃ”. File `GiayToImageStore.cs` là UTF-16 có BOM hợp lệ, giữ nguyên. Không chuyển mã hàng loạt, không thay DB.
+- Build đạt (cảnh báo ImageSharp/CS8601 có sẵn). Kiểm tra Edge trên DB sao chép: công nợ, danh sách/chi tiết/thêm tòa, danh sách phòng, hóa đơn khách và trang chủ quản lý/admin, tổng8màn đạt; đã xem ảnh ô tìm kiếm. Log `data/vietnamese-encoding-browser.log`, ảnh `data/debt-dashboard-qa/b8df171c98/browser-check-fe85c447`. Server QA đã dừng; chưa push thay đổi này.
+
 ### 16/10/2026 – Hoàn thiện giao diện công nợ S4-03
 - `/CongNo` có tổng quan theo kết quả lọc, tổng hợp theo tòa cùng màn, ưu tiên thu, danh sách phòng và hộp chi tiết từng hóa đơn qua `/CongNo/Phong/{id}`. Hiển thị tổng/đã thu/cấn cọc/còn thiếu/hạn/ngày quá hạn/chờ xác nhận; kiểm tra sở hữu ở backend, khách/quản lý bị chặn. Nhãn nhiều kỳ đòi hỏi hai tháng/năm quá hạn khác nhau.
 - Chặn số âm, khoảng đảo, tiền/ngày sai định dạng hoặc tràn số cả UI/server; bộ lọc sai trả400 và không hiển thị/xuất kết quả. Có trạng thái rỗng, tìm kiếm, bốn cách sắp xếp tiền/quá hạn và phân trang gọn giữ bộ lọc. CSV UTF-8 BOM khớp toàn bộ kết quả lọc, giữ escape/chống công thức, tên chứa ngày và bộ lọc; có phản hồi đang xuất/thành công/thất bại. Khoản chờ không tính đã thu; cấn cọc vẫn tách riêng.
