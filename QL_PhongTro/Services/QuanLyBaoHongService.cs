@@ -73,6 +73,34 @@ public sealed class QuanLyBaoHongService(AppDbContext db, ITimeProvider clock, B
         return rows;
     }
 
+    public async Task<BaoHongTongQuan> TongQuanAsync(int managerId, BaoHongBoLoc filter, CancellationToken ct = default)
+    {
+        var buildings = await ToaNhaLocAsync(managerId, filter, ct);
+        var scoped = Rows(managerId);
+        var now = clock.UtcNow;
+        var cutoff = now.AddHours(-24);
+        var states = await scoped.GroupBy(x => x.BaoHong.TrangThai)
+            .Select(g => new { State = g.Key, Count = g.Count() }).ToListAsync(ct);
+        var urgent = scoped.Where(x => x.BaoHong.MucDo == "GAP" && x.BaoHong.TrangThai == "MOI" && x.BaoHong.NgayTao < cutoff);
+        var tabs = scoped;
+        if (filter.ToaNhaId.HasValue) tabs = tabs.Where(x => x.ToaNhaId == filter.ToaNhaId.Value);
+        if (filter.MucDo is not null) tabs = tabs.Where(x => x.BaoHong.MucDo == filter.MucDo);
+        var tabCounts = await tabs.GroupBy(x => x.BaoHong.TrangThai)
+            .Select(g => new { State = g.Key, Count = g.Count() }).ToDictionaryAsync(x => x.State, x => x.Count, ct);
+        var selected = filter.TrangThai is null ? tabs : tabs.Where(x => x.BaoHong.TrangThai == filter.TrangThai);
+        var warning = await selected.Where(x => x.BaoHong.MucDo == "GAP" && x.BaoHong.TrangThai == "MOI" && x.BaoHong.NgayTao < cutoff)
+            .OrderBy(x => x.BaoHong.NgayTao).ThenBy(x => x.BaoHong.Id).FirstOrDefaultAsync(ct);
+        if (warning is not null) warning.CanhBaoQuaHan = BaoHongCanhBaoService.DanhGia(warning.BaoHong, now);
+        return new BaoHongTongQuan
+        {
+            Tong = states.Sum(x => x.Count), Moi = states.Where(x => x.State == "MOI").Sum(x => x.Count),
+            HoanThanh = states.Where(x => x.State == "HOAN_THANH").Sum(x => x.Count),
+            QuaHan = await urgent.CountAsync(ct), SoToaNha = buildings.Count,
+            KetQua = filter.TrangThai is null ? tabCounts.Values.Sum() : tabCounts.GetValueOrDefault(filter.TrangThai),
+            TheoTrangThai = tabCounts, CanhBao = warning
+        };
+    }
+
     public async Task<BaoHongChiTiet?> ChiTietAsync(int managerId, int id, CancellationToken ct = default)
     {
         var actor = await ActorAsync(managerId, false, ct);
