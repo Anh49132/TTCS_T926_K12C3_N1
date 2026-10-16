@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = "Báo cáo doanh thu và lấp đầy";
     var vn = CultureInfo.GetCultureInfo("vi-VN");
-    var chartMax = Model.BieuDo6Thang.Count == 0 ? 0L : Model.BieuDo6Thang.Max(x => x.TongPhatHanh);
 }
 
 <article class="bc-page" data-revenue-report>
@@ -24,7 +23,7 @@
                     <select name="tuThang" id="tuThang" class="bc-select-small" aria-label="Từ tháng">
                         @for (var month = 1; month <= 12; month++)
                         {
-                            <option value="@month" selected="@(Model.TuThang == month)">T@month.ToString("D2")</option>
+                            <option value="@month" selected="@(Model.TuThang == month)">T@(month.ToString("D2"))</option>
                         }
                     </select>
                     <input name="tuNam" id="tuNam" type="number" min="1900" max="9999" value="@Model.TuNam" class="bc-input-year" aria-label="Từ năm" required />
@@ -36,13 +35,13 @@
                     <select name="denThang" id="denThang" class="bc-select-small" aria-label="Đến tháng">
                         @for (var month = 1; month <= 12; month++)
                         {
-                            <option value="@month" selected="@(Model.DenThang == month)">T@month.ToString("D2")</option>
+                            <option value="@month" selected="@(Model.DenThang == month)">T@(month.ToString("D2"))</option>
                         }
                     </select>
                     <input name="denNam" id="denNam" type="number" min="1900" max="9999" value="@Model.DenNam" class="bc-input-year" aria-label="Đến năm" required />
                 </div>
             </div>
-            <button type="submit" class="bc-button">Xem báo cáo</button>
+            <span class="bc-filter-limit">Tối đa 12 tháng</span><button type="submit" class="bc-button">Xem báo cáo</button><a class="bc-reset" href="/BaoCao">Đặt lại</a>
         </form>
     </header>
 
@@ -74,44 +73,11 @@
                 <strong class="bc-kpi-value">@Model.TiLeThuTongThe.ToString("0.#", vn)%</strong>
                 <p class="bc-kpi-hint">Đã thu / đã phát hành</p>
             </article>
+            <article class="bc-kpi-card bc-kpi-occupancy"><span class="bc-kpi-label">Tỷ lệ lấp đầy cuối kỳ</span><strong class="bc-kpi-value">@(Model.TiLeLapDayHienTai.HasValue ? Model.TiLeLapDayHienTai.Value.ToString("0.#",vn)+"%" : "—")</strong><p class="bc-kpi-hint">@(Model.ChiTietTheoThang.LastOrDefault()?.SoPhongDangThue??0) / @(Model.ChiTietTheoThang.LastOrDefault()?.TongPhongChoThue??0) phòng cho thuê</p></article>
         </section>
 
-        <section class="bc-card" aria-labelledby="revenue-chart-heading">
-            <header class="bc-card-header">
-                <div>
-                    <h2 id="revenue-chart-heading">Doanh thu 6 tháng gần nhất</h2>
-                    <p>Tổng tiền hóa đơn đã phát hành theo tháng · @Model.TenToaNhaDangChon</p>
-                </div>
-                <div class="bc-chart-legend" aria-label="Chỉ số biểu đồ">
-                    <span class="bc-legend-item"><span class="bc-color-dot dot-issued" aria-hidden="true"></span>Đã phát hành</span>
-                </div>
-            </header>
-            <div class="bc-chart-wrapper">
-                @if (Model.BieuDo6Thang.Count == 0)
-                {
-                    <p class="bc-empty-chart">Chưa có dữ liệu báo cáo cho phạm vi này.</p>
-                }
-                else
-                {
-                    <div class="bc-bars-container" role="group" aria-label="Biểu đồ cột tổng tiền hóa đơn đã phát hành trong 6 tháng gần nhất">
-                        @foreach (var item in Model.BieuDo6Thang)
-                        {
-                            var barHeight = chartMax == 0 ? 0m : (decimal)item.TongPhatHanh / chartMax * 100m;
-                            var barHeightText = barHeight.ToString("0.#", CultureInfo.InvariantCulture);
-                            var revenueText = item.TongPhatHanh.ToString("N0", vn) + " đ";
-                            <div class="bc-bar-group">
-                                <span class="bc-chart-value">@revenueText</span>
-                                <div class="bc-bar-track" aria-hidden="true">
-                                    <div class="bc-bar-column col-issued" style="height: @barHeightText%" title="@item.NhanDayDu: @revenueText"></div>
-                                </div>
-                                <span class="bc-bar-label">@item.NhanThang</span>
-                            </div>
-                        }
-                    </div>
-                }
-            </div>
-        </section>
-
+        <partial name="_RevenueChart" model="Model" />
+        <div class="bc-bottom-grid">
         <section class="bc-card" aria-labelledby="monthly-report-heading">
             <header class="bc-card-header">
                 <div>
@@ -141,7 +107,7 @@
                         }
                         else
                         {
-                            @foreach (var row in Model.ChiTietTheoThang)
+                            @foreach (var row in Model.ChiTietTheoThang.AsEnumerable().Reverse())
                             {
                                 <tr>
                                     <th scope="row">@row.NhanThang</th>
@@ -200,9 +166,10 @@
                 </table>
             </div>
         </section>
+        </div>
     }
 </article>
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/bao-cao.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/bao-cao.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/revenue-dashboard.css" asp-append-version="true" />
 }

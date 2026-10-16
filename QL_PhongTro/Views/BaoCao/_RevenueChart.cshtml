@@ -1,0 +1,22 @@
+@model QL_PhongTro.ViewModels.BaoCaoDoanhThuViewModel
+@using System.Globalization
+@{
+    var vn=CultureInfo.GetCultureInfo("vi-VN");
+    var max=Model.BieuDo6Thang.SelectMany(x=>new[]{x.TongPhatHanh,x.TongDaThu,x.SoConPhaiThu}).DefaultIfEmpty(0).Max();
+    var last=Model.ChiTietTheoThang.LastOrDefault();
+    var ratio=last?.TiLeLapDay;
+    string Height(long value)=>(max==0?0m:(decimal)value/max*100m).ToString("0.###",CultureInfo.InvariantCulture)+"%";
+    string Short(long value)=>value>=1000000000 ? (value/1000000000m).ToString("0.##",vn)+" tỷ" : value>=1000000 ? (value/1000000m).ToString("0.#",vn)+" tr" : value>=1000 ? (value/1000m).ToString("0.#",vn)+" nghìn" : value.ToString("N0",vn);
+}
+<div class="bc-chart-grid">
+<section class="bc-card" aria-labelledby="revenue-chart-heading"><header class="bc-card-header"><div><h2 id="revenue-chart-heading">Doanh thu 6 tháng gần nhất</h2><p>Tổng tiền hóa đơn đã phát hành, đã thu và còn phải thu theo tháng · @Model.TenToaNhaDangChon</p></div></header>
+<div class="bc-chart-wrapper"><p class="bc-axis-note">Đơn vị: VND · Mốc cao nhất @max.ToString("N0",vn) đ</p>
+<div class="bc-series-chart" role="group" aria-label="Biểu đồ doanh thu 6 tháng; xem số tiền chính xác bằng bàn phím hoặc trỏ vào từng tháng">
+@foreach(var item in Model.BieuDo6Thang){
+<div class="bc-series-month" tabindex="0" aria-label="@item.NhanDayDu: phát hành @item.TongPhatHanh.ToString("N0",vn) đồng, đã thu @item.TongDaThu.ToString("N0",vn) đồng, còn phải thu @item.SoConPhaiThu.ToString("N0",vn) đồng">
+<div class="bc-series-track" aria-hidden="true">@foreach(var bar in new[]{(item.TongPhatHanh,"issued"),(item.TongDaThu,"collected"),(item.SoConPhaiThu,"remaining")}){<div class="bc-series-bar @bar.Item2" style="height:@Height(bar.Item1)"><span>@Short(bar.Item1)</span></div>}</div><span class="bc-series-label">@item.NhanThang</span>
+<div class="bc-tooltip"><strong>@item.NhanDayDu</strong><span>Đã phát hành <b>@item.TongPhatHanh.ToString("N0",vn) đ</b></span><span>Đã thu <b>@item.TongDaThu.ToString("N0",vn) đ</b></span><span>Còn phải thu <b>@item.SoConPhaiThu.ToString("N0",vn) đ</b></span></div>
+</div>}
+</div><div class="bc-series-legend"><span><i class="issued"></i>Đã phát hành</span><span><i class="collected"></i>Đã thu</span><span><i class="remaining"></i>Còn phải thu</span></div></div></section>
+<section class="bc-card bc-occupancy-card"><header class="bc-card-header"><div><h2>Tình hình lấp đầy</h2><p>Tính tại ngày cuối tháng @Model.DenThang.ToString("D2")/@Model.DenNam</p></div></header><div class="bc-occupancy-body"><div class="bc-donut" style="--occupancy:@((ratio??0).ToString(CultureInfo.InvariantCulture))%" role="img" aria-label="Tỷ lệ lấp đầy @(ratio?.ToString("0.#",vn)??"chưa có") phần trăm"><div><strong>@(ratio.HasValue ? ratio.Value.ToString("0.#",vn)+"%" : "—")</strong><span>Tỷ lệ lấp đầy</span></div></div><dl><div><dt>Phòng đang thuê</dt><dd>@(last?.SoPhongDangThue??0)</dd></div><div><dt>Phòng cho thuê</dt><dd>@(last?.TongPhongChoThue??0)</dd></div><div><dt>Phòng trống</dt><dd>@Model.LapDayTheoToaNha.Sum(x=>x.SoPhongTrong)</dd></div></dl></div><p class="bc-occupancy-note">Phòng ngừng cho thuê không tính vào mẫu số. Phòng đặt cọc vẫn tính trong tổng phòng cho thuê.</p></section>
+</div>

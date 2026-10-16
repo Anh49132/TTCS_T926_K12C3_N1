@@ -246,6 +246,11 @@ public sealed class BaoCaoService(AppDbContext db, ITimeProvider clock)
         denThang ??= now.Month;
         denNam ??= now.Year;
 
+        if (denThang is < 1 or > 12 || denNam is < 1900 or > 9999)
+        {
+            model.ErrorMessage = "Tháng hoặc năm không hợp lệ.";
+            return model;
+        }
         if (!tuThang.HasValue || !tuNam.HasValue)
         {
             var defaultEnd = new DateOnly(denNam.Value, denThang.Value, 1);
@@ -571,13 +576,17 @@ public sealed class BaoCaoService(AppDbContext db, ITimeProvider clock)
         var chartMonth = chartStart;
         while (chartMonth <= endDate)
         {
-            var monthInvoices = invoicesByMonth.GetValueOrDefault((chartMonth.Year, chartMonth.Month)) ?? [];
+            var chartRow = TinhThang(chartMonth.Year, chartMonth.Month);
 
             model.BieuDo6Thang.Add(new BaoCaoChartItem
             {
                 Nam = chartMonth.Year,
                 Thang = chartMonth.Month,
-                TongPhatHanh = monthInvoices.Sum(i => i.TongTien)
+                TongPhatHanh = chartRow.TongPhatHanh,
+                TongDaThu = chartRow.TongDaThu,
+                SoConPhaiThu = chartRow.SoConPhaiThu,
+                TiLeThu = chartRow.TiLeThu,
+                TiLeLapDay = chartRow.TiLeLapDay
             });
 
             chartMonth = chartMonth.AddMonths(1);

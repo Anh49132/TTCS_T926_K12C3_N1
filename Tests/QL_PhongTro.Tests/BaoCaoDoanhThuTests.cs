@@ -388,6 +388,8 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
         // Tháng bắt đầu lớn hơn tháng kết thúc
         var inverted = await service.LayBaoCaoAsync(10, "CHU_NHA", 1, 11, 2026, 5, 2026);
         Assert.Equal("Tháng bắt đầu không được lớn hơn tháng kết thúc.", inverted.ErrorMessage);
+        var invalidEnd = await service.LayBaoCaoAsync(10, "CHU_NHA", 1, null, null, 13, 2026);
+        Assert.Equal("Tháng hoặc năm không hợp lệ.", invalidEnd.ErrorMessage);
     }
 
     [Fact]
@@ -444,6 +446,8 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
             Assert.Equal(tableRow.Thang, chartItem.Thang);
             Assert.Equal(tableRow.Nam, chartItem.Nam);
             Assert.Equal(tableRow.TongPhatHanh, chartItem.TongPhatHanh);
+            Assert.Equal(tableRow.TongDaThu, chartItem.TongDaThu);
+            Assert.Equal(tableRow.SoConPhaiThu, chartItem.SoConPhaiThu);
         }
     }
 
