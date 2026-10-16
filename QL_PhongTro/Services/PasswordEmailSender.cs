@@ -39,7 +39,7 @@ public interface IAppointmentEmailSender
     Task SendNewRequestAsync(string email, string ownerName, string requestCode, string tenantName, string roomCode, string requestType, DateOnly desiredDate, int requestId);
 }
 
-public interface IInvoiceEmailSender
+public interface IQueuedInvoiceEmailSender
 {
     Task SendIssuedAsync(string email, string subject, string body, string path);
 }
@@ -48,7 +48,7 @@ public enum EmailDeliveryMode { Pickup, Smtp }
 
 public sealed record EmailDeliveryResult(EmailDeliveryMode Mode, string? PickupDirectory = null, string? PickupFilePath = null);
 
-public sealed class PasswordEmailSender(IOptions<PasswordResetOptions> options, IWebHostEnvironment environment) : IPasswordEmailSender, ITemporaryPasswordEmailSender, IRegistrationEmailSender, IAppointmentEmailSender, IInvoiceEmailSender
+public sealed class PasswordEmailSender(IOptions<PasswordResetOptions> options, IWebHostEnvironment environment) : IPasswordEmailSender, ITemporaryPasswordEmailSender, IRegistrationEmailSender, IAppointmentEmailSender, IQueuedInvoiceEmailSender
 {
     public Task SendIssuedAsync(string email, string subject, string body, string path)
     {

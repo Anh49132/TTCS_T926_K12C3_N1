@@ -70,6 +70,7 @@ public static class DatabaseUpdates
         foreach (var entity in db.Model.GetEntityTypes())
         {
             var table = entity.GetTableName()!;
+            if (table == "email_gui_log" && schemaVersion < 36) continue;
             if(schemaVersion<33 && table is "xac_nhan_tat_toan" or "lich_su_trang_thai_phong")continue;
             if(schemaVersion<32 && table=="cham_dut_hop_dong")continue;
             if (schemaVersion < 34 && table is "giao_dich_coc" or "thanh_ly_hop_dong" or "chi_tiet_khau_tru" && !HasTable(c, table)) continue;
@@ -142,6 +143,8 @@ public static class DatabaseUpdates
         if(schemaVersion>=34 || HasTable(c,"thanh_ly_hop_dong"))TatToanSchema.Validate(c);
         if(schemaVersion>=32)ChamDutHopDongSchema.Validate(c);
         if(schemaVersion>=33)XacNhanTatToanSchema.Validate(c);
+        if (schemaVersion >= 35) ReportPerformanceSchema.Validate(c);
+        if (schemaVersion >= 36) EmailGuiLogSchema.Validate(c);
         if (problems.Count != 0)
             throw new InvalidOperationException("Database schema is not ready: " + string.Join("; ", problems) +
                 "\nStop the app, then run: dotnet run --project QL_PhongTro -- --update-database" +
@@ -489,7 +492,6 @@ public static class DatabaseUpdates
         if (version < 33) XacNhanTatToanSchema.Upgrade(c);
         if (version < 34) BranchSchemaReconciliation.Upgrade(c);
         if (version < 35) InvoicePaymentReportSchema.Upgrade(c);
-        if (version < 36) InvoicePaymentProofSchema.Upgrade(c);
         Check(path);
         Console.WriteLine($"Database updated to version {CurrentVersion}. Existing business rows preserved.");
     }

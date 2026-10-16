@@ -1,6 +1,13 @@
 using System.ComponentModel.DataAnnotations.Schema;
 namespace QL_PhongTro.Models;
 
+public static class LoaiThongBaoHoaDon
+{
+    public const string HoaDonMoi = "HOA_DON_MOI";
+    public const string SapDenHan = "TRUOC_HAN_2_NGAY";
+    public const string QuaHan = "QUA_HAN";
+}
+
 [Table("thong_bao")]
 public sealed class ThongBaoHoaDon
 {
