@@ -87,6 +87,19 @@ if (args.Contains("--update-database"))
     DatabaseUpdates.Update(databasePath, Path.Combine(dataDir, "permissions.seed.json"));
     return;
 }
+if (args.Contains("--chay-nhac-han"))
+{
+    if (!builder.Environment.IsDevelopment())
+        throw new InvalidOperationException("--chay-nhac-han is available only in Development.");
+    DatabaseUpdates.Check(databasePath);
+    var ngayIndex = Array.IndexOf(args, "--ngay");
+    DateOnly? ngay = null;
+    if (ngayIndex >= 0 && ngayIndex + 1 < args.Length)
+        ngay = DateOnly.Parse(args[ngayIndex + 1]);
+    var result = await QL_PhongTro.Services.NhacHanService.ChayTuCommandLine(databasePath, ngay);
+    Console.WriteLine($"Nhắc hạn: {result.SapDenHan} sắp đến hạn, {result.QuaHan} quá hạn.");
+    return;
+}
 if (args.Contains("--check-database"))
 {
     DatabaseUpdates.Check(databasePath);
