@@ -1,3 +1,8 @@
+### 16/10/2026 – Thiết kế lại bản in hóa đơn A4
+- Tách `_InvoicePrint.cshtml` dùng chung cho khách/chủ nhà và `invoice-print.css`: khổ A4, thương hiệu, khách/phòng/kỳ/ngày, bảng khoản thu với chỉ số/cách tính, tổng hóa đơn, tiền đã thu, cấn cọc và dư nợ. Mẫu chỉ xuất hiện khi in; menu, form, thông báo và các khung thao tác không vào bản in. Không đổi DB, công thức hay dữ liệu.
+- Mỗi dòng tránh ngắt giữa trang, đầu bảng lặp nếu hóa đơn dài. Không đưa ảnh chứng từ/ghi chú báo trả riêng tư vào bản in. Khoản chờ xác nhận được ghi riêng, không trừ nợ. Nháp/xem trước/hủy có nhãn rõ. Nhóm kiểm thử hóa đơn khách liên quan đạt 5/5 (`data/invoice-print-tests/invoice-print.trx`).
+- Build đạt. Edge xuất ba PDF thật từ DB sao chép: hóa đơn thường của khách, kỳ cuối của khách và cùng kỳ cuối của chủ nhà; đều một trang A4. Render PDF thành PNG đã rà trực quan. Hóa đơn kỳ cuối giữ tổng 5.813.742 đ, cấn cọc 5.800.000 đ, còn phải trả 13.742 đ. Log/ảnh/PDF trong `data/invoice-print-*` và `data/payment-workflow-qa/aa57372d90/browser-check-ede49fa6`. Bộ kiểm tra `verification/InvoicePrintBrowser`; không ghi nghiệp vụ trong DB QA hoặc DB thật. Để server tắt sau kiểm tra.
+
 ### 16/10/2026 – Luồng đối chiếu báo thanh toán theo mẫu
 - Khách có form báo trả kèm ảnh/ghi chú, ngân hàng/QR, màn chờ xác nhận, hủy, lịch sử và lý do từ chối. Chủ nhà có thống kê/tab chờ, cột báo trả, chuông và màn đối chiếu với ba mục kiểm tra thủ công; từ chối bắt buộc lý do. Khoản chờ không giảm nợ; chỉ xác nhận mới ghi thu. Thông báo mới là in-app.
 - Schema v39 thêm metadata và thông báo thanh toán; không suy đoán thời gian gửi cũ. Kiểm tra quyền/CSRF, token ảnh 15 phút, thông báo/nghiệp vụ/audit cùng transaction. Chi tiết: `docs/luong-bao-thanh-toan-va-thong-bao.md`.
