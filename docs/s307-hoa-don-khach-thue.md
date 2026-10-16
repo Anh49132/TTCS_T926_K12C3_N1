@@ -26,8 +26,12 @@ Các dòng đã lưu tiếp tục là snapshot bất biến của hóa đơn. Kh
 - Tại `/ThongBao/ChiTiet?maHoaDon=<mã>` và `/ThongBao/HoaDon/{id}`, khách thuê có thể gửi số tiền, ngày thanh toán và hình thức Tiền mặt/Chuyển khoản cho hóa đơn đã phát hành còn dư nợ.
 - Backend xác thực quyền sở hữu hóa đơn; số tiền phải là số nguyên đồng lớn hơn 0 và không vượt số còn phải trả sau khi trừ các lần thu đã xác nhận và cấn trừ cọc.
 - Báo cáo được lưu thành khoản thanh toán `CHO_XAC_NHAN`; không sửa trạng thái phát hành bất biến của hóa đơn. Trang chi tiết và danh sách khách thuê hiển thị “Chờ xác nhận”. Trong khi có báo cáo chờ xác nhận, khách không thể gửi/sửa báo cáo khác cho hóa đơn đó.
-- Updater schema v35 thêm cột tùy chọn `hinh_thuc_bao_cao`, giới hạn hai hình thức trên và giữ nguyên các dòng thanh toán lịch sử.
-- Chưa có tải/xem ảnh chứng từ, hủy báo cáo, hoặc thao tác chủ nhà xác nhận/từ chối báo cáo trong phạm vi này.
+- Updater schema v35 thêm cột tùy chọn `hinh_thuc_bao_cao`, giới hạn hai hình thức trên; v36 thêm metadata ảnh tùy chọn và giữ nguyên các dòng thanh toán lịch sử.
+- Chuyển khoản bắt buộc có ảnh chứng từ; tiền mặt cho phép bỏ trống. Chỉ nhận JPG/JPEG/PNG tối đa 5 MiB (5.242.880 byte); backend xác thực định dạng thực tế và lưu ngoài thư mục public.
+- Chủ nhà sở hữu hóa đơn và Quản trị hệ thống có thể yêu cầu liên kết xem ảnh được ký bảo mật, gắn với tài khoản hiện tại và hết hạn sau 15 phút. Server kiểm tra lại quyền ở mỗi lần tải ảnh; phản hồi không lưu cache.
+- Khi báo cáo còn `CHO_XAC_NHAN`, khách thuê có thể hủy. Báo cáo được giữ lại với trạng thái `DA_HUY`; hóa đơn vẫn giữ trạng thái phát hành gốc và trạng thái thanh toán hiển thị được suy ra lại từ số tiền đã xác nhận/cấn trừ. Nếu báo cáo đã được xác nhận hoặc không còn chờ, yêu cầu hủy bị từ chối.
+- Sau khi hủy thành công, giao diện tải lại trạng thái hóa đơn và mở form cho phép khách gửi báo cáo mới; lịch sử báo cáo đã hủy vẫn được bảo toàn.
+- Chưa có thao tác chủ nhà từ chối báo cáo trong phạm vi này.
 
 ### Bổ sung quyết định PO: không phát hành dịch vụ khoán theo người
 

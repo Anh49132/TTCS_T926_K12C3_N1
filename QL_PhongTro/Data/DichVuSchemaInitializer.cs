@@ -42,6 +42,8 @@ public static class DichVuSchemaInitializer
         if(Convert.ToInt32(check.ExecuteScalar())>=33)XacNhanTatToanSchema.EnsureInvoiceGuards(connection,tx);
         check.CommandText = "SELECT MAX(version) FROM app_schema_version";
         if(Convert.ToInt32(check.ExecuteScalar())>=35)InvoicePaymentReportSchema.Ensure(connection,tx);
+        check.CommandText = "SELECT MAX(version) FROM app_schema_version";
+        if(Convert.ToInt32(check.ExecuteScalar())>=36)InvoicePaymentProofSchema.Ensure(connection,tx);
         check.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='chi_phi_bao_hong'";
         if (Convert.ToInt32(check.ExecuteScalar()) == 1) BaoHongChiPhiSchema.InstallForNewInvoiceModule(connection, tx);
         check.CommandText = "PRAGMA foreign_key_check";

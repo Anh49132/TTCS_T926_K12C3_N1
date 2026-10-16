@@ -13,7 +13,7 @@
     ViewData["Title"] = $"{(Model.XemTruoc ? "Xem trước hóa đơn" : "Chi tiết hóa đơn")} · Phòng {Model.MaPhong}";
 }
 @section Styles { <link rel="stylesheet" href="~/css/invoice-flow.css" asp-append-version="true" /> <link rel="stylesheet" href="~/css/monthly-invoices.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/invoice-detail.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/invoice-review.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/invoice-collection.css" asp-append-version="true" /> }
-@section Scripts { <script src="~/js/invoice-review.js" asp-append-version="true"></script><script src="~/js/invoice-publish.js" asp-append-version="true"></script><script src="~/js/invoice-collection.js" asp-append-version="true"></script> }
+@section Scripts { <script src="~/js/invoice-review.js" asp-append-version="true"></script><script src="~/js/invoice-publish.js" asp-append-version="true"></script><script src="~/js/invoice-collection.js" asp-append-version="true"></script><script src="~/js/invoice-payment-proof.js" asp-append-version="true"></script> }
 @if (Model.ThanhToan is not null && !Model.KhachXem && !Model.XemTruoc && invoice.TrangThai != "NHAP")
 {
     <partial name="_CollectionDetails" model="Model" />
@@ -70,6 +70,12 @@ else
                 Báo cáo thanh toán @Model.BaoCaoChoXacNhan.SoTien.ToString("N0", vn) đ, ngày @Model.BaoCaoChoXacNhan.NgayThanhToan.ToString("dd/MM/yyyy"),
                 hình thức @(Model.BaoCaoChoXacNhan.HinhThucBaoCao == "TIEN_MAT" ? "Tiền mặt" : "Chuyển khoản") đang chờ xác nhận. Bạn không thể sửa báo cáo đã gửi.
             </div>
+            <form asp-controller="ThongBao" asp-action="HuyBaoCaoThanhToan" method="post" class="mt-2">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="hoaDonId" value="@invoice.Id" />
+                <button type="submit" class="btn btn-outline-danger btn-sm"
+                        onclick="return confirm('Bạn có chắc muốn hủy báo cáo thanh toán này?');">Hủy báo cáo</button>
+            </form>
         }
         else if (invoice.TrangThai == "DA_PHAT_HANH" && Model.SoConPhaiTra > 0)
         {

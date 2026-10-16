@@ -22,7 +22,9 @@ public sealed partial class GhiThuHoaDonService(AppDbContext db, ITimeProvider c
             join contract in db.HopDongs on invoice.HopDongId equals contract.Id
             join room in db.PhongTros on contract.PhongId equals room.Id
             join building in db.ToaNhas on room.ToaNhaId equals building.Id
-            where invoice.Id == invoiceId && building.ChuNhaId == actor
+            join account in db.TaiKhoans on actor equals account.Id
+            where invoice.Id == invoiceId && account.DangHoatDong && !account.IsDeleted
+                  && (building.ChuNhaId == actor && account.VaiTro == "CHU_NHA" || account.VaiTro == "ADMIN")
             select invoice).SingleOrDefaultAsync(ct);
         return owned ?? throw new UnauthorizedAccessException();
     }
