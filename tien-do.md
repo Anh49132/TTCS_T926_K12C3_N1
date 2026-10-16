@@ -126,3 +126,75 @@ Cập nhật kiểm thử cuối15/10/2026: fullsuite trên S4-07:04 tích hợp
 # 15/10/2026 — Người dùng yêu cầu tích hợp và push dev
 
 Merge S4-07 commit903fe8a vào deva934630 có S4-05 task1–4. Một conflict test tin đăng được giải bằng selector/form/assertion cụ thể từ dev. Build đạt, hồi quy tích hợp **575/575PASS,0FAIL/0SKIP**; đầy đủ báo hỏng, nhóm hóa đơn/tất toán/thu-hủy/giải phóng phòng/tạo Nháp, hợp đồng và đăng Nháp/danh sách phòng trống/dashboard. Không thay DB thật hoặc tạo ảnh; chưaSafari, không coi575ca là fullsuite devmới. Báo cáo: [docs/S4-07-dev-push-20261015.md](docs/S4-07-dev-push-20261015.md). Push duy nhấtdev theo yêu cầu, khôngforce/tag.
+
+# 15/10/2026 — S4-07 giao diện Quản lý theo ảnh tham chiếu
+
+Nhánh `feature/S4-07/ui-improvements` từ dev8e4eca4. Thêm bốn thẻ thống kê toàn phạm vi, banner ưu tiên trong kết quả lọc, panel bộ lọc/tab trạng thái/bảng sáu cột/badge/phân trang. Giữ query, quyền backend, quy tắc GAP + MOI + chờ >24 giờ và luồng xử lý; không đổi schema hoặc giao diện Chủ nhà. CSS riêng, ở760px chuyển bảng thành thẻ;360px không tràn ngang (scrollWidth345). Build đạt, **133/133 test báo hỏng PASS**, gồm hai test mới cho thống kê/tab/phạm vi/phân trang. Trình duyệt desktop1366px và360px: lọc đúng một dòng, detail/back giữ query, tab rỗng và xóa lọc đạt. Không tạo/chụp ảnh; chưa Safari hoặc chạy lại full suite. Demo5247 đã restart bằng runtime UI riêng, giữ dữ liệu. Chưa stage/commit/push. Chi tiết: [docs/S4-07-ui-improvements.md](docs/S4-07-ui-improvements.md).
+
+# 15/10/2026 — Giao diện chi tiết báo hỏng cho Quản lý
+
+Theo ảnh tham chiếu của người dùng, thêm partial `_ManagerDetail.cshtml` cho vai trò Quản lý, CSS/JS riêng chỉ nạp tại chi tiết quản lý. Bố cục desktop hai cột: sự cố/lịch sử/phản hồi bên trái, chi phí/cập nhật trạng thái bên phải; màn hình nhỏ chuyển một cột. Giữ dữ liệu động, các action POST, tên trường, CSRF, phiên bản, khóa chống trùng, query quay lại danh sách, điều kiện khóa chi phí/quyền ghi và trạng thái cuối. Ảnh tiếp tục dùng endpoint có quyền; khi tải lỗi hiện ô dự phòng. Không sửa controller/service/model/schema trong lượt này; các thay đổi backend có sẵn từ task danh sách được giữ nguyên. Điều chỉnh selector test liên kết quay lại theo nhãn mới, giữ các assertion quyền/bộ lọc.
+
+Build Debug/Razor cuối đạt 0 lỗi (cảnh báo ImageSharp/CS8601 có sẵn). Kiểm tra trình duyệt trên CSDL demo sao chép riêng cổng 5296: desktop 1280px hiển thị hai cột, scrollWidth 1265; 360px hiển thị một cột, scrollWidth 345; mở lịch sử chi phí và xem form chi phí trên mobile đạt. Chưa Safari/thiết bị thật, không chạy full suite. Demo nguồn v31 được nâng v34 chỉ trên bản sao mới `data/manager-detail-ui/demo/detail.sqlite`, không nâng DB local hoặc DB demo nguồn. Lệnh build: `dotnet build QL_PhongTro/QL_PhongTro.csproj -c Debug --no-restore -o data/manager-detail-ui/runtime`. Hồi quy báo hỏng đạt **133/133 PASS, 0 FAIL/0 SKIP** (`dotnet test Tests/QL_PhongTro.Tests/QL_PhongTro.Tests.csproj --no-build --no-restore -o data/manager-detail-ui/tests --filter FullyQualifiedName~BaoHong`); lần đầu sandbox chặn socket testhost, chạy lại ngoài sandbox đạt. Build cuối sau chỉnh icon lịch sử đạt; trình duyệt xác minh cả bản Hoàn thành có chi phí và bản Đang xử lý có form cập nhật, nút quay lại danh sách hoạt động. Chưa stage/commit/push.
+
+## 15/10/2026 — Chỉnh lại riêng thẻ Thông tin sự cố theo ảnh mới
+
+Tăng phân cấp chữ/biểu tượng, padding và khoảng cách của thẻ; người gửi thẳng cột thứ hai (cột 1/3), hàng thiết bị/mức độ/thời điểm ba cột; khung phòng nền xám và hàng ảnh cao 108px với biểu tượng mở ảnh SVG. CSS container query điều chỉnh theo chiều rộng thẻ, trên 360px tự chia hai cột và dành hàng riêng cho thời điểm/hành động ảnh. Chỉ sửa partial giao diện và CSS, không sửa backend/DB. Ảnh tải được vẫn hiển thị; lỗi tải dùng ô dự phòng sẵn có, không giả trạng thái lỗi theo ảnh mẫu.
+
+Build Debug/Razor đạt 0 lỗi, giữ cảnh báo ImageSharp/CS8601 cũ. Kiểm tra trình duyệt desktop 1440px và mobile 360px: không tràn ngang (scrollWidth 1425 và 345). Demo cổng 5296 đã khởi động lại bằng runtime mới. Không chạy lại bộ 133 test vì thay đổi chỉ markup/icon/CSS; kết quả 133/133 ở lượt trước không được tính là lần chạy mới. Chưa Safari/thiết bị thật. Chưa commit/push.
+
+## 15/10/2026 — Thêm đường phân cách và thu gọn đầu thẻ sự cố
+
+Chỉ chỉnh `wwwroot/css/manager-repair-detail.css`: thêm đường dọc giữa các ô metadata, đường ngang giữa hai hàng; trên thẻ hẹp thời điểm xuống hàng riêng với đường phân cách phù hợp. Thu tiêu đề Thông tin sự cố 24→18px, biểu tượng 48→32px, khung phòng tối thiểu 70→44px và giảm padding/khoảng cách đầu thẻ. Giữ nguyên toàn bộ nội dung động và backend, không sao chép nội dung tài chính từ ảnh tham chiếu.
+
+Kiểm tra trực tiếp demo 5296 trên desktop 1440px và mobile 360px đạt; đường dọc 1px, tiêu đề 18px, scrollWidth 1425/345, không tràn ngang. CSS phục vụ trực tiếp từ wwwroot, đã tải lại trang; không cần build/restart hoặc chạy lại test nghiệp vụ cho chỉnh CSS này. Chưa Safari/thiết bị thật. Chưa commit/push.
+
+## 15/10/2026 — Sửa thiếu Báo hỏng của tôi trong menu khách thuê
+
+Thêm liên kết BaoHong/Index ngay sau Hợp đồng của tôi trong `_TenantHeader.cshtml`, chỉ hiển thị khi `PermissionService.AllowsAsync("BAO_HONG")` cho phép; dùng Active("BaoHong") để đánh dấu tại danh sách/chi tiết/tạo mới. Giữ nguyên controller/service/phân quyền backend/schema và dữ liệu. Không thêm mục vào thanh điều hướng ngang để tránh chật header.
+
+Build Debug/Razor đạt 0 lỗi (cảnh báo ImageSharp/CS8601 cũ). Demo 5296 khởi động lại bằng runtime mới. Kiểm tra bằng khách thuê demo: mở menu từ trang chủ thấy liên kết; bấm vào tới /BaoHong, mục menu có is-active; bấm Gửi báo hỏng mở /BaoHong/Create đủ biểu mẫu. Desktop 1440px và mobile 360px hiển thị đúng, menu nằm trong viewport (cạnh phải 252px trên 360px), scrollWidth 345px. Không gửi báo hỏng thử/không đổi quyền DB để kiểm tra; nhánh ẩn khi không có quyền dùng predicate hiện hữu đã được đối chiếu mã. Không chạy lại full suite hoặc 133 test cho thay đổi view nhỏ này; chưa Safari. Chưa commit/push.
+
+## 15/10/2026 — Giao diện danh sách báo hỏng khách thuê theo ảnh
+
+Thay `Views/BaoHong/Index.cshtml` bằng breadcrumb/tiêu đề/nút Gửi báo hỏng, thanh thống kê bốn trạng thái, bảng sáu cột (thiết bị+mã, phòng+tòa, trạng thái, mức độ, thời điểm Việt Nam, xem chi tiết), footer. CSS/JS riêng `tenant-repair-list.*` chỉ nạp cho trang danh sách khách thuê. Dữ liệu/nhãn/ngày giờ động, không dùng số liệu hardcode. Mobile <=760px chuyển bảng thành thẻ. Giữ nguyên backend, quyền/sở hữu/CSRF, schema và dữ liệu, endpoint tạo/chi tiết và phân trang 20+1 hiện hữu. Bộ lọc JS theo mã/thiết bị/phòng/tòa (không phân biệt dấu/hoa thường), trạng thái và mức độ áp dụng kết hợp trên trang hiện tại. Khi có nhiều trang, nhãn thống kê/tổng và ghi chú nêu rõ phạm vi tối đa20 bản ghi; không trình bày tổng trang thành tổng toàn hệ thống. Không JS vẫn xem danh sách/phân trang; điều khiển lọc chỉ hiện khi JS chạy.
+
+Build cuối đạt0lỗi, cảnh báo ImageSharp/CS8601 cũ. Demo5296 restart runtime mới. Browser desktop1440px:11bản ghi, thống kê Mới4/Đang xử lý2/Hoàn thành3/Từ chối2; lọc Hoàn thành ra3, thêmGấp+từ khóa không dấu VOI NUOC ra2, từ khóa không tồn tại ra0+thông báo rỗng, Xóa bộ lọc về11, mã0002 ra1 và mở chi tiết đúng. Mobile360px: thẻ đầy đủ trường, scrollWidth345; desktop scrollWidth1425. Trang2rỗng có thông báo+quay lại trang trước; nút Gửi báo hỏng mở biểu mẫu hiện hữu. Đã sửa lỗi Razor @page và ID biểu tượng tìm kiếm trùng ô nhập trong quá trình kiểm tra. Không tạo báo hỏng thử, không đổi dữ liệu. Không chạy lại full suite/133test vì thay đổi giao diện; chưa Safari/thiết bị thật và chưa kiểm tra tập >20 bản ghi bằng browser. Chưa commit/push.
+
+# 16/10/2026 — Đồng bộ giao diện báo hỏng Chủ nhà theo mẫu trước
+
+Danh sách Chủ nhà dùng partial `_ReportList.cshtml` chung với khách thuê: thống kê động, bảng/badge, tìm kiếm/lọc trên trang, phân trang giữ nguyên. Nội dung dành cho Chủ nhà, không có nút tạo báo hỏng. Chi tiết dùng bố cục thông tin sự cố/đường phân cách/ảnh/lịch sử và chi phí theo mẫu Quản lý, liên kết danh sách/ảnh qua ChuNhaBaoHong. Form phản hồi/cập nhật trạng thái chỉ render cho LaQuanLy; Chủ nhà không có form ghi. Chỉ thay view/CSS, không sửa controller/service/schema trong lượt này. Thêm thu gọn header tài khoản trên mobile chỉ tại danh sách Chủ nhà để tránh min-width gây tràn.
+
+Build Razor đạt0lỗi (ImageSharp/CS8601 cũ). Demo5296 restart. Browser Chủ nhà desktop1440:11bản ghi, lọc Hoàn thành ra3, mở chi tiết0002 có thông tin/lịch sử/chi phí,0form, ảnh URL ChuNhaBaoHong/Image; quay lại danh sách đúng. Mobile360: chi tiết scrollWidth354 và danh sách sau sửa header355 <=360. Không gửi form/đổi DB; chưa Safari/full suite. Khách thuê dùng partial chung giữ luồng hiện hữu, chưa kiểm tra lại browser khách sau tách partial. Chưa commit/push.
+
+# 16/10/2026 — Kiểm thử lại toàn bộ phạm vi S4-07 sau chỉnh giao diện
+
+Theo yêu cầu người dùng, build và chạy toàn bộ nhóm BaoHong trên mã hiện tại: `dotnet test Tests/QL_PhongTro.Tests/QL_PhongTro.Tests.csproj --no-restore -o data/s407-ui-retest/runtime --filter FullyQualifiedName~BaoHong --logger "trx;LogFileName=s407.trx" --results-directory data/s407-ui-retest/results`. Kết quả mới **133/133 PASS,0FAIL,0SKIP**, thời gian test1phút50giây. Build/Razor0lỗi; cảnh báo có sẵn NU1900 (không truy cập nguồn cảnh báo NuGet), ImageSharp license, CS8601. Phạm vi toàn bộ12file test BaoHong: tạo/ảnh/đọc, trạng thái/ghi chú/phản hồi/lịch sử, chi phí/hóa đơn/schema/hòa giải,24giờ,bộ lọc/phân trang/tổng quan, quyền/CSRF/chống trùng/đồng thời/rollback. Đây là toàn bộ nhóm báo hỏng, không phải full suite cả dự án.
+
+Smoke HTTP và browser dùng bản sao mới `data/s407-ui-retest/demo/retest.sqlite`, cổng5297, không tác động DB nguồn. Browser Quản lý: lọc tòaA+MOI+GAP ra1, nhận xử lý có ghi chú thành công và cảnh báo biến mất; gửi phản hồi, hoàn thành có ghi chú, lưu250.000đ KHACH_THUE thành công, trạng thái chờ hóa đơn kỳ11/2026. Quay lại danh sách giữ ba điều kiện lọc và hiện rỗng vì báo đã hoàn thành. Mobile360px danh sách/chi tiết scrollWidth345. HTTP mới xác minh cả3vai trò thấy cùng lịch sử/chi phí, chủ nhà/khách không có form ghi; quản lý ngoài phạm vi403, filter sai400, bản đã xử lý không còn trong lọcMOI+GAP. DB bản sao integrity_check=ok,foreign_key_check rỗng; cờ chờ thu=1,tiền250000. SHA256 DB demo nguồn không thay đổi. Chứng cứ ignored: `data/s407-ui-retest/results/s407.trx`, `data/s407-ui-retest/demo/http-smoke.json`, script `data/s407-ui-retest/http-smoke.py`.
+
+Không phát hiện lỗi trong phạm vi kiểm tra; không sửa backend/giao diện trong lượt test này. Chưa Safari/thiết bị vật lý/tải đồng thời thực tế/full suite toàn dự án. Không stage/commit/push. Web kiểm thử tách riêng; cổng5296 được mở lại để người dùng dùng dữ liệu demo cũ.
+
+## 16/10/2026 — Bổ sung nút Áp dụng cho bộ lọc báo hỏng Chủ nhà/Khách thuê
+
+Partial danh sách chung có form lọc với nút Áp dụng; JS chặn submit mặc định và lọc tại trình duyệt khi bấm nút hoặc Enter. Bỏ tự lọc lúc nhập/chọn để thao tác nhất quán, giữ Xóa bộ lọc khi rỗng và phạm vi trang hiện tại. Chỉ sửa view/CSS/JS, không thay backend. Build0lỗi; browser Chủ nhà chọn Hoàn thành vẫn11dòng trước áp dụng, bấm nút ra3, mã0002+Enter ra1. Mobile360px scrollWidth355; nút hiển thị đầy đủ. Web5296 restart bản mới. Không chạy lại133test vì thay đổi UI cục bộ; chưaSafari. Chưacommit/push.
+
+## 16/10/2026 — Thu gọn tổng quan báo hỏng Quản lý
+
+Theo ảnh người dùng, chỉ chỉnh CSS manager-repairs.css: tiêu đề23px, số thống kê28px, biểu tượng28px, giảm padding/gap/margin và cảnh báo. Browser1440px: thẻ cao98px, banner62px; mobile360px scrollWidth345 không tràn ngang. CSS áp dụng trực tiếp trên web5296, không đổi backend/nội dung/bộ lọc hoặc build lại cho thay đổi CSS. Không chạy lại test nghiệp vụ, chưaSafari. Chưacommit/push.
+
+## 16/10/2026 — Bộ lọc báo hỏng Quản lý theo kiểu danh sách phòng
+
+Chỉ sửa `_ManagerList.cshtml` và manager-repairs.css: thứ tự tiêu đề→tab→bộ lọc→bảng, nhãn inline trong ô chọn, viền/bo góc/chữ/nút trắng tương tự danh sách phòng. Giữ nguyên ba name/query, formGET, nút Áp dụng và Xóa, không thêm search/sort chưa có backend. Build0lỗi, browser1440px hiển thị đúng; lọc tòaA+MOI+GAP ra1;360px scrollWidth345. Web5296 restart. Không sửa backend/DB. Không chạy lại toàn bộ133test cho đổi markup/CSS này; chưaSafari. Chưacommit/push.
+
+## 16/10/2026 — Đồng bộ chi tiết báo hỏng Khách thuê
+
+Theo yêu cầu chỉ giao diện: Details.cshtml khách thuê dùng chung partial chi tiết với Chủ nhà/Quản lý, nạp CSS và xử lý fallback ảnh hiện có. Bố cục hai cột thông tin/ảnh/lịch sử và chi phí, tiêu đề gọn, đường phân cách metadata; mobile xếp một cột. Partial chọn đường dẫn BaoHong cho khách thuê, giữ nguyên điều kiện hiển thị form theo vai trò. Không sửa backend/schema/DB nghiệp vụ.
+
+Build Razor thành công0lỗi (cảnh báo ImageSharp có sẵn). Browser khách thuê demo5296 chi tiết0002: ảnh tải đúng qua BaoHong/Image, thông tin/lịch sử/350.000đ và kỳ dự kiến hiển thị;0form thao tác quản lý, liên kết danh sách đúng BaoHong. Desktop1440 và mobile360: scrollWidth1425/345, không tràn ngang. Web demo đã khởi động lại bản mới. Không chạy lại full test nghiệp vụ vì đổi view/CSS; chưaSafari. Chưa commit/push.
+
+## 16/10/2026 — Kiểm tra trước khi đẩy nhánh giao diện S4-07
+
+Theo yêu cầu đẩy riêng nhánh feature/S4-07/ui-improvements lên origin (Anh49132/TTCS_T926_K12C3_N1). Fetch xác nhận dev đã có cập nhật mới; giữ nguyên nền nhánh hiện tại, không gộp vào dev. Rà soát 21file của thay đổi báo hỏng, không đưa DB/data/credentials hoặc project test csproj vào commit. diff --check đã xử lý dòng trống cuối partial.
+
+Chạy `dotnet test Tests/QL_PhongTro.Tests/QL_PhongTro.Tests.csproj --no-restore -o data/s407-prepush/runtime --filter FullyQualifiedName~BaoHong --logger "trx;LogFileName=s407-prepush.trx" --results-directory data/s407-prepush/results`: build thành công, **133/133 PASS,0FAIL,0SKIP**,2phút04giây. Cảnh báo NU1900/ImageSharp có sẵn. Không chạy full suite dự án hoặc kiểm tra tương thích tích hợp với dev mới. Tài liệu phạm vi cuối đã cập nhật docs/S4-07-ui-improvements.md.

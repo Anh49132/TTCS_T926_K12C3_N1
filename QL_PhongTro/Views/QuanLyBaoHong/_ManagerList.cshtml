@@ -1,0 +1,83 @@
+@model List<QL_PhongTro.ViewModels.BaoHongChiTiet>
+@using QL_PhongTro.ViewModels
+@using QL_PhongTro.Services
+@{
+    var filter = (BaoHongBoLoc)ViewData["BaoHongBoLoc"]!;
+    var summary = (BaoHongTongQuan)ViewData["BaoHongTongQuan"]!;
+    var buildings = (IEnumerable<ToaNhaBaoHongLoc>)ViewData["BaoHongToaNhas"]!;
+    var rows = Model.Take(20).ToList();
+    var pages = Math.Max(1, (summary.KetQua + 19) / 20);
+    var first = rows.Count == 0 ? 0 : (filter.Page - 1) * 20 + 1;
+    var last = rows.Count == 0 ? 0 : first + rows.Count - 1;
+    var tabs = new[] { (Code: "", Label: "Tất cả"), (Code: "MOI", Label: "Mới"), (Code: "DANG_XU_LY", Label: "Đang xử lý"), (Code: "HOAN_THANH", Label: "Hoàn thành"), (Code: "TU_CHOI", Label: "Từ chối") };
+    Dictionary<string,string> TabRoute(string state) {
+        var route = filter.RouteValues(1);
+        if(state.Length == 0) route.Remove("trangThai"); else route["trangThai"] = state;
+        return route;
+    }
+    string Icon(string name) => name switch {
+        "clipboard" => "M9 5H6v16h12V5h-3M9 3h6v4H9ZM9 11h1m2 0h3m-6 4h1m2 0h3",
+        "inbox" => "m5 5-3 9v6h20v-6l-3-9ZM2 14h6l2 3h4l2-3h6",
+        "clock" => "M12 8v5l3 2M5 3 2 6m17-3 3 3M7 20l-2 2m12-2 2 2M12 4a8 8 0 1 0 0 16 8 8 0 0 0 0-16",
+        "check" => "m8 12 3 3 5-6M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18",
+        _ => "m12 3 10 18H2ZM12 9v5m0 3h.01"
+    };
+}
+<div class="repairs-page manager-repairs">
+    <header class="mr-heading"><h1>Báo hỏng được phân công</h1><p>Các báo hỏng tại tòa nhà bạn đang quản lý.</p></header>
+    <section class="mr-stats" aria-label="Tổng quan báo hỏng trong phạm vi quản lý">
+    @foreach(var card in new[] {
+        (Label:"Tổng báo hỏng", Value:summary.Tong, Note:$"{summary.SoToaNha} tòa nhà", Icon:"clipboard", Alert:false),
+        (Label:"Mới", Value:summary.Moi, Note:"Cần tiếp nhận", Icon:"inbox", Alert:false),
+        (Label:"Gấp — Quá 24 giờ", Value:summary.QuaHan, Note:"Cần ưu tiên", Icon:"clock", Alert:true),
+        (Label:"Hoàn thành", Value:summary.HoanThanh, Note:"Đã xử lý", Icon:"check", Alert:false) }) {
+        <div class="mr-stat @(card.Alert ? "mr-stat-alert" : "")"><div><span>@card.Label</span><i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="@Icon(card.Icon)" /></svg></i></div><p><strong>@card.Value.ToString("D2")</strong><small>@card.Note</small></p></div>
+    }
+    </section>
+    @if(summary.CanhBao is { CanhBaoQuaHan: { } warning } urgent) {
+        <aside class="mr-urgent" role="status" aria-label="Báo hỏng cần ưu tiên">
+            <svg aria-hidden="true" viewBox="0 0 24 24"><path d="@Icon("warning")" /></svg>
+            <div><strong class="repair-overdue-label">Gấp — Quá 24 giờ</strong><p>@urgent.BaoHong.MaBaoHong · Phòng @urgent.MaPhong, @urgent.TenToaNha · Đã chờ xử lý: @warning.ThoiGianChoHienThi</p></div>
+            <a asp-action="Details" asp-all-route-data="@(filter.RouteValues(id: urgent.BaoHong.Id))">Xem và xử lý <span aria-hidden="true">→</span></a>
+        </aside>
+    }
+    <section class="mr-panel" aria-labelledby="mr-list-title">
+        <div class="mr-panel-top"><div class="mr-panel-heading"><h2 id="mr-list-title">Danh sách báo hỏng <span>@summary.KetQua báo hỏng</span></h2><small>Tại các tòa nhà được phân công</small></div>
+
+        </div>
+        <nav class="mr-tabs" aria-label="Lọc nhanh theo trạng thái">
+        @foreach(var tab in tabs) {
+            var count = tab.Code.Length == 0 ? summary.TheoTrangThai.Values.Sum() : summary.TheoTrangThai.GetValueOrDefault(tab.Code);
+            <a asp-action="Index" asp-all-route-data="@TabRoute(tab.Code)" class="@((filter.TrangThai ?? "") == tab.Code ? "is-active" : "")" aria-current="@((filter.TrangThai ?? "") == tab.Code ? "page" : null)">@tab.Label <span>@count</span></a>
+        }
+        </nav>
+            <form asp-controller="QuanLyBaoHong" asp-action="Index" method="get" class="mr-filters" aria-label="Bộ lọc báo hỏng">
+                <div class="mr-inline-filter"><label for="repair-building">Tòa nhà:</label><select id="repair-building" name="toaNhaId"><option value="">Tất cả tòa được phân công</option>@foreach(var building in buildings){<option value="@building.Id" selected="@(filter.ToaNhaId == building.Id)">@building.TenToaNha</option>}</select></div>
+                <div class="mr-inline-filter"><label for="repair-status">Trạng thái:</label><select id="repair-status" name="trangThai"><option value="">Tất cả trạng thái</option><option value="MOI" selected="@(filter.TrangThai == "MOI")">Mới</option><option value="DANG_XU_LY" selected="@(filter.TrangThai == "DANG_XU_LY")">Đang xử lý</option><option value="HOAN_THANH" selected="@(filter.TrangThai == "HOAN_THANH")">Đã xong</option><option value="TU_CHOI" selected="@(filter.TrangThai == "TU_CHOI")">Từ chối</option></select></div>
+                <div class="mr-inline-filter"><label for="repair-priority">Mức độ khẩn:</label><select id="repair-priority" name="mucDo"><option value="">Tất cả mức độ</option><option value="THUONG" selected="@(filter.MucDo == "THUONG")">Thường</option><option value="GAP" selected="@(filter.MucDo == "GAP")">Gấp</option></select></div>
+                <button class="mr-apply" type="submit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18M8 3v6m8 0v6m-8 0v6"/></svg>Áp dụng bộ lọc</button><a class="mr-reset" asp-controller="QuanLyBaoHong" asp-action="Index">Xóa bộ lọc</a>
+            </form>
+        @if(rows.Count == 0){<p class="mr-empty" role="status">@(filter.DangLoc ? "Không có báo hỏng phù hợp với bộ lọc đã chọn." : filter.Page == 1 ? "Chưa có báo hỏng trong phạm vi của bạn." : "Không có báo hỏng trên trang này.")</p>}
+        else {
+        <div class="mr-table-wrap"><table class="mr-table"><caption class="visually-hidden">Danh sách báo hỏng đáp ứng bộ lọc</caption><thead><tr><th scope="col">Báo hỏng</th><th scope="col">Tòa nhà / Phòng</th><th scope="col">Mức độ khẩn</th><th scope="col">Trạng thái</th><th scope="col">Ngày báo hỏng</th><th scope="col">Thao tác</th></tr></thead><tbody>
+        @foreach(var row in rows) {
+            var report = row.BaoHong;
+            var routes = filter.RouteValues(id: report.Id);
+            <tr data-repair-id="@report.Id" class="@(row.CanhBaoQuaHan is not null ? "repairs-card-overdue" : "")">
+                <td data-label="Báo hỏng"><a class="mr-code" asp-action="Details" asp-all-route-data="@routes">@report.MaBaoHong</a><span class="mr-device">@report.LoaiThietBi</span><small class="mr-description" title="@report.MoTa">@report.MoTa</small></td>
+                <td data-label="Tòa nhà / Phòng"><strong>Phòng @row.MaPhong</strong><span class="mr-muted">@row.TenToaNha</span></td>
+                <td data-label="Mức độ khẩn"><span class="mr-badge @(report.MucDo == "GAP" ? "mr-urgent-badge" : "mr-normal")">@(report.MucDo == "GAP" ? "Gấp" : "Thường")</span>@if(row.CanhBaoQuaHan is { } alert){<small class="mr-overdue" title="Đã chờ xử lý: @alert.ThoiGianChoHienThi">Quá 24 giờ</small>}</td>
+                <td data-label="Trạng thái"><span class="mr-badge mr-status-@report.TrangThai">@BaoHongService.TenTrangThai(report.TrangThai)</span></td>
+                <td data-label="Ngày báo hỏng"><time datetime="@report.NgayTao.ToString("O")">@report.NgayTao.AddHours(7).ToString("dd/MM/yyyy")<small>@report.NgayTao.AddHours(7).ToString("HH:mm")</small></time></td>
+                <td data-label="Thao tác"><a class="mr-handle" asp-action="Details" asp-all-route-data="@routes">Xem và xử lý <span aria-hidden="true">↗</span></a></td>
+            </tr>
+        }
+        </tbody></table></div>
+        }
+        <footer class="mr-footer"><span>Hiển thị @first–@last trong tổng số @summary.KetQua báo hỏng</span><nav aria-label="Phân trang báo hỏng">
+        @if(filter.Page > 1){<a asp-action="Index" asp-all-route-data="@(filter.RouteValues(filter.Page - 1))" aria-label="Trang trước">‹<span class="visually-hidden">← Trang trước</span></a>}else{<span class="mr-disabled" aria-disabled="true" aria-label="Trang trước">‹</span>}
+        <span class="mr-current" aria-current="page" aria-label="Trang @filter.Page trên @pages">@filter.Page</span>
+        @if(Model.Count > 20){<a asp-action="Index" asp-all-route-data="@(filter.RouteValues(filter.Page + 1))" aria-label="Trang sau"><span class="visually-hidden">Trang sau →</span>›</a>}else{<span class="mr-disabled" aria-disabled="true" aria-label="Trang sau">›</span>}
+        </nav></footer>
+    </section>
+</div>

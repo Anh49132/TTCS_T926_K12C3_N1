@@ -1,0 +1,93 @@
+@model QL_PhongTro.ViewModels.BaoHongChiTiet
+@{
+    var report = Model.BaoHong;
+    var reportController = Model.LaQuanLy ? "QuanLyBaoHong" : Model.LaChuNha ? "ChuNhaBaoHong" : "BaoHong";
+    var routes = (ViewData["BaoHongBoLoc"] as QL_PhongTro.ViewModels.BaoHongBoLoc ?? new()).RouteValues(id: report.Id);
+    var listRoutes = (ViewData["BaoHongBoLoc"] as QL_PhongTro.ViewModels.BaoHongBoLoc)?.RouteValues();
+    var statusName = QL_PhongTro.Services.BaoHongService.TenTrangThai(report.TrangThai);
+    var statusClass = report.TrangThai == "HOAN_THANH" ? "is-complete" : report.TrangThai == "TU_CHOI" ? "is-rejected" : "is-pending";
+}
+<div class="repairs-page manager-repair-detail @(!Model.LaQuanLy && !Model.LaChuNha ? "tenant-repair-detail" : "")">
+    <nav class="mrd-breadcrumb" aria-label="Đường dẫn điều hướng">
+        <a asp-controller="@reportController" asp-action="Index" asp-all-route-data="listRoutes">Báo hỏng</a><span aria-hidden="true">›</span><span aria-current="page">@report.MaBaoHong</span>
+    </nav>
+    <header class="mrd-heading">
+        <div><div class="mrd-title"><h1>Chi tiết báo hỏng</h1><span class="mrd-status @statusClass">@statusName</span></div><p>@report.MaBaoHong</p></div>
+        <a class="mrd-back" asp-controller="@reportController" asp-action="Index" asp-all-route-data="listRoutes"><span aria-hidden="true">←</span> Danh sách báo hỏng</a>
+    </header>
+    <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
+    @if (Model.CanhBaoQuaHan is { } warning) { <partial name="~/Views/BaoHong/_CanhBaoQuaHan.cshtml" model="warning" /> }
+    <div class="mrd-columns">
+        <div class="mrd-main">
+            <section class="repairs-card mrd-incident" aria-labelledby="mrd-incident-title">
+                <h2 id="mrd-incident-title"><span class="mrd-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="6" y="5" width="12" height="16" rx="2"/><path d="M9 5V3h6v2M9 10h6M9 14h6M9 18h4"/></svg></span>Thông tin sự cố</h2>
+                <div class="mrd-room"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18M6 21V4l10-2v19M16 8h4v13M12 12v2"/></svg><strong>Phòng: @Model.MaPhong</strong><span>· @Model.TenToaNha</span></div>
+                <dl class="mrd-facts mrd-facts-summary">
+                    <div><dt>Hợp đồng</dt><dd>@Model.MaHopDong</dd></div>
+                    <div><dt>Người gửi</dt><dd>@Model.TenNguoiBao</dd></div>
+                </dl>
+                <dl class="mrd-facts mrd-facts-three">
+                    <div><dt>Loại thiết bị</dt><dd>@report.LoaiThietBi</dd></div>
+                    <div><dt>Mức độ</dt><dd><span class="mrd-priority @(report.MucDo == "GAP" ? "is-urgent" : "")">@(report.MucDo == "GAP" ? "Gấp" : "Thường")</span></dd></div>
+                    <div><dt>Thời điểm gửi</dt><dd>@report.NgayTao.AddHours(7).ToString("dd/MM/yyyy HH:mm")</dd></div>
+                </dl>
+                <div class="mrd-description"><div class="mrd-label">Mô tả sự cố</div><p class="repairs-description">@report.MoTa</p></div>
+                <div class="mrd-label">Ảnh thiết bị</div>
+                <div class="mrd-photos">
+                @foreach (var photo in Model.Images) {
+                    var photoUrl = Url.Action("Image", reportController, new { id = report.Id, order = photo.ThuTu });
+                    <div class="mrd-photo">
+                        <div class="mrd-preview">
+                            <img src="@photoUrl" alt="Ảnh thiết bị @photo.ThuTu" loading="lazy" />
+                            <span class="mrd-photo-fallback" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 3 18 18M4 8v12h16v-4M8 4h12v8M6 17l4-5 3 3M15 8h.01"/></svg><small>Ảnh chưa tải</small></span>
+                        </div>
+                        <div class="mrd-photo-name">Ảnh thiết bị @photo.ThuTu<span class="mrd-photo-note">Ảnh đính kèm báo hỏng</span></div>
+                        <a href="@photoUrl" target="_blank" rel="noopener">Mở ảnh @photo.ThuTu <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4 10 14M10 5H5v15h15v-5"/></svg></a>
+                    </div>
+                }
+                @if (Model.Images.Count == 0) { <p class="mrd-empty">Không có ảnh đính kèm.</p> }
+                </div>
+            </section>
+            <div class="mrd-history"><partial name="~/Views/BaoHong/_TraoDoi.cshtml" model="Model" /></div>
+            @if (Model.LaQuanLy && Model.ChoPhepXuLy) {
+                <section class="repairs-card mrd-reply" aria-labelledby="repair-reply-title">
+                    <h2 id="repair-reply-title"><span class="mrd-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 4h16v13H9l-5 4V4Z"/></svg></span>Gửi phản hồi cho khách</h2>
+                    <form asp-controller="QuanLyBaoHong" asp-action="PhanHoi" asp-all-route-data="routes" method="post" class="repair-management-form">
+                        <input asp-for="PhanHoi.KhoaChongTrung" type="hidden" />
+                        <label asp-for="PhanHoi.NoiDung">Nội dung phản hồi <span class="mrd-required">*</span></label>
+                        <textarea asp-for="PhanHoi.NoiDung" rows="4" maxlength="5000" required placeholder="Thông tin kiểm tra, lịch xử lý hoặc hướng dẫn cho khách"></textarea>
+                        <span asp-validation-for="PhanHoi.NoiDung" class="text-danger"></span>
+                        <div class="repairs-actions"><button type="submit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 3-7 18-4-7-7-4 18-7ZM10 14 21 3"/></svg>Gửi phản hồi</button></div>
+                    </form>
+                </section>
+            }
+        </div>
+        <aside class="mrd-side" aria-label="Chi phí và xử lý báo hỏng">
+            <div class="mrd-cost"><partial name="~/Views/BaoHong/_ChiPhi.cshtml" model="Model" /></div>
+            @if (Model.LaQuanLy) {
+            <section class="repairs-card mrd-update" aria-labelledby="repair-status-title">
+                <h2 id="repair-status-title"><span class="mrd-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m4 6 2 2 3-4M12 6h8M4 12l2 2 3-4M12 12h8M4 18l2 2 3-4M12 18h8"/></svg></span>Cập nhật trạng thái</h2>
+                <div class="mrd-current"><span>Trạng thái hiện tại</span><span class="mrd-status @statusClass">@statusName</span></div>
+                @if (!Model.ChoPhepXuLy) {
+                    <p class="mrd-locked">Bạn hiện có quyền xem. Cần quyền ghi module Báo hỏng để cập nhật và gửi phản hồi.</p>
+                } else if (Model.TrangThaiTiepTheo.Count == 0) {
+                    <p class="mrd-locked"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V6a4 4 0 0 1 8 0v4M12 14v3"/></svg> Báo hỏng đã ở trạng thái cuối. Bạn vẫn có thể gửi phản hồi bên dưới.</p>
+                } else {
+                    <form asp-controller="QuanLyBaoHong" asp-action="CapNhat" asp-all-route-data="routes" method="post" class="repair-management-form">
+                        <input asp-for="CapNhat.PhienBan" type="hidden" /><input asp-for="CapNhat.KhoaChongTrung" type="hidden" />
+                        <label asp-for="CapNhat.TrangThai">Trạng thái tiếp theo <span class="mrd-required">*</span></label>
+                        <select asp-for="CapNhat.TrangThai" required><option value="">Chọn trạng thái</option>
+                            @foreach (var status in Model.TrangThaiTiepTheo) { <option value="@status">@QL_PhongTro.Services.BaoHongService.TenTrangThai(status)</option> }
+                        </select>
+                        <span asp-validation-for="CapNhat.TrangThai" class="text-danger"></span><span asp-validation-for="CapNhat.PhienBan" class="text-danger"></span>
+                        <label asp-for="CapNhat.GhiChu">Ghi chú cập nhật <span class="mrd-required">*</span></label>
+                        <textarea asp-for="CapNhat.GhiChu" rows="3" maxlength="5000" required placeholder="Nêu việc đã làm hoặc lý do từ chối"></textarea>
+                        <span asp-validation-for="CapNhat.GhiChu" class="text-danger"></span>
+                        <div class="repairs-actions"><button type="submit">Lưu trạng thái</button></div>
+                    </form>
+                }
+            </section>
+            }
+        </aside>
+    </div>
+</div>

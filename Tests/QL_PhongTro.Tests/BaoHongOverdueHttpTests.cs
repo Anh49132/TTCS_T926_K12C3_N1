@@ -83,7 +83,7 @@ public sealed partial class BaoHongTests
         Assert.Equal(audits, f.Scalar("SELECT count(*) FROM nhat_ky_hoat_dong"));
         f.Time.UtcNow = f.Time.UtcNow.AddMinutes(1);
         Assert.Contains("class=\"repair-overdue-label\"", await client.GetStringAsync($"/QuanLyBaoHong/Details/{exact}"));
-        Assert.Equal(2, Regex.Matches(await client.GetStringAsync("/QuanLyBaoHong"), "class=\"repair-overdue-label\"").Count);
+        Assert.Equal(2, Regex.Matches(await client.GetStringAsync("/QuanLyBaoHong"), "class=\"repairs-card-overdue\"").Count);
         using var other = await Login("manager2@test.local");
         Assert.DoesNotContain("repair-overdue-label", await other.GetStringAsync("/QuanLyBaoHong"));
         Assert.Equal(HttpStatusCode.Forbidden, (await other.GetAsync(url)).StatusCode);
