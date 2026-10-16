@@ -15,6 +15,10 @@ public sealed class NhacHanService(IServiceScopeFactory scopeFactory, ITimeProvi
 
         using var scope = scopeFactory.CreateAsyncScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        if (!await InvoiceNotificationDispatcher.IsInstalledAsync(db, cancellationToken)) return result;
+        await db.Database.OpenConnectionAsync(cancellationToken);
+        await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        await using var transaction = await db.Database.UseTransactionAsync(sqlite, cancellationToken);
         // 1. Nhắc sắp đến hạn (còn 2 ngày)
         var sapDenHan = await db.HoaDons
             .AsNoTracking()
@@ -45,7 +49,7 @@ public sealed class NhacHanService(IServiceScopeFactory scopeFactory, ITimeProvi
                     if (soConPhaiTra > 0)
                     {
                         db.ThongBaoHoaDons.Add(TaoThongBao(invoice.Id, taiKhoan.Id, taiKhoan.Email,
-                            taiKhoan.HoTen, soConPhaiTra, invoice.HanThanhToan, LoaiThongBaoHoaDon.SapDenHan, clock.UtcNow));
+                            taiKhoan.HoTen, invoice.Thang, invoice.Nam, invoice.TongTien, soConPhaiTra, invoice.HanThanhToan, LoaiThongBaoHoaDon.SapDenHan, clock.UtcNow));
                         result.SapDenHan++;
                     }
                 }
@@ -82,7 +86,7 @@ public sealed class NhacHanService(IServiceScopeFactory scopeFactory, ITimeProvi
                     if (soConPhaiTra > 0)
                     {
                         db.ThongBaoHoaDons.Add(TaoThongBao(invoice.Id, taiKhoan.Id, taiKhoan.Email,
-                            taiKhoan.HoTen, soConPhaiTra, invoice.HanThanhToan, LoaiThongBaoHoaDon.QuaHan, clock.UtcNow));
+                            taiKhoan.HoTen, invoice.Thang, invoice.Nam, invoice.TongTien, soConPhaiTra, invoice.HanThanhToan, LoaiThongBaoHoaDon.QuaHan, clock.UtcNow));
                         result.QuaHan++;
                     }
                 }
@@ -90,17 +94,18 @@ public sealed class NhacHanService(IServiceScopeFactory scopeFactory, ITimeProvi
         }
 
         await db.SaveChangesAsync(cancellationToken);
+        await transaction!.CommitAsync(cancellationToken);
         return result;
     }
 
     private static ThongBaoHoaDon TaoThongBao(
-        int hoaDonId, int nguoiNhanId, string email, string ten, long soConPhaiTra,
+        int hoaDonId, int nguoiNhanId, string email, string ten, int thang, int nam, long tongTien, long soConPhaiTra,
         DateOnly hanThanhToan, string loaiThongBao, DateTime ngayTaoUtc)
     {
         var laSapDenHan = loaiThongBao == LoaiThongBaoHoaDon.SapDenHan;
         var culture = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
         var tieuDe = laSapDenHan ? "Hóa đơn sắp đến hạn thanh toán" : "Hóa đơn đã quá hạn thanh toán";
-        var noiDung = $"Xin chào {ten}, hóa đơn của bạn còn phải thanh toán {soConPhaiTra.ToString("N0", culture)} đ. " +
+        var noiDung = $"Xin chào {ten}, hóa đơn kỳ {thang:00}/{nam}, tổng tiền {tongTien.ToString("N0", culture)} đ, còn phải thanh toán {soConPhaiTra.ToString("N0", culture)} đ. " +
             $"Hạn thanh toán: {hanThanhToan:dd/MM/yyyy}.";
         return new ThongBaoHoaDon
         {
@@ -122,9 +127,7 @@ public sealed class NhacHanService(IServiceScopeFactory scopeFactory, ITimeProvi
             .Where(t => t.HoaDonId == hoaDonId && t.TrangThai == "DA_XAC_NHAN")
             .SumAsync(t => (long?)t.SoTien, cancellationToken) ?? 0L;
 
-        var tongCanTru = await db.GiaoDichCocs
-            .Where(g => g.HoaDonId == hoaDonId && g.TrangThai == "DA_XAC_NHAN" && g.Loai == "CAN_TRU")
-            .SumAsync(g => (long?)g.SoTien, cancellationToken) ?? 0L;
+        var tongCanTru = (await CanTruHoaDonQueries.LayAsync(db, [hoaDonId])).GetValueOrDefault(hoaDonId);
 
         var invoice = await db.HoaDons
             .AsNoTracking()
@@ -147,7 +150,8 @@ public sealed class NhacHanService(IServiceScopeFactory scopeFactory, ITimeProvi
                 ForeignKeys = true
             }.ToString()));
         services.AddScoped<ITimeProvider, SystemTimeProvider>();
-        var provider = services.BuildServiceProvider();
+        services.AddScoped<NhacHanService>();
+        using var provider = services.BuildServiceProvider();
         using var scope = provider.CreateScope();
         var service = scope.ServiceProvider.GetRequiredService<NhacHanService>();
         return await service.ChayNhacHanAsync(ngayGiaLap);

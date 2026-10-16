@@ -371,6 +371,8 @@ Trạng thái theo tiến độ đến **06/10/2026**. "Xong" nghĩa là đã tr
 
 ### Sprint 4 — Thanh toán, công nợ, trả phòng, nghiệm thu (43 điểm) — xem tiến độ mới
 
+> Cập nhật 16/10/2026: đã rà và hoàn thiện tích hợp S4-01…S4-09, thêm schema v37 hòa giải v35/v36, nối xác nhận báo trả, sửa công nợ/quyền/CSV, nội dung email và UI 360px. Đọc [bàn giao và ma trận AC](docs/hoan-thien-tieu-chi-S4-20261016.md). Các ghi chú “toàn bộ Sprint 3/4 chưa có” và phiên bản v13 bên dưới là lịch sử, không phản ánh checkout hiện tại. DB local không tự nâng; kiểm chứng trên bản sao.
+
 > S4-06 task 1 triển khai 14/10/2026: [bàn giao báo hỏng](docs/S4-06-bao-hong.md). Schema v28 thêm bao_hong/bộ đếm. PO chốt DANG_HIEU_LUC + kỳ thuê hiện tại, người đứng tên/người ở ghép đang ở, chọn phòng khi nhiều hợp đồng; BH-yyyyMM-0001…9999 theo tháng Việt Nam toàn hệ thống, hết dải từ chối. Có gửi/list/detail và kiểm tra quyền, chưa ảnh/quản lý phản hồi/đổi trạng thái. DB thật không tự nâng; demo riêng cổng5248.
 
 > S4-06 task 2–3 triển khai 14/10/2026: [ảnh](docs/S4-06-anh-bao-hong.md), [trạng thái và phản hồi](docs/S4-06-trang-thai-phan-hoi.md). v29 lưu ảnh riêng; v30 thêm phiên bản và lịch sử bất biến. PO chốt Mới→Đang xử lý/Từ chối, Đang xử lý→Hoàn thành, ghi chú bắt buộc; phản hồi mọi trạng thái; chỉ QUAN_LY được gán tại tòa xử lý; khách gửi giữ quyền xem sau hết hợp đồng. Demo task3 riêng cổng5250; DB thật không tự nâng. Chưa thông báo tự động/khách trả lời/chi phí S4-07.

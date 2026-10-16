@@ -1,4 +1,21 @@
 (() => {
+    document.querySelectorAll("[data-payment-report]").forEach(form => {
+        const method = form.elements.hinhThucThanhToan;
+        const proof = form.elements.anhChungTu;
+        const validate = () => {
+            proof.required = method.value === "CHUYEN_KHOAN";
+            proof.setCustomValidity(proof.files[0]?.size > 5 * 1024 * 1024
+                ? "Ảnh chứng từ tối đa 5 MiB." : "");
+        };
+        method.addEventListener("change", validate);
+        proof.addEventListener("change", validate);
+        form.addEventListener("submit", event => {
+            validate();
+            if (!form.reportValidity()) event.preventDefault();
+            else form.querySelector("button[type=submit]").disabled = true;
+        });
+        validate();
+    });
     document.querySelectorAll("[data-payment-proof-link]").forEach(button => {
         button.addEventListener("click", async () => {
             const error = button.parentElement.querySelector("[data-payment-proof-error]");

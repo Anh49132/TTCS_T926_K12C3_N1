@@ -109,9 +109,14 @@ public sealed partial class HoaDonDichVuService
         foreach (var reading in readings.Where(x => !x.DaKhoa)) { reading.DaKhoa = true; reading.PhienBan++; }
         bill.TrangThai = "DA_PHAT_HANH"; bill.NgayPhatHanh = now; bill.NgayPhatHanhNghiepVu = dates.Issue;
         bill.HanThanhToan = dates.Due; bill.NguoiPhatHanhId = actor; bill.PhienBan++;
+        var collected = await db.ThanhToans.Where(x => x.HoaDonId == bill.Id && x.TrangThai == "DA_XAC_NHAN")
+            .SumAsync(x => (long?)x.SoTien) ?? 0;
+        var offset = (await CanTruHoaDonQueries.LayAsync(db, [bill.Id])).GetValueOrDefault(bill.Id);
+        var remaining = Math.Max(0L, checked(bill.TongTien - collected - offset));
+        var vn = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
         db.ThongBaoHoaDons.Add(new() { NguoiNhanId = recipient.Id, HoaDonId = bill.Id, NgayTao = now, EmailNhan = recipient.Email,
             TieuDe = $"Hóa đơn phòng {context.MaPhong} · {bill.Thang:00}/{bill.Nam}", DuongDan = $"/ThongBao/HoaDon/{bill.Id}",
-            NoiDung = $"Hóa đơn {bill.MaHoaDon} đã được phát hành. Tổng tiền: {bill.TongTien.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))} đ. Hạn thanh toán: {dates.Due:dd/MM/yyyy}." });
+            NoiDung = $"Hóa đơn {bill.MaHoaDon}, kỳ {bill.Thang:00}/{bill.Nam} đã được phát hành. Tổng tiền: {bill.TongTien.ToString("N0", vn)} đ. Còn phải trả: {remaining.ToString("N0", vn)} đ. Hạn thanh toán: {dates.Due:dd/MM/yyyy}." });
         // Invoice, source meter locks and durable notification are committed together. No email is sent inside this transaction.
         await db.SaveChangesAsync();
     }

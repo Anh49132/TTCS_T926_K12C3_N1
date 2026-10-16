@@ -50,6 +50,67 @@ try
     {await Eval("document.activeElement?.blur();scrollTo({top:0,left:0,behavior:'instant'});true");await Wait("scrollY===0");var result=await Command("Page.captureScreenshot",new {format="png",captureBeyondViewport=true});await File.WriteAllBytesAsync(Path.Combine(output,name),Convert.FromBase64String(result.GetProperty("data").GetString()!));}
     async Task Viewport(int width,int height,bool mobile)=>await Command("Emulation.setDeviceMetricsOverride",new {width,height,mobile,deviceScaleFactor=1});
     await Command("Page.enable",new {});await Viewport(1440,1000,false);await Login("Owner");
+    if(args.Length==3 && args[2]=="s4")
+    {
+        async Task CheckWidth(string name)
+        {
+            await Viewport(360,900,true); await Screenshot(name+"-360.png");
+            if((await Eval("document.documentElement.scrollWidth")).GetInt32()>360)
+            {
+                var overflow=await Eval("[...document.querySelectorAll('body *')].filter(e=>e.getBoundingClientRect().right>361 && getComputedStyle(e).position!=='fixed').map(e=>({tag:e.tagName,cls:e.className,right:e.getBoundingClientRect().right,width:e.getBoundingClientRect().width})).slice(0,20)");
+                await File.WriteAllTextAsync(Path.Combine(output,name+"-overflow.json"),overflow.ToString());
+                throw new Exception("Mobile overflow: "+name);
+            }
+        }
+        async Task PostForm(string selector)
+        {
+            var result=await Eval("(async()=>{const f=document.querySelector("+JsonSerializer.Serialize(selector)+");const r=await fetch(f.action,{method:'POST',body:new FormData(f)});return {status:r.status,path:new URL(r.url).pathname}})()");
+            if(result.GetProperty("status").GetInt32()!=200)throw new Exception("Form failed: "+selector);
+            await Navigate(result.GetProperty("path").GetString()!);
+        }
+        await Login("Tenant"); await Navigate("/ThongBao/HoaDon/1");
+        await CheckWidth("tenant-before-report");
+        if((await Eval("document.querySelector('[data-payment-report]')!==null")).GetBoolean())
+        {
+        await Eval("const f=document.querySelector('[data-payment-report]');f.elements.soTien.value='250000';f.elements.hinhThucThanhToan.value='CHUYEN_KHOAN';f.elements.hinhThucThanhToan.dispatchEvent(new Event('change'));true");
+        if(!(await Eval("document.querySelector('[name=anhChungTu]').required")).GetBoolean())throw new Exception("Proof is not required for bank transfer.");
+        await Eval("(async()=>{const c=document.createElement('canvas');c.width=8;c.height=8;const b=await new Promise(r=>c.toBlob(r,'image/png'));const d=new DataTransfer();d.items.add(new File([b],'receipt.png',{type:'image/png'}));const i=document.querySelector('[name=anhChungTu]');i.files=d.files;i.dispatchEvent(new Event('change'));return true})()");
+        await PostForm("[data-payment-report]");
+        }
+        await Wait("document.body.textContent.includes('Chờ xác nhận')"); await CheckWidth("tenant-pending-report");
+        await Login("Owner"); await Navigate("/HoaDonDichVu/Details/1");
+        await Wait("document.querySelector('form[action*=ConfirmPaymentReport]')!==null");
+        await Eval("document.querySelector('[data-payment-proof-link]').click();true");
+        await Wait("document.querySelector('#ic-payment-proof-image')?.naturalWidth>0");
+        await CheckWidth("owner-proof-confirmation");
+        await PostForm("form[action*=ConfirmPaymentReport]");
+        await Wait("document.querySelector('#invoice-collection')?.dataset.paid==='750000' && document.querySelector('#invoice-collection')?.dataset.remaining==='950000'");
+        if((await Eval("document.querySelector('form[action*=ConfirmPaymentReport]')!==null")).GetBoolean())throw new Exception("Confirmed report remained pending.");
+        await CheckWidth("owner-confirmed-payment");
+        await Navigate("/CongNo"); await CheckWidth("owner-debt");
+        if(!(await Eval("document.body.textContent.includes('950.000')")).GetBoolean())throw new Exception("Debt did not update after confirmation.");
+        await Navigate("/BaoCao"); await CheckWidth("owner-revenue");
+        await Login("Tenant"); await Navigate("/ThongBao/HoaDon/1");
+        if((await Eval("document.body.textContent.includes('đang chờ xác nhận')")).GetBoolean())throw new Exception("Tenant still sees pending payment.");
+        await CheckWidth("tenant-confirmed-payment");
+        await Navigate("/BaoHong/Create"); await CheckWidth("tenant-repair-form");
+        await Eval("const f=document.querySelector('form[action*=Create]');f.elements['Input.HopDongId'].value='2';f.elements['Input.LoaiThietBi'].value='Vòi nước';f.elements['Input.MoTa'].value='Kiểm thử vòi nước rò rỉ';f.querySelector('[value=GAP]').checked=true;true");
+        await PostForm("form[action*=Create]"); await CheckWidth("tenant-repair-tracking");
+        await Login("Manager"); await Navigate("/QuanLyBaoHong/Details/1");
+        await CheckWidth("manager-repair");
+        foreach(var state in new[]{"DANG_XU_LY","HOAN_THANH"})
+        {
+            await Eval("const f=document.querySelector('form[action*=CapNhat]');f.elements['CapNhat.TrangThai'].value="+JsonSerializer.Serialize(state)+";f.elements['CapNhat.GhiChu'].value='Đã kiểm tra và xử lý vòi nước';true");
+            await PostForm("form[action*=CapNhat]");
+        }
+        await Eval("const f=document.querySelector('[data-repair-cost-form]');f.elements['ChiPhiInput.SoTien'].value='350000';f.elements['ChiPhiInput.BenChiuPhi'].value='KHACH_THUE';true");
+        await PostForm("[data-repair-cost-form]"); await CheckWidth("manager-repair-cost");
+        await Login("Tenant"); await Navigate("/BaoHong/Details/1");
+        await Wait("document.body.textContent.includes('Hoàn thành') && document.body.textContent.includes('350.000')");
+        await CheckWidth("tenant-repair-completed");
+        await File.WriteAllTextAsync(Path.Combine(output,"report.json"),JsonSerializer.Serialize(new {PaymentReport=true,PrivateProof=true,OwnerConfirmation=true,UpdatedDebt=true,RepairWorkflow=true,RepairCost=true,Mobile360=true}));
+        Console.WriteLine("Sprint 4 browser checks passed: "+output);return;
+    }
     if(args.Length==3 && args[2]=="task5")
     {
         foreach(var role in new[]{"Owner","Tenant"})

@@ -1,4 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using System.Globalization;
+using QL_PhongTro.Services;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 using QL_PhongTro.Authorization;
@@ -9,11 +13,10 @@ using QL_PhongTro.ViewModels;
 namespace QL_PhongTro.Controllers;
 
 // Catalog only. No unimplemented business data or placeholder CRUD endpoints.
-[ModuleAccess]
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-public class ModulesController(AppDbContext db) : Controller
+public class ModulesController(AppDbContext db, ITimeProvider clock) : Controller
 {
-    [HttpGet("/Modules/{code}")]
+    [HttpGet("/Modules/{code}"), ModuleAccess]
     public async Task<IActionResult> Index(string code, string? section)
     {
         var module = await db.AppModules.AsNoTracking().SingleOrDefaultAsync(m => m.Code == code);
@@ -36,71 +39,50 @@ public class ModulesController(AppDbContext db) : Controller
         }
         if (code == "BAO_CAO") return RedirectToAction("Index", "BaoCao");
         if (code == "TAI_CHINH" && section == "cong-no")
-            return await CongNo(null, null, null, null, null);
+        {
+            if (!User.IsInRole("CHU_NHA") && !User.IsInRole("ADMIN")) return Forbid();
+            return RedirectToAction(nameof(CongNo));
+        }
         if (code is "PHONG_TRO" or "TAI_KHOAN" or "TIN_DANG") return Redirect(PermissionService.Url(code));
         return View(module);
     }
 
-    [HttpGet("/CongNo")]
-    [ModuleAccess]
-    public Task<IActionResult> CongNo(int? toaNhaId, int? quaHanTu, int? quaHanDen, long? tienTu, long? tienDen)
-        => CongNoPage(toaNhaId, quaHanTu, quaHanDen, tienTu, tienDen);
+    private int ActorId => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
 
-    private async Task<IActionResult> CongNoPage(int? toaNhaId, int? quaHanTu, int? quaHanDen, long? tienTu, long? tienDen)
+    [HttpGet("/CongNo"), ModuleAccess("TAI_CHINH"), Authorize(Roles = "CHU_NHA,ADMIN")]
+    public async Task<IActionResult> CongNo(int? toaNhaId, int? quaHanTu, int? quaHanDen, long? tienTu, long? tienDen)
     {
-        var buildings = await db.ToaNhas.AsNoTracking().OrderBy(x => x.TenToaNha)
-            .Select(x => new CongNoIndexViewModel.BuildingOption(x.Id, x.TenToaNha)).ToListAsync();
-        var invoiceRows = await (from invoice in db.HoaDons.AsNoTracking()
-                                 join contract in db.HopDongs.AsNoTracking() on invoice.HopDongId equals contract.Id
-                                 join room in db.PhongTros.AsNoTracking() on contract.PhongId equals room.Id
-                                 join building in db.ToaNhas.AsNoTracking() on room.ToaNhaId equals building.Id
-                                 join account in db.TaiKhoans.AsNoTracking() on contract.KhachDungTenId equals account.Id into accounts
-                                 from account in accounts.DefaultIfEmpty()
-                                 where invoice.TrangThai == "DA_PHAT_HANH" && (!toaNhaId.HasValue || building.Id == toaNhaId.Value)
-                                 select new { RoomId = room.Id, room.MaPhong, Building = building.TenToaNha, Name = account == null ? "Chưa có người đứng tên" : account.HoTen, InvoiceId = invoice.Id, invoice.TongTien, invoice.HanThanhToan }).ToListAsync();
-        var paid = await db.ThanhToans.AsNoTracking().Where(x => x.TrangThai == "DA_XAC_NHAN")
-            .GroupBy(x => x.HoaDonId).Select(x => new { Id = x.Key, Total = x.Sum(y => y.SoTien) }).ToDictionaryAsync(x => x.Id, x => x.Total);
-        var today = DateOnly.FromDateTime(DateTime.Today);
-        var rows = invoiceRows.GroupBy(x => new { x.RoomId, x.MaPhong, x.Building, x.Name }).Select(g =>
-        {
-            var outstanding = g.Where(x => x.TongTien - (paid.TryGetValue(x.InvoiceId, out var p) ? p : 0) > 0).ToList();
-            return new CongNoRowViewModel(g.Key.RoomId, g.Key.MaPhong, g.Key.Building, g.Key.Name, outstanding.Count,
-                outstanding.Sum(x => Math.Max(0, x.TongTien - (paid.TryGetValue(x.InvoiceId, out var p) ? p : 0))),
-                outstanding.Count == 0 ? 0 : outstanding.Max(x => Math.Max(0, today.DayNumber - x.HanThanhToan.DayNumber)));
-        }).Where(x => x.TongConThieu > 0)
-          .Where(x => !quaHanTu.HasValue || x.SoNgayQuaHanDaiNhat >= Math.Max(0, quaHanTu.Value))
-          .Where(x => !quaHanDen.HasValue || x.SoNgayQuaHanDaiNhat <= Math.Max(0, quaHanDen.Value))
-          .Where(x => !tienTu.HasValue || x.TongConThieu >= Math.Max(0, tienTu.Value))
-          .Where(x => !tienDen.HasValue || x.TongConThieu <= Math.Max(0, tienDen.Value))
-          .OrderBy(x => x.TenToaNha).ThenBy(x => x.MaPhong).ToList();
-        return View("CongNo", new CongNoIndexViewModel { ToaNhaId = toaNhaId, QuaHanTu = quaHanTu, QuaHanDen = quaHanDen, TienTu = tienTu, TienDen = tienDen, Buildings = buildings, Rows = rows });
+        try { return View("CongNo", await LoadDebt(toaNhaId, quaHanTu, quaHanDen, tienTu, tienDen)); }
+        catch (UnauthorizedAccessException) { return Forbid(); }
     }
 
-    [HttpGet("/CongNo/ExportCsv")]
-    [ModuleAccess]
+    private Task<CongNoIndexViewModel> LoadDebt(int? toaNhaId, int? quaHanTu, int? quaHanDen, long? tienTu, long? tienDen)
+        => new CongNoService(db, clock).LayAsync(ActorId, User.IsInRole("ADMIN"), toaNhaId, quaHanTu, quaHanDen, tienTu, tienDen);
+
+    [HttpGet("/CongNo/ExportCsv"), ModuleAccess("TAI_CHINH"), Authorize(Roles = "CHU_NHA,ADMIN")]
     public async Task<IActionResult> ExportCsv(int? toaNhaId, int? quaHanTu, int? quaHanDen, long? tienTu, long? tienDen)
     {
-        var invoiceRows = await (from invoice in db.HoaDons.AsNoTracking()
-                                 join contract in db.HopDongs.AsNoTracking() on invoice.HopDongId equals contract.Id
-                                 join room in db.PhongTros.AsNoTracking() on contract.PhongId equals room.Id
-                                 join building in db.ToaNhas.AsNoTracking() on room.ToaNhaId equals building.Id
-                                 join account in db.TaiKhoans.AsNoTracking() on contract.KhachDungTenId equals account.Id into accounts
-                                 from account in accounts.DefaultIfEmpty()
-                                 where invoice.TrangThai == "DA_PHAT_HANH" && (!toaNhaId.HasValue || building.Id == toaNhaId.Value)
-                                 select new { RoomId = room.Id, room.MaPhong, Building = building.TenToaNha, Name = account == null ? "Chưa có người đứng tên" : account.HoTen, InvoiceId = invoice.Id, invoice.TongTien, invoice.HanThanhToan }).ToListAsync();
-        var paid = await db.ThanhToans.AsNoTracking().Where(x => x.TrangThai == "DA_XAC_NHAN").GroupBy(x => x.HoaDonId).Select(x => new { Id = x.Key, Total = x.Sum(y => y.SoTien) }).ToDictionaryAsync(x => x.Id, x => x.Total);
-        var today = DateOnly.FromDateTime(DateTime.Today);
-        var rows = invoiceRows.GroupBy(x => new { x.RoomId, x.MaPhong, x.Building, x.Name }).Select(g => {
-            var outstanding = g.Where(x => x.TongTien - (paid.TryGetValue(x.InvoiceId, out var p) ? p : 0) > 0).ToList();
-            return new CongNoRowViewModel(g.Key.RoomId, g.Key.MaPhong, g.Key.Building, g.Key.Name, outstanding.Count, outstanding.Sum(x => Math.Max(0, x.TongTien - (paid.TryGetValue(x.InvoiceId, out var p) ? p : 0))), outstanding.Count == 0 ? 0 : outstanding.Max(x => Math.Max(0, today.DayNumber - x.HanThanhToan.DayNumber)));
-        }).Where(x => x.TongConThieu > 0).Where(x => !quaHanTu.HasValue || x.SoNgayQuaHanDaiNhat >= Math.Max(0, quaHanTu.Value)).Where(x => !quaHanDen.HasValue || x.SoNgayQuaHanDaiNhat <= Math.Max(0, quaHanDen.Value)).Where(x => !tienTu.HasValue || x.TongConThieu >= Math.Max(0, tienTu.Value)).Where(x => !tienDen.HasValue || x.TongConThieu <= Math.Max(0, tienDen.Value)).OrderBy(x => x.TenToaNha).ThenBy(x => x.MaPhong).ToList();
-        static string Csv(string value) => "\"" + value.Replace("\"", "\"\"") + "\"";
+        CongNoIndexViewModel model;
+        try { model = await LoadDebt(toaNhaId, quaHanTu, quaHanDen, tienTu, tienDen); }
+        catch (UnauthorizedAccessException) { return Forbid(); }
+        static string Csv(string value)
+        {
+            // Spreadsheet applications must treat user-supplied names as text.
+            if (value.TrimStart().StartsWith('=') || value.TrimStart().StartsWith('+') ||
+                value.TrimStart().StartsWith('-') || value.TrimStart().StartsWith('@')) value = "'" + value;
+            return "\"" + value.Replace("\"", "\"\"") + "\"";
+        }
+        static string Number(long value) => value.ToString(CultureInfo.InvariantCulture);
         var csv = new StringBuilder("Phòng,Tòa nhà,Người đứng tên,HĐ chưa trả hết,Tổng còn thiếu,Quá hạn dài nhất\r\n");
-        foreach (var row in rows) csv.AppendLine(string.Join(',', Csv(row.MaPhong), Csv(row.TenToaNha), Csv(row.NguoiDungTen), row.SoHoaDonChuaTraHet, row.TongConThieu, row.SoNgayQuaHanDaiNhat));
-        return File(Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(csv.ToString())).ToArray(), "text/csv; charset=utf-8", $"cong-no-{DateTime.Now:yyyyMMdd-HHmmss}.csv");
+        foreach (var row in model.Rows)
+            csv.Append(string.Join(',', Csv(row.MaPhong), Csv(row.TenToaNha), Csv(row.NguoiDungTen),
+                Number(row.SoHoaDonChuaTraHet), Number(row.TongConThieu), Number(row.SoNgayQuaHanDaiNhat))).Append("\r\n");
+        csv.Append(string.Join(',', Csv("TỔNG KẾT QUẢ ĐANG LỌC"), "", "", Number(model.TotalInvoices), Number(model.TotalOutstanding), "")).Append("\r\n");
+        return File(Encoding.UTF8.GetPreamble().Concat(Encoding.UTF8.GetBytes(csv.ToString())).ToArray(),
+            "text/csv; charset=utf-8", $"cong-no-{clock.UtcNow.AddHours(7):yyyyMMdd-HHmmss}.csv");
     }
 
-    [HttpGet("/api/modules/{code}")]
+    [HttpGet("/api/modules/{code}"), ModuleAccess]
     public async Task<IActionResult> Details(string code)
     {
         var module = await db.AppModules.AsNoTracking().SingleOrDefaultAsync(m => m.Code == code);

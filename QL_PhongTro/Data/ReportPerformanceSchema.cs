@@ -16,6 +16,17 @@ public static class ReportPerformanceSchema
     public static void Upgrade(SqliteConnection connection)
     {
         using var transaction = connection.BeginTransaction();
+        Ensure(connection, transaction);
+        using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = "INSERT INTO app_schema_version(version,applied_at) VALUES(35,strftime('%Y-%m-%dT%H:%M:%fZ','now'))";
+        command.ExecuteNonQuery();
+        transaction.Commit();
+        Validate(connection);
+    }
+
+    public static void Ensure(SqliteConnection connection, SqliteTransaction transaction)
+    {
         using var command = connection.CreateCommand();
         command.Transaction = transaction;
 
@@ -28,20 +39,17 @@ public static class ReportPerformanceSchema
             command.ExecuteNonQuery();
         }
 
-        command.CommandText = "INSERT INTO app_schema_version(version,applied_at) VALUES(35,strftime('%Y-%m-%dT%H:%M:%fZ','now'))";
-        command.ExecuteNonQuery();
-        transaction.Commit();
-        Validate(connection);
     }
 
-    public static void Validate(SqliteConnection connection)
+    public static void Validate(SqliteConnection connection, SqliteTransaction? transaction = null)
     {
         foreach (var (table, name, columns) in Indexes)
         {
-            if (!HasTable(connection, null, table))
+            if (!HasTable(connection, transaction, table))
                 continue;
 
             using var command = connection.CreateCommand();
+            command.Transaction = transaction;
             command.CommandText = $"""
                 SELECT COUNT(*) FROM pragma_index_list('{table}') i
                 WHERE i.name=$name

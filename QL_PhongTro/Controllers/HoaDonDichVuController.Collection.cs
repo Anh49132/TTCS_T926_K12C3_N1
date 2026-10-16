@@ -10,6 +10,25 @@ namespace QL_PhongTro.Controllers;
 public partial class HoaDonDichVuController
 {
     [HttpPost, Authorize(Roles = "CHU_NHA"), ValidateAntiForgeryToken, ModuleAccess("TAI_CHINH", write: true)]
+    public async Task<IActionResult> ConfirmPaymentReport(int id, int paymentId, string? khoaChongTrung, CancellationToken ct)
+    {
+        if (!ModelState.IsValid) return BadRequest();
+        // Bind both IDs to prevent a forged return target or a cross-invoice confirmation.
+        if (!await db.ThanhToans.AnyAsync(x => x.Id == paymentId && x.HoaDonId == id, ct)) return Forbid();
+        try
+        {
+            await HttpContext.RequestServices.GetRequiredService<GhiThuHoaDonService>().XacNhanBaoCaoAsync(AccountId, paymentId, khoaChongTrung, ct);
+            TempData["DraftSuccess"] = "Đã xác nhận báo thanh toán và cập nhật số còn phải trả.";
+        }
+        catch (UnauthorizedAccessException) { return Forbid(); }
+        catch (GhiThuValidationException ex) { TempData["DraftError"] = string.Join(" ", ex.Errors.Values.SelectMany(x => x)); }
+        catch (InvalidOperationException ex) { TempData["DraftError"] = ex.Message; }
+        catch (Exception ex) when (ex is DbUpdateException or SqliteException)
+        { TempData["DraftError"] = "Chưa thể xác nhận. Hãy tải lại hóa đơn; không có khoản thu mới được ghi thêm."; }
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
+    [HttpPost, Authorize(Roles = "CHU_NHA"), ValidateAntiForgeryToken, ModuleAccess("TAI_CHINH", write: true)]
     public async Task<IActionResult> CancelCollection(HuyLanThuHoaDonInput input, CancellationToken ct)
     {
         if (!ModelState.IsValid) return BadRequest(new { errors = new Dictionary<string, string[]> { [""] = ["Thông tin lần thu không hợp lệ. Hãy tải lại hóa đơn."] } });

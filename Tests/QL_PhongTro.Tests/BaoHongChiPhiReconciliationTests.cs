@@ -56,7 +56,7 @@ public sealed partial class BaoHongChiPhiSchemaTests
         var before = Snapshot();
         DatabaseUpdates.Update(f.Path, f.Seed);
         Assert.Equal(before, Snapshot());
-        Assert.Equal(36, f.Scalar("SELECT MAX(version) FROM app_schema_version"));
+        Assert.Equal(37, f.Scalar("SELECT MAX(version) FROM app_schema_version"));
         DatabaseUpdates.Check(f.Path);
         BaoHongChiPhiSchema.Validate(f.Db); TatToanSchema.Validate(f.Db);
         ChamDutHopDongSchema.Validate(f.Db); XacNhanTatToanSchema.Validate(f.Db);

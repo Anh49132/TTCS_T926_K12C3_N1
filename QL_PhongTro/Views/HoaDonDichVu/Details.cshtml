@@ -79,7 +79,7 @@ else
         }
         else if (invoice.TrangThai == "DA_PHAT_HANH" && Model.SoConPhaiTra > 0)
         {
-            <form asp-controller="ThongBao" asp-action="BaoCaoThanhToan" method="post" class="mt-4">
+            <form asp-controller="ThongBao" asp-action="BaoCaoThanhToan" method="post" enctype="multipart/form-data" class="mt-4" data-payment-report>
                 @Html.AntiForgeryToken()
                 <input type="hidden" name="hoaDonId" value="@invoice.Id" />
                 <h3 class="h5">Báo cáo thanh toán</h3>
@@ -99,6 +99,11 @@ else
                         <option value="TIEN_MAT">Tiền mặt</option>
                         <option value="CHUYEN_KHOAN">Chuyển khoản</option>
                     </select>
+                </div>
+                <div class="mb-3">
+                    <label for="payment-report-proof" class="form-label">Ảnh chứng từ</label>
+                    <input id="payment-report-proof" name="anhChungTu" type="file" class="form-control" accept="image/jpeg,image/png" />
+                    <div class="form-text">JPG/JPEG hoặc PNG, tối đa 5 MiB. Bắt buộc khi chuyển khoản.</div>
                 </div>
                 <button type="submit" class="btn btn-dark">Gửi báo cáo thanh toán</button>
             </form>

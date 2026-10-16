@@ -7,6 +7,17 @@ public static class EmailGuiLogSchema
     public static void Upgrade(SqliteConnection connection)
     {
         using var transaction = connection.BeginTransaction();
+        Ensure(connection, transaction);
+        using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = "INSERT INTO app_schema_version(version,applied_at) VALUES(36,strftime('%Y-%m-%dT%H:%M:%fZ','now'))";
+        command.ExecuteNonQuery();
+        transaction.Commit();
+        Validate(connection);
+    }
+
+    public static void Ensure(SqliteConnection connection, SqliteTransaction transaction)
+    {
         using var command = connection.CreateCommand();
         command.Transaction = transaction;
         command.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='email_gui_log'";
@@ -33,10 +44,6 @@ public static class EmailGuiLogSchema
         }
 
         Validate(connection, transaction);
-        command.CommandText = "INSERT INTO app_schema_version(version,applied_at) VALUES(36,strftime('%Y-%m-%dT%H:%M:%fZ','now'))";
-        command.ExecuteNonQuery();
-        transaction.Commit();
-        Validate(connection);
     }
 
     public static void Validate(SqliteConnection connection, SqliteTransaction? transaction = null)

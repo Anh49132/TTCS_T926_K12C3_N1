@@ -97,6 +97,9 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
         cmd.ExecuteNonQuery();
         using (var invoiceGuards = conn.BeginTransaction())
         {
+            InvoicePaymentReportSchema.Ensure(conn, invoiceGuards);
+            InvoicePaymentProofSchema.Ensure(conn, invoiceGuards);
+            ReportPerformanceSchema.Ensure(conn, invoiceGuards);
             InvoiceCollectionSchema.Ensure(conn, invoiceGuards);
             InvoiceCollectionCancellationSchema.Ensure(conn, invoiceGuards);
             TatToanSchema.EnsureInvoiceGuard(conn, invoiceGuards);
@@ -590,7 +593,7 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
 
         using var command = connection.CreateCommand();
         command.CommandText = "SELECT MAX(version) FROM app_schema_version";
-        Assert.Equal(36L, command.ExecuteScalar());
+        Assert.Equal(37L, command.ExecuteScalar());
         ReportPerformanceSchema.Validate(connection);
     }
 
@@ -607,7 +610,7 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
 
         using var command = connection.CreateCommand();
         command.CommandText = "SELECT MAX(version) FROM app_schema_version";
-        Assert.Equal(36L, command.ExecuteScalar());
+        Assert.Equal(37L, command.ExecuteScalar());
         EmailGuiLogSchema.Validate(connection);
     }
 

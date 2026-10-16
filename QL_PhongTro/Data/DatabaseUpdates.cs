@@ -7,7 +7,7 @@ namespace QL_PhongTro.Data;
 // Append new versions; never rewrite an update already shared with the team.
 public static class DatabaseUpdates
 {
-    internal const int CurrentVersion = 36;
+    internal const int CurrentVersion = 37;
     private static SqliteConnection Open(string path, bool readOnly)
     {
         var c = new SqliteConnection(new SqliteConnectionStringBuilder
@@ -194,7 +194,9 @@ public static class DatabaseUpdates
             Console.WriteLine($"Database already up to date (version {CurrentVersion}). No changes.");
             return;
         }
-        if (version >= 5) Check(path, true, true, version >= 8, false, false);
+        // v35/v36 were used independently by merged branches. Their missing additive
+        // pieces are reconciled by v37; validate the complete model after that step.
+        if (version >= 5 && version < 35) Check(path, true, true, version >= 8, false, false);
         var backupPath = path + ".before-update-" + Guid.NewGuid().ToString("N") + ".bak";
         using (var backup = new SqliteConnection(new SqliteConnectionStringBuilder { DataSource = backupPath }.ToString()))
         {
@@ -492,6 +494,8 @@ public static class DatabaseUpdates
         if (version < 33) XacNhanTatToanSchema.Upgrade(c);
         if (version < 34) BranchSchemaReconciliation.Upgrade(c);
         if (version < 35) InvoicePaymentReportSchema.Upgrade(c);
+        if (version < 36) InvoicePaymentProofSchema.Upgrade(c);
+        if (version < 37) Sprint4IntegrationSchema.Upgrade(c);
         Check(path);
         Console.WriteLine($"Database updated to version {CurrentVersion}. Existing business rows preserved.");
     }

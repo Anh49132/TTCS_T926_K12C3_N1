@@ -33,6 +33,33 @@ body.homepage-dashboard-theme:not(.role-tenant) .contract-details-reference .lea
     }
 }
 @media (max-width: 600px) {
+    body.homepage-dashboard-theme:not(.role-tenant) .dashboard-header {
+        gap: .5rem;
+    }
+    body.homepage-dashboard-theme:not(.role-tenant) .dashboard-header > .page-title {
+        display: none;
+    }
+    body.homepage-dashboard-theme:not(.role-tenant) .latte-header-user {
+        min-width: 0;
+        flex: 1 1 0;
+        padding-left: .5rem;
+    }
+    body.homepage-dashboard-theme:not(.role-tenant) .latte-header-user .sidebar-account {
+        min-width: 0;
+    }
+    body.homepage-dashboard-theme:not(.role-tenant) .latte-header-user .account-trigger {
+        width: 100%;
+        min-width: 0;
+    }
+    body.homepage-dashboard-theme:not(.role-tenant) .latte-header-user .account-label {
+        min-width: 0;
+    }
+    body.homepage-dashboard-theme:not(.role-tenant) .latte-header-user .account-label strong {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
     body.homepage-dashboard-theme:not(.role-tenant) .contract-details-reference .contract-card {
         padding: 1rem;
     }

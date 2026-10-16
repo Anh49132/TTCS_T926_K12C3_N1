@@ -36,6 +36,8 @@ public sealed partial class RoomServicesTests
         async Task<MultipartFormDataContent> FormAsync(byte[] bytes, string filename)
         {
             var html = await tenant.GetStringAsync($"/ThongBao/HoaDon/{invoiceId}");
+            Assert.Contains("enctype=\"multipart/form-data\"", html);
+            Assert.Contains("name=\"anhChungTu\"", html);
             var form = new MultipartFormDataContent();
             form.Add(new StringContent(AntiforgeryToken(html)), "__RequestVerificationToken");
             form.Add(new StringContent(invoiceId.ToString()), "hoaDonId");

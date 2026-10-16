@@ -271,7 +271,7 @@ public sealed partial class RoomServicesTests
                 ALTER TABLE thanh_toan DROP COLUMN anh_chung_tu_so_byte;
                 """;
             command.ExecuteNonQuery();
-            command.CommandText = "DELETE FROM app_schema_version WHERE version=36";
+            command.CommandText = "DELETE FROM app_schema_version WHERE version>=36";
             command.ExecuteNonQuery();
             command.CommandText = "SELECT MAX(version) FROM app_schema_version";
             Assert.Equal(35L, command.ExecuteScalar());

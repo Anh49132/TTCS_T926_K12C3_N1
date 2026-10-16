@@ -1,12 +1,13 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 using QL_PhongTro.Data;
 using QL_PhongTro.Models;
 using QL_PhongTro.ViewModels;
 
 namespace QL_PhongTro.Services;
 
-public sealed class BaoCaoThanhToanService(AppDbContext db, PaymentProofImageStore? proofImages = null) : IBaoCaoThanhToanService
+public sealed class BaoCaoThanhToanService(AppDbContext db, PaymentProofImageStore? proofImages = null, ITimeProvider? clock = null) : IBaoCaoThanhToanService
 {
     public async Task<ThanhToanHoaDon?> LayBaoCaoChoXacNhanAsync(
         int actorId, int invoiceId, CancellationToken cancellationToken = default)
@@ -47,6 +48,8 @@ public sealed class BaoCaoThanhToanService(AppDbContext db, PaymentProofImageSto
         var updated = await db.ThanhToans
             .Where(x => x.Id == pendingPaymentId.Value && x.HoaDonId == invoiceId && x.TrangThai == "CHO_XAC_NHAN")
             .ExecuteUpdateAsync(update => update.SetProperty(x => x.TrangThai, "DA_HUY"), cancellationToken);
+        if (updated == 1)
+            await AuditAsync(actorId, pendingPaymentId.Value, "CHO_XAC_NHAN", "DA_HUY", cancellationToken);
         await transaction!.CommitAsync(cancellationToken);
         return new(invoice.MaHoaDon, updated == 1);
     }
@@ -99,7 +102,7 @@ public sealed class BaoCaoThanhToanService(AppDbContext db, PaymentProofImageSto
         var imageStore = proofImages ?? new PaymentProofImageStore(db.Database.GetDbConnection().DataSource + ".payment-proofs");
         var preparedImage = await imageStore.PrepareAsync(proofImage, cancellationToken);
         var imageKey = preparedImage is null ? null : Guid.NewGuid().ToString("N");
-        db.ThanhToans.Add(new ThanhToanHoaDon
+        var report = new ThanhToanHoaDon
         {
             HoaDonId = invoiceId,
             SoTien = decimal.ToInt64(amount!.Value),
@@ -109,10 +112,12 @@ public sealed class BaoCaoThanhToanService(AppDbContext db, PaymentProofImageSto
             AnhChungTuKey = imageKey,
             AnhChungTuContentType = preparedImage?.ContentType,
             AnhChungTuSoByte = preparedImage?.Bytes.LongLength
-        });
+        };
+        db.ThanhToans.Add(report);
         try
         {
             await db.SaveChangesAsync(cancellationToken);
+            await AuditAsync(actorId, report.Id, null, "CHO_XAC_NHAN", cancellationToken);
             if (preparedImage is not null)
                 await imageStore.SaveAsync(imageKey!, preparedImage.Bytes, cancellationToken);
             await transaction!.CommitAsync(cancellationToken);
@@ -122,6 +127,16 @@ public sealed class BaoCaoThanhToanService(AppDbContext db, PaymentProofImageSto
             if (imageKey is not null) imageStore.Delete(imageKey);
             throw;
         }
+    }
+
+    private async Task AuditAsync(int actorId, int paymentId, string? before, string after, CancellationToken ct)
+    {
+        var actor = await db.TaiKhoans.AsNoTracking().SingleOrDefaultAsync(x => x.Id == actorId && x.DangHoatDong && !x.IsDeleted && x.VaiTro == "KHACH_THUE", ct)
+            ?? throw new UnauthorizedAccessException();
+        var prior = before is null ? null : JsonSerializer.Serialize(new { trang_thai = before });
+        var next = JsonSerializer.Serialize(new { trang_thai = after });
+        var now = (clock ?? new SystemTimeProvider()).UtcNow;
+        await db.Database.ExecuteSqlInterpolatedAsync($"INSERT INTO nhat_ky_hoat_dong(nguoi_thuc_hien_id,ten_nguoi_thuc_hien,vai_tro_luc_thuc_hien,loai_doi_tuong,doi_tuong_id,hanh_dong,du_lieu_truoc,du_lieu_sau,thoi_diem) VALUES({actorId},{actor.HoTen},{actor.VaiTro},{"thanh_toan"},{paymentId},{(before == null ? "TAO" : "DOI_TRANG_THAI")},{prior},{next},{now})", ct);
     }
 
     private Task<bool> LaHoaDonCuaKhachAsync(int actorId, int invoiceId, CancellationToken cancellationToken) =>
