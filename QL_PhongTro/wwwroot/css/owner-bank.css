@@ -1,0 +1,11 @@
+.bank-qr{width:160px;height:160px;object-fit:contain;background:#fff;border:1px solid #ddd;border-radius:8px;padding:6px;display:block;margin:8px 0 16px}
+.bank-qr[hidden],.invoice-bank[hidden]{display:none}
+.bank-actions{display:flex;flex-wrap:wrap;gap:10px}
+.bank-settings input{max-width:100%}.bank-settings dd,.invoice-bank dd{overflow-wrap:anywhere}
+.invoice-bank{padding:16px;border:1px solid #E9EAEC;border-radius:10px;background:#F5F5F4;color:#25282D;scroll-margin-top:90px}
+.bank-settings{scroll-margin-top:90px}
+.invoice-bank-content{display:flex;flex-wrap:wrap;align-items:center;gap:20px}
+.invoice-bank-content dl{flex:1;min-width:0}.invoice-bank-content dt{font-weight:500;color:#596174}.invoice-bank-content dd{margin-bottom:12px}
+.invoice-bank .invoice-bank-content dl>div{display:block;border:0;padding:0}.invoice-bank .invoice-bank-content dd{text-align:left;font-weight:500;margin-top:4px}
+.invoice-bank-content .btn{margin:4px}.bank-settings [aria-invalid=true]{border-color:#b42318}
+@media(max-width:480px){.invoice-bank-content{display:block}.bank-settings .form-control{min-width:0}.bank-actions .btn{flex:1}}

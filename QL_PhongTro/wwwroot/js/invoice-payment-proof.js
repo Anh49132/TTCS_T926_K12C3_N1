@@ -4,10 +4,12 @@
         const proof = form.elements.anhChungTu;
         const validate = () => {
             proof.required = method.value === "CHUYEN_KHOAN";
+            const marker = form.querySelector('[data-proof-required]');
+            if (marker) marker.hidden = !proof.required;
             proof.setCustomValidity(proof.files[0]?.size > 5 * 1024 * 1024
                 ? "Ảnh chứng từ tối đa 5 MiB." : "");
         };
-        method.addEventListener("change", validate);
+        form.querySelectorAll('[name=hinhThucThanhToan]').forEach(input => input.addEventListener('change', validate));
         proof.addEventListener("change", validate);
         form.addEventListener("submit", event => {
             validate();

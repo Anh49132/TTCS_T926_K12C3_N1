@@ -95,4 +95,4 @@ public sealed class HomeTinDangItemViewModel
 
 public sealed record HomeTenantContract(string Code, string Room, string Building, string Role, string Label, long Rent, DateOnly? Start, DateOnly? End, int Priority);
 
-public sealed record HomeTenantInvoice(string Code, string Room, int Month, int Year, DateOnly Due, long Total, long Paid, long Remaining, string Status, DateTime Published);
+public sealed record HomeTenantInvoice(string Code, string Room, int Month, int Year, DateOnly Due, long Total, long Paid, long Remaining, string Status, DateTime Published, int Id = 0);

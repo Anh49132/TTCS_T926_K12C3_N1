@@ -1,0 +1,9 @@
+@{ ViewData["Title"] = "Thông báo"; }
+<section class="payment-inbox" data-payment-inbox>
+    <h1>Thông báo của tôi</h1><p>Thông báo chưa đọc khác với báo thanh toán chưa xử lý. Đọc thông báo không xác nhận nhận tiền.</p>
+    <button type="button" class="btn btn-outline-secondary" data-payment-read-all>Đánh dấu tất cả đã đọc</button>
+    <div data-payment-notice-list aria-live="polite"></div><button type="button" class="btn btn-outline-secondary" data-payment-load-more>Xem thêm</button>
+    <form data-payment-notice-csrf hidden>@Html.AntiForgeryToken()</form>
+</section>
+@section Styles { <link rel="stylesheet" href="~/css/payment-notifications.css" asp-append-version="true" /> }
+@section Scripts { <script src="~/js/payment-notifications.js" asp-append-version="true" defer></script> }

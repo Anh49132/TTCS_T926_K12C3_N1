@@ -12,18 +12,21 @@
         DuKien = [new(Model.MaPhong, invoice, [])] };
     ViewData["Title"] = $"{(Model.XemTruoc ? "Xem trước hóa đơn" : "Chi tiết hóa đơn")} · Phòng {Model.MaPhong}";
 }
-@section Styles { <link rel="stylesheet" href="~/css/invoice-flow.css" asp-append-version="true" /> <link rel="stylesheet" href="~/css/monthly-invoices.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/invoice-detail.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/invoice-review.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/invoice-collection.css" asp-append-version="true" /> }
-@section Scripts { <script src="~/js/invoice-review.js" asp-append-version="true"></script><script src="~/js/invoice-publish.js" asp-append-version="true"></script><script src="~/js/invoice-collection.js" asp-append-version="true"></script><script src="~/js/invoice-payment-proof.js" asp-append-version="true"></script> }
-@if (Model.ThanhToan is not null && !Model.KhachXem && !Model.XemTruoc && invoice.TrangThai != "NHAP")
+@section Styles { <link rel="stylesheet" href="~/css/payment-workflow.css" asp-append-version="true" /> <link rel="stylesheet" href="~/css/owner-bank.css" asp-append-version="true" /> <link rel="stylesheet" href="~/css/invoice-flow.css" asp-append-version="true" /> <link rel="stylesheet" href="~/css/monthly-invoices.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/invoice-detail.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/invoice-review.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/invoice-collection.css" asp-append-version="true" /> }
+@section Scripts { <script src="~/js/payment-workflow.js" asp-append-version="true"></script> <script src="~/js/invoice-bank.js" asp-append-version="true"></script> <script src="~/js/invoice-review.js" asp-append-version="true"></script><script src="~/js/invoice-publish.js" asp-append-version="true"></script><script src="~/js/invoice-collection.js" asp-append-version="true"></script><script src="~/js/invoice-payment-proof.js" asp-append-version="true"></script> }
+<link rel="stylesheet" href="~/css/invoice-print.css" asp-append-version="true" />
+<partial name="~/Views/HoaDonDichVu/_InvoicePrint.cshtml" model="Model" />
+@if (Model.KhachXem) { <partial name="~/Views/HoaDonDichVu/_TenantPaymentDetails.cshtml" model="Model" /> }
+else if (Model.ThanhToan is not null && !Model.KhachXem && !Model.XemTruoc && invoice.TrangThai != "NHAP")
 {
     <partial name="_CollectionDetails" model="Model" />
 }
 else
 {
 <div class="monthly-invoices invoice-detail">
-<nav class="mi-breadcrumb" aria-label="Đường dẫn"><a asp-controller="Home" asp-action="Index">Tổng quan</a> / <a asp-controller="@(Model.KhachXem ? "ThongBao" : "HoaDonDichVu")" asp-action="@(Model.KhachXem ? "Index" : "Management")" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-nam="@invoice.Nam" asp-route-thang="@invoice.Thang">Hóa đơn, thanh toán</a> / @Model.MaPhong</nav>
+<nav class="mi-breadcrumb" aria-label="Đường dẫn"><a asp-controller="Home" asp-action="Index">Tổng quan</a> / <a asp-controller="@(Model.KhachXem ? "ThongBao" : "HoaDonDichVu")" asp-action="@(Model.KhachXem ? "DanhSach" : "Management")" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-nam="@invoice.Nam" asp-route-thang="@invoice.Thang">Hóa đơn, thanh toán</a> / @Model.MaPhong</nav>
 <header class="id-heading">
-<a asp-controller="@(Model.KhachXem ? "ThongBao" : "HoaDonDichVu")" asp-action="@(Model.KhachXem ? "Index" : "Management")" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-nam="@invoice.Nam" asp-route-thang="@invoice.Thang" class="btn btn-outline-secondary id-back">← Quay lại danh sách</a>
+<a asp-controller="@(Model.KhachXem ? "ThongBao" : "HoaDonDichVu")" asp-action="@(Model.KhachXem ? "DanhSach" : "Management")" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-nam="@invoice.Nam" asp-route-thang="@invoice.Thang" class="btn btn-outline-secondary id-back">← Quay lại danh sách</a>
 <div><div class="id-title"><h1>@(Model.XemTruoc ? "Xem trước hóa đơn" : "Hóa đơn") @(Model.XemTruoc ? Model.MaPhong : invoice.MaHoaDon)</h1><span class="id-status">@(Model.XemTruoc ? "Đủ dữ liệu" : Model.KhachXem && Model.BaoCaoChoXacNhan is not null ? "Chờ xác nhận" : invoice.TrangThai == "DA_PHAT_HANH" ? "Đã phát hành" : invoice.TrangThai == "DA_HUY" ? "Đã hủy" : "Bản nháp")</span></div><p>@Model.TenKhach · @Model.TenToaNha · Kỳ tháng @invoice.Thang/@invoice.Nam</p></div>
 <button type="button" class="btn btn-outline-secondary id-print" onclick="window.print()">▤ Xem bản in</button>
 </header>
@@ -100,6 +103,7 @@ else
                         <option value="CHUYEN_KHOAN">Chuyển khoản</option>
                     </select>
                 </div>
+                <partial name="~/Views/Shared/_InvoiceBank.cshtml" />
                 <div class="mb-3">
                     <label for="payment-report-proof" class="form-label">Ảnh chứng từ</label>
                     <input id="payment-report-proof" name="anhChungTu" type="file" class="form-control" accept="image/jpeg,image/png" />
@@ -146,7 +150,7 @@ else
 </aside></div>
 <footer class="mi-footer"><strong>@(Model.XemTruoc ? "Chưa phát hành" : "Đã lưu hóa đơn") · @invoice.TongTien.ToString("N0", vn) đ</strong>
 @if (Model.XemTruoc && write) { <form asp-action="CreateDraft" method="post"><input type="hidden" name="toaNhaId" value="@Model.ToaNhaId" /><input type="hidden" name="hopDongId" value="@invoice.HopDongId" /><input type="hidden" name="nam" value="@invoice.Nam" /><input type="hidden" name="thang" value="@invoice.Thang" /><input type="hidden" name="ngayPhatHanh" value="@issueDate.ToString("yyyy-MM-dd")" /><input type="hidden" name="hanThanhToan" value="@invoice.HanThanhToan.ToString("yyyy-MM-dd")" /><button class="btn btn-dark">Tạo hóa đơn Nháp để chỉnh sửa</button></form> }
-else { <a asp-controller="@(Model.KhachXem ? "ThongBao" : "HoaDonDichVu")" asp-action="@(Model.KhachXem ? "Index" : "Management")" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-nam="@invoice.Nam" asp-route-thang="@invoice.Thang" class="btn btn-outline-secondary">Quay lại danh sách hóa đơn</a> }
+else { <a asp-controller="@(Model.KhachXem ? "ThongBao" : "HoaDonDichVu")" asp-action="@(Model.KhachXem ? "DanhSach" : "Management")" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-nam="@invoice.Nam" asp-route-thang="@invoice.Thang" class="btn btn-outline-secondary">Quay lại danh sách hóa đơn</a> }
 </footer>
 </div>
 }

@@ -32,7 +32,7 @@ public sealed partial class RoomServicesTests
         using (var command = schema.CreateCommand())
         {
             command.CommandText = "SELECT MAX(version) FROM app_schema_version";
-            Assert.Equal(37L, command.ExecuteScalar());
+            Assert.Equal(39L, command.ExecuteScalar());
             command.CommandText = "SELECT COUNT(*) FROM pragma_table_info('thanh_toan') WHERE name='hinh_thuc_bao_cao'";
             Assert.Equal(1L, command.ExecuteScalar());
         }

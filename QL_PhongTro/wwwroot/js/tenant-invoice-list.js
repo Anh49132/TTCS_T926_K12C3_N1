@@ -1,176 +1,96 @@
 (() => {
-    const page = document.querySelector(".tenant-invoice-list");
+    const page = document.querySelector('.tenant-invoice-list');
     if (!page) return;
-
-    const form = page.querySelector(".tenant-invoice-filters");
-    const loading = document.getElementById("tenant-invoice-list-loading");
-    const error = document.getElementById("tenant-invoice-list-error");
-    const empty = document.getElementById("tenant-invoice-list-empty");
-    const noMatch = document.getElementById("tenant-invoice-list-no-match");
-    const results = document.getElementById("tenant-invoice-list-results");
-    const count = document.getElementById("tenant-invoice-list-count");
-    const rows = document.getElementById("tenant-invoice-list-rows");
-    const pagination = document.getElementById("tenant-invoice-list-pagination");
-    const money = new Intl.NumberFormat("vi-VN");
-    const params = new URLSearchParams(window.location.search);
-    const selectedPage = Number(page.dataset.page || params.get("page") || 1);
-    let currentPage = selectedPage;
-    const apiUrl = new URL(page.dataset.listUrl, window.location.origin);
-    const statusLabels = {
-        CHUA_THANH_TOAN: "Chưa thanh toán",
-        THANH_TOAN_MOT_PHAN: "Thanh toán một phần",
-        DA_THANH_TOAN: "Đã thanh toán",
-        QUA_HAN: "Quá hạn",
-        CHO_XAC_NHAN: "Chờ xác nhận"
+    const form = page.querySelector('form'), rows = page.querySelector('#tenant-invoice-list-rows');
+    const find = selector => page.querySelector(selector), money = new Intl.NumberFormat('vi-VN');
+    const params = new URLSearchParams(location.search);
+    const pageUrl = (changes = {}) => {
+        const url = new URL(page.dataset.pageUrl, location.origin);
+        for (const [key, value] of new FormData(form)) if (value) url.searchParams.set(key, value);
+        for (const [key, value] of Object.entries(changes)) url.searchParams.set(key, value);
+        return url.href;
     };
-
-    const invoiceUrl = (invoice) => {
-        const url = new URL(page.dataset.detailUrl, window.location.origin);
-        url.searchParams.set("maHoaDon", invoice.maHoaDon);
-        const period = form.elements.namedItem("ky").value;
-        const status = form.elements.namedItem("trangThai").value;
-        if (period) url.searchParams.set("ky", period);
-        if (status !== "TAT_CA") url.searchParams.set("trangThai", status);
-        if (currentPage > 1) url.searchParams.set("page", currentPage);
-        return url.toString();
-    };
-
-    const setError = (message) => {
-        loading.hidden = true;
-        results.hidden = true;
-        empty.hidden = true;
-        noMatch.hidden = true;
-        error.textContent = message;
-        error.hidden = false;
-    };
-
-    const buildPagination = (current, pages) => {
-        pagination.replaceChildren();
-        if (pages <= 1) return;
-        const list = document.createElement("div");
-        list.className = "tenant-invoice-pagination";
-        const addLink = (label, target, disabled, accessibleLabel) => {
-            const link = document.createElement(disabled ? "span" : "a");
-            link.className = `btn ${disabled ? "btn-outline-secondary disabled" : "btn-outline-dark"}`;
-            link.textContent = label;
-            if (disabled) {
-                link.setAttribute("aria-disabled", "true");
-            } else {
-                const url = new URL(page.dataset.pageUrl, window.location.origin);
-                const period = form.elements.namedItem("ky").value;
-                const status = form.elements.namedItem("trangThai").value;
-                if (period) url.searchParams.set("ky", period);
-                if (status !== "TAT_CA") url.searchParams.set("trangThai", status);
-                url.searchParams.set("page", target);
-                link.href = url.toString();
-            }
-            link.setAttribute("aria-label", accessibleLabel);
-            list.append(link);
+    const node = (tag, text, className) => { const el = document.createElement(tag); el.textContent = text; if (className) el.className = className; return el; };
+    const pagination = (current, pages) => {
+        const wrap = node('div', '', 'tenant-invoice-pagination');
+        const link = (label, target, disabled = false) => {
+            const el = node(disabled ? 'span' : 'a', label, disabled ? 'disabled' : target === current ? 'current' : '');
+            if (!disabled) el.href = pageUrl({ page: target }); else el.setAttribute('aria-disabled', 'true');
+            if (target === current && !disabled) el.setAttribute('aria-current', 'page');
+            el.setAttribute('aria-label', label === '‹' ? 'Trang trước' : label === '›' ? 'Trang sau' : `Trang ${target}`); wrap.append(el);
         };
-        addLink("Trước", current - 1, current <= 1, "Trang trước");
-        const indicator = document.createElement("span");
-        indicator.textContent = `Trang ${current} / ${pages}`;
-        list.append(indicator);
-        addLink("Sau", current + 1, current >= pages, "Trang sau");
-        pagination.append(list);
+        link('‹', current - 1, current <= 1);
+        let previous = 0;
+        for (const number of [...new Set([1, current - 1, current, current + 1, pages])].filter(x => x >= 1 && x <= pages).sort((a,b) => a-b)) {
+            if (number - previous > 1) wrap.append(node('span', '…'));
+            link(String(number), number); previous = number;
+        }
+        link('›', current + 1, current >= pages);
+        find('#tenant-invoice-list-pagination').replaceChildren(wrap);
     };
-
-    const render = (data) => {
-        currentPage = data.trang;
-        loading.hidden = true;
-        error.hidden = true;
-        results.hidden = true;
-        empty.hidden = true;
-        noMatch.hidden = true;
+    const render = data => {
+        const overview = data.tongQuan;
+        find('[data-total]').textContent = money.format(overview.tongSo);
+        find('[data-unpaid]').textContent = `${overview.canThanhToan} hóa đơn`;
+        find('[data-balance]').textContent = `${money.format(overview.tongConPhaiTra)} đ`;
+        find('[data-overdue]').textContent = `${overview.quaHan} hóa đơn`;
+        find('[data-tab-total]').textContent = overview.tongSo;
+        find('[data-tab-unpaid]').textContent = overview.canThanhToan;
+        find('[data-tab-paid]').textContent = overview.daThanhToan;
+        page.querySelectorAll('[data-group]').forEach(tab => {
+            const active = tab.dataset.group === form.elements.nhom.value;
+            tab.href = pageUrl({ nhom: tab.dataset.group, page: 1 }); tab.classList.toggle('active', active);
+            if (active) tab.setAttribute('aria-current', 'page');
+        });
+        find('#tenant-invoice-list-loading').hidden = true;
+        find('#tenant-invoice-list-empty').hidden = data.tongSoHoaDon !== 0;
+        find('#tenant-invoice-list-no-match').hidden = data.tongSoHoaDon === 0 || data.soKetQua !== 0;
+        find('#tenant-invoice-list-results').hidden = false;
+        find('#tenant-invoice-list-count').textContent = `${data.soKetQua} hóa đơn`;
         rows.replaceChildren();
-        if (data.tongSoHoaDon === 0) {
-            empty.hidden = false;
-            return;
-        }
-        if (data.hoaDons.length === 0) {
-            noMatch.hidden = false;
-            return;
-        }
-
         for (const invoice of data.hoaDons) {
-            const row = document.createElement("tr");
-            row.tabIndex = 0;
-            row.setAttribute("role", "link");
-            row.setAttribute("aria-label", `Mở hóa đơn ${invoice.maHoaDon}, kỳ ${invoice.thang}/${invoice.nam}`);
-            row.dataset.href = invoiceUrl(invoice);
-            const code = document.createElement("th");
-            code.scope = "row";
-            const codeLink = document.createElement("a");
-            codeLink.href = row.dataset.href;
-            codeLink.textContent = invoice.maHoaDon;
-            code.append(codeLink);
-            const period = document.createElement("td");
-            period.textContent = `${String(invoice.thang).padStart(2, "0")}/${invoice.nam}`;
-            const total = document.createElement("td");
-            total.className = "text-end";
-            total.textContent = `${money.format(invoice.tongCong)} đ`;
-            const remaining = document.createElement("td");
-            remaining.className = "text-end";
-            remaining.textContent = `${money.format(invoice.soConPhaiTra)} đ`;
-            const due = document.createElement("td");
-            due.textContent = invoice.hanThanhToan;
-            const status = document.createElement("td");
-            const badge = document.createElement("span");
-            badge.className = `badge ${invoice.trangThai === "CHO_XAC_NHAN" ? "text-bg-warning" : invoice.quaHan ? "text-bg-danger" : invoice.trangThai === "DA_THANH_TOAN" ? "text-bg-success" : "text-bg-secondary"}`;
-            badge.textContent = statusLabels[invoice.trangThai] || invoice.tenTrangThai;
-            status.append(badge);
-            if (invoice.quaHan) {
-                const overdue = document.createElement("span");
-                overdue.className = "tenant-invoice-overdue";
-                overdue.setAttribute("role", "status");
-                overdue.textContent = `Quá hạn ${invoice.soNgayTre} ngày`;
-                status.append(overdue);
-            }
-            row.append(code, period, total, remaining, due, status);
-            row.addEventListener("click", (event) => {
-                if (event.target.closest("a")) return;
-                window.location.assign(row.dataset.href);
-            });
-            row.addEventListener("keydown", (event) => {
-                if (event.key === "Enter") window.location.assign(row.dataset.href);
-            });
+            const row = document.createElement('tr');
+            const url = `${page.dataset.detailUrl.replace(/\/$/, '')}/${invoice.id}`;
+            const code = node('th', ''); code.scope = 'row';
+            const anchor = node('a', invoice.maHoaDon); anchor.href = url;
+            code.append(anchor, node('small', `Phòng ${invoice.maPhong}`)); row.append(code);
+            const cell = (label, text, className = '') => { const td = node('td', text, className); td.dataset.label = label; row.append(td); return td; };
+            cell('Kỳ', `${String(invoice.thang).padStart(2,'0')}/${invoice.nam}`);
+            cell('Tổng hóa đơn', `${money.format(invoice.tongCong)} đ`, 'til-money');
+            const paid = cell('Đã thanh toán', `${money.format(invoice.soDaThanhToan)} đ`, 'til-money');
+            if (invoice.soDaCanTru > 0) paid.append(node('small', `Cấn cọc ${money.format(invoice.soDaCanTru)} đ`));
+            cell('Còn phải trả', `${money.format(invoice.soConPhaiTra)} đ`, 'til-money til-debt');
+            const due = cell('Hạn thanh toán', invoice.hanThanhToan);
+            if (invoice.soNgayTre > 0) due.append(node('small', `Quá hạn ${invoice.soNgayTre} ngày`, 'til-late'));
+            const status = cell('Trạng thái', '');
+            const settled = invoice.soConPhaiTra === 0, partial = !settled && (invoice.soDaThanhToan > 0 || invoice.soDaCanTru > 0);
+            status.append(node('span', settled ? 'Đã thanh toán' : partial ? 'Trả một phần' : invoice.soNgayTre > 0 ? 'Quá hạn' : 'Chưa thanh toán',
+                `til-status ${settled ? 'paid' : partial ? 'partial' : invoice.soNgayTre > 0 ? 'late' : ''}`));
+            if (invoice.choXacNhan) status.append(node('small', `Chờ xác nhận ${money.format(invoice.soTienChoXacNhan)} đ`, 'til-report'));
+            const action = cell('Thao tác', '', 'til-action'), detail = node('a', 'Xem chi tiết', 'til-view');
+            detail.href = url; detail.setAttribute('aria-label', `Xem chi tiết hóa đơn ${invoice.maHoaDon}`); action.append(detail);
             rows.append(row);
         }
-        const hasFilter = form.elements.namedItem("ky").value || form.elements.namedItem("trangThai").value !== "TAT_CA";
-        count.textContent = hasFilter
-            ? `Có ${data.soKetQua} hóa đơn khớp bộ lọc.`
-            : `Có ${data.tongSoHoaDon} hóa đơn của bạn.`;
-        buildPagination(data.trang, data.soTrang);
-        results.hidden = false;
+        const start = data.soKetQua ? (data.trang - 1) * data.pageSize + 1 : 0;
+        find('[data-result-range]').textContent = `Hiển thị ${start}–${Math.min(data.trang * data.pageSize, data.soKetQua)} trong ${data.soKetQua} hóa đơn`;
+        pagination(data.trang, data.soTrang);
     };
-
-    form.addEventListener("submit", () => {
-        const submit = form.querySelector('button[type="submit"]');
-        if (submit) submit.disabled = true;
-    });
-
+    find('#til-page-size').addEventListener('change', event => { location.assign(pageUrl({ pageSize: event.target.value, page: 1 })); });
+    form.addEventListener('submit', () => { form.querySelector('button[type=submit]').disabled = true; });
     (async () => {
-        loading.hidden = false;
         try {
-            const period = params.get("ky") || "";
-            const status = params.get("trangThai") || "TAT_CA";
-            apiUrl.searchParams.set("ky", period);
-            apiUrl.searchParams.set("trangThai", status);
-            apiUrl.searchParams.set("page", selectedPage);
-            const response = await fetch(apiUrl, {
-                headers: { Accept: "application/json" },
-                cache: "no-store",
-                credentials: "same-origin"
-            });
-            if (!response.ok) {
-                const body = await response.json().catch(() => null);
-                setError(body?.message || "Không thể tải danh sách hóa đơn. Vui lòng thử lại.");
-                return;
-            }
-            render(await response.json());
-        } catch (requestError) {
-            console.error("Không tải được danh sách hóa đơn.", requestError);
-            setError("Không thể tải danh sách hóa đơn. Vui lòng thử lại.");
+            const url = new URL(page.dataset.listUrl, location.origin);
+            for (const [key,value] of new FormData(form)) url.searchParams.set(key,value);
+            url.searchParams.set('page', page.dataset.page || params.get('page') || 1);
+            const response = await fetch(url, { credentials:'same-origin', cache:'no-store', headers:{ Accept:'application/json' } });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.message || 'Không thể tải danh sách hóa đơn.');
+            render(data);
+        } catch (failure) {
+            find('#tenant-invoice-list-loading').hidden = true;
+            find('#tenant-invoice-list-results').hidden = true;
+            find('#tenant-invoice-list-error').textContent = failure.message || 'Không thể tải danh sách hóa đơn. Vui lòng thử lại.';
+            find('#tenant-invoice-list-error').hidden = false;
         }
     })();
 })();

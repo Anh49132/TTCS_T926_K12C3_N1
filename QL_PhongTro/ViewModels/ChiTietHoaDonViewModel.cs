@@ -6,6 +6,7 @@ public sealed class ChiTietHoaDonViewModel
 {
     public ThanhToanHoaDonSummary? ThanhToan { get; set; }
     public ThanhToanHoaDon? BaoCaoChoXacNhan { get; set; }
+    public IReadOnlyList<QL_PhongTro.Services.PaymentReportRow> ThanhToanRows { get; set; } = [];
     public DateOnly HomNay { get; set; }
     public string TenNguoiGhiThu { get; set; } = "";
     public IReadOnlyList<LichSuHoaDonNhapViewModel> LichSuNhap { get; set; } = [];

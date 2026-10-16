@@ -1,9 +1,10 @@
-﻿@inject QL_PhongTro.Authorization.PermissionService HeaderPermissions
+@inject QL_PhongTro.Authorization.PermissionService HeaderPermissions
 @{
     var isPropertyPage = ViewContext.RouteData.Values["controller"]?.ToString() == "PhongTro";
     var isListingPage = ViewContext.RouteData.Values["controller"]?.ToString() is "TinDang" or "TimTin";
     var useHomepageTheme = User.IsInRole("KHACH_THUE") || User.IsInRole("CHU_NHA") || User.IsInRole("QUAN_LY") || User.IsInRole("ADMIN");
     var isTenant = User.IsInRole("KHACH_THUE");
+    var showPaymentBell = User.IsInRole("CHU_NHA") && await HeaderPermissions.AllowsAsync("TAI_CHINH");
     var showNotificationBell = !isTenant && (await HeaderPermissions.MenuAsync()).Any(x => x.Code == "YEU_CAU_THUE");
     var roleClass = User.IsInRole("ADMIN") ? "role-admin" : User.IsInRole("CHU_NHA") ? "role-owner" : User.IsInRole("QUAN_LY") ? "role-manager" : isTenant ? "role-tenant" : "";
 }
@@ -151,7 +152,8 @@ else
 <span class="page-title">@ViewData["Title"]</span>
 }
 <form class="latte-header-search" action="/TimTin" method="get"><button aria-label="TÃ¬m kiáº¿m" type="submit"><svg class="header-search-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="10.8" cy="10.8" r="6.3" /><path d="m15.5 15.5 4.2 4.2" /></svg></button><input name="TuKhoa" aria-label="TÃ¬m kiáº¿m phÃ²ng, tin Ä‘Äƒng" placeholder="TÃ¬m kiáº¿m phÃ²ng, tÃ²a nhÃ , tin Ä‘Äƒng..." /></form>
-@if (showNotificationBell)
+@if (showPaymentBell) { <partial name="_PaymentBell" /> }
+else if (showNotificationBell)
 {
 <a class="header-notification-bell" href="/Modules/YEU_CAU_THUE?section=thong-bao" aria-label="ThÃ´ng bÃ¡o" title="ThÃ´ng bÃ¡o"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" /></svg></a>
 }

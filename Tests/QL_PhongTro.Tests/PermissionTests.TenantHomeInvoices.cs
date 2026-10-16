@@ -27,7 +27,7 @@ public sealed partial class PermissionTests
         HomeInvoice(82,80,"BILL-HOME-DRAFT",8,900000,"NHAP");HomeInvoice(83,81,"BILL-HOME-FOREIGN",10,900000);
         using var tenant=await Login("KHACH_THUE");var html=WebUtility.HtmlDecode(await tenant.GetStringAsync("/"));
         Assert.Contains("Hóa đơn cần thanh toán</small><strong>1</strong>",html);Assert.Contains("500.000 đ",html);Assert.Contains("800.000 đ",html);Assert.Contains("Thanh toán một phần",html);Assert.Contains("Đã thanh toán",html);Assert.Contains("BILL-HOME-PARTIAL",html);Assert.Contains("BILL-HOME-PAID",html);
-        Assert.DoesNotContain("BILL-HOME-DRAFT",html);Assert.DoesNotContain("BILL-HOME-FOREIGN",html);Assert.Contains("/ThongBao/ChiTiet?maHoaDon=BILL-HOME-PARTIAL",html);
+        Assert.DoesNotContain("BILL-HOME-DRAFT",html);Assert.DoesNotContain("BILL-HOME-FOREIGN",html);Assert.Contains("/ThongBao/HoaDon/80",html);
     }
     [Fact] public async Task TenantHomeInvoicesExcludeCancelledButKeepDebtAfterContractEnds()
     {

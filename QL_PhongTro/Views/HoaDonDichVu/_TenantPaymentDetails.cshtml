@@ -1,0 +1,101 @@
+@model QL_PhongTro.ViewModels.ChiTietHoaDonViewModel
+@using System.Globalization
+@using QL_PhongTro.Services
+@{
+    var bill = Model.HoaDon;
+    var vn = CultureInfo.GetCultureInfo("vi-VN");
+    var pending = Model.BaoCaoChoXacNhan;
+    var metadata = pending is null ? null : Model.ThanhToanRows.FirstOrDefault(x => x.Payment.Id == pending.Id)?.Report;
+    var last = Model.ThanhToanRows.FirstOrDefault(x => x.Payment.HinhThucBaoCao is not null);
+    var status = bill.TrangThai == "DA_HUY" ? "Đã hủy" : Model.SoConPhaiTra == 0 ? "Đã thanh toán" : Model.SoDaThanhToan > 0 || Model.SoDaCanTru > 0 ? "Trả một phần" : "Chưa thanh toán";
+    var canReport = bill.TrangThai == "DA_PHAT_HANH" && Model.SoConPhaiTra > 0 && pending is null;
+    var issue = bill.NgayPhatHanhNghiepVu ?? DateOnly.FromDateTime((bill.NgayPhatHanh ?? bill.NgayLap).AddHours(7));
+    ViewData["PaymentMemo"] = bill.MaHoaDon;
+    var hasSuccess = TempData.Peek("PaymentReportSuccess") is string;
+}
+<div class="pw-page tenant-payment-detail">
+    <nav class="pw-breadcrumb" aria-label="Đường dẫn"><a asp-controller="Home" asp-action="Index">Trang chủ</a><span>/</span><a asp-controller="ThongBao" asp-action="DanhSach">Hóa đơn, thanh toán</a><span>/</span><span>@bill.MaHoaDon</span></nav>
+    <header class="pw-heading"><a class="btn btn-outline-secondary" asp-controller="ThongBao" asp-action="DanhSach">← Quay lại danh sách hóa đơn</a><div><h1>Hóa đơn @bill.MaHoaDon <span class="pw-badge @(bill.TrangThai == "DA_HUY" ? "rejected" : "paid")">@(bill.TrangThai == "DA_HUY" ? "Đã hủy" : "Đã phát hành")</span><span class="pw-badge @(Model.SoConPhaiTra == 0 ? "paid" : "pending")">@status</span></h1><p>Phòng @Model.MaPhong · @Model.TenToaNha · Kỳ tháng @bill.Thang.ToString("00")/@bill.Nam</p></div><button class="btn btn-outline-secondary" type="button" onclick="window.print()">▤ Xem bản in</button></header>
+    @if (TempData["PaymentReportSuccess"] is string success && pending is null) { <div class="pw-banner success" role="status">@success</div> }
+    @if (TempData["PaymentReportError"] is string error) { <div class="pw-banner rejected" role="alert">@error</div> }
+    @if (pending is not null)
+    {
+        <div class="pw-banner pending" role="status"><strong>Báo thanh toán đang chờ chủ nhà xác nhận</strong><p>Bạn đã báo thanh toán @pending.SoTien.ToString("N0", vn) đ · Gửi lúc @(metadata?.GuiLuc?.AddHours(7).ToString("dd/MM/yyyy HH:mm") ?? "Chưa có thông tin"). Khoản này chưa được tính vào số đã thu.</p></div>
+    }
+    else if (last?.Payment.TrangThai == "TU_CHOI")
+    {
+        <div class="pw-banner rejected" role="alert"><strong>Báo thanh toán trước đã bị từ chối</strong><p>Lý do: @(last.Report?.LyDoTuChoi ?? "Chưa có thông tin")</p><p>Kiểm tra lại thông tin và gửi báo thanh toán mới nếu cần. Khoản bị từ chối không được tính vào số đã thu.</p></div>
+    }
+    else if (last?.Payment.TrangThai == "DA_HUY" && !hasSuccess) { <div class="pw-banner success">Báo thanh toán trước đã được hủy. Bạn có thể gửi báo thanh toán mới khi hóa đơn còn phải trả.</div> }
+    <div class="pw-tenant-layout @(pending is not null ? "has-pending" : "")">
+        <div class="pw-tenant-main">
+            <div class="pw-stats @(pending is not null ? "four" : "")">
+                <section class="pw-card"><span>Tổng hóa đơn</span><strong>@Model.TongCong.ToString("N0", vn) đ</strong></section>
+                <section class="pw-card"><span>Đã thu xác nhận</span><strong>@Model.SoDaThanhToan.ToString("N0", vn) đ</strong></section>
+                @if (pending is not null) { <section class="pw-card"><span>Đang chờ xác nhận</span><strong class="pw-gold">@pending.SoTien.ToString("N0", vn) đ</strong></section> }
+                <section class="pw-card"><span>Còn phải trả</span><strong class="pw-gold">@Model.SoConPhaiTra.ToString("N0", vn) đ</strong>@if(pending is not null){<small>Chưa trừ khoản đang chờ xác nhận.</small>}@if(Model.QuaHan){<small class="pw-badge rejected">Quá hạn @Model.SoNgayTre ngày</small>}</section>
+            </div>
+            <section class="pw-card"><h2>Chi tiết các khoản thu</h2>
+                <div class="pw-table-wrap"><table class="pw-table"><thead><tr><th>Khoản thu</th><th>Cách tính</th><th>Số lượng</th><th class="money">Đơn giá</th><th class="money">Thành tiền</th></tr></thead><tbody>
+                @foreach (var line in bill.ChiTiet.OrderBy(x => x.SoThuTu))
+                {
+                    var method = line.LoaiKhoan == "TIEN_PHONG" ? (line.SoNgayTinhTien.HasValue ? "Giá tháng theo số ngày ở" : "Giá tháng theo hợp đồng") : line.LoaiKhoan == "GIAM_TRU" ? "Giảm trừ" : line.LoaiKhoan == "PHAT_SINH" ? "Phát sinh" : line.CachTinhApDung == "THEO_CHI_SO" ? $"{line.ChiSoDau?.ToString("0.###", vn)} → {line.ChiSoCuoi?.ToString("0.###", vn)} {line.DonViTinh}" : line.CachTinhApDung == "THEO_NGUOI" ? "Theo đầu người" : "Cố định theo phòng";
+                    <tr><th>@line.TenKhoan @if(line.GhiChu is not null){<small>@line.GhiChu</small>}</th><td>@method</td><td>@line.SoLuong.ToString("0.###", vn) @(line.LoaiKhoan == "TIEN_PHONG" ? "tháng" : line.DonViTinh)</td><td class="money">@line.DonGia.ToString("N0", vn) đ</td><td class="money">@(line.LoaiKhoan == "GIAM_TRU" ? "−" : "")@line.ThanhTien.ToString("N0", vn) đ</td></tr>
+                }
+                </tbody></table></div>
+                <dl class="pw-totals"><div><dt>Tổng cộng</dt><dd>@Model.TongCong.ToString("N0", vn) đ</dd></div><div><dt>Đã thu xác nhận</dt><dd>@Model.SoDaThanhToan.ToString("N0", vn) đ</dd></div>@if(Model.SoDaCanTru>0){<div><dt>Đã cấn cọc</dt><dd>@Model.SoDaCanTru.ToString("N0", vn) đ</dd></div>}<div><dt>Còn phải trả</dt><dd><strong>@Model.SoConPhaiTra.ToString("N0", vn) đ</strong></dd></div><div><dt>Hạn thanh toán</dt><dd>@bill.HanThanhToan.ToString("dd/MM/yyyy")</dd></div></dl>
+            </section>
+            @if (pending is not null)
+            {
+                <section class="pw-card" id="payment-report-@pending.Id"><h2>Thanh toán của tôi <span class="pw-badge pending">1 báo cáo</span></h2><div class="pw-pending-report">
+                    <div class="pw-report-heading"><div><strong>BC-@pending.Id.ToString("D6")</strong> <span class="pw-badge pending">Chờ xác nhận</span><p class="pw-report-money">@pending.SoTien.ToString("N0", vn) đ</p></div>
+                        <form asp-controller="ThongBao" asp-action="HuyBaoCaoThanhToan" method="post" data-cancel-payment>@Html.AntiForgeryToken()<input type="hidden" name="hoaDonId" value="@bill.Id" /><button type="submit" class="btn btn-outline-danger">Hủy báo thanh toán</button></form>
+                    </div>
+                    <dl class="pw-report-facts"><div><dt>Ngày trả</dt><dd>@pending.NgayThanhToan.ToString("dd/MM/yyyy")</dd></div><div><dt>Hình thức</dt><dd>@GhiThuHoaDonService.TenHinhThuc(pending.HinhThucBaoCao)</dd></div><div><dt>Gửi lúc</dt><dd>@(metadata?.GuiLuc?.AddHours(7).ToString("dd/MM/yyyy HH:mm") ?? "Chưa có thông tin")</dd></div><div><dt>Ghi chú</dt><dd>@(metadata?.GhiChu ?? "—")</dd></div></dl>
+                    @if (pending.AnhChungTuKey is not null)
+                    {
+                        <div class="pw-evidence compact" data-evidence-url="/api/chung-tu-thanh-toan/@pending.Id/link" data-evidence-auto><img data-evidence-image alt="Chứng từ thanh toán bạn đã gửi" hidden /><div><p>@(metadata?.TenTep ?? "Ảnh chứng từ") · @((pending.AnhChungTuSoByte.GetValueOrDefault()/1024m/1024m).ToString("0.##", vn)) MiB</p><button type="button" class="btn btn-outline-secondary" data-evidence-open>Xem ảnh</button><p data-evidence-error class="text-danger" role="alert" hidden></p></div></div>
+                    }
+                    <p class="pw-note">Báo cáo đã gửi không thể chỉnh sửa. Bạn chỉ có thể hủy khi chủ nhà chưa xác nhận.</p>
+                </div></section>
+            }
+            <section class="pw-card"><h2>Lịch sử thanh toán</h2><div class="pw-table-wrap"><table class="pw-table"><thead><tr><th>Số tiền</th><th>Ngày thanh toán</th><th>Hình thức</th><th>Trạng thái</th></tr></thead><tbody>
+                @foreach (var row in Model.ThanhToanRows.Where(x => x.Payment.TrangThai != "CHO_XAC_NHAN"))
+                {
+                    var p = row.Payment; var label = p.TrangThai == "DA_XAC_NHAN" ? "Đã xác nhận" : p.TrangThai == "TU_CHOI" ? "Bị từ chối" : "Đã hủy";
+                    <tr id="payment-report-@p.Id"><th>@p.SoTien.ToString("N0", vn) đ</th><td>@p.NgayThanhToan.ToString("dd/MM/yyyy")</td><td>@GhiThuHoaDonService.TenHinhThuc(p.HinhThucBaoCao ?? row.ReceiptMethod)</td><td><span class="pw-badge @(p.TrangThai == "DA_XAC_NHAN" ? "paid" : "rejected")">@label</span>@if(row.Report?.LyDoTuChoi is not null){<small>Lý do: @row.Report.LyDoTuChoi</small>}</td></tr>
+                }
+                @if (!Model.ThanhToanRows.Any(x => x.Payment.TrangThai != "CHO_XAC_NHAN")) { <tr><td colspan="4" class="pw-muted">Chưa có lịch sử thanh toán.</td></tr> }
+            </tbody></table></div><p class="pw-muted">@(pending is not null ? "Khoản đang chờ xác nhận chưa được tính vào lịch sử thu và số đã thu." : "Chỉ khoản đã xác nhận được tính vào số đã thu.")</p>
+            @if (Model.ThanhToanRows.Any(x => x.Payment.HinhThucBaoCao is not null && x.Payment.TrangThai != "CHO_XAC_NHAN")) { <details class="pw-history-details"><summary>Xem chi tiết lịch sử</summary><partial name="~/Views/HoaDonDichVu/_PaymentReportHistory.cshtml" model="Model" /></details> }
+            </section>
+            @if (pending is null) { <section class="pw-card"><partial name="~/Views/HoaDonDichVu/_PaymentInvoiceInfo.cshtml" model="Model" /></section> }
+        </div>
+        <aside class="pw-tenant-side">
+            @if (pending is not null) { <section class="pw-card"><partial name="~/Views/HoaDonDichVu/_PaymentInvoiceInfo.cshtml" model="Model" /></section> }
+            @if (canReport)
+            {
+                <section class="pw-card"><h2>Báo đã thanh toán</h2><div class="pw-amount"><span>Còn phải trả</span><strong>@Model.SoConPhaiTra.ToString("N0", vn) đ</strong></div>
+                    <form asp-controller="ThongBao" asp-action="BaoCaoThanhToan" method="post" enctype="multipart/form-data" data-payment-report>
+                        @Html.AntiForgeryToken()<input type="hidden" name="hoaDonId" value="@bill.Id" />
+                        <label for="payment-report-amount">Số tiền đã trả <em>*</em></label><input type="number" id="payment-report-amount" name="soTien" value="@Model.SoConPhaiTra" min="1" max="@Model.SoConPhaiTra" step="1" required inputmode="numeric" /><small class="pw-muted">Tối đa @Model.SoConPhaiTra.ToString("N0", vn) đ.</small>
+                        <label for="payment-report-date">Ngày trả <em>*</em></label><input id="payment-report-date" type="date" name="ngayThanhToan" value="@Model.HomNay.ToString("yyyy-MM-dd")" required />
+                        <fieldset class="pw-methods"><legend>Hình thức <em>*</em></legend><label><input type="radio" name="hinhThucThanhToan" value="CHUYEN_KHOAN" checked required /> Chuyển khoản</label><label><input type="radio" name="hinhThucThanhToan" value="TIEN_MAT" /> Tiền mặt</label></fieldset>
+                        <partial name="~/Views/Shared/_InvoiceBank.cshtml" />
+                        <label for="payment-report-proof">Ảnh chứng từ <em data-proof-required>*</em></label><div class="pw-upload"><input id="payment-report-proof" name="anhChungTu" type="file" accept=".jpg,.jpeg,.png,image/jpeg,image/png" required /><small>JPG, PNG · Tối đa 5 MiB</small></div>
+                        <div data-proof-preview hidden><img alt="Xem trước ảnh chứng từ đã chọn" /><small data-proof-filename></small><button type="button" class="btn btn-outline-danger" data-proof-remove>Xóa ảnh</button></div>
+                        <label for="payment-report-note">Ghi chú (không bắt buộc)</label><textarea id="payment-report-note" name="ghiChu" maxlength="300" rows="2" placeholder="Mã giao dịch hoặc nội dung chuyển khoản…"></textarea>
+                        <p class="pw-muted">Ảnh được bảo vệ quyền xem; liên kết xem ảnh có hạn 15 phút.</p><button type="submit" class="btn btn-dark pw-full">Gửi báo thanh toán</button><p class="pw-muted mt-2">Sau khi gửi, bạn không thể chỉnh sửa; chỉ được hủy trước khi chủ nhà xác nhận.</p>
+                    </form>
+                </section>
+            }
+            else
+            {
+                <section class="pw-card"><h2>Trạng thái thanh toán</h2><dl class="pw-totals"><div><dt>Đã xác nhận</dt><dd>@Model.SoDaThanhToan.ToString("N0", vn) đ</dd></div>@if(Model.SoDaCanTru>0){<div><dt>Đã cấn cọc</dt><dd>@Model.SoDaCanTru.ToString("N0", vn) đ</dd></div>}<div><dt>Đang chờ</dt><dd>@((pending?.SoTien ?? 0).ToString("N0", vn)) đ</dd></div><div><dt>Còn phải trả</dt><dd>@Model.SoConPhaiTra.ToString("N0", vn) đ</dd></div></dl>
+                @if(pending is not null){<p class="pw-note blue">Nếu được xác nhận, khoản báo trả @pending.SoTien.ToString("N0", vn) đ sẽ được cộng vào đã thu. Số còn phải trả dự kiến: @Math.Max(0, Model.SoConPhaiTra-pending.SoTien).ToString("N0", vn) đ, nếu công nợ không thay đổi.</p>}
+                @if(bill.TrangThai=="DA_HUY"){<p>Hóa đơn đã hủy, không nhận báo thanh toán mới.</p>}else if(pending is null && Model.SoConPhaiTra==0){<p class="pw-note">Hóa đơn đã được thanh toán đủ.</p>}</section>
+            }
+            <section class="pw-card"><h2>Quy trình xác nhận</h2><ol class="pw-steps"><li>Gửi báo thanh toán</li><li>Chủ nhà đối chiếu</li><li>Hóa đơn cập nhật sau khi xác nhận</li></ol></section>
+        </aside>
+    </div>
+</div>

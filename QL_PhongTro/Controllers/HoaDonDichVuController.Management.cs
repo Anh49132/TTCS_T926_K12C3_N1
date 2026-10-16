@@ -29,6 +29,18 @@ public partial class HoaDonDichVuController
                 DaThu=db.ThanhToans.Where(t=>t.HoaDonId==bill.Id && t.TrangThai=="DA_XAC_NHAN").Sum(t=>(long?)t.SoTien) ?? 0
             }).ToListAsync();
         var offsets=await QL_PhongTro.Services.CanTruHoaDonQueries.LayAsync(db,rows.Select(x=>x.Id));
+        var invoiceIds = rows.Select(x => x.Id).ToList();
+        var pending = await (from p in db.ThanhToans.AsNoTracking()
+            join m in db.BaoCaoThanhToans.AsNoTracking() on p.Id equals m.ThanhToanId into metadata
+            from m in metadata.DefaultIfEmpty()
+            where invoiceIds.Contains(p.HoaDonId) && p.TrangThai == "CHO_XAC_NHAN"
+            select new { p.Id, p.HoaDonId, p.SoTien, GuiLuc = m == null ? null : m.GuiLuc }).ToListAsync();
+        foreach (var row in rows)
+        {
+            var report = pending.Where(x => x.HoaDonId == row.Id).OrderByDescending(x => x.Id).FirstOrDefault();
+            row.BaoCaoId = report?.Id; row.SoTienBaoCao = report?.SoTien; row.GuiLuc = report?.GuiLuc;
+        }
+        model.SoChoXacNhan = rows.Count(x => x.BaoCaoId.HasValue);
         foreach(var row in rows)row.DaCanTru=offsets.GetValueOrDefault(row.Id);
         foreach(var row in rows) row.QuaHan = row.TrangThai=="DA_PHAT_HANH" && row.ConNo>0 && row.HanThanhToan<today;
         model.SoNhap=rows.Count(r=>r.TrangThai=="NHAP");
@@ -42,7 +54,7 @@ public partial class HoaDonDichVuController
             select (long?)t.SoTien).SumAsync() ?? 0;
         var filtered=rows.Where(r=>(!toaNhaId.HasValue || r.ToaNhaId==toaNhaId)
             && (!nam.HasValue || r.Nam==nam) && (!thang.HasValue || r.Thang==thang)
-            && (string.IsNullOrEmpty(trangThai) || r.TrangThai==trangThai || trangThai=="QUA_HAN" && r.QuaHan)
+            && (string.IsNullOrEmpty(trangThai) || r.TrangThai==trangThai || trangThai=="QUA_HAN" && r.QuaHan || trangThai=="CHO_XAC_NHAN" && r.BaoCaoId.HasValue)
             && (string.IsNullOrWhiteSpace(q) || (r.MaHoaDon+" "+r.MaPhong+" "+r.TenKhach).Contains(q.Trim(),StringComparison.OrdinalIgnoreCase)))
             .OrderByDescending(r=>r.Nam).ThenByDescending(r=>r.Thang).ThenByDescending(r=>r.Id).ToList();
         model.Total=filtered.Count; model.Page=Math.Clamp(page,1,Math.Max(1,(model.Total+9)/10));

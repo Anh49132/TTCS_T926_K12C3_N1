@@ -216,7 +216,7 @@ public sealed partial class RoomServicesTests
                 """);
         }
         using var web=BillingWeb(CollectionClock());
-        var fields=new Dictionary<string,string>{["id"]=invoice.ToString(),["paymentId"]=payment.ToString(),["khoaChongTrung"]=Guid.NewGuid().ToString("N")};
+        var fields=new Dictionary<string,string>{["id"]=invoice.ToString(),["paymentId"]=payment.ToString(),["khoaChongTrung"]=Guid.NewGuid().ToString("N"),["daKiemTraTien"]="true",["dungSoTien"]="true",["dungKhach"]="true"};
         foreach(var login in new[]{"other","tenant","manager","admin"})
         {
             using var client=web.CreateClient(new(){AllowAutoRedirect=false}); await Login(client,login);

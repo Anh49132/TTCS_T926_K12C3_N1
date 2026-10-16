@@ -10,11 +10,37 @@ namespace QL_PhongTro.Controllers;
 public partial class HoaDonDichVuController
 {
     [HttpPost, Authorize(Roles = "CHU_NHA"), ValidateAntiForgeryToken, ModuleAccess("TAI_CHINH", write: true)]
-    public async Task<IActionResult> ConfirmPaymentReport(int id, int paymentId, string? khoaChongTrung, CancellationToken ct)
+    public async Task<IActionResult> RejectPaymentReport(int id, int paymentId, string? lyDo, CancellationToken ct)
+    {
+        if (!ModelState.IsValid) return BadRequest();
+        if (!await db.ThanhToans.AnyAsync(x => x.Id == paymentId && x.HoaDonId == id, ct)) return Forbid();
+        try
+        {
+            await HttpContext.RequestServices.GetRequiredService<GhiThuHoaDonService>().TuChoiBaoCaoAsync(AccountId, paymentId, lyDo, ct);
+            TempData["DraftSuccess"] = "Đã từ chối báo thanh toán và thông báo cho khách. Công nợ được giữ nguyên.";
+        }
+        catch (UnauthorizedAccessException) { return Forbid(); }
+        catch (GhiThuValidationException ex) { TempData["DraftError"] = string.Join(" ", ex.Errors.Values.SelectMany(x => x)); }
+        catch (InvalidOperationException ex) { TempData["DraftError"] = ex.Message; }
+        catch (Exception ex) when (ex is DbUpdateException or SqliteException)
+        { TempData["DraftError"] = "Không thể từ chối lúc này. Chưa có thay đổi nào được lưu; hãy tải lại hóa đơn."; }
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
+    [HttpPost, Authorize(Roles = "CHU_NHA"), ValidateAntiForgeryToken, ModuleAccess("TAI_CHINH", write: true)]
+    public async Task<IActionResult> ConfirmPaymentReport(int id, int paymentId, string? khoaChongTrung, CancellationToken ct,
+        bool daKiemTraTien = false, bool dungSoTien = false, bool dungKhach = false)
     {
         if (!ModelState.IsValid) return BadRequest();
         // Bind both IDs to prevent a forged return target or a cross-invoice confirmation.
-        if (!await db.ThanhToans.AnyAsync(x => x.Id == paymentId && x.HoaDonId == id, ct)) return Forbid();
+        if (!await (from p in db.ThanhToans join i in db.HoaDons on p.HoaDonId equals i.Id
+            join h in db.HopDongs on i.HopDongId equals h.Id join r in db.PhongTros on h.PhongId equals r.Id
+            join b in db.ToaNhas on r.ToaNhaId equals b.Id where p.Id == paymentId && i.Id == id && b.ChuNhaId == AccountId select p.Id).AnyAsync(ct)) return Forbid();
+        if (!daKiemTraTien || !dungSoTien || !dungKhach)
+        {
+            TempData["DraftError"] = "Hãy kiểm tra tiền thực nhận, số tiền và đúng khách thuê/phòng trước khi xác nhận.";
+            return RedirectToAction(nameof(Details), new { id });
+        }
         try
         {
             await HttpContext.RequestServices.GetRequiredService<GhiThuHoaDonService>().XacNhanBaoCaoAsync(AccountId, paymentId, khoaChongTrung, ct);

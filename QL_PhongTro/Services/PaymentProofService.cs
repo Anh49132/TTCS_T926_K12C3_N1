@@ -53,7 +53,8 @@ public sealed class PaymentProofService(
          where payment.Id == paymentId && payment.AnhChungTuKey != null
                && payment.AnhChungTuContentType != null
                && account.DangHoatDong && !account.IsDeleted
-               && (account.VaiTro == "ADMIN" || (account.VaiTro == "CHU_NHA" && building.ChuNhaId == actorId))
+               && (account.VaiTro == "ADMIN" || (account.VaiTro == "CHU_NHA" && building.ChuNhaId == actorId)
+                   || account.VaiTro == "KHACH_THUE" && db.KhachThues.Any(k => k.Id == contract.KhachDungTenId && k.TaiKhoanId == actorId))
          select new AuthorizedPayment(payment.AnhChungTuKey!, payment.AnhChungTuContentType!))
         .SingleOrDefaultAsync(ct);
 

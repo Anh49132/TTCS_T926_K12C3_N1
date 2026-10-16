@@ -253,6 +253,7 @@ public partial class HoaDonDichVuController(AppDbContext db, DichVuService servi
             .Where(x => x.HoaDonId == id && x.TrangThai == "CHO_XAC_NHAN")
             .OrderByDescending(x => x.Id).FirstOrDefaultAsync();
         model.HomNay = collection.HomNay;
+        model.ThanhToanRows = await PaymentWorkflow.HistoryAsync(db, id);
         model.TenNguoiGhiThu = await db.TaiKhoans.Where(x => x.Id == AccountId).Select(x => x.HoTen).SingleAsync();
         if (model.HoaDon.TrangThai == "DA_PHAT_HANH") model.LyDoChanHuy = await invoices.LyDoChanHuyAsync(id);
         return View(model);

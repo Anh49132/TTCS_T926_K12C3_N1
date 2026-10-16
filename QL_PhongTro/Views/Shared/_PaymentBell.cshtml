@@ -1,0 +1,13 @@
+@inject QL_PhongTro.Authorization.PermissionService BellPermissions
+<link rel="stylesheet" href="~/css/payment-notifications.css" asp-append-version="true" />
+<div class="payment-bell" data-payment-bell>
+    <button type="button" class="payment-bell-toggle" aria-label="Thông báo chưa đọc" aria-expanded="false" aria-controls="payment-bell-panel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" /></svg><span data-payment-unread hidden>0</span></button>
+    <section class="payment-bell-panel" id="payment-bell-panel" aria-label="Thông báo" hidden>
+        <header><strong>Thông báo</strong><button type="button" data-payment-read-all>Đánh dấu tất cả đã đọc</button></header>
+        <div data-payment-notice-list aria-live="polite"></div>
+        <a class="payment-notice-all" href="/ThongBaoThanhToan">Xem tất cả thông báo</a>
+        @if (User.IsInRole("CHU_NHA") && await BellPermissions.AllowsAsync("YEU_CAU_THUE")) { <a class="payment-notice-all" href="/Modules/YEU_CAU_THUE?section=thong-bao">Thông báo yêu cầu thuê</a> }
+    </section>
+    <form data-payment-notice-csrf hidden>@Html.AntiForgeryToken()</form>
+</div>
+<script src="~/js/payment-notifications.js" asp-append-version="true" defer></script>

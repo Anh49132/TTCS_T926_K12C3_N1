@@ -1,0 +1,37 @@
+@model QL_PhongTro.ViewModels.ChiTietHoaDonViewModel
+@using System.Globalization
+@using QL_PhongTro.Models
+@{
+    var bill = Model.HoaDon;
+    var vn = CultureInfo.GetCultureInfo("vi-VN");
+    string Money(long value) => value.ToString("N0", vn) + " đ";
+    var paid = Model.KhachXem ? Model.SoDaThanhToan : Model.ThanhToan?.TongDaThu ?? 0;
+    var remaining = Model.KhachXem ? Model.SoConPhaiTra : Model.ThanhToan?.ConPhaiTra ?? bill.TongTien;
+    var offset = Model.KhachXem ? Model.SoDaCanTru : Math.Max(0, bill.TongTien - paid - remaining);
+    var issue = bill.NgayPhatHanhNghiepVu ?? DateOnly.FromDateTime((bill.NgayPhatHanh ?? bill.NgayLap).AddHours(7));
+    var status = Model.XemTruoc ? "XEM TRƯỚC" : bill.TrangThai == "NHAP" ? "BẢN NHÁP" : bill.TrangThai == "DA_HUY" ? "ĐÃ HỦY" : remaining == 0 ? "ĐÃ THANH TOÁN" : paid + offset > 0 ? "TRẢ MỘT PHẦN" : "CHƯA THANH TOÁN";
+    var pending = Model.BaoCaoChoXacNhan;
+}
+<article class="invoice-print-sheet" aria-label="Bản in hóa đơn">
+    <header class="ip-brand"><div><strong>NhàTốt</strong><span>SỐNG ĐÚNG NƠI</span></div><div class="ip-brand-info"><b>@Model.TenToaNha</b><span>Hóa đơn tiền thuê phòng &amp; dịch vụ</span></div></header>
+    <div class="ip-title"><h1>@(bill.LoaiHoaDon == "KY_CUOI" ? "HÓA ĐƠN KỲ CUỐI" : "HÓA ĐƠN TIỀN PHÒNG")</h1><span>@status</span></div>
+    <p class="ip-code">Mã hóa đơn: <b>@(Model.XemTruoc ? "Chưa cấp" : bill.MaHoaDon)</b></p>
+    <section class="ip-info">
+        <div><span>Khách thuê</span><b>@Model.TenKhach</b></div><div><span>Phòng / Kỳ</span><b>@Model.MaPhong · @bill.Thang.ToString("00")/@bill.Nam</b></div>
+        <div><span>Ngày phát hành</span><b>@(bill.TrangThai == "NHAP" && !Model.XemTruoc ? "Chưa phát hành" : issue.ToString("dd/MM/yyyy"))</b></div><div><span>Hạn thanh toán</span><b>@bill.HanThanhToan.ToString("dd/MM/yyyy")</b></div>
+        <div><span>Tòa nhà</span><b>@Model.TenToaNha</b></div><div><span>Ngày chốt</span><b>@bill.NgayChot.ToString("dd/MM/yyyy")</b></div>
+    </section>
+    <table class="ip-lines"><colgroup><col style="width:5%"/><col style="width:33%"/><col style="width:22%"/><col style="width:12%"/><col style="width:13%"/><col style="width:15%"/></colgroup><thead><tr><th>STT</th><th>Khoản thu</th><th>Cách tính / Chỉ số</th><th>Số lượng</th><th class="ip-number">Đơn giá</th><th class="ip-number">Thành tiền</th></tr></thead><tbody>
+    @{ var index = 0; }
+    @foreach (var line in bill.ChiTiet.OrderBy(x => x.SoThuTu))
+    {
+        <tr><td>@(++index)</td><td><b>@line.TenKhoan</b>@if(!string.IsNullOrWhiteSpace(line.GhiChu)){<small>@line.GhiChu</small>}</td><td>
+        @if(line.ChiSoDau.HasValue){<span>@line.ChiSoDau?.ToString("0.###", vn) → @line.ChiSoCuoi?.ToString("0.###", vn) @line.DonViTinh</span>}
+        else if(line.LoaiKhoan == "TIEN_PHONG"){<span>@(line.SoNgayTinhTien.HasValue ? "Theo số ngày ở" : "Theo hợp đồng")</span>}
+        else {<span>@(line.LoaiKhoan == "GIAM_TRU" ? "Giảm trừ" : line.LoaiKhoan == "PHAT_SINH" ? "Phát sinh" : line.CachTinhApDung == CachTinhDichVu.TheoNguoi ? "Theo người" : "Cố định")</span>}
+        </td><td>@(line.SoNgayTinhTien.HasValue ? $"{line.SoNgayTinhTien}/{line.SoNgayTrongThang} ngày" : $"{line.SoLuong.ToString("0.###", vn)} {(line.LoaiKhoan == "TIEN_PHONG" ? "tháng" : line.CachTinhApDung == CachTinhDichVu.TheoNguoi ? "người" : line.CachTinhApDung == CachTinhDichVu.CoDinh ? "phòng" : line.DonViTinh)}")</td><td class="ip-number">@Money(line.DonGia)</td><td class="ip-number"><b>@(line.LoaiKhoan == "GIAM_TRU" ? "−" : "")@Money(line.ThanhTien)</b></td></tr>
+    }
+    </tbody></table>
+    <section class="ip-settlement"><div class="ip-notes"><b>Thông tin thanh toán</b><p>Chỉ khoản thu đã xác nhận và tiền cọc đã cấn trừ mới được tính giảm số còn phải trả.</p>@if(pending is not null){<p class="ip-pending">Đang chờ xác nhận: <b>@Money(pending.SoTien)</b>.<br/>Khoản này chưa trừ vào dư nợ.</p>}@if(bill.TrangThai == "DA_HUY"){<p>Hóa đơn đã hủy, không dùng để yêu cầu thanh toán.</p>}</div><dl><div><dt>Tổng hóa đơn</dt><dd>@Money(bill.TongTien)</dd></div><div><dt>Đã thu xác nhận</dt><dd>@Money(paid)</dd></div><div><dt>Đã cấn cọc</dt><dd>@Money(offset)</dd></div><div class="ip-balance"><dt>Còn phải trả</dt><dd>@Money(remaining)</dd></div></dl></section>
+    <footer class="ip-footer"><span>NhàTốt · @Model.TenToaNha · Phòng @Model.MaPhong</span><span>Vui lòng ghi mã hóa đơn khi thanh toán.</span></footer>
+</article>

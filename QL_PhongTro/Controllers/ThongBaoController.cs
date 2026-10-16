@@ -20,12 +20,14 @@ public sealed class ThongBaoController(
     private int Actor => int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : 0;
 
     [HttpGet]
-    public IActionResult DanhSach(string? ky, string? trangThai, int page = 1)
+    public IActionResult DanhSach(string? ky, string? trangThai, int page = 1, string? timKiem = null,
+        string baoThanhToan = "TAT_CA", int pageSize = 10, string nhom = "TAT_CA", string? tinhTrang = null)
     {
-        var status = string.IsNullOrEmpty(trangThai) ? TrangThaiThanhToanHoaDon.TatCa : trangThai;
+        var status = tinhTrang ?? (string.IsNullOrEmpty(trangThai) ? TrangThaiThanhToanHoaDon.TatCa : trangThai);
         var error = ValidateInvoiceFilters(ky, status, page, out _);
+        error ??= ValidateListOptions(timKiem, baoThanhToan, pageSize, nhom);
         if (error is not null) Response.StatusCode = StatusCodes.Status400BadRequest;
-        return View(new HoaDonKhachDanhSachPageViewModel(ky, status, page, error));
+        return View(new HoaDonKhachDanhSachPageViewModel(ky, status, page, error, timKiem, baoThanhToan, pageSize, nhom));
     }
 
     [HttpGet]
@@ -33,10 +35,13 @@ public sealed class ThongBaoController(
         string? ky,
         string? trangThai,
         int page = 1,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default,
+        string? timKiem = null, string baoThanhToan = "TAT_CA", int pageSize = 10, string nhom = "TAT_CA", string? tinhTrang = null)
     {
         var status = string.IsNullOrEmpty(trangThai) ? TrangThaiThanhToanHoaDon.TatCa : trangThai;
         var error = ValidateInvoiceFilters(ky, status, page, out var selectedMonth);
+        error ??= ValidateListOptions(timKiem, baoThanhToan, pageSize, nhom);
+        if (tinhTrang is not null) error ??= ValidateInvoiceFilters(null, tinhTrang, 1, out _);
         if (error is not null) return BadRequest(new { message = error });
         if (!await QL_PhongTro.Services.InvoiceNotificationDispatcher.IsInstalledAsync(db, cancellationToken))
             return NotFound(new { message = "Chưa có dữ liệu hóa đơn." });
@@ -44,10 +49,12 @@ public sealed class ThongBaoController(
         var invoices = await (from bill in db.HoaDons.AsNoTracking()
             join contract in db.HopDongs.AsNoTracking() on bill.HopDongId equals contract.Id
             join profile in db.KhachThues.AsNoTracking() on contract.KhachDungTenId equals profile.Id
+            join room in db.PhongTros.AsNoTracking() on contract.PhongId equals room.Id
             where profile.TaiKhoanId == Actor && bill.TrangThai == "DA_PHAT_HANH"
             select new
             {
                 bill.Id,
+                room.MaPhong,
                 bill.MaHoaDon,
                 bill.Thang,
                 bill.Nam,
@@ -58,7 +65,10 @@ public sealed class ThongBaoController(
                     .Where(payment => payment.HoaDonId == bill.Id && payment.TrangThai == "DA_XAC_NHAN")
                     .Sum(payment => (long?)payment.SoTien) ?? 0L,
                 ChoXacNhan = db.ThanhToans.AsNoTracking()
-                    .Any(payment => payment.HoaDonId == bill.Id && payment.TrangThai == "CHO_XAC_NHAN")
+                    .Any(payment => payment.HoaDonId == bill.Id && payment.TrangThai == "CHO_XAC_NHAN"),
+                SoTienChoXacNhan = db.ThanhToans.AsNoTracking()
+                    .Where(payment => payment.HoaDonId == bill.Id && payment.TrangThai == "CHO_XAC_NHAN")
+                    .Sum(payment => (long?)payment.SoTien) ?? 0L
             }).ToListAsync(cancellationToken);
 
         var today = DateOnly.FromDateTime(clock.UtcNow.AddHours(7));
@@ -88,6 +98,11 @@ public sealed class ThongBaoController(
             return new
             {
                 invoice.Id,
+                invoice.MaPhong,
+                invoice.DaThanhToan,
+                DaCanTru = offsets.GetValueOrDefault(invoice.Id),
+                invoice.ChoXacNhan,
+                invoice.SoTienChoXacNhan,
                 invoice.MaHoaDon,
                 invoice.Thang,
                 invoice.Nam,
@@ -102,19 +117,35 @@ public sealed class ThongBaoController(
         }).ToList();
 
         var totalCount = summaries.Count;
+        var overview = new TongQuanHoaDonKhach(totalCount, summaries.Count(x => x.SoConPhaiTra > 0),
+            summaries.Sum(x => x.SoConPhaiTra), summaries.Count(x => x.SoNgayTre > 0), summaries.Count(x => x.SoConPhaiTra == 0));
         if (selectedMonth is { } month)
             summaries = summaries.Where(invoice => invoice.Nam == month.Year && invoice.Thang == month.Month).ToList();
         if (status != TrangThaiThanhToanHoaDon.TatCa)
             summaries = summaries.Where(invoice => invoice.TrangThai == status).ToList();
+        if (tinhTrang is not null and not "TAT_CA")
+            summaries = summaries.Where(x => tinhTrang switch
+            {
+                "DA_THANH_TOAN" => x.SoConPhaiTra == 0,
+                "THANH_TOAN_MOT_PHAN" => x.SoConPhaiTra > 0 && (x.DaThanhToan > 0 || x.DaCanTru > 0),
+                "CHUA_THANH_TOAN" => x.SoConPhaiTra > 0 && x.DaThanhToan == 0 && x.DaCanTru == 0,
+                "QUA_HAN" => x.SoNgayTre > 0,
+                "CHO_XAC_NHAN" => x.ChoXacNhan,
+                _ => false
+            }).ToList();
+        if (!string.IsNullOrWhiteSpace(timKiem))
+            summaries = summaries.Where(x => x.MaHoaDon.Contains(timKiem.Trim(), StringComparison.OrdinalIgnoreCase)).ToList();
+        if (baoThanhToan != "TAT_CA") summaries = summaries.Where(x => x.ChoXacNhan == (baoThanhToan == "CHO_XAC_NHAN")).ToList();
+        if (nhom != "TAT_CA") summaries = summaries.Where(x => (x.SoConPhaiTra > 0) == (nhom == "CAN_THANH_TOAN")).ToList();
 
         var filteredCount = summaries.Count;
-        var pages = Math.Max(1, (filteredCount + 9) / 10);
+        var pages = Math.Max(1, (filteredCount + pageSize - 1) / pageSize);
         page = Math.Min(page, pages);
         var rows = summaries.OrderByDescending(invoice => invoice.Nam)
             .ThenByDescending(invoice => invoice.Thang)
             .ThenByDescending(invoice => invoice.Id)
-            .Skip((page - 1) * 10)
-            .Take(10)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .Select(invoice => new HoaDonKhachDanhSachItem(
                 invoice.MaHoaDon,
                 invoice.Thang,
@@ -125,10 +156,11 @@ public sealed class ThongBaoController(
                 invoice.TrangThai,
                 invoice.TenTrangThai,
                 invoice.QuaHan,
-                invoice.SoNgayTre))
+                invoice.SoNgayTre, invoice.Id, invoice.MaPhong, invoice.DaThanhToan, invoice.DaCanTru,
+                invoice.ChoXacNhan, invoice.SoTienChoXacNhan))
             .ToArray();
 
-        return Ok(new HoaDonKhachDanhSachResponse(totalCount, filteredCount, pages, page, rows));
+        return Ok(new HoaDonKhachDanhSachResponse(totalCount, filteredCount, pages, page, rows, overview, pageSize));
     }
 
     public async Task<IActionResult> Index(int page = 1)
@@ -160,7 +192,9 @@ public sealed class ThongBaoController(
     public async Task<IActionResult> HoaDon(int id, CancellationToken cancellationToken)
     {
         if (!await QL_PhongTro.Services.InvoiceNotificationDispatcher.IsInstalledAsync(db, cancellationToken)) return NotFound();
-        if (!await db.ThongBaoHoaDons.AnyAsync(x => x.HoaDonId == id && x.NguoiNhanId == Actor, cancellationToken)) return Forbid();
+        if (!await (from bill in db.HoaDons join contract in db.HopDongs on bill.HopDongId equals contract.Id
+            join profile in db.KhachThues on contract.KhachDungTenId equals profile.Id
+            where bill.Id == id && profile.TaiKhoanId == Actor select bill.Id).AnyAsync(cancellationToken)) return Forbid();
         var invoice = await db.HoaDons.AsNoTracking().Include(x => x.ChiTiet).SingleOrDefaultAsync(x => x.Id == id && (x.TrangThai == "DA_PHAT_HANH" || x.TrangThai == "DA_HUY"), cancellationToken);
         if (invoice is null) return NotFound();
         var context = await (from h in db.HopDongs join p in db.PhongTros on h.PhongId equals p.Id join t in db.ToaNhas on p.ToaNhaId equals t.Id
@@ -192,17 +226,18 @@ public sealed class ThongBaoController(
             BaoCaoChoXacNhan = await paymentReports.LayBaoCaoChoXacNhanAsync(Actor, invoice.Id, cancellationToken)
         };
         await invoices.FillRelationsAsync(model, Actor);
+        model.ThanhToanRows = await QL_PhongTro.Services.PaymentWorkflow.HistoryAsync(db, id, cancellationToken);
         return View("~/Views/HoaDonDichVu/Details.cshtml", model);
     }
 
     [HttpPost, ValidateAntiForgeryToken, RequestSizeLimit(6 * 1024 * 1024),
      RequestFormLimits(MultipartBodyLengthLimit = 6 * 1024 * 1024)]
     public async Task<IActionResult> BaoCaoThanhToan(int hoaDonId, decimal? soTien, DateOnly? ngayThanhToan,
-        string? hinhThucThanhToan, IFormFile? anhChungTu, CancellationToken cancellationToken)
+        string? hinhThucThanhToan, IFormFile? anhChungTu, CancellationToken cancellationToken, string? ghiChu = null)
     {
         try
         {
-            await paymentReports.GuiAsync(Actor, hoaDonId, soTien, ngayThanhToan, hinhThucThanhToan, anhChungTu, cancellationToken);
+            await paymentReports.GuiCoGhiChuAsync(Actor, hoaDonId, soTien, ngayThanhToan, hinhThucThanhToan, anhChungTu, ghiChu, cancellationToken);
             TempData["PaymentReportSuccess"] = "Đã gửi báo cáo thanh toán. Hóa đơn đang chờ chủ nhà xác nhận.";
         }
         catch (GhiThuValidationException ex)
@@ -227,7 +262,7 @@ public sealed class ThongBaoController(
             TempData[result.DaHuy ? "PaymentReportSuccess" : "PaymentReportError"] = result.DaHuy
                 ? "Đã hủy báo cáo thanh toán. Bạn có thể gửi báo cáo mới."
                 : "Báo cáo không còn ở trạng thái chờ xác nhận nên không thể hủy.";
-            return RedirectToAction(nameof(ChiTiet), new { maHoaDon = result.MaHoaDon });
+            return RedirectToAction(nameof(HoaDon), new { id = hoaDonId });
         }
         catch (UnauthorizedAccessException)
         {
@@ -236,14 +271,14 @@ public sealed class ThongBaoController(
     }
 
     [HttpGet]
-    public IActionResult ChiTiet(string maHoaDon, string? ky = null, string? trangThai = null, int page = 1)
+    public async Task<IActionResult> ChiTiet(string maHoaDon, string? ky = null, string? trangThai = null, int page = 1)
     {
         if (string.IsNullOrWhiteSpace(maHoaDon)) return NotFound();
-        return View(new ChiTietHoaDonKhachPageViewModel(
-            maHoaDon,
-            ky,
-            string.IsNullOrWhiteSpace(trangThai) ? TrangThaiThanhToanHoaDon.TatCa : trangThai,
-            page));
+        var id = await (from bill in db.HoaDons.AsNoTracking() join contract in db.HopDongs on bill.HopDongId equals contract.Id
+            join profile in db.KhachThues on contract.KhachDungTenId equals profile.Id
+            where bill.MaHoaDon == maHoaDon && profile.TaiKhoanId == Actor
+                && (bill.TrangThai == "DA_PHAT_HANH" || bill.TrangThai == "DA_HUY") select (int?)bill.Id).SingleOrDefaultAsync();
+        return id.HasValue ? RedirectToAction(nameof(HoaDon), new { id = id.Value }) : Forbid();
     }
 
     [HttpGet]
@@ -319,6 +354,15 @@ public sealed class ThongBaoController(
             pendingReport?.NgayThanhToan.ToString("dd/MM/yyyy"),
             pendingReport?.HinhThucBaoCao,
             today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)));
+    }
+
+    private static string? ValidateListOptions(string? search, string report, int size, string group)
+    {
+        if (search?.Length > 100) return "Từ khóa tối đa 100 ký tự.";
+        if (size is not (10 or 20 or 50)) return "Số dòng mỗi trang không hợp lệ.";
+        if (report is not ("TAT_CA" or "CHO_XAC_NHAN" or "KHONG_CHO")) return "Bộ lọc báo thanh toán không hợp lệ.";
+        if (group is not ("TAT_CA" or "CAN_THANH_TOAN" or "DA_THANH_TOAN")) return "Nhóm hóa đơn không hợp lệ.";
+        return null;
     }
 
     private static string? ValidateInvoiceFilters(

@@ -324,13 +324,13 @@ public partial class HomeController(
             join a in db.TaiKhoans on k.TaiKhoanId equals a.Id
             join room in db.PhongTros on h.PhongId equals room.Id
             where a.Id == accountId && a.VaiTro == "KHACH_THUE" && a.DangHoatDong && !a.IsDeleted && bill.TrangThai == "DA_PHAT_HANH"
-            select new { bill.MaHoaDon, room.MaPhong, bill.Thang, bill.Nam, bill.HanThanhToan, Published = bill.NgayPhatHanh ?? bill.NgayLap,
+            select new { bill.Id, bill.MaHoaDon, room.MaPhong, bill.Thang, bill.Nam, bill.HanThanhToan, Published = bill.NgayPhatHanh ?? bill.NgayLap,
                 Total = db.ChiTietHoaDons.Where(l => l.HoaDonId == bill.Id).Sum(l => (long?)(l.LoaiKhoan == "GIAM_TRU" ? -l.ThanhTien : l.ThanhTien)) ?? 0L,
                 Paid = db.ThanhToans.Where(p => p.HoaDonId == bill.Id && p.TrangThai == "DA_XAC_NHAN").Sum(p => (long?)p.SoTien) ?? 0L }).ToListAsync();
         var invoices = rows.Select(b => {
             var remaining = Math.Max(0L, checked(b.Total - b.Paid));
             var status = remaining == 0 ? "Đã thanh toán" : today > b.HanThanhToan ? "Quá hạn" : b.Paid > 0 ? "Thanh toán một phần" : "Chưa thanh toán";
-            return new HomeTenantInvoice(b.MaHoaDon, b.MaPhong, b.Thang, b.Nam, b.HanThanhToan, b.Total, b.Paid, remaining, status, b.Published);
+            return new HomeTenantInvoice(b.MaHoaDon, b.MaPhong, b.Thang, b.Nam, b.HanThanhToan, b.Total, b.Paid, remaining, status, b.Published, b.Id);
         }).ToList();
         dashboard.TenantInvoicesReady = true;
         dashboard.TenantUnpaidInvoices = invoices.Count(b => b.Remaining > 0);

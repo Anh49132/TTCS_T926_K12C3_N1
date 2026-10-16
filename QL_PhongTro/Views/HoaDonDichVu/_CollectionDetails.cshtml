@@ -25,7 +25,7 @@
 </defs></svg>
 <a class="ic-back" asp-action="Management" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-nam="@bill.Nam" asp-route-thang="@bill.Thang">← Quay lại quản lý hóa đơn</a>
 <div class="ic-notice" id="ic-success" role="status" hidden><span id="ic-success-text"></span><button type="button" aria-label="Đóng thông báo">×</button></div>
-<header class="ic-heading"><div><div class="ic-title"><h1>Hóa đơn @bill.MaHoaDon</h1><span class="ic-status @statusClass" data-ic-status>@summary.TenTrangThai</span></div><p>Phòng @Model.MaPhong <span>·</span> @Model.TenKhach <span>·</span> Kỳ @bill.Thang.ToString("00")/@bill.Nam</p></div><div class="ic-actions"><button type="button" class="ic-button secondary" onclick="window.print()"><svg><use href="#ic-download"/></svg>In / lưu PDF</button>@if(write){<button type="button" class="ic-button primary" id="ic-open" hidden="@(!summary.ChoPhepGhiThu)"><svg><use href="#ic-wallet"/></svg>Ghi thu tiền</button>}</div></header>
+<header class="ic-heading"><div><div class="ic-title"><h1>Hóa đơn @bill.MaHoaDon</h1><span class="ic-status @statusClass" data-ic-status>@summary.TenTrangThai</span></div><p>Phòng @Model.MaPhong <span>·</span> @Model.TenKhach <span>·</span> Kỳ @bill.Thang.ToString("00")/@bill.Nam</p></div><div class="ic-actions"><button type="button" class="ic-button secondary" onclick="window.print()"><svg><use href="#ic-download"/></svg>In / lưu PDF</button>@if(write){<button type="button" class="ic-button primary" id="ic-open" hidden="@(!summary.ChoPhepGhiThu || Model.BaoCaoChoXacNhan is not null)"><svg><use href="#ic-wallet"/></svg>Ghi thu tiền</button>}</div></header>
 @if(!summary.SanSang){<p class="alert alert-warning">Chức năng ghi thu chưa được cài trên CSDL này. Cần nâng cấp bằng bước v26 sau khi kiểm tra trên bản sao.</p>}
 <div class="ic-stats">
 <section class="ic-stat"><span class="ic-icon blue"><svg><use href="#ic-document"/></svg></span><div><span>Tổng hóa đơn</span><strong data-ic-total>@summary.TongHoaDon.ToString("N0",vn) đ</strong></div></section>
@@ -33,6 +33,7 @@
 <section class="ic-stat remaining"><span class="ic-icon amber"><svg><use href="#ic-wallet"/></svg></span><div><span>Còn phải trả</span><strong data-ic-remaining>@summary.ConPhaiTra.ToString("N0",vn) đ</strong></div></section>
 <section class="ic-stat"><span class="ic-icon neutral"><svg><use href="#ic-clock"/></svg></span><div><span>Hạn thanh toán</span><strong>@bill.HanThanhToan.ToString("dd/MM/yyyy")</strong></div></section>
 </div>
+@if (Model.BaoCaoChoXacNhan is not null) { <partial name="_OwnerPaymentReview" model="Model" /> }
 <div class="ic-columns"><div class="ic-main">
 <section class="ic-card"><h2>Chi tiết hóa đơn</h2><div class="ic-table-wrap"><table class="ic-table"><thead><tr><th>STT</th><th>Khoản mục</th><th class="money">Đơn giá</th><th>Số lượng</th><th class="money">Thành tiền</th></tr></thead><tbody>
 @foreach(var line in bill.ChiTiet.OrderBy(x=>x.SoThuTu)){
@@ -54,33 +55,8 @@ else if(line.LoaiKhoan == "DICH_VU" && line.CachTinhApDung == CachTinhDichVu.The
 </tbody></table></div><p class="ic-hint">ⓘ Các lần thu đã hủy không được tính vào tổng đã thu và không thể khôi phục.</p></section>
 <partial name="_Cancellation" model="Model" />
 <partial name="_DraftHistory" model="Model.LichSuNhap" />
-@if (Model.BaoCaoChoXacNhan is { } report)
-{
-<section class="ic-card" aria-labelledby="ic-payment-report-title">
-    <h2 id="ic-payment-report-title">Báo cáo thanh toán · Chờ xác nhận</h2>
-    <dl class="ic-info">
-        <div><dt>Số tiền</dt><dd>@report.SoTien.ToString("N0",vn) đ</dd></div>
-        <div><dt>Ngày thanh toán</dt><dd>@report.NgayThanhToan.ToString("dd/MM/yyyy")</dd></div>
-        <div><dt>Hình thức</dt><dd>@GhiThuHoaDonService.TenHinhThuc(report.HinhThucBaoCao)</dd></div>
-    </dl>
-    @if (write)
-    {
-        <form asp-action="ConfirmPaymentReport" method="post" class="mt-3">
-            @Html.AntiForgeryToken()
-            <input type="hidden" name="id" value="@bill.Id" />
-            <input type="hidden" name="paymentId" value="@report.Id" />
-            <input type="hidden" name="khoaChongTrung" value="@Guid.NewGuid().ToString("N")" />
-            <button type="submit" class="ic-button primary">Xác nhận đã nhận @report.SoTien.ToString("N0", vn) đ</button>
-        </form>
-    }
-    @if (!string.IsNullOrEmpty(report.AnhChungTuKey))
-    {
-        <button type="button" class="btn btn-outline-primary" data-payment-proof-link="@Url.Action("PaymentProofLink", "HoaDonDichVu", new { paymentId = report.Id })" aria-controls="ic-payment-proof-image">Xem ảnh chứng từ</button>
-        <p class="small text-danger mt-2" data-payment-proof-error role="alert" hidden></p>
-        <img id="ic-payment-proof-image" class="img-fluid mt-3" alt="Ảnh chứng từ thanh toán" hidden />
-    }
-</section>
-}
+<partial name="_PaymentReportHistory" model="Model" />
+
 </div><aside>
 <section class="ic-card"><h2>Tiến độ thanh toán</h2><div class="ic-progress" role="progressbar" aria-label="Tỉ lệ đã thu" aria-valuemin="0" aria-valuemax="100" aria-valuenow="@progress.ToString("0",CultureInfo.InvariantCulture)"><div id="ic-progress-fill" style="width:@progress.ToString("0.##",CultureInfo.InvariantCulture)%">@progress.ToString("0",vn)%</div></div><div class="ic-progress-labels"><div><span>Đã thu</span><strong><span data-ic-paid>@summary.TongDaThu.ToString("N0",vn) đ</span> / <span data-ic-total>@summary.TongHoaDon.ToString("N0",vn) đ</span></strong></div><div><span>Còn</span><strong class="ic-debt" data-ic-remaining>@summary.ConPhaiTra.ToString("N0",vn) đ</strong></div></div></section>
 <section class="ic-card"><h2>Thông tin hóa đơn</h2><dl class="ic-info"><div><dt>Khách thuê</dt><dd>@Model.TenKhach</dd></div><div><dt>Phòng</dt><dd>@Model.MaPhong</dd></div><div><dt>Tòa nhà</dt><dd>@Model.TenToaNha</dd></div><div><dt>Ngày phát hành</dt><dd>@issue.ToString("dd/MM/yyyy")</dd></div><div><dt>Hạn thanh toán</dt><dd>@bill.HanThanhToan.ToString("dd/MM/yyyy")</dd></div></dl></section>

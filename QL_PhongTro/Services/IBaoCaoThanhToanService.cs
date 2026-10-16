@@ -6,6 +6,8 @@ public sealed record HuyBaoCaoThanhToanResult(string MaHoaDon, bool DaHuy);
 
 public interface IBaoCaoThanhToanService
 {
+    Task GuiCoGhiChuAsync(int actorId, int invoiceId, decimal? amount, DateOnly? paymentDate, string? paymentMethod,
+        IFormFile? proofImage, string? note, CancellationToken cancellationToken = default);
     Task<ThanhToanHoaDon?> LayBaoCaoChoXacNhanAsync(int actorId, int invoiceId, CancellationToken cancellationToken = default);
     Task<HuyBaoCaoThanhToanResult> HuyAsync(int actorId, int invoiceId, CancellationToken cancellationToken = default);
     Task GuiAsync(int actorId, int invoiceId, decimal? amount, DateOnly? paymentDate, string? paymentMethod,

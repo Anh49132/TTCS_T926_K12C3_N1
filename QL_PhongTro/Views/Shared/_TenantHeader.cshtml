@@ -12,7 +12,7 @@
     var unread = 0;
     if (showNotifications) {
         var published = NotificationDb.HoaDons.Where(x => x.TrangThai == "DA_PHAT_HANH" || x.TrangThai == "DA_HUY").Select(x => x.Id);
-        unread = await NotificationDb.ThongBaoHoaDons.CountAsync(x => x.NguoiNhanId == actor && x.NgayDoc == null && published.Contains(x.HoaDonId));
+        unread = await NotificationDb.ThongBaoThanhToans.CountAsync(x => x.NguoiNhanId == actor && x.NgayDoc == null) + await NotificationDb.ThongBaoHoaDons.CountAsync(x => x.NguoiNhanId == actor && x.NgayDoc == null && published.Contains(x.HoaDonId));
     }
 }
 <header class="tenant-header">
@@ -41,7 +41,7 @@
         <a class="@(controller == "Home" && action == "GioiThieu" ? "is-active" : "")" asp-controller="Home" asp-action="GioiThieu">Giới thiệu</a>
     </nav>
     <div class="tenant-header-actions">
-    @if (showNotifications) { <a asp-controller="ThongBao" asp-action="Index" class="tenant-header-bell" aria-label="Thông báo hóa đơn, @unread chưa đọc"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9a6 6 0 0 1 12 0v5l2 3H4l2-3Zm4 11h4M12 1v2" /></svg><span>@unread</span></a> }
+    @if (showNotifications) { <partial name="_PaymentBell" /> }
     <details class="tenant-account">
         <summary aria-label="Tài khoản @name"><span class="tenant-avatar" aria-hidden="true">@(string.IsNullOrWhiteSpace(name) ? "K" : System.Globalization.StringInfo.GetNextTextElement(name).ToUpperInvariant())</span><span class="tenant-account-name">@name</span><svg class="tenant-account-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 9 5 5 5-5" /></svg></summary>
         <div class="tenant-account-panel">

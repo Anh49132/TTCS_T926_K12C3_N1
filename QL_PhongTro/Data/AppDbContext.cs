@@ -5,6 +5,9 @@ namespace QL_PhongTro.Data;
 
 public partial class AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor? httpContext = null) : DbContext(options)
 {
+    public DbSet<TaiKhoanNganHang> TaiKhoanNganHangs => Set<TaiKhoanNganHang>();
+    public DbSet<BaoCaoThanhToan> BaoCaoThanhToans => Set<BaoCaoThanhToan>();
+    public DbSet<ThongBaoThanhToan> ThongBaoThanhToans => Set<ThongBaoThanhToan>();
     public DbSet<XacNhanTatToan> XacNhanTatToans => Set<XacNhanTatToan>();
     public DbSet<LichSuTrangThaiPhong> LichSuTrangThaiPhongs => Set<LichSuTrangThaiPhong>();
     public DbSet<ChamDutHopDong> ChamDutHopDongs => Set<ChamDutHopDong>();
@@ -51,6 +54,13 @@ public partial class AppDbContext(DbContextOptions<AppDbContext> options, IHttpC
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<BaoCaoThanhToan>().HasOne<ThanhToanHoaDon>().WithMany().HasForeignKey(x => x.ThanhToanId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<BaoCaoThanhToan>().HasOne<TaiKhoan>().WithMany().HasForeignKey(x => x.NguoiGuiId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<BaoCaoThanhToan>().HasOne<TaiKhoan>().WithMany().HasForeignKey(x => x.NguoiXuLyId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<ThongBaoThanhToan>().HasOne<ThanhToanHoaDon>().WithMany().HasForeignKey(x => x.ThanhToanId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<ThongBaoThanhToan>().HasOne<TaiKhoan>().WithMany().HasForeignKey(x => x.NguoiNhanId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<ThongBaoThanhToan>().HasIndex(x => new { x.ThanhToanId, x.NguoiNhanId, x.Loai }).IsUnique();
+        modelBuilder.Entity<TaiKhoanNganHang>().HasOne<TaiKhoan>().WithMany().HasForeignKey(x => x.ChuNhaId).OnDelete(DeleteBehavior.Restrict);
         modelBuilder.Entity<XacNhanTatToan>().HasIndex(x=>x.HopDongId).IsUnique();
         modelBuilder.Entity<XacNhanTatToan>().HasIndex(x=>x.ThanhLyId).IsUnique();
         modelBuilder.Entity<XacNhanTatToan>().HasOne<BangTatToan>().WithMany().HasForeignKey(x=>x.ThanhLyId).OnDelete(DeleteBehavior.Restrict);

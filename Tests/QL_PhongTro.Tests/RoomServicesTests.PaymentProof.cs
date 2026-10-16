@@ -99,7 +99,7 @@ public sealed partial class RoomServicesTests
         using var owner = factory.CreateClient(new() { AllowAutoRedirect = false });
         await Login(owner, "owner");
         var ownerPage = await owner.GetStringAsync($"/HoaDonDichVu/Details/{invoiceId}");
-        Assert.Contains("Xem ảnh chứng từ", ownerPage);
+        Assert.Contains("Mở ảnh lớn", ownerPage);
         var ownerLinkResponse = await owner.GetAsync($"/HoaDonDichVu/PaymentProofLink?paymentId={paymentId}");
         Assert.Equal(HttpStatusCode.OK, ownerLinkResponse.StatusCode);
         var ownerLinkJson = await ownerLinkResponse.Content.ReadAsStringAsync();
@@ -125,7 +125,7 @@ public sealed partial class RoomServicesTests
         await Login(admin, "other");
         var adminPage = await admin.GetAsync($"/HoaDonDichVu/Details/{invoiceId}");
         Assert.Equal(HttpStatusCode.OK, adminPage.StatusCode);
-        Assert.Contains("Xem ảnh chứng từ", await adminPage.Content.ReadAsStringAsync());
+        Assert.Contains("Mở ảnh lớn", await adminPage.Content.ReadAsStringAsync());
         var adminLinkResponse = await admin.GetAsync($"/HoaDonDichVu/PaymentProofLink?paymentId={paymentId}");
         Assert.Equal(HttpStatusCode.OK, adminLinkResponse.StatusCode);
         var adminLink = System.Text.Json.JsonDocument.Parse(await adminLinkResponse.Content.ReadAsStringAsync())

@@ -92,7 +92,7 @@ public sealed partial class RoomServicesTests
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var html = WebUtility.HtmlDecode(await response.Content.ReadAsStringAsync());
         Assert.Contains("Chờ xác nhận", html);
-        Assert.Contains("Bạn không thể sửa báo cáo đã gửi", html);
+        Assert.Contains("Báo cáo đã gửi không thể chỉnh sửa", html);
         Assert.DoesNotContain("name=\"soTien\"", html);
         Assert.DoesNotContain("Gửi báo cáo thanh toán", html);
     }
@@ -120,7 +120,7 @@ public sealed partial class RoomServicesTests
         var cancelled = await Post(tenant, "/ThongBao/HuyBaoCaoThanhToan",
             new() { ["hoaDonId"] = invoiceId.ToString() });
         Assert.Equal(HttpStatusCode.Redirect, cancelled.StatusCode);
-        Assert.Contains("/ThongBao/ChiTiet?maHoaDon=PAYMENT-REPORT-CANCEL", cancelled.Headers.Location!.ToString());
+        Assert.Equal($"/ThongBao/HoaDon/{invoiceId}", cancelled.Headers.Location!.ToString());
         var returnedPage = WebUtility.HtmlDecode(await tenant.GetStringAsync(cancelled.Headers.Location));
         Assert.Contains("Đã hủy báo cáo thanh toán", returnedPage);
 
@@ -230,15 +230,15 @@ public sealed partial class RoomServicesTests
             Assert.Equal(250_000, data.RootElement.GetProperty("soTienBaoCaoChoXacNhan").GetInt64());
             Assert.False(data.RootElement.GetProperty("choPhepBaoCaoThanhToan").GetBoolean());
         }
-        var detailPage = WebUtility.HtmlDecode(await tenant.GetStringAsync("/ThongBao/ChiTiet?maHoaDon=PAYMENT-REPORT-HTTP"));
-        Assert.Contains("tenant-payment-report-form", detailPage);
+        var oldPage = await tenant.GetAsync("/ThongBao/ChiTiet?maHoaDon=PAYMENT-REPORT-HTTP");
+        Assert.Equal(HttpStatusCode.Redirect, oldPage.StatusCode);
         var pageResponse = await tenant.GetAsync($"/ThongBao/HoaDon/{invoiceId}");
         Assert.Equal(HttpStatusCode.OK, pageResponse.StatusCode);
         var page = WebUtility.HtmlDecode(await pageResponse.Content.ReadAsStringAsync());
         var statusPosition = page.IndexOf("id-status", StringComparison.Ordinal);
         var statusMarkup = statusPosition >= 0 ? page.Substring(statusPosition, Math.Min(180, page.Length - statusPosition)) : page;
         Assert.Contains("Chờ xác nhận", statusMarkup);
-        Assert.Contains("bạn không thể sửa báo cáo đã gửi", page, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Báo cáo đã gửi không thể chỉnh sửa", page, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("name=\"soTien\"", page);
     }
 

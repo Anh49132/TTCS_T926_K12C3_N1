@@ -49,7 +49,12 @@ public sealed class BaoCaoThanhToanService(AppDbContext db, PaymentProofImageSto
             .Where(x => x.Id == pendingPaymentId.Value && x.HoaDonId == invoiceId && x.TrangThai == "CHO_XAC_NHAN")
             .ExecuteUpdateAsync(update => update.SetProperty(x => x.TrangThai, "DA_HUY"), cancellationToken);
         if (updated == 1)
+        {
             await AuditAsync(actorId, pendingPaymentId.Value, "CHO_XAC_NHAN", "DA_HUY", cancellationToken);
+            var metadata = await db.BaoCaoThanhToans.SingleOrDefaultAsync(x => x.ThanhToanId == pendingPaymentId, cancellationToken);
+            if (metadata is not null) { metadata.NguoiXuLyId = actorId; metadata.XuLyLuc = (clock ?? new SystemTimeProvider()).UtcNow; }
+            await PaymentWorkflow.NotifyAsync(db, pendingPaymentId.Value, "DA_HUY", (clock ?? new SystemTimeProvider()).UtcNow, cancellationToken);
+        }
         await transaction!.CommitAsync(cancellationToken);
         return new(invoice.MaHoaDon, updated == 1);
     }
@@ -60,6 +65,10 @@ public sealed class BaoCaoThanhToanService(AppDbContext db, PaymentProofImageSto
 
     public async Task GuiAsync(int actorId, int invoiceId, decimal? amount, DateOnly? paymentDate, string? paymentMethod,
         IFormFile? proofImage, CancellationToken cancellationToken = default)
+        => await GuiCoGhiChuAsync(actorId, invoiceId, amount, paymentDate, paymentMethod, proofImage, null, cancellationToken);
+
+    public async Task GuiCoGhiChuAsync(int actorId, int invoiceId, decimal? amount, DateOnly? paymentDate, string? paymentMethod,
+        IFormFile? proofImage, string? note, CancellationToken cancellationToken = default)
     {
         await db.Database.OpenConnectionAsync(cancellationToken);
         await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
@@ -72,6 +81,7 @@ public sealed class BaoCaoThanhToanService(AppDbContext db, PaymentProofImageSto
         if (invoice is null) throw new UnauthorizedAccessException();
 
         var errors = new Dictionary<string, string[]>();
+        if (note?.Length > 300) errors["GhiChu"] = ["Ghi chú tối đa 300 ký tự."];
         void Error(string field, string message) => errors[field] = [message];
         if (invoice.TrangThai != "DA_PHAT_HANH")
             Error("", "Chỉ có thể báo thanh toán hóa đơn đã phát hành.");
@@ -117,9 +127,14 @@ public sealed class BaoCaoThanhToanService(AppDbContext db, PaymentProofImageSto
         try
         {
             await db.SaveChangesAsync(cancellationToken);
+            var filename = proofImage is null ? null : Path.GetFileName(proofImage.FileName.Replace('\\', '/'));
+            if (filename?.Length > 120) filename = filename[..120];
+            db.BaoCaoThanhToans.Add(new() { ThanhToanId = report.Id, NguoiGuiId = actorId,
+                GuiLuc = (clock ?? new SystemTimeProvider()).UtcNow, GhiChu = string.IsNullOrWhiteSpace(note) ? null : note.Trim(), TenTep = filename });
             await AuditAsync(actorId, report.Id, null, "CHO_XAC_NHAN", cancellationToken);
             if (preparedImage is not null)
                 await imageStore.SaveAsync(imageKey!, preparedImage.Bytes, cancellationToken);
+            await PaymentWorkflow.NotifyAsync(db, report.Id, "BAO_MOI", (clock ?? new SystemTimeProvider()).UtcNow, cancellationToken);
             await transaction!.CommitAsync(cancellationToken);
         }
         catch

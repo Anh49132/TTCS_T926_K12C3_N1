@@ -111,12 +111,13 @@ public sealed partial class RoomServicesTests
         Assert.Contains("role=\"alert\" hidden", html);
         Assert.Contains("Không có hóa đơn nào khớp bộ lọc.", html);
         Assert.Contains("type=\"month\"", html);
-        Assert.Contains("Xóa bộ lọc", html);
+        Assert.Contains("Đặt lại", html);
 
         var detailPage = await tenant.GetAsync(
             "/ThongBao/ChiTiet?maHoaDon=LIST-2025-05&ky=2025-05&trangThai=QUA_HAN&page=2");
-        var detailHtml = await detailPage.Content.ReadAsStringAsync();
-        Assert.Contains("DanhSach?ky=2025-05&amp;trangThai=QUA_HAN&amp;page=2", detailHtml);
+        Assert.Equal(HttpStatusCode.Redirect, detailPage.StatusCode);
+        Assert.StartsWith("/ThongBao/HoaDon/", detailPage.Headers.Location!.ToString());
+
     }
 
     [Fact]

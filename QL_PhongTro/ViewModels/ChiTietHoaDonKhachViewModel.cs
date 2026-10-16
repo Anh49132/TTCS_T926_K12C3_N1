@@ -1,11 +1,5 @@
 namespace QL_PhongTro.ViewModels;
 
-public sealed record ChiTietHoaDonKhachPageViewModel(
-    string MaHoaDon,
-    string? Ky = null,
-    string TrangThai = "TAT_CA",
-    int Page = 1);
-
 public static class TrangThaiThanhToanHoaDon
 {
     public const string TatCa = "TAT_CA";
@@ -20,7 +14,11 @@ public sealed record HoaDonKhachDanhSachPageViewModel(
     string? Ky,
     string TrangThai,
     int Page,
-    string? LoiLoc);
+    string? LoiLoc,
+    string? TimKiem = null,
+    string BaoThanhToan = "TAT_CA",
+    int PageSize = 10,
+    string Nhom = "TAT_CA");
 
 public sealed record HoaDonKhachDanhSachItem(
     string MaHoaDon,
@@ -32,14 +30,24 @@ public sealed record HoaDonKhachDanhSachItem(
     string TrangThai,
     string TenTrangThai,
     bool QuaHan,
-    int SoNgayTre);
+    int SoNgayTre,
+    int Id = 0,
+    string MaPhong = "",
+    long SoDaThanhToan = 0,
+    long SoDaCanTru = 0,
+    bool ChoXacNhan = false,
+    long SoTienChoXacNhan = 0);
+
+public sealed record TongQuanHoaDonKhach(int TongSo, int CanThanhToan, long TongConPhaiTra, int QuaHan, int DaThanhToan);
 
 public sealed record HoaDonKhachDanhSachResponse(
     int TongSoHoaDon,
     int SoKetQua,
     int SoTrang,
     int Trang,
-    IReadOnlyList<HoaDonKhachDanhSachItem> HoaDons);
+    IReadOnlyList<HoaDonKhachDanhSachItem> HoaDons,
+    TongQuanHoaDonKhach? TongQuan = null,
+    int PageSize = 10);
 
 public sealed record ChiTietHoaDonKhachViewModel(
     string MaHoaDon,

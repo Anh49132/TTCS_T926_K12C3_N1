@@ -23,21 +23,13 @@ public sealed partial class RoomServicesTests
         await Login(tenant, "tenant");
 
         var page = await tenant.GetAsync("/ThongBao/ChiTiet?maHoaDon=HD-DEMO-202609-0001");
-        Assert.Equal(HttpStatusCode.OK, page.StatusCode);
-        var html = await page.Content.ReadAsStringAsync();
-        Assert.Contains("Đang tải chi tiết hóa đơn", html);
-        Assert.Contains("role=\"alert\" hidden", html);
-        Assert.Contains("/ThongBao/ChiTietDuLieu?maHoaDon=HD-DEMO-202609-0001", html);
-        Assert.Contains("Chỉ số đầu kỳ", html);
-        Assert.Contains("Chỉ số cuối kỳ", html);
-        Assert.Contains("Số đơn vị tiêu thụ", html);
-        Assert.Contains("Đơn giá", html);
-        Assert.Contains("Thành tiền", html);
-        Assert.Contains("Tổng kết hóa đơn", html);
-        Assert.Contains("Tổng cộng", html);
-        Assert.Contains("Đã thanh toán", html);
-        Assert.Contains("Còn phải trả", html);
-        Assert.Contains("Hạn thanh toán", html);
+        Assert.Equal(HttpStatusCode.Redirect, page.StatusCode);
+        Assert.Equal($"/ThongBao/HoaDon/{invoiceId}", page.Headers.Location!.ToString());
+        var canonical = await tenant.GetAsync(page.Headers.Location);
+        Assert.Equal(HttpStatusCode.OK, canonical.StatusCode);
+        var html = await canonical.Content.ReadAsStringAsync();
+        Assert.DoesNotContain("tenant-invoice-detail.js", html);
+        Assert.Contains("data-invoice-bank", html);
 
         var response = await tenant.GetAsync("/ThongBao/ChiTietDuLieu?maHoaDon=HD-DEMO-202609-0001");
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
@@ -78,13 +70,12 @@ public sealed partial class RoomServicesTests
         Assert.Equal(100000m, decimal.Round(1m * 100000m, 0, MidpointRounding.AwayFromZero));
         Assert.Null(lines[0].GetProperty("chiSoDau").GetString());
         Assert.Null(lines[0].GetProperty("chiSoCuoi").GetString());
-        Assert.Contains("line.chiSoDau === null ? \"—\"", File.ReadAllText(Path.Combine(app, "wwwroot", "js", "tenant-invoice-detail.js")));
 
         var notificationDetail = await tenant.GetAsync($"/ThongBao/HoaDon/{invoiceId}");
         Assert.Equal(HttpStatusCode.OK, notificationDetail.StatusCode);
         var notificationHtml = await notificationDetail.Content.ReadAsStringAsync();
         Assert.Contains("Tổng cộng", notificationHtml);
-        Assert.Contains("Đã thanh toán", notificationHtml);
+        Assert.Contains("Đã thu xác nhận", notificationHtml);
         Assert.Contains("Còn phải trả", notificationHtml);
         Assert.Contains("Hạn thanh toán", notificationHtml);
         Assert.Contains("Quá hạn 3 ngày", notificationHtml);

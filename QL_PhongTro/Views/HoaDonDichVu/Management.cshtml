@@ -3,30 +3,31 @@
 @inject QL_PhongTro.Authorization.PermissionService Permissions
 @inject QL_PhongTro.Services.ITimeProvider Clock
 @{ ViewData["Title"]="Quản lý hóa đơn"; var vn=CultureInfo.GetCultureInfo("vi-VN"); var write=await Permissions.AllowsAsync("TAI_CHINH",true); var today=DateOnly.FromDateTime(Clock.UtcNow.AddHours(7)); }
-@section Styles { <link rel="stylesheet" href="~/css/monthly-invoices.css" asp-append-version="true"/><link rel="stylesheet" href="~/css/invoice-flow.css" asp-append-version="true"/> }
+@section Styles { <link rel="stylesheet" href="~/css/payment-workflow.css" asp-append-version="true" /> <link rel="stylesheet" href="~/css/monthly-invoices.css" asp-append-version="true"/><link rel="stylesheet" href="~/css/invoice-flow.css" asp-append-version="true"/> }
 @section Scripts { <script src="~/js/invoice-management.js" asp-append-version="true"></script> }
-<div class="monthly-invoices invoice-flow">
+<div class="monthly-invoices invoice-flow payment-management">
 <header class="mi-heading"><div><h1>Quản lý hóa đơn</h1><p>Theo dõi, kiểm tra và phát hành hóa đơn theo từng kỳ.</p></div><a asp-action="Setup" class="btn btn-dark">＋ Tạo hóa đơn tháng</a></header>
 <div class="flow-metrics">
 <div class="mi-card"><span>Hóa đơn nháp</span><strong>@Model.SoNhap</strong><small>Chưa phát hành</small></div>
+<div class="mi-card pending-metric"><a asp-action="Management" asp-route-trangThai="CHO_XAC_NHAN"><span>Chờ xác nhận</span><strong>@Model.SoChoXacNhan</strong><small>Báo thanh toán mới</small></a></div>
 <div class="mi-card"><span>Chờ thanh toán</span><strong>@Model.SoCho</strong><small>Hóa đơn còn dư nợ</small></div>
 <div class="mi-card"><span>Quá hạn</span><strong class="text-danger">@Model.SoQuaHan</strong><small>Đã quá hạn thanh toán</small></div>
 <div class="mi-card"><span>Đã thu tháng này</span><strong>@Model.DaThuThang.ToString("N0",vn) đ</strong><small>Các khoản thu đã xác nhận</small></div>
 </div>
 @if(!Model.SanSang){<div class="alert alert-info">Chức năng hóa đơn chưa được thiết lập.</div>}
 <section class="mi-card">
-<nav class="flow-tabs">@foreach(var tab in new[]{("","Tất cả"),("NHAP","Nháp"),("DA_PHAT_HANH","Đã phát hành"),("DA_HUY","Đã hủy")}){<a class="@(Model.TrangThai==tab.Item1 || Model.TrangThai==null && tab.Item1=="" ? "active" : "")" asp-action="Management" asp-route-trangThai="@tab.Item1" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-nam="@Model.Nam" asp-route-thang="@Model.Thang">@tab.Item2</a>}</nav>
+<nav class="flow-tabs">@foreach(var tab in new[]{("","Tất cả"),("CHO_XAC_NHAN", "Chờ xác nhận"),("NHAP","Nháp"),("DA_PHAT_HANH","Đã phát hành"),("DA_HUY","Đã hủy")}){<a class="@(Model.TrangThai==tab.Item1 || Model.TrangThai==null && tab.Item1=="" ? "active" : "")" asp-action="Management" asp-route-q="@Model.Q" asp-route-trangThai="@tab.Item1" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-nam="@Model.Nam" asp-route-thang="@Model.Thang">@tab.Item2 @if(tab.Item1=="CHO_XAC_NHAN"){<span class="pw-badge pending">@Model.SoChoXacNhan</span>}</a>}</nav>
 <form method="get" class="flow-filters">
 <input name="q" value="@Model.Q" maxlength="100" class="form-control" placeholder="Tìm mã hóa đơn, phòng, khách thuê..." aria-label="Tìm hóa đơn"/>
 <select name="toaNhaId" asp-items="Model.ToaNhas" class="form-select" aria-label="Tòa nhà"><option value="">Tất cả tòa nhà</option></select>
 <select name="thang" class="form-select" aria-label="Tháng"><option value="">Tất cả tháng</option>@for(var m=1;m<=12;m++){<option value="@m" selected="@(Model.Thang==m)">Tháng @m</option>}</select>
 <input type="number" name="nam" value="@Model.Nam" min="1900" max="9998" class="form-control" placeholder="Năm" aria-label="Năm"/>
-<select name="trangThai" class="form-select" aria-label="Trạng thái">@foreach(var tab in new[]{("","Tất cả trạng thái"),("NHAP","Nháp"),("DA_PHAT_HANH","Đã phát hành"),("DA_HUY","Đã hủy"),("QUA_HAN","Quá hạn")}){<option value="@tab.Item1" selected="@(Model.TrangThai==tab.Item1)">@tab.Item2</option>}</select><button class="btn btn-dark">Lọc</button>
+<select name="trangThai" class="form-select" aria-label="Trạng thái">@foreach(var tab in new[]{("","Tất cả trạng thái"),("CHO_XAC_NHAN","Chờ xác nhận"),("NHAP","Nháp"),("DA_PHAT_HANH","Đã phát hành"),("DA_HUY","Đã hủy"),("QUA_HAN","Quá hạn")}){<option value="@tab.Item1" selected="@(Model.TrangThai==tab.Item1)">@tab.Item2</option>}</select><button class="btn btn-dark">Lọc</button>
 </form>
-<form asp-action="PublishMonthlyDrafts" method="post" id="management-batch"><div class="table-responsive"><table class="table flow-table"><thead><tr><th><input type="checkbox" data-management-all aria-label="Chọn các bản nháp trên trang"/></th><th>Mã hóa đơn</th><th>Phòng / Khách thuê</th><th>Kỳ</th><th>Ngày phát hành</th><th>Hạn thanh toán</th><th>Tổng tiền</th><th>Đã thu</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>
-@foreach(var row in Model.Rows){<tr><td>@if(write && row.TrangThai=="NHAP"){<input type="checkbox" name="selectedInvoiceIds" value="@row.Id" data-building="@row.ToaNhaId" data-year="@row.Nam" data-month="@row.Thang" data-total="@row.TongTien" aria-label="Chọn hóa đơn @row.MaHoaDon"/><input name="versions[@row.Id]" value="@row.PhienBan" type="hidden"/>}</td><th>@row.MaHoaDon</th><td><strong>@row.MaPhong</strong><small>@row.TenKhach</small></td><td>@row.Thang.ToString("00")/@row.Nam</td><td>@(row.NgayPhatHanh?.ToString("dd/MM/yyyy") ?? "—")</td><td>@row.HanThanhToan.ToString("dd/MM/yyyy")</td><td>@row.TongTien.ToString("N0",vn) đ</td><td>@row.DaThu.ToString("N0",vn) đ</td><td><span class="flow-badge @(row.QuaHan ? "danger" : row.TrangThai=="NHAP" ? "warning" : "")">@row.HienThi</span></td><td><a asp-action="Details" asp-route-id="@row.Id" class="btn btn-outline-secondary">@(row.TrangThai=="NHAP" ? "Kiểm tra" : "Xem")</a>@if(row.TrangThai=="NHAP"){<a asp-action="Monthly" asp-route-toaNhaId="@row.ToaNhaId" asp-route-nam="@row.Nam" asp-route-thang="@row.Thang" class="d-block mt-1">Phát hành theo kỳ</a>}</td></tr>}
+<form asp-action="PublishMonthlyDrafts" method="post" id="management-batch"><div class="table-responsive"><table class="table flow-table"><thead><tr><th><input type="checkbox" data-management-all aria-label="Chọn các bản nháp trên trang"/></th><th>Mã hóa đơn</th><th>Phòng / Khách thuê</th><th>Kỳ</th><th>Ngày phát hành</th><th>Hạn thanh toán</th><th>Tổng tiền</th><th>Đã thu</th><th>Báo thanh toán</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>
+@foreach(var row in Model.Rows){<tr><td>@if(write && row.TrangThai=="NHAP"){<input type="checkbox" name="selectedInvoiceIds" value="@row.Id" data-building="@row.ToaNhaId" data-year="@row.Nam" data-month="@row.Thang" data-total="@row.TongTien" aria-label="Chọn hóa đơn @row.MaHoaDon"/><input name="versions[@row.Id]" value="@row.PhienBan" type="hidden"/>}</td><th>@row.MaHoaDon</th><td><strong>@row.MaPhong</strong><small>@row.TenKhach</small></td><td>@row.Thang.ToString("00")/@row.Nam</td><td>@(row.NgayPhatHanh?.ToString("dd/MM/yyyy") ?? "—")</td><td>@row.HanThanhToan.ToString("dd/MM/yyyy")</td><td>@row.TongTien.ToString("N0",vn) đ</td><td>@row.DaThu.ToString("N0",vn) đ</td><td class="pw-report-cell">@if(row.BaoCaoId.HasValue){<span class="pw-badge pending">@("Ch\u1edd x\u00e1c nh\u1eadn") @row.SoTienBaoCao?.ToString("N0",vn) @("\u0111")</span><small>@(row.GuiLuc.HasValue ? row.GuiLuc.Value.AddHours(7).ToString("dd/MM/yyyy HH:mm") : "Ch\u01b0a c\u00f3 th\u1eddi \u0111i\u1ec3m g\u1eedi")</small>}else{<span>?</span>}</td><td><span class="flow-badge @(row.QuaHan ? "danger" : row.TrangThai=="NHAP" ? "warning" : "")">@row.HienThi</span></td><td><a asp-action="Details" asp-route-id="@row.Id" asp-fragment="@(row.BaoCaoId.HasValue ? "payment-report-"+row.BaoCaoId : null)" class="btn @(row.BaoCaoId.HasValue ? "btn-dark" : "btn-outline-secondary")">@(row.TrangThai=="NHAP" || row.BaoCaoId.HasValue ? "Kiểm tra" : "Xem")</a>@if(row.TrangThai=="NHAP"){<a asp-action="Monthly" asp-route-toaNhaId="@row.ToaNhaId" asp-route-nam="@row.Nam" asp-route-thang="@row.Thang" class="d-block mt-1">Phát hành theo kỳ</a>}</td></tr>}
 </tbody></table></div>
-@if(write){<div class="flow-actions"><span data-management-count>Đã chọn 0 hóa đơn</span><button type="button" data-management-open class="btn btn-dark">Phát hành hàng loạt</button></div>
+@if(write && Model.TrangThai != "CHO_XAC_NHAN"){<div class="flow-actions"><span data-management-count>Đã chọn 0 hóa đơn</span><button type="button" data-management-open class="btn btn-dark">Phát hành hàng loạt</button></div>
 <p data-management-error class="text-danger" role="alert"></p>
 <dialog class="flow-confirm" id="management-confirm" aria-labelledby="management-title"><h2 id="management-title">Xác nhận phát hành hàng loạt</h2><p>Thông báo được tạo cho khách sau khi phát hành. Hóa đơn đã phát hành không thể sửa.</p>
 <input name="toaNhaId" type="hidden"/><input name="nam" type="hidden"/><input name="thang" type="hidden"/>
@@ -37,5 +38,26 @@
 <div class="flow-actions"><button type="button" data-management-close class="btn btn-outline-secondary">Quay lại kiểm tra</button><button type="submit" class="btn btn-dark">Xác nhận phát hành</button></div></dialog>}
 </form>
 @if(Model.Rows.Count==0){<p class="flow-empty">Không có hóa đơn phù hợp bộ lọc.</p>}
-<footer class="flow-pagination"><span>@Model.Total hóa đơn · Trang @Model.Page</span><div>@for(var p=1;p<=Math.Max(1,(Model.Total+9)/10);p++){<a class="btn @(p==Model.Page ? "btn-dark" : "btn-outline-secondary")" asp-route-page="@p" asp-route-q="@Model.Q" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-nam="@Model.Nam" asp-route-thang="@Model.Thang" asp-route-trangThai="@Model.TrangThai">@p</a>}</div></footer>
+@{
+    var totalPages = Math.Max(1, (Model.Total + 9) / 10);
+    var pageNumbers = new SortedSet<int> { 1, totalPages };
+    for (var number = Math.Max(1, Model.Page - 1); number <= Math.Min(totalPages, Model.Page + 1); number++) { pageNumbers.Add(number); }
+    var previousPage = 0;
+}
+<footer class="flow-pagination management-pagination">
+    <span class="management-page-info">@Model.Total.ToString("N0", vn) hóa đơn · Trang @Model.Page / @totalPages</span>
+    <nav aria-label="Phân trang hóa đơn chủ nhà">
+        @if (Model.Page > 1) { <a class="btn btn-outline-secondary" aria-label="Trang trước" asp-route-page="@(Model.Page - 1)" asp-route-q="@Model.Q" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-nam="@Model.Nam" asp-route-thang="@Model.Thang" asp-route-trangThai="@Model.TrangThai">‹</a> }
+        else { <span class="btn btn-outline-secondary disabled" aria-disabled="true" aria-label="Trang trước">‹</span> }
+        @foreach (var number in pageNumbers)
+        {
+            if (number - previousPage > 1) { <span class="management-page-gap" aria-hidden="true">…</span> }
+            if (number == Model.Page) { <span class="btn btn-dark" aria-current="page" aria-label="Trang @number">@number</span> }
+            else { <a class="btn btn-outline-secondary" aria-label="Trang @number" asp-route-page="@number" asp-route-q="@Model.Q" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-nam="@Model.Nam" asp-route-thang="@Model.Thang" asp-route-trangThai="@Model.TrangThai">@number</a> }
+            previousPage = number;
+        }
+        @if (Model.Page < totalPages) { <a class="btn btn-outline-secondary" aria-label="Trang sau" asp-route-page="@(Model.Page + 1)" asp-route-q="@Model.Q" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-nam="@Model.Nam" asp-route-thang="@Model.Thang" asp-route-trangThai="@Model.TrangThai">›</a> }
+        else { <span class="btn btn-outline-secondary disabled" aria-disabled="true" aria-label="Trang sau">›</span> }
+    </nav>
+</footer>
 </section></div>

@@ -89,10 +89,9 @@ public sealed partial class RoomServicesTests
         var discountLine = discount.GetProperty("chiTiet").EnumerateArray().Single(x =>
             x.GetProperty("loaiKhoan").GetString() == "GIAM_TRU");
         Assert.Equal("200.000", discountLine.GetProperty("thanhTien").GetString());
-        Assert.Contains("line.loaiKhoan === \"GIAM_TRU\" ? \"−\" : \"\"", File.ReadAllText(
-            Path.Combine(app, "wwwroot", "js", "tenant-invoice-detail.js")));
-        Assert.Contains("tenant-invoice-overdue", await (await tenant.GetAsync(
-            "/ThongBao/ChiTiet?maHoaDon=SAMPLE-LATE-ONE")).Content.ReadAsStringAsync());
+        var oldPage = await tenant.GetAsync("/ThongBao/ChiTiet?maHoaDon=SAMPLE-LATE-ONE");
+        Assert.Equal(HttpStatusCode.Redirect, oldPage.StatusCode);
+        Assert.StartsWith("/ThongBao/HoaDon/", oldPage.Headers.Location!.ToString());
 
         clock.UtcNow = new(2026, 10, 9, 17, 30, 0, DateTimeKind.Utc); // 00:30 Vietnam on the due date.
         var onDueDate = await GetInvoice("SAMPLE-DUE-TODAY");
