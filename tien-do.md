@@ -1,3 +1,17 @@
+### 17/10/2026 – Bỏ breadcrumb chi tiết tin
+- Gỡ riêng dòng Trang chủ / Tìm phòng / Chi tiết tin. Build/HTTP đạt; demo đã chạy lại.
+
+### 17/10/2026 – Bỏ footer riêng trang chi tiết phòng
+- Không render footer công khai ở TinDang/ChiTiet theo ảnh; giữ footer các trang khác. Build/HTTP đạt, kiểm tra trang chủ vẫn có footer. Demo đã chạy lại.
+
+### 17/10/2026 – Làm mới trang chi tiết phòng bằng Bootstrap
+- Cân cột ảnh/nội dung và cột giá, làm rõ giá thuê/cọc/chi phí, thông tin phòng và chủ nhà. Bootstrap button/table-responsive; CSS giới hạn ld-page. Breadcrumb về TimTin, giữ lưu/chia sẻ/gallery và form nghiệp vụ.
+- Build đạt; Edge 360/768/1440px không tràn ngang, giá mẫu đúng, lưu tin và gallery mở/đóng đạt; form tenant3 ở 360px vẫn có giới hạn 3 người, không gửi yêu cầu. Đã xem ảnh data/listing-detail-1440.png; ảnh public/mobile/tenant cùng thư mục. Demo đã chạy lại; chưa push.
+
+### 17/10/2026 – Làm mới trang Giới thiệu bằng Bootstrap
+- Banner chia chữ/ảnh, thẻ sứ mệnh/chỉ số, 3 cam kết và quy trình 4 bước dùng Bootstrap grid/card/button. Thay CTA tìm tin trùng bằng liên kết hướng dẫn trong trang, CSS giới hạn gioithieu-page; giữ header/footer chung.
+- Build đạt; Edge 360/768/1440px không tràn ngang; liên kết hướng dẫn và tìm phòng hoạt động, 3 cam kết/4 bước đủ. Đã xem ảnh data/about-bootstrap-1440.png, ảnh mobile/tablet cùng thư mục. Demo đã chạy lại; chưa push lần chỉnh này.
+
 ### 17/10/2026 – Thu giãn dòng thẻ phòng trang chủ và footer
 - Giảm khoảng cách tiêu đề/giá/khu vực/metadata, gutter hàng thẻ và padding section; thu dòng liên kết/liên hệ cùng padding bản quyền footer công khai.
 - Edge 360/768/1440px không tràn ngang; form tìm kiếm vẫn đạt. Chỉ đổi CSS, demo có hiệu lực ngay.

@@ -57,6 +57,8 @@
     <main class="public-main @(isHome ? "public-main-home" : "") @(isTimTin ? "public-main-timtin" : "")">
         @RenderBody()
     </main>
+    @if (!(ViewContext.RouteData.Values["controller"]?.ToString() == "TinDang" && ViewContext.RouteData.Values["action"]?.ToString() == "ChiTiet"))
+    {
         <footer class="public-footer nhatot-footer">
             <div class="nhatot-footer-inner">
                 <div class="footer-top">
@@ -115,6 +117,7 @@
                 <span class="footer-legal">Minh bạch · An toàn · Tin cậy</span>
             </div>
         </footer>
+    }
     @if (User.IsInRole("KHACH_THUE")) { <script src="~/js/tenant-sidebar.js" asp-append-version="true"></script> }
     @await RenderSectionAsync("Scripts", required: false)
 </body>

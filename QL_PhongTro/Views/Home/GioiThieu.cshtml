@@ -4,12 +4,13 @@
 }
 
 <div class="gioithieu-page">
-    <section class="gioithieu-hero">
-        <div class="gioithieu-hero-content">
+    <section class="gioithieu-hero row g-0 align-items-stretch" aria-labelledby="about-title">
+        <div class="gioithieu-hero-content col-12 col-lg-7 d-flex flex-column justify-content-center">
             <span class="gioithieu-tag">VỀ CHÚNG TÔI</span>
-            <h1>NhàTốt · Sống Đúng Nơi</h1>
+            <h1 id="about-title" class="display-5 fw-bold">NhàTốt<br /><span>Sống đúng nơi.</span></h1>
             <p>Nền tảng tìm kiếm và kết nối phòng trọ, căn hộ cho thuê minh bạch, tin cậy hàng đầu. Chúng tôi giúp bạn tìm chốn ở phù hợp để an tâm bắt đầu cuộc sống mới.</p>
         </div>
+        <div class="col-lg-5 d-none d-lg-block about-hero-image" role="img" aria-label="Không gian sống sáng thoáng với cửa sổ lớn"></div>
     </section>
 
     <div class="nhatot-container py-5">
@@ -23,13 +24,13 @@
                     <p>
                         NhàTốt ra đời với mục tiêu xóa bỏ mọi lo âu đó. Bằng việc xây dựng môi trường thông tin chuẩn xác và kết nối trực tiếp giữa người thuê và chủ nhà, chúng tôi cam kết mang lại trải nghiệm tìm kiếm phòng ở an tâm, nhanh chóng và văn minh nhất.
                     </p>
-                    <div class="d-flex gap-3 mt-4">
-                        <a href="/TimTin" class="btn btn-nhatot-primary">Tìm phòng ngay ↗</a>
-                        <a href="/TimTin" class="btn btn-nhatot-outline">Xem tin đăng cho thuê</a>
+                    <div class="d-flex flex-wrap gap-2 mt-4">
+                        <a href="/TimTin" class="btn btn-dark px-4">Tìm phòng ngay ↗</a>
+                        <a href="#about-steps" class="btn btn-outline-dark">Cách tìm phòng</a>
                     </div>
                 </div>
                 <div class="col-lg-6">
-                    <div class="gioithieu-stat-card">
+                    <div class="gioithieu-stat-card card border-0 shadow-sm">
                         <div class="stat-item">
                             <span class="stat-number">100%</span>
                             <span class="stat-label">Tin đăng xác thực, minh bạch địa chỉ &amp; giá</span>
@@ -55,21 +56,21 @@
             </div>
             <div class="row g-4">
                 <div class="col-md-4">
-                    <div class="value-card">
+                    <div class="value-card card h-100 border-0 shadow-sm">
                         <div class="value-icon">💰</div>
                         <h3>Giá thật minh bạch</h3>
                         <p>Giá thuê được niêm yết chính xác. Mọi chi phí dịch vụ đi kèm (điện, nước, internet, gửi xe) đều được công khai chi tiết, không phát sinh chi phí bất ngờ.</p>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="value-card">
+                    <div class="value-card card h-100 border-0 shadow-sm">
                         <div class="value-icon">📷</div>
                         <h3>Ảnh thật xác thực</h3>
                         <p>Hình ảnh chân thực chụp thực tế từ từng góc phòng, phản ánh đúng hiện trạng không gian sống để bạn tiết kiệm tối đa thời gian di chuyển.</p>
                     </div>
                 </div>
                 <div class="col-md-4">
-                    <div class="value-card">
+                    <div class="value-card card h-100 border-0 shadow-sm">
                         <div class="value-icon">🤝</div>
                         <h3>Liên hệ trực tiếp</h3>
                         <p>Kết nối trực tiếp giữa khách thuê với chủ nhà hoặc quản lý tòa nhà. Đặt lịch hẹn xem phòng online nhanh chóng, xác nhận lịch rõ ràng.</p>
@@ -78,35 +79,35 @@
             </div>
         </section>
 
-        <section class="gioithieu-steps mb-5">
+        <section id="about-steps" class="gioithieu-steps mb-5">
             <div class="text-center mb-4">
                 <span class="gioithieu-tag">HƯỚNG DẪN</span>
                 <h2 class="section-title">Quy trình 4 bước thuê phòng dễ dàng</h2>
             </div>
             <div class="row g-3">
                 <div class="col-sm-6 col-lg-3">
-                    <div class="step-card">
+                    <div class="step-card card h-100 border-0">
                         <span class="step-num">01</span>
                         <h4>Tìm kiếm phòng</h4>
                         <p>Dùng bộ lọc thông minh theo khu vực quận/huyện, khoảng giá và diện tích mong muốn.</p>
                     </div>
                 </div>
                 <div class="col-sm-6 col-lg-3">
-                    <div class="step-card">
+                    <div class="step-card card h-100 border-0">
                         <span class="step-num">02</span>
                         <h4>Xem chi tiết</h4>
                         <p>Đọc kỹ mô tả tiện nghi, xem ảnh thực tế và biểu phí dịch vụ sinh hoạt hàng tháng.</p>
                     </div>
                 </div>
                 <div class="col-sm-6 col-lg-3">
-                    <div class="step-card">
+                    <div class="step-card card h-100 border-0">
                         <span class="step-num">03</span>
                         <h4>Đặt lịch hẹn</h4>
                         <p>Chọn ngày giờ thuận tiện và gửi yêu cầu xem phòng trực tiếp tới chủ nhà trên hệ thống.</p>
                     </div>
                 </div>
                 <div class="col-sm-6 col-lg-3">
-                    <div class="step-card">
+                    <div class="step-card card h-100 border-0">
                         <span class="step-num">04</span>
                         <h4>An tâm dọn vào</h4>
                         <p>Gặp gỡ chủ nhà xem phòng thực tế, ký hợp đồng minh bạch và bắt đầu cuộc sống mới.</p>
@@ -117,3 +118,7 @@
 
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/about-bootstrap.css" asp-append-version="true" />
+}
