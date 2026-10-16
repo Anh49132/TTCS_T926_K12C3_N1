@@ -1,0 +1,118 @@
+/* Bootstrap login card; other authentication screens keep their current styles. */
+.login-bootstrap{grid-template-columns:46% 54%;background:#f6f6f3;min-height:100svh}
+.login-bootstrap .login-photo{min-height:100svh;background-position:55% center}
+.login-bootstrap .login-photo:before{background:linear-gradient(180deg,#18272d26,#18272d10 25%,#18272de6)}
+.login-bootstrap .login-photo>.login-brand{left:2.5rem;top:2.5rem}.login-bootstrap .login-brand img{height:42px}
+.login-bootstrap .login-story{left:2.5rem;right:2.5rem;bottom:3rem;max-width:460px}
+.login-bootstrap .login-proof{border:1px solid #ffffff30;background:#ffffff12;padding:.5rem .75rem;font-size:.68rem;margin-bottom:1.25rem}
+.login-bootstrap .login-story h2{font-size:clamp(1.9rem,2.7vw,2.7rem);font-weight:650;line-height:1.2;letter-spacing:-.03em}
+.login-bootstrap .login-story>p{font-size:.9rem;line-height:1.8;color:#e4e8e6;max-width:420px;margin-bottom:1.5rem}
+.login-bootstrap .login-stats{gap:1.5rem}.login-bootstrap .login-stats strong{font-size:1.5rem;font-weight:600;color:#e1cda9}.login-bootstrap .login-stats span{font-size:.67rem;margin-top:.35rem}
+.login-bootstrap .login-panel{padding:7rem 2rem 2rem;min-width:0;min-height:100svh}
+.login-bootstrap .login-panel>.login-brand{top:2rem;left:2.5rem}
+.login-bootstrap .login-card{width:100%;max-width:460px;margin:0;padding:2.25rem;border-radius:20px;background:#fff;box-shadow:0 10px 40px #25282d07!important}
+.login-bootstrap .login-welcome-tag{align-self:flex-start;font-size:.6rem;font-weight:650;letter-spacing:.1em;color:#8a7149;background:#bfa77a18;padding:.5rem .7rem}
+.login-bootstrap .login-card h1{font-size:1.85rem;line-height:1.25;letter-spacing:-.035em;margin-bottom:.75rem}
+.login-bootstrap .login-description{font-size:.85rem;line-height:1.75;color:#7b838a;margin-bottom:1.5rem}
+.login-bootstrap .form-label{font-size:.78rem;font-weight:600;color:#414a52;margin-bottom:.5rem}
+.login-bootstrap .login-field .form-control{min-height:50px;padding:.8rem 2.7rem .8rem 2.6rem;background:#fafaf9;border:1px solid #e6e8e9;border-radius:10px;font-size:.85rem}
+.login-bootstrap .login-field .form-control:focus{background:#fff;border-color:#BFA77A;box-shadow:0 0 0 .18rem #bfa77a26}
+.login-bootstrap .login-field>.field-icon,.login-bootstrap .login-field .toggle-password{color:#858d93}
+.login-bootstrap .login-field .toggle-password{width:34px;height:34px;right:8px;border-radius:7px}.login-bootstrap .login-field .toggle-password:hover{background:#eceeea;color:#30343B}
+.login-bootstrap .login-options{font-size:.73rem;margin:1rem 0 1.25rem;flex-wrap:wrap;row-gap:.65rem}
+.login-bootstrap .login-options a{color:#8a7149;font-weight:500}.login-bootstrap .login-remember{color:#68727b;line-height:1.4}
+.login-bootstrap .form-check-input{width:16px;height:16px;float:none;margin:0;box-shadow:none;border-color:#cdd2d5;flex-shrink:0}.login-bootstrap .form-check-input:checked{background-color:#30343B;border-color:#30343B}
+.login-bootstrap .login-submit{min-height:48px;border-radius:10px;background:#30343B;border-color:#30343B;font-size:.88rem;font-weight:650}.login-bootstrap .login-submit:hover{background:#484d54;border-color:#484d54}
+.login-bootstrap .login-bottom{font-size:.77rem;line-height:1.6;margin-top:1.25rem;padding-top:1.25rem}.login-bootstrap .login-bottom a{display:inline-block;color:#8a7149}
+.login-bootstrap #loginError{font-size:.78rem;line-height:1.6}
+@media(max-width:991px){.login-bootstrap{grid-template-columns:40% 60%}.login-bootstrap .login-panel{padding:6rem 1.5rem 2rem}.login-bootstrap .login-card{padding:1.75rem}.login-bootstrap .login-story{left:1.5rem;right:1.5rem}.login-bootstrap .login-story h2{font-size:2rem}.login-bootstrap .login-stats{gap:1rem}.login-bootstrap .login-stats>div+div{padding-left:1rem}}
+@media(max-width:760px){.login-bootstrap{grid-template-columns:1fr}.login-bootstrap .login-photo{display:none}.login-bootstrap .login-panel{min-height:100svh;padding:6.5rem 1rem 2rem}.login-bootstrap .login-panel>.login-brand{top:1.5rem;left:1.5rem}.login-bootstrap .login-card{max-width:440px;padding:1.75rem 1.25rem;border-radius:16px}.login-bootstrap .login-card h1{font-size:1.7rem}.login-bootstrap .login-brand img{height:38px}}
+@media(max-height:650px) and (min-width:761px){.login-bootstrap .login-panel{padding-top:6rem;padding-bottom:1.5rem}.login-bootstrap .login-story{bottom:1.5rem}.login-bootstrap .login-card{padding:1.5rem}}
+/* Registration shares the Bootstrap auth composition with a compact form. */
+.register-page.login-bootstrap .login-panel{padding-top:6.5rem;padding-bottom:2rem}
+.register-page.login-bootstrap .register-card{max-width:480px;margin:0;padding:1.75rem 2rem}
+.register-page.login-bootstrap .register-card h1{font-size:1.8rem}
+.register-page.login-bootstrap .login-description{margin-bottom:1.25rem}
+.register-page.login-bootstrap .register-card .form-control{min-height:46px;padding:.7rem .85rem;border:1px solid #e6e8e9;border-radius:9px;font-size:.85rem;background:#fafaf9}
+.register-page.login-bootstrap .register-card .password-field .form-control{padding-right:2.75rem}
+.register-page.login-bootstrap .register-card .form-control:focus{background:#fff;border-color:#BFA77A;box-shadow:0 0 0 .18rem #bfa77a26}
+.register-page.login-bootstrap .register-card .mb-3{margin-bottom:1rem!important}
+.register-page.login-bootstrap .register-card .form-text{font-size:.7rem;line-height:1.6;color:#858d93;margin-top:.4rem}
+.register-page.login-bootstrap .login-bottom{margin-top:1rem;padding-top:1rem}
+@media(max-width:760px){.register-page.login-bootstrap .login-panel{padding:6rem 1rem 1.5rem;align-items:flex-start}.register-page.login-bootstrap .register-card{padding:1.5rem 1.25rem}.register-page.login-bootstrap .register-card h1{font-size:1.65rem}}
+/* Compact vertical rhythm for the registration form. */
+.register-page.login-bootstrap .register-card{padding-top:1.5rem;padding-bottom:1.5rem}
+.register-page.login-bootstrap .login-welcome-tag{margin-bottom:.75rem!important}
+.register-page.login-bootstrap .register-card h1{margin-bottom:.5rem;line-height:1.25}
+.register-page.login-bootstrap .login-description{margin-bottom:1rem;line-height:1.6}
+.register-page.login-bootstrap .register-card .mb-3{margin-bottom:.75rem!important}
+.register-page.login-bootstrap .form-label{margin-bottom:.35rem;line-height:1.4}
+.register-page.login-bootstrap .register-card .form-control{min-height:44px;padding:.65rem .85rem}
+.register-page.login-bootstrap .register-card .form-text{margin-top:.3rem;line-height:1.4}
+.register-page.login-bootstrap .login-submit{min-height:44px}
+.register-page.login-bootstrap .login-bottom{margin-top:.85rem;padding-top:.85rem;line-height:1.5}
+/* Password recovery follows the shared Bootstrap authentication card. */
+.forgot-bootstrap .login-card{max-width:450px;padding:2rem}
+.forgot-bootstrap .forgot-icon{width:52px;height:52px;border-radius:14px;background:#bfa77a1c;color:#92774c;display:grid;place-items:center}
+.forgot-bootstrap .login-card h1{font-size:1.85rem;line-height:1.25;margin-bottom:.65rem}
+.forgot-bootstrap .login-description{line-height:1.7;margin-bottom:1.25rem}
+.forgot-bootstrap .login-bottom{margin-top:1rem;padding-top:1rem}
+.forgot-bootstrap .login-bottom a{font-size:.8rem;font-weight:600}
+@media(max-width:760px){.forgot-bootstrap .login-card{padding:1.75rem 1.25rem}.forgot-bootstrap .login-card h1{font-size:1.7rem}}
+/* Tighter vertical rhythm for password recovery. */
+.forgot-bootstrap .login-card{padding:1.5rem 2rem}
+.forgot-bootstrap .forgot-icon{width:46px;height:46px;margin-bottom:.75rem!important}
+.forgot-bootstrap .login-welcome-tag{margin-bottom:.75rem!important}
+.forgot-bootstrap .login-card h1{margin-bottom:.5rem;line-height:1.25}
+.forgot-bootstrap .login-description{margin-bottom:1rem;line-height:1.6}
+.forgot-bootstrap .form-label{margin-bottom:.4rem;line-height:1.4}
+.forgot-bootstrap form .mb-3{margin-bottom:.75rem!important}
+.forgot-bootstrap .login-field .form-control{min-height:46px;padding-top:.65rem;padding-bottom:.65rem}
+.forgot-bootstrap .login-submit{min-height:44px;padding-top:.65rem;padding-bottom:.65rem}
+.forgot-bootstrap .login-bottom{margin-top:.85rem;padding-top:.85rem;line-height:1.5}
+@media(max-width:760px){.forgot-bootstrap .login-card{padding:1.5rem 1.25rem}}
+/* Email confirmation follows the shared Bootstrap auth card. */
+.confirm-bootstrap .login-panel{padding-top:6rem;padding-bottom:2rem}
+.confirm-bootstrap .login-card{max-width:480px;padding:1.75rem 2rem}
+.confirm-bootstrap .confirmation-icon{display:grid;place-items:center;width:48px;height:48px;background:#bfa77a1c;color:#92774c;border-radius:13px;margin-bottom:.75rem!important}
+.confirm-bootstrap .login-welcome-tag{margin-bottom:.75rem!important}
+.confirm-bootstrap .login-card h1{font-size:1.8rem;line-height:1.25;margin-bottom:.6rem}
+.confirm-bootstrap .login-description{font-size:.85rem;line-height:1.7;margin-bottom:1rem}
+.confirm-bootstrap .login-card>form>.form-control{min-height:46px;background:#fafaf9;border:1px solid #e6e8e9;border-radius:9px;font-size:.85rem}
+.confirm-bootstrap .login-card>form>.form-control:focus{background:#fff;border-color:#BFA77A;box-shadow:0 0 0 .18rem #bfa77a26}
+.confirm-bootstrap #Code{font-size:1.25rem;letter-spacing:.45em;text-align:center;font-weight:600;min-height:52px}
+.confirm-bootstrap #Code::placeholder{color:#bdc3c7;font-weight:400}
+.confirm-bootstrap .form-label{margin-bottom:.4rem;line-height:1.4}
+.confirm-bootstrap .confirmation-actions{gap:.6rem;margin-top:1rem!important}
+.confirm-bootstrap .confirmation-resend{min-height:44px;border-radius:9px;font-size:.8rem;border-color:#dfe3e6;background:#fff;color:#656A73}
+.confirm-bootstrap .confirmation-resend:hover{background:#F5F5F4;color:#30343B}
+.confirm-bootstrap .login-card .alert{border:1px solid #bfa77a55;border-radius:9px;background:#bfa77a12;color:#776443;font-size:.76rem;line-height:1.65;padding:.75rem;margin-bottom:.75rem}
+.confirm-bootstrap .login-card .alert-danger{background:#fff1f0;border-color:#f2ccc8;color:#a33d32}
+.confirm-bootstrap .confirmation-local{font-size:.72rem;color:#737b83;line-height:1.6;border:1px solid #e9eaec;border-radius:9px;padding:.65rem .75rem;background:#fafaf9}
+.confirmation-local summary{cursor:pointer;font-weight:600;color:#776443}.confirmation-local[open] summary{margin-bottom:.6rem}.confirmation-local code{display:block;overflow-wrap:anywhere;white-space:normal;color:#737b83;font-size:.67rem}
+.confirm-bootstrap .login-bottom{margin-top:1rem;padding-top:1rem}
+@media(max-width:760px){.confirm-bootstrap .login-panel{padding:6rem 1rem 1.5rem;align-items:flex-start}.confirm-bootstrap .login-card{padding:1.5rem 1.25rem}.confirm-bootstrap .login-card h1{font-size:1.6rem}}
+/* Compact vertical spacing for the email confirmation card. */
+.confirm-bootstrap .login-card{padding-top:1.5rem;padding-bottom:1.5rem}
+.confirm-bootstrap .confirmation-icon{width:44px;height:44px;margin-bottom:.65rem!important}
+.confirm-bootstrap .login-welcome-tag{margin-bottom:.65rem!important}
+.confirm-bootstrap .login-card h1{margin-bottom:.45rem;line-height:1.25}
+.confirm-bootstrap .login-description{margin-bottom:.85rem;line-height:1.55}
+.confirm-bootstrap .form-label{margin-bottom:.35rem;line-height:1.4}
+.confirm-bootstrap label[for=Code]{margin-top:.75rem!important}
+.confirm-bootstrap .login-card>form>.form-control{min-height:44px;padding-top:.6rem;padding-bottom:.6rem}
+.confirm-bootstrap #Code{min-height:48px}
+.confirm-bootstrap .confirmation-actions{gap:.5rem;margin-top:.75rem!important}
+.confirm-bootstrap .login-submit,.confirm-bootstrap .confirmation-resend{min-height:42px;padding-top:.6rem;padding-bottom:.6rem}
+.confirm-bootstrap .login-bottom{margin-top:.75rem;padding-top:.75rem;line-height:1.4}
+/* Password change shares the Bootstrap authentication card and compact spacing. */
+.change-bootstrap .change-password-card{max-width:470px;padding:1.75rem 2rem;margin:0}
+.change-bootstrap .login-welcome-tag{margin-bottom:.85rem!important}
+.change-bootstrap .login-card h1{font-size:1.85rem;line-height:1.25;margin-bottom:.6rem}
+.change-bootstrap .login-description{font-size:.83rem;line-height:1.65;margin-bottom:1.25rem}
+.change-bootstrap .form-label{line-height:1.4;margin-bottom:.4rem;font-size:.78rem}
+.change-bootstrap form .mb-3{margin-bottom:.85rem!important}
+.change-bootstrap .login-field .form-control{min-height:46px;padding-top:.65rem;padding-bottom:.65rem}
+.change-bootstrap .login-submit{min-height:44px;margin-top:.2rem}
+.change-bootstrap .login-bottom{margin-top:1rem;padding-top:1rem;line-height:1.5}
+@media(max-width:760px){.change-bootstrap .login-panel{padding:6rem 1rem 1.5rem}.change-bootstrap .change-password-card{padding:1.5rem 1.25rem}.change-bootstrap .login-card h1{font-size:1.7rem}}

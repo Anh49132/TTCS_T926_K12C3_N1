@@ -1,3 +1,32 @@
+### 17/10/2026 – Làm mới Đổi mật khẩu bằng Bootstrap
+- Đồng bộ thẻ trắng, nhãn bảo mật và ba ô mật khẩu với nhóm auth; spacing gọn, nút rõ. Giữ trường, validation, CSRF và quy trình đổi mật khẩu.
+- Build đạt; Edge sau đăng nhập tenant3 tại 360/768/1440px không tràn ngang; ba trường required và hiện/ẩn độc lập đạt. Không gửi đổi mật khẩu. Đã xem ảnh data/change-bootstrap-1440.png; demo đã chạy lại, chưa push.
+
+### 17/10/2026 – Thu giãn cách dòng form Xác nhận email
+- Căn đều và giảm khoảng cách biểu tượng/tiêu đề/mô tả, email/mã và hai nút; chỉ đổi CSS confirm-bootstrap, giữ nghiệp vụ.
+
+### 17/10/2026 – Làm mới Xác nhận email bằng Bootstrap
+- Đồng bộ form với Login/Register/Forgot: thẻ trắng, biểu tượng email, mã 6 số dễ đọc, nút xác nhận/gửi lại; chi tiết đường dẫn email thử nghiệm gói trong disclosure. Giữ thông báo và endpoint nghiệp vụ.
+- Build đạt; Edge 360/768/1440px không tràn ngang, required/6-digit pattern/CSRF/resend formnovalidate/link Login đạt; không xác nhận mã hay gửi email. Đã xem ảnh data/confirm-bootstrap-1440.png; demo đã chạy lại, chưa push.
+
+### 17/10/2026 – Căn giãn dòng form Quên mật khẩu
+- Thu padding thẻ, khoảng cách biểu tượng/nhãn/tiêu đề/mô tả/email/nút và quay lại. Chỉ CSS riêng forgot-bootstrap; giữ chức năng.
+
+### 17/10/2026 – Làm mới Quên mật khẩu bằng Bootstrap
+- Đồng bộ thẻ trắng với Login/Register, thêm biểu tượng khôi phục, nhãn, email và nút rõ ràng, spacing gọn. Chỉ sửa giao diện, giữ logic gửi/CSRF và thông báo.
+- Build đạt; Edge 360/768/1440px không tràn ngang, required/email validation và liên kết Login đạt. Không gửi email reset. Đã xem ảnh data/forgot-bootstrap-1440.png; demo đã chạy lại, chưa push.
+
+### 17/10/2026 – Thu giãn cách dòng form đăng ký
+- Giảm khoảng cách tiêu đề/mô tả, các trường, hướng dẫn mật khẩu và footer form; input/nút 44px. Chỉ CSS riêng register-page.
+
+### 17/10/2026 – Làm mới Đăng ký bằng Bootstrap
+- Đồng bộ với Login: thẻ trắng, nhãn chào, form/nút và khoảng cách gọn, dùng chung login-bootstrap.css với override riêng register-page. Giữ các trường và logic đăng ký.
+- Build đạt; Edge 360/768/1440px không tràn ngang, required/phone pattern, password toggle, CSRF và liên kết Login đạt; không tạo tài khoản. Đã xem ảnh data/register-bootstrap-1440.png; demo đã chạy lại, chưa push.
+
+### 17/10/2026 – Làm mới đăng nhập bằng Bootstrap
+- Cân ảnh/form, thẻ trắng Bootstrap, nhãn chào, ô nhập/checkbox/nút đồng bộ và mobile gọn. CSS riêng chỉ nạp ở Login qua section Styles của LoginLayout; giữ logic đăng nhập/CSRF/khóa tài khoản/token.
+- Build đạt; Edge 360/768/1440px không tràn ngang, báo trống form và hiện/ẩn mật khẩu đạt, đăng nhập tenant3 demo thành công. Đã xem ảnh data/login-bootstrap-1440.png và data/login-bootstrap-360.png. Demo đã chạy lại, chưa push.
+
 ### 17/10/2026 – Bỏ breadcrumb chi tiết tin
 - Gỡ riêng dòng Trang chủ / Tìm phòng / Chi tiết tin. Build/HTTP đạt; demo đã chạy lại.
 
