@@ -14,11 +14,12 @@ public sealed class BaoHongController(BaoHongService service, BaoHongImageStore 
 {
     private int ActorId => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
     [HttpGet]
-    public async Task<IActionResult> Index(int page = 1, CancellationToken ct = default)
+    public async Task<IActionResult> Index([FromQuery] BaoHongBoLoc filter, CancellationToken ct = default)
     {
-        page = Math.Clamp(page, 1, 100000); ViewData["Page"] = page;
-        try { return View(await service.DanhSachAsync(ActorId, page, ct)); }
+        if (!ModelState.IsValid) return BadRequest("Điều kiện lọc báo hỏng không hợp lệ.");
+        try { var result = await service.DanhSachLocAsync(ActorId, filter, ct); ViewData["Page"] = filter.Page; ViewData["BaoHongBoLoc"] = filter; ViewData["BaoHongTongQuan"] = result.Summary; return View(result.Rows); }
         catch (UnauthorizedAccessException) { return Forbid(); }
+        catch (ArgumentException) { return BadRequest("Điều kiện lọc báo hỏng không hợp lệ."); }
     }
     [HttpGet, ModuleAccess("BAO_HONG", write: true)]
     public async Task<IActionResult> Create(CancellationToken ct)

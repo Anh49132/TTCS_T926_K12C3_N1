@@ -7,12 +7,12 @@
     var statusName = QL_PhongTro.Services.BaoHongService.TenTrangThai(report.TrangThai);
     var statusClass = report.TrangThai == "HOAN_THANH" ? "is-complete" : report.TrangThai == "TU_CHOI" ? "is-rejected" : "is-pending";
 }
-<div class="repairs-page manager-repair-detail @(!Model.LaQuanLy && !Model.LaChuNha ? "tenant-repair-detail" : "")">
+<div class="repairs-page manager-repair-detail @(Model.LaQuanLy ? "repair-manager-upgrade" : "")">
     <nav class="mrd-breadcrumb" aria-label="Đường dẫn điều hướng">
         <a asp-controller="@reportController" asp-action="Index" asp-all-route-data="listRoutes">Báo hỏng</a><span aria-hidden="true">›</span><span aria-current="page">@report.MaBaoHong</span>
     </nav>
     <header class="mrd-heading">
-        <div><div class="mrd-title"><h1>Chi tiết báo hỏng</h1><span class="mrd-status @statusClass">@statusName</span></div><p>@report.MaBaoHong</p></div>
+        <div><div class="mrd-title"><h1>@report.MaBaoHong · @report.LoaiThietBi</h1><span class="mrd-status @statusClass">@statusName</span><span class="mrd-priority @(report.MucDo=="GAP" ? "is-urgent" : "")">@(report.MucDo=="GAP" ? "Gấp" : "Thường")</span></div><p>Chi tiết báo hỏng · Phòng @Model.MaPhong · @Model.TenToaNha · gửi lúc @report.NgayTao.AddHours(7).ToString("dd/MM/yyyy HH:mm")</p></div>
         <a class="mrd-back" asp-controller="@reportController" asp-action="Index" asp-all-route-data="listRoutes"><span aria-hidden="true">←</span> Danh sách báo hỏng</a>
     </header>
     <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
@@ -63,7 +63,6 @@
             }
         </div>
         <aside class="mrd-side" aria-label="Chi phí và xử lý báo hỏng">
-            <div class="mrd-cost"><partial name="~/Views/BaoHong/_ChiPhi.cshtml" model="Model" /></div>
             @if (Model.LaQuanLy) {
             <section class="repairs-card mrd-update" aria-labelledby="repair-status-title">
                 <h2 id="repair-status-title"><span class="mrd-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m4 6 2 2 3-4M12 6h8M4 12l2 2 3-4M12 12h8M4 18l2 2 3-4M12 18h8"/></svg></span>Cập nhật trạng thái</h2>
@@ -75,6 +74,7 @@
                 } else {
                     <form asp-controller="QuanLyBaoHong" asp-action="CapNhat" asp-all-route-data="routes" method="post" class="repair-management-form">
                         <input asp-for="CapNhat.PhienBan" type="hidden" /><input asp-for="CapNhat.KhoaChongTrung" type="hidden" />
+                        <div class="ru-actions" aria-label="Chọn hành động">@foreach(var target in Model.TrangThaiTiepTheo){<button type="button" class="ru-action @(target=="TU_CHOI" ? "danger" : "")" data-repair-target="@target">@(target=="DANG_XU_LY" ? "Tiếp nhận" : target=="HOAN_THANH" ? "Hoàn thành" : "Từ chối")</button>}@if(report.TrangThai=="DANG_XU_LY"){<button type="button" class="ru-action" data-repair-focus-reply>Tiếp tục xử lý</button>}</div>
                         <label asp-for="CapNhat.TrangThai">Trạng thái tiếp theo <span class="mrd-required">*</span></label>
                         <select asp-for="CapNhat.TrangThai" required><option value="">Chọn trạng thái</option>
                             @foreach (var status in Model.TrangThaiTiepTheo) { <option value="@status">@QL_PhongTro.Services.BaoHongService.TenTrangThai(status)</option> }
@@ -88,6 +88,7 @@
                 }
             </section>
             }
+            <div class="mrd-cost"><partial name="~/Views/BaoHong/_ChiPhi.cshtml" model="Model" /></div>
         </aside>
     </div>
 </div>

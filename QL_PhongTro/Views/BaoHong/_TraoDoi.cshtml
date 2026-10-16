@@ -1,6 +1,7 @@
 @model QL_PhongTro.ViewModels.BaoHongChiTiet
 <section class="repairs-card" aria-labelledby="repair-history-title">
 <h2 id="repair-history-title">Phản hồi và lịch sử xử lý</h2>
+<div class="ru-history-origin"><strong>Khách gửi báo hỏng</strong><time>@Model.BaoHong.NgayTao.AddHours(7).ToString("dd/MM/yyyy HH:mm")</time><p>@Model.TenNguoiBao · Trạng thái Mới</p></div>
 @if (Model.TraoDois.Count == 0) { <p>Chưa có phản hồi hoặc cập nhật từ quản lý.</p> }
 else {
     <ol class="repair-timeline">

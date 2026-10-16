@@ -1,0 +1,21 @@
+@model List<QL_PhongTro.ViewModels.BaoHongChiTiet>
+@using QL_PhongTro.ViewModels
+@using QL_PhongTro.Services
+@{
+    ViewData["Title"] = "Thông báo";
+    var filter=(BaoHongBoLoc)ViewData["BaoHongBoLoc"]!;
+    var summary=(BaoHongTongQuan)ViewData["BaoHongTongQuan"]!;
+    var pages=Math.Max(1,(summary.KetQua+19)/20);
+}
+@section Styles { <link rel="stylesheet" href="~/css/manager-notifications.css" asp-append-version="true"/> }
+<section class="manager-notifications">
+<header><div><h1>Thông báo báo hỏng</h1><p>Yêu cầu từ khách thuê tại các tòa nhà bạn đang quản lý.</p></div><a class="btn btn-outline-secondary" asp-action="Index">Quản lý báo hỏng</a></header>
+<div class="mn-summary"><strong>@summary.Moi cần tiếp nhận</strong><span>@summary.DangXuLy đang xử lý</span><span>@summary.QuaHan báo Gấp quá 24 giờ chưa tiếp nhận</span></div>
+<nav class="mn-tabs" aria-label="Lọc thông báo"><a href="/ThongBaoQuanLy" aria-current="@(filter.TrangThai is null && filter.CanhBao is null ? "page" : null)">Tất cả</a><a href="/ThongBaoQuanLy?trangThai=MOI" aria-current="@(filter.TrangThai=="MOI" ? "page" : null)">Cần tiếp nhận</a><a href="/ThongBaoQuanLy?canhBao=QUA_HAN" aria-current="@(filter.CanhBao=="QUA_HAN" ? "page" : null)">Gấp quá hạn</a></nav>
+<p class="mn-help">Danh sách ghi nhận các báo hỏng đã gửi, mới nhất trước. Nhãn “Cần tiếp nhận” phản ánh trạng thái xử lý, không phải trạng thái đã đọc.</p>
+@if(Model.Count==0){<div class="mn-empty" role="status"><h2>Không có thông báo phù hợp</h2><p>Khi khách thuê gửi báo hỏng tại tòa được giao, yêu cầu sẽ xuất hiện ở đây.</p></div>}
+@foreach(var row in Model){var b=row.BaoHong;
+<article class="mn-item" data-notice-id="@b.Id"><span class="mn-icon" aria-hidden="true">@(b.MucDo=="GAP" ? "!" : "▤")</span><div><h2>@(b.TrangThai=="MOI" ? "Báo hỏng cần tiếp nhận" : "Báo hỏng của khách thuê") <span class="mn-state">@BaoHongService.TenTrangThai(b.TrangThai)</span></h2><p><strong>@row.TenNguoiBao</strong> · Phòng @row.MaPhong · @row.TenToaNha</p><p>@b.LoaiThietBi · @b.MaBaoHong <span class="@(b.MucDo=="GAP" ? "mn-urgent" : "")">· @(b.MucDo=="GAP" ? "Gấp" : "Thường")</span></p><small>Gửi lúc @b.NgayTao.AddHours(7).ToString("dd/MM/yyyy HH:mm") · Cập nhật @row.CapNhatGanNhat.AddHours(7).ToString("dd/MM/yyyy HH:mm")</small>@if(row.CanhBaoQuaHan is not null){<p class="mn-urgent">Gấp — Quá 24 giờ chưa tiếp nhận</p>}</div><a class="btn btn-outline-secondary" asp-action="Details" asp-route-id="@b.Id">@(b.TrangThai=="MOI" ? "Kiểm tra ngay" : "Xem chi tiết")</a></article>
+}
+<footer><span>@summary.KetQua báo hỏng · Trang @filter.Page / @pages</span><nav aria-label="Phân trang">@if(filter.Page>1){<a asp-action="ThongBao" asp-all-route-data="@filter.RouteValues(filter.Page-1)">‹ Trước</a>}@if(filter.Page<pages){<a asp-action="ThongBao" asp-all-route-data="@filter.RouteValues(filter.Page+1)">Sau ›</a>}</nav></footer>
+</section>

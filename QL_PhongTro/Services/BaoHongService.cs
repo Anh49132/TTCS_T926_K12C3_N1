@@ -52,7 +52,19 @@ public sealed class BaoHongService(AppDbContext db, ITimeProvider clock, BaoHong
         join t in db.ToaNhas on p.ToaNhaId equals t.Id
         join h in db.HopDongs on b.HopDongId equals h.Id
         join a in db.TaiKhoans on b.NguoiBaoId equals a.Id
-        select new BaoHongChiTiet { BaoHong = b, MaPhong = p.MaPhong, TenToaNha = t.TenToaNha, MaHopDong = h.MaHopDong, TenNguoiBao = a.HoTen };
+        select new BaoHongChiTiet { BaoHong = b, ToaNhaId = t.Id, MaPhong = p.MaPhong, TenToaNha = t.TenToaNha, MaHopDong = h.MaHopDong, TenNguoiBao = a.HoTen };
+
+    public async Task<(List<BaoHongChiTiet> Rows, BaoHongTongQuan Summary)> DanhSachLocAsync(int actorId, BaoHongBoLoc filter, CancellationToken ct = default)
+    {
+        await ActorAsync(actorId, false, ct); filter.ChuanHoa();
+        if (filter.ToaNhaId.HasValue || filter.CanhBao is not null) throw new ArgumentException("Điều kiện lọc không hỗ trợ trên danh sách khách thuê.");
+        var scoped = Rows(actorId); var query = RepairListQuery.Filter(scoped, filter, clock.UtcNow);
+        var counts = await scoped.GroupBy(x => x.BaoHong.TrangThai).Select(g => new { State = g.Key, Count = g.Count() }).ToDictionaryAsync(x => x.State, x => x.Count, ct);
+        var total = await query.CountAsync(ct); filter.Page = Math.Clamp(filter.Page, 1, Math.Max(1, (total + 19) / 20));
+        var rows = await RepairListQuery.Sort(query, filter.SapXep).Skip((filter.Page - 1) * 20).Take(20).ToListAsync(ct);
+        await RepairListQuery.EnrichAsync(db, rows, ct);
+        return (rows, new BaoHongTongQuan { Tong = counts.Values.Sum(), Moi = counts.GetValueOrDefault("MOI"), DangXuLy = counts.GetValueOrDefault("DANG_XU_LY"), HoanThanh = counts.GetValueOrDefault("HOAN_THANH"), TheoTrangThai = counts, KetQua = total });
+    }
 
     public async Task<List<BaoHongChiTiet>> DanhSachAsync(int actorId, int page, CancellationToken ct = default)
     {

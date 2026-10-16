@@ -19,6 +19,8 @@ public class ModulesController(AppDbContext db, ITimeProvider clock) : Controlle
     [HttpGet("/Modules/{code}"), ModuleAccess]
     public async Task<IActionResult> Index(string code, string? section)
     {
+        if (code == "YEU_CAU_THUE" && section == "thong-bao" && User.IsInRole("QUAN_LY"))
+            return RedirectToAction("ThongBao", "QuanLyBaoHong");
         var module = await db.AppModules.AsNoTracking().SingleOrDefaultAsync(m => m.Code == code);
         if (module is null) return NotFound();
         ViewData["SectionTitle"] = (code, section) switch

@@ -1,0 +1,10 @@
+<link rel="stylesheet" href="~/css/payment-notifications.css" asp-append-version="true" />
+<div class="payment-bell" data-manager-bell>
+    <button type="button" class="payment-bell-toggle" aria-label="Thông báo báo hỏng" aria-expanded="false" aria-controls="manager-bell-panel"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" /></svg><span data-manager-pending hidden>0</span></button>
+    <section class="payment-bell-panel" id="manager-bell-panel" aria-label="Thông báo báo hỏng" hidden>
+        <header><strong>Thông báo báo hỏng</strong></header>
+        <div data-manager-notice-list data-payment-notice-list aria-live="polite"></div>
+        <a class="payment-notice-all" href="/ThongBaoQuanLy">Xem tất cả thông báo</a>
+    </section>
+</div>
+<script src="~/js/manager-notifications.js" asp-append-version="true" defer></script>

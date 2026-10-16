@@ -3,8 +3,8 @@
    ViewData["Title"] = title; var page = (int)(ViewData["Page"] ?? 1);
    var filter = ViewData["BaoHongBoLoc"] as QL_PhongTro.ViewModels.BaoHongBoLoc;
 }
-@section Scripts { @if(owner){<script src="~/js/tenant-repair-list.js" asp-append-version="true" defer></script>} }
-@section Styles { @if(owner){<link rel="stylesheet" href="~/css/tenant-repair-list.css" asp-append-version="true" />} <link rel="stylesheet" href="~/css/tenant-repairs.css" asp-append-version="true" /> @if(!owner){<link rel="stylesheet" href="~/css/manager-repairs.css" asp-append-version="true" />} }
+@section Scripts { @if(owner){<script src="~/js/tenant-repair-list.js" asp-append-version="true" defer></script>}else{<script src="~/js/manager-repair-detail.js" asp-append-version="true" defer></script>} }
+@section Styles { @if(owner){<link rel="stylesheet" href="~/css/tenant-repair-list.css" asp-append-version="true" />} <link rel="stylesheet" href="~/css/tenant-repairs.css" asp-append-version="true" /> @if(!owner){<link rel="stylesheet" href="~/css/manager-repairs.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/repair-upgrade.css" asp-append-version="true" />} }
 @if (!owner) {
     <partial name="_ManagerList" model="Model" />
 } else {

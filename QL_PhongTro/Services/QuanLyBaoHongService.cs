@@ -62,14 +62,12 @@ public sealed class QuanLyBaoHongService(AppDbContext db, ITimeProvider clock, B
     public async Task<List<BaoHongChiTiet>> DanhSachLocAsync(int managerId, BaoHongBoLoc filter, CancellationToken ct = default)
     {
         await ToaNhaLocAsync(managerId, filter, ct);
-        var query = Rows(managerId);
-        if (filter.ToaNhaId.HasValue) query = query.Where(x => x.ToaNhaId == filter.ToaNhaId.Value);
-        if (filter.TrangThai is not null) query = query.Where(x => x.BaoHong.TrangThai == filter.TrangThai);
-        if (filter.MucDo is not null) query = query.Where(x => x.BaoHong.MucDo == filter.MucDo);
-        var rows = await query.OrderByDescending(x => x.BaoHong.Id)
+        var query = RepairListQuery.Filter(Rows(managerId), filter, clock.UtcNow);
+        var rows = await RepairListQuery.Sort(query, filter.SapXep)
             .Skip((filter.Page - 1) * 20).Take(21).ToListAsync(ct);
         var now = clock.UtcNow;
         foreach (var row in rows) row.CanhBaoQuaHan = BaoHongCanhBaoService.DanhGia(row.BaoHong, now);
+        await RepairListQuery.EnrichAsync(db, rows, ct);
         return rows;
     }
 
@@ -82,9 +80,7 @@ public sealed class QuanLyBaoHongService(AppDbContext db, ITimeProvider clock, B
         var states = await scoped.GroupBy(x => x.BaoHong.TrangThai)
             .Select(g => new { State = g.Key, Count = g.Count() }).ToListAsync(ct);
         var urgent = scoped.Where(x => x.BaoHong.MucDo == "GAP" && x.BaoHong.TrangThai == "MOI" && x.BaoHong.NgayTao < cutoff);
-        var tabs = scoped;
-        if (filter.ToaNhaId.HasValue) tabs = tabs.Where(x => x.ToaNhaId == filter.ToaNhaId.Value);
-        if (filter.MucDo is not null) tabs = tabs.Where(x => x.BaoHong.MucDo == filter.MucDo);
+        var tabs = RepairListQuery.Filter(scoped, filter, now, state: false);
         var tabCounts = await tabs.GroupBy(x => x.BaoHong.TrangThai)
             .Select(g => new { State = g.Key, Count = g.Count() }).ToDictionaryAsync(x => x.State, x => x.Count, ct);
         var selected = filter.TrangThai is null ? tabs : tabs.Where(x => x.BaoHong.TrangThai == filter.TrangThai);
@@ -94,6 +90,8 @@ public sealed class QuanLyBaoHongService(AppDbContext db, ITimeProvider clock, B
         return new BaoHongTongQuan
         {
             Tong = states.Sum(x => x.Count), Moi = states.Where(x => x.State == "MOI").Sum(x => x.Count),
+            DangXuLy = states.Where(x => x.State == "DANG_XU_LY").Sum(x => x.Count),
+            HoanThanhThang = await scoped.CountAsync(x => x.BaoHong.TrangThai == "HOAN_THANH" && db.BaoHongTraoDois.Any(t => t.BaoHongId == x.BaoHong.Id && t.Loai == "TRANG_THAI" && t.TrangThaiSau == "HOAN_THANH" && t.ThoiDiem >= new DateTime(now.AddHours(7).Year, now.AddHours(7).Month, 1).AddHours(-7) && t.ThoiDiem <= now), ct),
             HoanThanh = states.Where(x => x.State == "HOAN_THANH").Sum(x => x.Count),
             QuaHan = await urgent.CountAsync(ct), SoToaNha = buildings.Count,
             KetQua = filter.TrangThai is null ? tabCounts.Values.Sum() : tabCounts.GetValueOrDefault(filter.TrangThai),

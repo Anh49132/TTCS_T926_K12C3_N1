@@ -13,6 +13,41 @@ namespace QL_PhongTro.Controllers;
 public sealed class QuanLyBaoHongController(QuanLyBaoHongService service, BaoHongImageStore images, BaoHongChiPhiService costs) : Controller
 {
     private int ActorId => int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+
+    [HttpGet("/ThongBaoQuanLy/TomTat")]
+    public async Task<IActionResult> ThongBaoTomTat(CancellationToken ct)
+    {
+        try
+        {
+            var summary = await service.TongQuanAsync(ActorId, new(), ct);
+            var rows = await service.DanhSachLocAsync(ActorId, new() { SapXep = "UU_TIEN" }, ct);
+            return Json(new { canTiepNhan = summary.Moi, items = rows.Take(6).Select(x => new {
+                tieuDe = x.BaoHong.TrangThai == "MOI" ? "Báo hỏng cần tiếp nhận" : "Báo hỏng của khách thuê",
+                noiDung = $"{x.TenNguoiBao} · Phòng {x.MaPhong} · {x.BaoHong.LoaiThietBi}",
+                trangThai = BaoHongService.TenTrangThai(x.BaoHong.TrangThai),
+                ngayTao = x.BaoHong.NgayTao.AddHours(7).ToString("dd/MM/yyyy HH:mm"),
+                duongDan = Url.Action(nameof(Details), new { id = x.BaoHong.Id })
+            }) });
+        }
+        catch (UnauthorizedAccessException) { return Forbid(); }
+    }
+
+    [HttpGet("/ThongBaoQuanLy")]
+    public async Task<IActionResult> ThongBao([FromQuery] BaoHongBoLoc filter, CancellationToken ct)
+    {
+        if (!ModelState.IsValid) return BadRequest("Điều kiện lọc thông báo không hợp lệ.");
+        try
+        {
+            var summary = await service.TongQuanAsync(ActorId, filter, ct);
+            filter.Page = Math.Clamp(filter.Page, 1, Math.Max(1, (summary.KetQua + 19) / 20));
+            var rows = await service.DanhSachLocAsync(ActorId, filter, ct);
+            ViewData["BaoHongBoLoc"] = filter;
+            ViewData["BaoHongTongQuan"] = summary;
+            return View("ThongBao", rows.Take(20).ToList());
+        }
+        catch (UnauthorizedAccessException) { return Forbid(); }
+        catch (ArgumentException) { return BadRequest("Điều kiện lọc thông báo không hợp lệ."); }
+    }
     private async Task LoadFilterAsync(BaoHongBoLoc filter, CancellationToken ct)
     {
         if (ModelState.Any(x => x.Value?.Errors.Count > 0 &&

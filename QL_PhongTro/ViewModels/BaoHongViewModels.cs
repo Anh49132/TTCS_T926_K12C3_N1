@@ -23,6 +23,11 @@ public sealed class TaoBaoHongViewModel
 }
 public sealed class BaoHongChiTiet
 {
+    public DateTime CapNhatGanNhat { get; set; }
+    public int SoPhanHoi { get; set; }
+    public int SoAnh { get; set; }
+    public int? AnhDaiDienThuTu { get; set; }
+    public string? NguoiXuLyGanNhat { get; set; }
     public BaoHongCanhBao? CanhBaoQuaHan { get; set; }
     public ChiPhiBaoHong? ChiPhi { get; set; }
     public BaoHongChiPhiInput ChiPhiInput { get; set; } = new();

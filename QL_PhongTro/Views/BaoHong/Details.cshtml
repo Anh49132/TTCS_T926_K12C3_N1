@@ -10,9 +10,11 @@
 @section Styles {
     <link rel="stylesheet" href="~/css/tenant-repairs.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/manager-repair-detail.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/repair-upgrade.css" asp-append-version="true" />
 }
 @section Scripts {
     <script src="~/js/repair-cost.js" asp-append-version="true" defer></script>
     <script src="~/js/manager-repair-detail.js" asp-append-version="true" defer></script>
 }
-<partial name="~/Views/QuanLyBaoHong/_ManagerDetail.cshtml" model="Model" />
+@if(Model.LaQuanLy || Model.LaChuNha){<partial name="~/Views/QuanLyBaoHong/_ManagerDetail.cshtml" model="Model" />}
+else {<partial name="~/Views/BaoHong/_TenantDetail.cshtml" model="Model" />}

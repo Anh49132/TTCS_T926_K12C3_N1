@@ -24,13 +24,13 @@
     };
 }
 <div class="repairs-page manager-repairs">
-    <header class="mr-heading"><h1>Báo hỏng được phân công</h1><p>Các báo hỏng tại tòa nhà bạn đang quản lý.</p></header>
+    <header class="mr-heading"><h1>Báo hỏng được phân công</h1><p>Ưu tiên và xử lý các yêu cầu tại tòa nhà bạn quản lý · Tổng @summary.Tong báo hỏng.</p></header>
     <section class="mr-stats" aria-label="Tổng quan báo hỏng trong phạm vi quản lý">
     @foreach(var card in new[] {
-        (Label:"Tổng báo hỏng", Value:summary.Tong, Note:$"{summary.SoToaNha} tòa nhà", Icon:"clipboard", Alert:false),
-        (Label:"Mới", Value:summary.Moi, Note:"Cần tiếp nhận", Icon:"inbox", Alert:false),
+        (Label:"Cần tiếp nhận", Value:summary.Moi, Note:$"{summary.SoToaNha} tòa nhà được phân công", Icon:"inbox", Alert:false),
+        (Label:"Đang xử lý", Value:summary.DangXuLy, Note:"Đang khắc phục sự cố", Icon:"clipboard", Alert:false),
         (Label:"Gấp — Quá 24 giờ", Value:summary.QuaHan, Note:"Cần ưu tiên", Icon:"clock", Alert:true),
-        (Label:"Hoàn thành", Value:summary.HoanThanh, Note:"Đã xử lý", Icon:"check", Alert:false) }) {
+        (Label:"Hoàn thành tháng này", Value:summary.HoanThanhThang, Note:"Theo lịch sử hoàn thành", Icon:"check", Alert:false) }) {
         <div class="mr-stat @(card.Alert ? "mr-stat-alert" : "")"><div><span>@card.Label</span><i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="@Icon(card.Icon)" /></svg></i></div><p><strong>@card.Value.ToString("D2")</strong><small>@card.Note</small></p></div>
     }
     </section>
@@ -52,24 +52,28 @@
         }
         </nav>
             <form asp-controller="QuanLyBaoHong" asp-action="Index" method="get" class="mr-filters" aria-label="Bộ lọc báo hỏng">
+                <div class="mr-inline-filter ru-manager-search"><label for="repair-search">Tìm kiếm</label><input id="repair-search" name="timKiem" value="@filter.TimKiem" type="search" maxlength="200" placeholder="Mã yêu cầu, thiết bị, phòng, người báo..."/></div>
                 <div class="mr-inline-filter"><label for="repair-building">Tòa nhà:</label><select id="repair-building" name="toaNhaId"><option value="">Tất cả tòa được phân công</option>@foreach(var building in buildings){<option value="@building.Id" selected="@(filter.ToaNhaId == building.Id)">@building.TenToaNha</option>}</select></div>
                 <div class="mr-inline-filter"><label for="repair-status">Trạng thái:</label><select id="repair-status" name="trangThai"><option value="">Tất cả trạng thái</option><option value="MOI" selected="@(filter.TrangThai == "MOI")">Mới</option><option value="DANG_XU_LY" selected="@(filter.TrangThai == "DANG_XU_LY")">Đang xử lý</option><option value="HOAN_THANH" selected="@(filter.TrangThai == "HOAN_THANH")">Đã xong</option><option value="TU_CHOI" selected="@(filter.TrangThai == "TU_CHOI")">Từ chối</option></select></div>
                 <div class="mr-inline-filter"><label for="repair-priority">Mức độ khẩn:</label><select id="repair-priority" name="mucDo"><option value="">Tất cả mức độ</option><option value="THUONG" selected="@(filter.MucDo == "THUONG")">Thường</option><option value="GAP" selected="@(filter.MucDo == "GAP")">Gấp</option></select></div>
+                <div class="mr-inline-filter"><label for="repair-warning">Cảnh báo</label><select id="repair-warning" name="canhBao"><option value="">Tất cả</option><option value="QUA_HAN" selected="@(filter.CanhBao=="QUA_HAN")">Gấp — Quá 24 giờ chưa tiếp nhận</option></select></div>
+                <div class="mr-inline-filter"><label for="repair-sort">Sắp xếp</label><select id="repair-sort" name="sapXep"><option value="MOI_NHAT" selected="@(filter.SapXep=="MOI_NHAT")">Mới nhất</option><option value="UU_TIEN" selected="@(filter.SapXep=="UU_TIEN")">Ưu tiên cao nhất</option><option value="CU_NHAT" selected="@(filter.SapXep=="CU_NHAT")">Cũ nhất</option></select></div>
                 <button class="mr-apply" type="submit"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18M3 12h18M3 18h18M8 3v6m8 0v6m-8 0v6"/></svg>Áp dụng bộ lọc</button><a class="mr-reset" asp-controller="QuanLyBaoHong" asp-action="Index">Xóa bộ lọc</a>
             </form>
         @if(rows.Count == 0){<p class="mr-empty" role="status">@(filter.DangLoc ? "Không có báo hỏng phù hợp với bộ lọc đã chọn." : filter.Page == 1 ? "Chưa có báo hỏng trong phạm vi của bạn." : "Không có báo hỏng trên trang này.")</p>}
         else {
-        <div class="mr-table-wrap"><table class="mr-table"><caption class="visually-hidden">Danh sách báo hỏng đáp ứng bộ lọc</caption><thead><tr><th scope="col">Báo hỏng</th><th scope="col">Tòa nhà / Phòng</th><th scope="col">Mức độ khẩn</th><th scope="col">Trạng thái</th><th scope="col">Ngày báo hỏng</th><th scope="col">Thao tác</th></tr></thead><tbody>
+        <div class="mr-table-wrap"><table class="mr-table"><caption class="visually-hidden">Danh sách báo hỏng đáp ứng bộ lọc</caption><thead><tr><th scope="col">Yêu cầu</th><th scope="col">Phòng / Người báo</th><th scope="col">Mức độ khẩn</th><th scope="col">Trạng thái</th><th scope="col">Cập nhật gần nhất</th><th scope="col">Xử lý gần nhất</th><th scope="col">Thao tác</th></tr></thead><tbody>
         @foreach(var row in rows) {
             var report = row.BaoHong;
             var routes = filter.RouteValues(id: report.Id);
             <tr data-repair-id="@report.Id" class="@(row.CanhBaoQuaHan is not null ? "repairs-card-overdue" : "")">
-                <td data-label="Báo hỏng"><a class="mr-code" asp-action="Details" asp-all-route-data="@routes">@report.MaBaoHong</a><span class="mr-device">@report.LoaiThietBi</span><small class="mr-description" title="@report.MoTa">@report.MoTa</small></td>
-                <td data-label="Tòa nhà / Phòng"><strong>Phòng @row.MaPhong</strong><span class="mr-muted">@row.TenToaNha</span></td>
+                <td data-label="Yêu cầu"><div class="ru-manager-report">@if(row.AnhDaiDienThuTu is {} order){<a class="ru-thumb" asp-action="Details" asp-all-route-data="@routes"><img src="@Url.Action("Image",new{id=report.Id,order})" alt="Ảnh @report.LoaiThietBi" loading="lazy"/><span>@row.SoAnh ảnh</span></a>}<div><a class="mr-code" asp-action="Details" asp-all-route-data="@routes">@report.MaBaoHong</a><span class="mr-device">@report.LoaiThietBi</span><small class="mr-description" title="@report.MoTa">@report.MoTa</small><small class="mr-muted">Gửi @report.NgayTao.AddHours(7).ToString("dd/MM/yyyy HH:mm")</small></div></div></td>
+                <td data-label="Phòng / Người báo"><strong>Phòng @row.MaPhong</strong><span class="mr-muted">@row.TenToaNha</span><span class="mr-muted">@row.TenNguoiBao</span></td>
                 <td data-label="Mức độ khẩn"><span class="mr-badge @(report.MucDo == "GAP" ? "mr-urgent-badge" : "mr-normal")">@(report.MucDo == "GAP" ? "Gấp" : "Thường")</span>@if(row.CanhBaoQuaHan is { } alert){<small class="mr-overdue" title="Đã chờ xử lý: @alert.ThoiGianChoHienThi">Quá 24 giờ</small>}</td>
                 <td data-label="Trạng thái"><span class="mr-badge mr-status-@report.TrangThai">@BaoHongService.TenTrangThai(report.TrangThai)</span></td>
-                <td data-label="Ngày báo hỏng"><time datetime="@report.NgayTao.ToString("O")">@report.NgayTao.AddHours(7).ToString("dd/MM/yyyy")<small>@report.NgayTao.AddHours(7).ToString("HH:mm")</small></time></td>
-                <td data-label="Thao tác"><a class="mr-handle" asp-action="Details" asp-all-route-data="@routes">Xem và xử lý <span aria-hidden="true">↗</span></a></td>
+                <td data-label="Cập nhật gần nhất"><time datetime="@row.CapNhatGanNhat.ToString("O")">@row.CapNhatGanNhat.AddHours(7).ToString("dd/MM/yyyy")<small>@row.CapNhatGanNhat.AddHours(7).ToString("HH:mm")</small></time></td>
+                <td data-label="Xử lý gần nhất">@(row.NguoiXuLyGanNhat??"Chưa ghi nhận")<small class="mr-muted">@row.SoPhanHoi phản hồi</small></td>
+                <td data-label="Thao tác"><a class="mr-handle ru-handle" asp-action="Details" asp-all-route-data="@routes">@(report.TrangThai=="MOI" ? "Tiếp nhận" : report.TrangThai=="DANG_XU_LY" ? "Tiếp tục xử lý" : "Xem chi tiết") <span aria-hidden="true">↗</span></a></td>
             </tr>
         }
         </tbody></table></div>
