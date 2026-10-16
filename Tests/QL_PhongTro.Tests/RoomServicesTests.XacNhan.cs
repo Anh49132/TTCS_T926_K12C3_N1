@@ -26,11 +26,16 @@ public sealed partial class RoomServicesTests
     {
         using var db=Context();var f=await MonthlyFixture(db);
         await db.Database.ExecuteSqlRawAsync("UPDATE chi_so_dien_nuoc SET tu_ngay='2026-09-01',den_ngay='2026-09-30'; UPDATE khach_thue SET tai_khoan_id=3 WHERE id=1");db.ChangeTracker.Clear();
+        var requests = new CheckoutRequestService(db, CollectionClock());
+        var requestId = await requests.SubmitAsync(3, f.A, new(2026,10,13), "Đề nghị trả trước hạn");
+        await requests.ChangeAsync(1, requestId, 0, "DA_TIEP_NHAN", new(2026,10,13), "Đã thống nhất");
         var handover=new TraPhongService(db,TatToanClock());var input=new TraPhongInput {HopDongId=f.A,NgayTra=new(2026,10,13),ChiSoDien=224,ChiSoNuoc=30,LyDo="THOA_THUAN"};
         input.DauVanTay=TraPhongService.DauVanTay(await handover.NhapAsync(1,input,true));var invoice=await handover.LuuAsync(1,input);
         var service=new TatToanService(db,TatToanClock());await service.LuuAsync(1,(await service.NhapAsync(1,f.A)).Input);
         var count=await db.ChiSoDienNuocs.CountAsync();await service.HoanTatAsync(1,DongY(await service.KiemTraChotAsync(1,f.A)));db.ChangeTracker.Clear();
         Assert.Equal(count,await db.ChiSoDienNuocs.CountAsync());
+        Assert.Equal("HOAN_TAT", (await db.YeuCauTraPhongs.AsNoTracking().SingleAsync(x=>x.Id==requestId)).TrangThai);
+        Assert.True(await db.ThongBaoTraPhongs.AnyAsync(x=>x.YeuCauId==requestId && x.Loai=="HOAN_TAT" && x.NguoiNhanId==3));
         var bill=await db.HoaDons.Include(x=>x.ChiTiet).SingleAsync(x=>x.Id==invoice);
         Assert.Equal("DA_PHAT_HANH",bill.TrangThai);Assert.Equal(795355,bill.TongTien);
         Assert.Equal(224,bill.ChiTiet.Single(x=>x.CachTinhApDung==CachTinhDichVu.TheoChiSo && x.ChiSoCuoi==224).ChiSoCuoi);
@@ -194,6 +199,6 @@ public sealed partial class RoomServicesTests
         using var verify=new SqliteConnection($"Data Source={target};Pooling=False");verify.Open();using var check=verify.CreateCommand();
         check.CommandText="PRAGMA integrity_check";Assert.Equal("ok",check.ExecuteScalar());check.CommandText="PRAGMA foreign_key_check";using(var reader=check.ExecuteReader())Assert.False(reader.Read());
         check.CommandText="SELECT COUNT(*) FROM xac_nhan_tat_toan";Assert.Equal(0L,check.ExecuteScalar());
-        check.CommandText="SELECT MAX(version) FROM app_schema_version";Assert.Equal(39L,check.ExecuteScalar());
+        check.CommandText="SELECT MAX(version) FROM app_schema_version";Assert.Equal(40L,check.ExecuteScalar());
     }
 }

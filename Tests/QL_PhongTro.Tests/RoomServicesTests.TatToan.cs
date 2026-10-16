@@ -186,7 +186,7 @@ public sealed partial class RoomServicesTests
         var backups=Directory.GetFiles(folder,"v31-upgrade-copy.sqlite.before-update-*.bak");Assert.Single(backups);
         DatabaseUpdates.Check(target);DatabaseUpdates.Update(target,Path.Combine(app,"Data","permissions.seed.json"));Assert.Single(Directory.GetFiles(folder,"v31-upgrade-copy.sqlite.before-update-*.bak"));
         using var verify=new SqliteConnection($"Data Source={target};Pooling=False");verify.Open();using var check=verify.CreateCommand();check.CommandText="PRAGMA integrity_check";Assert.Equal("ok",check.ExecuteScalar());check.CommandText="PRAGMA foreign_key_check";using(var reader=check.ExecuteReader())Assert.False(reader.Read());
-        check.CommandText="SELECT MAX(version) FROM app_schema_version";Assert.Equal(39L,check.ExecuteScalar());Assert.Equal(before,Snapshot(target));
+        check.CommandText="SELECT MAX(version) FROM app_schema_version";Assert.Equal(40L,check.ExecuteScalar());Assert.Equal(before,Snapshot(target));
     }
     [Fact]
     public async Task TatToanConcurrentDraftCreatesOnlyOneRowAndKeepsSavedSnapshotStable()

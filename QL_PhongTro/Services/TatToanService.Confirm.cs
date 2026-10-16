@@ -105,7 +105,9 @@ public sealed partial class TatToanService
         db.XacNhanTatToans.Add(new() {ThanhLyId=bang.Id,HopDongId=h.Id,NguoiXacNhanId=actor,
             TenNguoiXacNhan=await db.TaiKhoans.Where(x=>x.Id==actor).Select(x=>x.HoTen).SingleAsync(),ThoiDiem=clock.UtcNow,
             SoTienTatToan=checked(bang.TienPhaiHoan-bang.TienKhachTraThem),TienCanTru=offset});
-        await db.SaveChangesAsync();await sqlite.CommitAsync();
+        await db.SaveChangesAsync();
+        await new CheckoutRequestService(db,clock).CompleteAsync(actor,input.HopDongId);
+        await sqlite.CommitAsync();
     }
 
     private async Task LuuChiSoCuoiAsync(int actor,HoaDon bill)

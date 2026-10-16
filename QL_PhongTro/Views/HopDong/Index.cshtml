@@ -12,6 +12,7 @@
  string Label(string state)=>state switch{"DANG_HIEU_LUC"=>"Hiệu lực","NHAP"=>"Nháp","CHO_HIEU_LUC"=>"Chờ hiệu lực","DA_KET_THUC"=>"Đã kết thúc","DA_HUY"=>"Đã hủy",_=>state};
 }
 <div class="contract-page contract-list lease-overview">
+@if(User.IsInRole("CHU_NHA") && await Permissions.AllowsAsync("HOP_DONG")){<p><a class="btn btn-outline-secondary" asp-controller="YeuCauTraPhong" asp-action="Index">Yêu cầu trả phòng của khách</a></p>}
 @if(User.IsInRole("CHU_NHA") && await Permissions.AllowsAsync("HOP_DONG",true) && await Permissions.AllowsAsync("TAI_CHINH",true)){<div class="lease-header-actions"><a class="btn btn-outline-primary" asp-controller="TraPhong" asp-action="Index">Ghi nhận trả phòng</a><a class="btn btn-outline-primary" asp-controller="TatToan" asp-action="Index">Bảng tất toán</a></div>}
 <div class="contract-heading"><div><h1>Hợp đồng &amp; người ở ghép</h1><p>Quản lý hợp đồng thuê và các thành viên cư trú trong từng phòng.</p></div><div class="lease-header-actions"><button type="button" class="btn btn-outline-primary" id="lease-export"><svg class="lease-download-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 15v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-4"/></svg> Xuất danh sách</button>@if(await Permissions.AllowsAsync("HOP_DONG",true)){<a class="btn btn-primary" asp-action="Create">＋ Tạo hợp đồng</a>}</div></div>
 @if(TempData["ContractSuccess"] is {} message){<div class="alert alert-success">@message</div>}

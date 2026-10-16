@@ -122,7 +122,7 @@ public sealed partial class BaoHongChiPhiSchemaTests
         }
         var old=Snapshot(f.Db); DatabaseUpdates.Update(f.Path,f.Seed); DatabaseUpdates.Check(f.Path);
         var after=Snapshot(f.Db); foreach(var row in old)Assert.Equal(row.Value,after[row.Key]);
-        Assert.Equal(39,f.Scalar("SELECT MAX(version) FROM app_schema_version"));
+        Assert.Equal(40,f.Scalar("SELECT MAX(version) FROM app_schema_version"));
         Assert.Equal(0,f.Scalar("SELECT COUNT(*) FROM chi_phi_bao_hong"));Assert.Equal(0,f.Scalar("SELECT COUNT(*) FROM lich_su_chi_phi_bao_hong"));
         f.Db.Close(); SqliteConnection.ClearAllPools();
         var hash=System.Security.Cryptography.SHA256.HashData(File.ReadAllBytes(f.Path));

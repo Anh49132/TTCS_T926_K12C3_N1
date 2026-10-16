@@ -14,6 +14,7 @@
             @if(User.IsInRole("CHU_NHA") && Model.XemTaiChinh){
                 @if(Model.HopDong.TrangThai=="DANG_HIEU_LUC"){<a class="btn btn-primary" asp-controller="TraPhong" asp-action="Nhap" asp-route-id="@Model.HopDong.Id">Xử lý trả phòng</a>}
                 <a class="btn btn-outline-secondary" asp-controller="TatToan" asp-action="ChiTiet" asp-route-id="@Model.HopDong.Id">Bảng tất toán</a>
+                <a class="btn btn-outline-secondary" asp-controller="YeuCauTraPhong" asp-action="Index" asp-route-hopDongId="@Model.HopDong.Id">Yêu cầu trả phòng</a>
             }
             @if (people) { <a class="btn btn-outline-secondary" asp-action="Details" asp-route-id="@Model.HopDong.Id">▤ &nbsp; Xem hợp đồng</a> }
             else { <button type="button" class="btn btn-outline-secondary" onclick="window.print()">▤ &nbsp; In hợp đồng</button> }

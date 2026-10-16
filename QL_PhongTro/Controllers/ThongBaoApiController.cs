@@ -14,6 +14,10 @@ namespace QL_PhongTro.Controllers;
 public class ThongBaoApiController(AppDbContext db, ITimeProvider clock) : Controller
 {
     private int AccountId => int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : 0;
+    private async Task<bool> CheckoutEnabled() => await HttpContext.RequestServices.GetRequiredService<PermissionService>().AllowsAsync("HOP_DONG")
+        && await new CheckoutRequestService(db, clock).ReadyAsync();
+    private async Task<int> CheckoutUnread(CancellationToken ct) => await CheckoutEnabled()
+        ? await db.ThongBaoTraPhongs.CountAsync(x => x.NguoiNhanId == AccountId && x.NgayDoc == null, ct) : 0;
 
     [HttpGet("chua-doc")]
     public async Task<IActionResult> DemChuaDoc(CancellationToken cancellationToken)
@@ -21,6 +25,7 @@ public class ThongBaoApiController(AppDbContext db, ITimeProvider clock) : Contr
         var count = await db.ThongBaoHoaDons.AsNoTracking()
             .CountAsync(x => x.NguoiNhanId == AccountId && x.NgayDoc == null, cancellationToken);
         count += await db.ThongBaoThanhToans.CountAsync(x => x.NguoiNhanId == AccountId && x.NgayDoc == null, cancellationToken);
+        count += await CheckoutUnread(cancellationToken);
         return Json(new { count });
     }
 
@@ -37,8 +42,11 @@ public class ThongBaoApiController(AppDbContext db, ITimeProvider clock) : Contr
             .ToListAsync(cancellationToken);
         var payments = await db.ThongBaoThanhToans.AsNoTracking().Where(x => x.NguoiNhanId == AccountId)
             .OrderByDescending(x => x.NgayTao).ThenByDescending(x => x.Id).Take(page * pageSize).ToListAsync(cancellationToken);
+        var checkouts = await CheckoutEnabled() ? await db.ThongBaoTraPhongs.AsNoTracking().Where(x => x.NguoiNhanId == AccountId)
+            .OrderByDescending(x => x.NgayTao).ThenByDescending(x => x.Id).Take(page * pageSize).ToListAsync(cancellationToken) : [];
         var result = items.Select(t => new BellItem(t.Id, "INVOICE", t.LoaiThongBao, t.TieuDe, t.NoiDung, t.DuongDan, t.NgayDoc.HasValue, t.NgayTao))
             .Concat(payments.Select(t => new BellItem(t.Id, "PAYMENT", t.Loai, t.TieuDe, t.NoiDung, t.DuongDan, t.NgayDoc.HasValue, t.NgayTao)))
+            .Concat(checkouts.Select(t => new BellItem(t.Id, "CHECKOUT", t.Loai, t.TieuDe, t.NoiDung, t.DuongDan, t.NgayDoc.HasValue, t.NgayTao)))
             .OrderByDescending(x => x.CreatedUtc).ThenByDescending(x => x.Id).Skip((page - 1) * pageSize).Take(pageSize).ToList();
         return Json(new { items = result.Select(t => new
         {
@@ -58,6 +66,7 @@ public class ThongBaoApiController(AppDbContext db, ITimeProvider clock) : Contr
         var count = await db.ThongBaoHoaDons.CountAsync(
             x => x.NguoiNhanId == AccountId && x.NgayDoc == null, cancellationToken);
         count += await db.ThongBaoThanhToans.CountAsync(x => x.NguoiNhanId == AccountId && x.NgayDoc == null, cancellationToken);
+        count += await CheckoutUnread(cancellationToken);
         return Json(new { success = true, unreadCount = count });
     }
 
@@ -69,6 +78,8 @@ public class ThongBaoApiController(AppDbContext db, ITimeProvider clock) : Contr
             .Where(x => x.NguoiNhanId == AccountId && x.NgayDoc == null)
             .ExecuteUpdateAsync(set => set.SetProperty(x => x.NgayDoc, now), cancellationToken);
         markedCount += await db.ThongBaoThanhToans.Where(x => x.NguoiNhanId == AccountId && x.NgayDoc == null)
+            .ExecuteUpdateAsync(set => set.SetProperty(x => x.NgayDoc, now), cancellationToken);
+        if (await CheckoutEnabled()) markedCount += await db.ThongBaoTraPhongs.Where(x => x.NguoiNhanId == AccountId && x.NgayDoc == null)
             .ExecuteUpdateAsync(set => set.SetProperty(x => x.NgayDoc, now), cancellationToken);
         return Json(new { success = true, markedCount, unreadCount = 0 });
     }
@@ -84,6 +95,16 @@ public class ThongBaoApiController(AppDbContext db, ITimeProvider clock) : Contr
 
     [HttpGet("/ThongBaoThanhToan")]
     public IActionResult Inbox() => View("~/Views/Shared/PaymentNotificationInbox.cshtml");
+
+    [HttpPost("tra-phong/{id:int}/da-doc"), ValidateAntiForgeryToken]
+    public async Task<IActionResult> ReadCheckout(int id, CancellationToken ct)
+    {
+        if (!await CheckoutEnabled()) return Forbid();
+        if (!await db.ThongBaoTraPhongs.AnyAsync(x => x.Id == id && x.NguoiNhanId == AccountId, ct)) return NotFound();
+        await db.ThongBaoTraPhongs.Where(x => x.Id == id && x.NguoiNhanId == AccountId && x.NgayDoc == null)
+            .ExecuteUpdateAsync(s => s.SetProperty(x => x.NgayDoc, clock.UtcNow), ct);
+        return Ok(new { success = true });
+    }
 
     private sealed record BellItem(int Id, string Source, string LoaiThongBao, string TieuDe, string NoiDung, string DuongDan, bool DaDoc, DateTime CreatedUtc);
 }

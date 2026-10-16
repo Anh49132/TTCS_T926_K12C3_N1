@@ -190,6 +190,6 @@ public sealed partial class BaoHongTests
         DatabaseUpdates.Update(f.Path, seed); DatabaseUpdates.Update(f.Path, seed); DatabaseUpdates.Check(f.Path);
         using var check = f.Context(); Assert.Equal(0, (await check.BaoHongs.SingleAsync(x => x.Id == id)).PhienBan);
         Assert.Single(await check.AnhBaoHongs.ToListAsync()); Assert.Empty(await check.BaoHongTraoDois.ToListAsync());
-        Assert.Equal(39, f.Scalar("SELECT MAX(version) FROM app_schema_version"));
+        Assert.Equal(40, f.Scalar("SELECT MAX(version) FROM app_schema_version"));
     }
 }

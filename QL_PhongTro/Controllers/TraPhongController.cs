@@ -23,9 +23,19 @@ public sealed class TraPhongController(AppDbContext db,ITimeProvider clock):Cont
     [HttpGet,ModuleAccess("TAI_CHINH",write:true)]
     public async Task<IActionResult> Index()=>View(await(from h in db.HopDongs.AsNoTracking() join p in db.PhongTros on h.PhongId equals p.Id join b in db.ToaNhas on p.ToaNhaId equals b.Id join k in db.KhachThues on h.KhachDungTenId equals k.Id where b.ChuNhaId==Actor && h.TrangThai=="DANG_HIEU_LUC" orderby b.TenToaNha,p.MaPhong select new HopDongTraPhongChon(h.Id,h.MaHopDong,p.MaPhong,b.TenToaNha,k.HoTen)).ToListAsync());
     [HttpGet,ModuleAccess("TAI_CHINH",write:true)]
-    public async Task<IActionResult> Nhap(int id)
+    public async Task<IActionResult> Nhap(int id, int? yeuCauId)
     {
-        try{var model=await Service.NhapAsync(Actor,new() { HopDongId=id });return model.HoaDonDaCo.HasValue?RedirectToAction(nameof(ChiTiet),new {id=model.HoaDonDaCo}):View(model);}
+        try{
+            await Service.KiemTraQuyenAsync(Actor,id);
+            var input = new TraPhongInput { HopDongId = id };
+            if (yeuCauId.HasValue)
+            {
+                var request = await db.YeuCauTraPhongs.AsNoTracking().SingleOrDefaultAsync(x => x.Id == yeuCauId && x.HopDongId == id && x.TrangThai == "DA_TIEP_NHAN");
+                if (request is null) return NotFound();
+                if (request.NgayBanGiao > DateOnly.FromDateTime(clock.UtcNow.AddHours(7))) throw new InvalidOperationException("Chưa đến ngày bàn giao đã thống nhất. Ngày trả thực tế không được ở tương lai.");
+                input.NgayTra = request.NgayBanGiao;
+            }
+            var model=await Service.NhapAsync(Actor,input);return model.HoaDonDaCo.HasValue?RedirectToAction(nameof(ChiTiet),new {id=model.HoaDonDaCo}):View(model);}
         catch(UnauthorizedAccessException){return Forbid();}catch(InvalidOperationException ex){ViewData["Message"]=ex.Message;return View("ThongBao");}
     }
     [HttpPost,ValidateAntiForgeryToken,ModuleAccess("TAI_CHINH",write:true)]

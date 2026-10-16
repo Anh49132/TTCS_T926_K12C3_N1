@@ -21,7 +21,7 @@
                 const a=node('a','',`payment-notice ${item.daDoc?'':'unread'}`);
                 const target=new URL(item.duongDan,location.origin);if(target.origin!==location.origin)continue;
                 a.href=target.href;a.append(node('strong',item.tieuDe),node('p',item.noiDung),node('small',item.ngayTao),node('span',item.source==='PAYMENT'?'Kiểm tra ngay':'Xem chi tiết','payment-notice-action'));
-                a.addEventListener('click',async event=>{event.preventDefault();try{await post(item.source==='PAYMENT'?`/api/thong-bao/thanh-toan/${item.id}/da-doc`:`/api/thong-bao/${item.id}/da-doc`);}catch{}location.assign(a.href);});
+                a.addEventListener('click',async event=>{event.preventDefault();try{await post(item.source==='CHECKOUT'?`/api/thong-bao/tra-phong/${item.id}/da-doc`:item.source==='PAYMENT'?`/api/thong-bao/thanh-toan/${item.id}/da-doc`:`/api/thong-bao/${item.id}/da-doc`);}catch{}location.assign(a.href);});
                 list.append(a);
             }
             const more=root.querySelector('[data-payment-load-more]');if(more){more.hidden=items.length<20;more.dataset.nextPage=page+1;}

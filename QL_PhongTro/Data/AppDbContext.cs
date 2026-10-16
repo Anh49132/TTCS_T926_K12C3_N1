@@ -6,6 +6,8 @@ namespace QL_PhongTro.Data;
 public partial class AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor? httpContext = null) : DbContext(options)
 {
     public DbSet<TaiKhoanNganHang> TaiKhoanNganHangs => Set<TaiKhoanNganHang>();
+    public DbSet<YeuCauTraPhong> YeuCauTraPhongs => Set<YeuCauTraPhong>();
+    public DbSet<ThongBaoTraPhong> ThongBaoTraPhongs => Set<ThongBaoTraPhong>();
     public DbSet<BaoCaoThanhToan> BaoCaoThanhToans => Set<BaoCaoThanhToan>();
     public DbSet<ThongBaoThanhToan> ThongBaoThanhToans => Set<ThongBaoThanhToan>();
     public DbSet<XacNhanTatToan> XacNhanTatToans => Set<XacNhanTatToan>();
@@ -55,6 +57,12 @@ public partial class AppDbContext(DbContextOptions<AppDbContext> options, IHttpC
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<BaoCaoThanhToan>().HasOne<ThanhToanHoaDon>().WithMany().HasForeignKey(x => x.ThanhToanId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<YeuCauTraPhong>().Property(x => x.PhienBan).IsConcurrencyToken();
+        modelBuilder.Entity<YeuCauTraPhong>().HasOne<HopDongThamChieu>().WithMany().HasForeignKey(x => x.HopDongId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<YeuCauTraPhong>().HasOne<TaiKhoan>().WithMany().HasForeignKey(x => x.NguoiGuiId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<YeuCauTraPhong>().HasOne<TaiKhoan>().WithMany().HasForeignKey(x => x.NguoiXuLyId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<ThongBaoTraPhong>().HasOne<YeuCauTraPhong>().WithMany().HasForeignKey(x => x.YeuCauId).OnDelete(DeleteBehavior.Restrict);
+        modelBuilder.Entity<ThongBaoTraPhong>().HasOne<TaiKhoan>().WithMany().HasForeignKey(x => x.NguoiNhanId).OnDelete(DeleteBehavior.Restrict);
         modelBuilder.Entity<BaoCaoThanhToan>().HasOne<TaiKhoan>().WithMany().HasForeignKey(x => x.NguoiGuiId).OnDelete(DeleteBehavior.Restrict);
         modelBuilder.Entity<BaoCaoThanhToan>().HasOne<TaiKhoan>().WithMany().HasForeignKey(x => x.NguoiXuLyId).OnDelete(DeleteBehavior.Restrict);
         modelBuilder.Entity<ThongBaoThanhToan>().HasOne<ThanhToanHoaDon>().WithMany().HasForeignKey(x => x.ThanhToanId).OnDelete(DeleteBehavior.Restrict);

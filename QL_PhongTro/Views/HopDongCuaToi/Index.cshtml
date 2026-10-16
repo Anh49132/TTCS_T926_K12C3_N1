@@ -22,6 +22,7 @@
             <p>Xem và tải các hợp đồng mà bạn đang đứng tên hoặc là người ở cùng.</p>
         </div>
     </header>
+    <p><a class="btn btn-outline-secondary" asp-controller="YeuCauTraPhong" asp-action="Index">Yêu cầu trả phòng trước hạn của tôi</a></p>
 
     @if (!Model.SchemaReady || !string.IsNullOrWhiteSpace(Model.Message))
     {

@@ -1,0 +1,45 @@
+@model QL_PhongTro.ViewModels.CheckoutRequestViewModel
+@inject QL_PhongTro.Authorization.PermissionService Permissions
+@{
+    ViewData["Title"] = "Yêu cầu trả phòng trước hạn";
+    var write = Model.IsOwner && await Permissions.AllowsAsync("HOP_DONG", true);
+    string State(string value) => value switch { "MOI" => "Chờ chủ nhà tiếp nhận", "DA_TIEP_NHAN" => "Đã thống nhất bàn giao", "TU_CHOI" => "Không chấp thuận", "DA_HUY" => "Khách đã hủy", _ => "Đã hoàn tất trả phòng" };
+    var selected = Model.Contracts.FirstOrDefault(x => x.Id == Model.HopDongId);
+    var available = Model.Contracts.Where(x => x.TrangThai == "DANG_HIEU_LUC" && x.NgayKetThuc > Model.HomNay).ToList();
+    var pages = Math.Max(1, (Model.Rows.Count + 19) / 20);
+}
+@section Styles { <link rel="stylesheet" href="~/css/checkout-request.css" asp-append-version="true" /> }
+<div class="checkout-requests">
+<header><div><h1>Yêu cầu trả phòng trước hạn</h1><p>@(Model.IsOwner ? "Tiếp nhận đề nghị, thống nhất ngày bàn giao và chuẩn bị trả phòng." : "Gửi ngày dự kiến và lý do để trao đổi với chủ nhà trước khi bàn giao phòng.")</p></div><a class="btn btn-outline-secondary" asp-controller="@(Model.IsOwner ? "HopDong" : "HopDongCuaToi")" asp-action="Index">Quay lại hợp đồng</a></header>
+<p class="cr-note">Gửi hoặc tiếp nhận yêu cầu chưa làm kết thúc hợp đồng, chưa tạo hóa đơn và chưa trừ tiền cọc. Hai bên vẫn cần bàn giao, chốt chỉ số và đối chiếu bảng tất toán.</p>
+@if(!Model.IsOwner){
+<section class="cr-card"><h2>Gửi yêu cầu mới</h2>
+@if(available.Count==0){<p>Không có hợp đồng do bạn đứng tên đủ điều kiện trả trước hạn. Yêu cầu cần hợp đồng đang hiệu lực và ngày đề nghị trước ngày kết thúc; người ở ghép cần trao đổi với người đứng tên.</p>}
+else {<form asp-action="Gui" method="post" class="cr-form">
+<label>Hợp đồng <span>*</span><select name="hopDongId" class="form-select" required><option value="">Chọn hợp đồng</option>@foreach(var c in available){<option value="@c.Id" selected="@(c.Id==Model.HopDongId)">@c.MaHopDong · @c.Phong · @c.ToaNha · hết hạn @c.NgayKetThuc.ToString("dd/MM/yyyy")</option>}</select></label>
+<label>Ngày đề nghị trả phòng <span>*</span><input name="ngayDeNghi" type="date" class="form-control" min="@Model.HomNay.ToString("yyyy-MM-dd")" max="@(selected is not null && selected.NgayKetThuc>Model.HomNay ? selected.NgayKetThuc.AddDays(-1).ToString("yyyy-MM-dd") : null)" required /></label>
+<label class="cr-wide">Lý do trả phòng <span>*</span><textarea name="lyDo" class="form-control" maxlength="500" rows="3" required placeholder="Nhập lý do và thông tin cần trao đổi với chủ nhà (tối đa 500 ký tự)."></textarea></label>
+<p class="cr-wide cr-muted">Ngày đề nghị từ hôm nay và trước ngày hết hợp đồng. Mỗi hợp đồng chỉ có một yêu cầu đang xử lý. Bạn có thể hủy khi chủ nhà chưa tiếp nhận.</p>
+<button class="btn btn-dark" type="submit">Gửi yêu cầu trả phòng</button></form>}
+</section>}
+<section class="cr-card"><h2>@(Model.IsOwner ? "Yêu cầu của khách thuê" : "Yêu cầu đã gửi") <small>@Model.Rows.Count yêu cầu · @Model.Rows.Count(x=>x.Request.TrangThai=="MOI") chờ tiếp nhận</small></h2>
+<form method="get" class="cr-filter"><label>Lọc theo hợp đồng<select name="hopDongId" class="form-select"><option value="">Tất cả hợp đồng</option>@foreach(var c in Model.Contracts){<option value="@c.Id" selected="@(c.Id==Model.HopDongId)">@c.MaHopDong · @c.Phong</option>}</select></label><button class="btn btn-outline-secondary">Lọc</button><a href="/YeuCauTraPhong">Bỏ lọc</a></form>
+@if(Model.Rows.Count==0){<p class="cr-empty">Chưa có yêu cầu trả phòng trong danh sách này.</p>}
+@foreach(var row in Model.Rows.Skip((Model.Page-1)*20).Take(20)){
+var r=row.Request; var active=row.TrangThaiHopDong=="DANG_HIEU_LUC";
+<article class="cr-request" id="request-@r.Id"><header><div><h3>TP-@r.Id.ToString("D6") · Phòng @row.Phong</h3><p>@row.ToaNha · @row.MaHopDong · @row.Khach</p></div><span class="cr-state state-@r.TrangThai">@State(r.TrangThai)</span></header>
+<dl><div><dt>Ngày đề nghị</dt><dd>@r.NgayDeNghi.ToString("dd/MM/yyyy")</dd></div><div><dt>Gửi lúc</dt><dd>@r.NgayTao.AddHours(7).ToString("dd/MM/yyyy HH:mm")</dd></div><div><dt>Lý do</dt><dd class="cr-text">@r.LyDo</dd></div>@if(r.NgayBanGiao.HasValue){<div><dt>Ngày bàn giao đã thống nhất</dt><dd>@r.NgayBanGiao.Value.ToString("dd/MM/yyyy")</dd></div>}@if(!string.IsNullOrWhiteSpace(r.PhanHoi)){<div><dt>Phản hồi chủ nhà</dt><dd class="cr-text">@r.PhanHoi</dd></div>}<div><dt>Cập nhật lúc</dt><dd>@r.CapNhatLuc.AddHours(7).ToString("dd/MM/yyyy HH:mm")</dd></div></dl>
+@if(!active && r.TrangThai!="HOAN_TAT"){<p class="cr-note">Hợp đồng không còn đang hiệu lực. Yêu cầu được giữ lại để tra cứu, không thể xử lý thêm.</p>}
+@if(!Model.IsOwner && r.TrangThai=="MOI" && active){<form asp-action="XuLy" method="post"><input type="hidden" name="id" value="@r.Id"/><input type="hidden" name="phienBan" value="@r.PhienBan"/><input type="hidden" name="thaoTac" value="DA_HUY"/><button class="btn btn-outline-danger" type="submit">Hủy yêu cầu</button></form>}
+@if(write && active && r.TrangThai=="MOI"){
+<form asp-action="XuLy" method="post" class="cr-form cr-decision"><input type="hidden" name="id" value="@r.Id"/><input type="hidden" name="phienBan" value="@r.PhienBan"/><input type="hidden" name="thaoTac" value="DA_TIEP_NHAN"/>
+<label>Ngày bàn giao đã thống nhất <span>*</span><input type="date" class="form-control" name="ngayBanGiao" min="@Model.HomNay.ToString("yyyy-MM-dd")" value="@(r.NgayDeNghi>=Model.HomNay ? r.NgayDeNghi.ToString("yyyy-MM-dd") : Model.HomNay.ToString("yyyy-MM-dd"))" required /></label><label>Phản hồi cho khách<textarea name="phanHoi" class="form-control" maxlength="500" rows="2" placeholder="Xác nhận hai bên đã trao đổi ngày bàn giao..."></textarea></label><button type="submit" class="btn btn-dark">Tiếp nhận và thống nhất ngày</button></form>}
+@if(write && active && r.TrangThai is "MOI" or "DA_TIEP_NHAN"){
+<details class="cr-reject"><summary>@(r.TrangThai=="MOI" ? "Không chấp thuận yêu cầu" : "Hủy lịch bàn giao đã tiếp nhận")</summary><form asp-action="XuLy" method="post"><input type="hidden" name="id" value="@r.Id"/><input type="hidden" name="phienBan" value="@r.PhienBan"/><input type="hidden" name="thaoTac" value="TU_CHOI"/><label>Lý do phản hồi <span>*</span><textarea name="phanHoi" class="form-control" maxlength="500" rows="2" required></textarea></label><button class="btn btn-outline-danger" type="submit">Gửi phản hồi và đóng yêu cầu</button></form></details>}
+@if(write && active && r.TrangThai=="DA_TIEP_NHAN"){
+<p class="cr-note">Đến ngày bàn giao, kiểm tra phòng và nhập ngày trả thực tế cùng chỉ số điện/nước. Việc tất toán, phạt cọc và hoàn tiền thực hiện ở luồng trả phòng hiện có.</p>
+@if(r.NgayBanGiao<=Model.HomNay){<a class="btn btn-dark" asp-controller="TraPhong" asp-action="Nhap" asp-route-id="@r.HopDongId" asp-route-yeuCauId="@r.Id">Bắt đầu xử lý trả phòng</a>}else{<p class="cr-muted">Chờ đến ngày bàn giao @r.NgayBanGiao?.ToString("dd/MM/yyyy") để bắt đầu xử lý trả phòng.</p>}}
+@if(r.TrangThai=="HOAN_TAT"){<a class="btn btn-outline-secondary" asp-controller="TatToan" asp-action="ChiTiet" asp-route-id="@r.HopDongId">Xem bảng tất toán</a>}
+</article>}
+@if(pages>1){<nav class="cr-pagination" aria-label="Phân trang yêu cầu">@if(Model.Page>1){<a asp-action="Index" asp-route-hopDongId="@Model.HopDongId" asp-route-page="@(Model.Page-1)">‹ Trước</a>}<span>Trang @Model.Page / @pages</span>@if(Model.Page<pages){<a asp-action="Index" asp-route-hopDongId="@Model.HopDongId" asp-route-page="@(Model.Page+1)">Sau ›</a>}</nav>}
+</section></div>

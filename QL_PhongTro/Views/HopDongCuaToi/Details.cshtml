@@ -16,6 +16,7 @@
     </header>
     @if(Model.SapHetHan){<div class="tcd-expiry-warning" role="status">@(Model.SoNgayConLai == 0 ? "Hợp đồng hết hạn hôm nay" : $"Hợp đồng sẽ hết hạn sau {Model.SoNgayConLai} ngày"). Vui lòng liên hệ chủ nhà nếu bạn muốn gia hạn.</div>}
     <p><a class="btn btn-outline-secondary" asp-controller="TatToan" asp-action="Index">Xem bảng tất toán của tôi</a></p>
+    <p><a class="btn btn-outline-secondary" asp-controller="YeuCauTraPhong" asp-action="Index" asp-route-maHopDong="@Model.MaHopDong">Yêu cầu trả phòng trước hạn</a></p>
     <div class="tcd-columns">
         <div class="tcd-main">
             <section class="tcd-card">

@@ -7,7 +7,7 @@ namespace QL_PhongTro.Data;
 // Append new versions; never rewrite an update already shared with the team.
 public static class DatabaseUpdates
 {
-    internal const int CurrentVersion = 39;
+    internal const int CurrentVersion = 40;
     private static SqliteConnection Open(string path, bool readOnly)
     {
         var c = new SqliteConnection(new SqliteConnectionStringBuilder
@@ -70,6 +70,7 @@ public static class DatabaseUpdates
         foreach (var entity in db.Model.GetEntityTypes())
         {
             var table = entity.GetTableName()!;
+            if (schemaVersion < 40 && table is "yeu_cau_tra_phong" or "thong_bao_tra_phong") continue;
             if (schemaVersion < 39 && table is "bao_cao_thanh_toan" or "thong_bao_thanh_toan") continue;
             if (table == "tai_khoan_ngan_hang" && schemaVersion < 38) continue;
             if (table == "email_gui_log" && schemaVersion < 36) continue;
@@ -500,6 +501,7 @@ public static class DatabaseUpdates
         if (version < 37) Sprint4IntegrationSchema.Upgrade(c);
         if (version < 38) OwnerBankSchema.Upgrade(c);
         if (version < 39) PaymentWorkflowSchema.Upgrade(c);
+        if (version < 40) CheckoutRequestSchema.Upgrade(c);
         Check(path);
         Console.WriteLine($"Database updated to version {CurrentVersion}. Existing business rows preserved.");
     }
