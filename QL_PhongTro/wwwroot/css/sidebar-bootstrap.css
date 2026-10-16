@@ -1,0 +1,34 @@
+/* Shared Bootstrap workspace navigation; tenant drawer remains separate. */
+.dashboard-sidebar:has(.bootstrap-sidebar){background:#30343B;border-right:1px solid #ffffff08}
+.dashboard-sidebar .bootstrap-sidebar{padding:1.25rem .75rem 1rem;scrollbar-width:thin;scrollbar-color:#62676d transparent}
+.dashboard-sidebar .bootstrap-sidebar .sidebar-brand{gap:.7rem;padding:0 .6rem 1.15rem;margin-bottom:.9rem;border-bottom:1px solid #ffffff12;color:#fff}
+.dashboard-sidebar .bootstrap-sidebar .sidebar-brand>svg{width:36px;height:36px;padding:8px;border-radius:11px;background:#BFA77A;color:#fff;stroke-width:1.7;flex-shrink:0}
+.dashboard-sidebar .bootstrap-sidebar .sidebar-brand strong{font-size:1.3rem;font-weight:750;letter-spacing:-.025em;line-height:1.2;color:#fff}
+.dashboard-sidebar .bootstrap-sidebar .sidebar-brand small{font-size:.63rem;letter-spacing:.03em;color:#bac0c5;margin-top:.25rem;line-height:1.4}
+.dashboard-sidebar .bootstrap-sidebar .compact-sidebar-profile{padding:.75rem;gap:.65rem;margin:0 0 1rem;border:1px solid #ffffff12;border-radius:11px;background:#ffffff05}
+.dashboard-sidebar .bootstrap-sidebar .compact-sidebar-profile .tenant-avatar{display:grid;place-items:center;width:36px;height:36px;flex-shrink:0;border-radius:50%;background:#e9dfcd;color:#78623d;font-size:.9rem;font-weight:700}
+.dashboard-sidebar .bootstrap-sidebar .compact-sidebar-profile>div{min-width:0}
+.dashboard-sidebar .bootstrap-sidebar .compact-sidebar-profile strong{display:block;font-size:.72rem;line-height:1.5;color:#f0f1f2;overflow-wrap:anywhere}
+.dashboard-sidebar .bootstrap-sidebar .compact-sidebar-profile small{display:block;font-size:.63rem;line-height:1.5;color:#a7afb6;margin-top:.15rem}
+.dashboard-sidebar .bootstrap-sidebar nav{gap:.15rem;min-width:0}
+.dashboard-sidebar .bootstrap-sidebar section{margin-top:1rem}
+.dashboard-sidebar .bootstrap-sidebar h2{font-size:.6rem;font-weight:650;letter-spacing:.1em;line-height:1.4;color:#969fa8;margin:0 .75rem .5rem}
+.dashboard-sidebar .bootstrap-sidebar .sidebar-link{display:flex;align-items:center;gap:.65rem;min-height:40px;padding:.6rem .7rem;margin:.15rem 0;border:1px solid transparent;border-radius:9px;color:#c0c6cc;font-size:.76rem;font-weight:500;line-height:1.45;text-decoration:none;transition:background-color .15s,color .15s}
+.dashboard-sidebar .bootstrap-sidebar .sidebar-link>svg{width:18px;height:18px;flex:0 0 18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;color:#9fa8b0}
+.dashboard-sidebar .bootstrap-sidebar .sidebar-link>span:not(.badge){min-width:0;overflow-wrap:anywhere}
+.dashboard-sidebar .bootstrap-sidebar .sidebar-link:hover{background:#ffffff09;color:#fff}
+.dashboard-sidebar .bootstrap-sidebar .sidebar-link:hover>svg{color:#dfcfb4}
+.dashboard-sidebar .bootstrap-sidebar .sidebar-link.is-active{background:#bfa77a1c;border-color:#bfa77a30;color:#f0dfbe;font-weight:650;box-shadow:inset 3px 0 #BFA77A}
+.dashboard-sidebar .bootstrap-sidebar .sidebar-link.is-active>svg{color:#d4bc93}
+.dashboard-sidebar .bootstrap-sidebar .sidebar-link .badge{margin-left:auto;flex-shrink:0;min-width:20px;min-height:20px;display:grid;place-items:center;padding:.2rem .4rem;font-size:.6rem;font-weight:650;background:#e9dfcd;color:#5f5039;border:0}
+.dashboard-sidebar .bootstrap-sidebar .sidebar-link:focus-visible,.dashboard-sidebar .bootstrap-sidebar .sidebar-brand:focus-visible{outline:2px solid #dfcfb4;outline-offset:2px}
+@media(max-width:767px){.dashboard-sidebar .bootstrap-sidebar{padding-top:1rem}.dashboard-sidebar .bootstrap-sidebar .sidebar-link{min-height:44px}}
+@media(prefers-reduced-motion:reduce){.dashboard-sidebar .bootstrap-sidebar .sidebar-link{transition:none}}
+/* Compact, even vertical spacing between navigation groups and links. */
+.dashboard-sidebar .bootstrap-sidebar .sidebar-brand{padding-bottom:.85rem;margin-bottom:.75rem}
+.dashboard-sidebar .bootstrap-sidebar .compact-sidebar-profile{padding:.65rem .75rem;margin-bottom:.75rem}
+.dashboard-sidebar .bootstrap-sidebar nav{gap:0}
+.dashboard-sidebar .bootstrap-sidebar section{margin-top:.75rem}
+.dashboard-sidebar .bootstrap-sidebar h2{margin-bottom:.35rem;line-height:1.35}
+.dashboard-sidebar .bootstrap-sidebar .sidebar-link{min-height:36px;padding:.45rem .7rem;margin:.1rem 0;line-height:1.4}
+@media(max-width:767px){.dashboard-sidebar .bootstrap-sidebar .sidebar-link{min-height:40px;padding:.55rem .7rem}}

@@ -1,0 +1,49 @@
+/* Scoped Bootstrap occupancy history. */
+.occupancy-bootstrap{max-width:1440px;margin:0 auto;line-height:1.5}
+.occupancy-bootstrap .oh-heading{gap:1rem;margin-bottom:.875rem}
+.occupancy-bootstrap .oh-heading h1{font-size:clamp(1.5rem,2.3vw,2rem);line-height:1.25;letter-spacing:-.025em;margin-bottom:.3rem}
+.occupancy-bootstrap .oh-heading p{font-size:.82rem;line-height:1.5}
+.occupancy-bootstrap .oh-heading .btn{min-height:42px;padding:.65rem 1rem;border-radius:9px;font-size:.78rem;gap:.5rem}
+.occupancy-bootstrap .oh-stats{gap:1rem;margin-bottom:.875rem}
+.occupancy-bootstrap .oh-stats section,.occupancy-bootstrap .oh-card{border:1px solid #e6e9eb;border-radius:13px;box-shadow:0 3px 12px #25282d03;background:#fff;min-width:0}
+.occupancy-bootstrap .oh-stats section{padding:1rem;gap:.75rem;align-items:center}
+.occupancy-bootstrap .oh-stats section>span{display:grid;place-items:center;width:38px;height:38px;flex:0 0 38px;background:#bfa77a19;color:#92774c;border-radius:10px}
+.occupancy-bootstrap .oh-stats svg{width:21px;height:21px;stroke:currentColor}
+.occupancy-bootstrap .oh-stats section>div{font-size:.78rem;line-height:1.5}
+.occupancy-bootstrap .oh-stats strong{font-size:1.8rem;line-height:1.3;margin-right:.4rem}
+.occupancy-bootstrap .oh-stats small{font-size:.7rem;line-height:1.5;margin-top:.25rem}
+.occupancy-bootstrap .oh-card{padding:1rem;margin-bottom:.875rem}
+.occupancy-bootstrap .oh-search{gap:1rem;margin-bottom:.75rem;align-items:center}
+.occupancy-bootstrap .oh-search-field{min-height:42px;border-radius:9px;border-color:#e3e7e9;background:#fafaf9}
+.occupancy-bootstrap .oh-search-field input.form-control{height:40px;border:0;box-shadow:none;background:transparent;font-size:.8rem}
+.occupancy-bootstrap .oh-search>small{font-size:.69rem;line-height:1.5}
+.occupancy-bootstrap .oh-filters{gap:.75rem;align-items:end}
+.occupancy-bootstrap .oh-filters>div{min-width:0}
+.occupancy-bootstrap .oh-filters label{font-size:.73rem;line-height:1.5;margin-bottom:.3rem}
+.occupancy-bootstrap .oh-filters .form-control,.occupancy-bootstrap .oh-filters .form-select,.occupancy-bootstrap .oh-fixed{min-height:42px;height:42px;padding:.6rem .75rem;border:1px solid #e3e7e9;border-radius:9px;font-size:.78rem;line-height:1.5;background-color:#fafaf9;min-width:0;width:100%;box-sizing:border-box}
+.occupancy-bootstrap .oh-fixed{display:flex;align-items:center;background:#f3f4f1;border-style:dashed;color:#7d858f}
+.occupancy-bootstrap .oh-filters .form-select{padding-right:2rem}
+.occupancy-bootstrap .oh-filters .btn{height:42px;padding:.6rem .85rem;border-radius:9px;font-size:.78rem}
+.occupancy-bootstrap .form-control:focus,.occupancy-bootstrap .form-select:focus{border-color:#bfa77a;box-shadow:0 0 0 .18rem #bfa77a26;outline:0}
+.occupancy-bootstrap .oh-list-heading{gap:1rem;margin-bottom:.65rem}
+.occupancy-bootstrap .oh-list-heading h2{font-size:1rem;line-height:1.5;margin-bottom:.25rem}
+.occupancy-bootstrap .oh-list-heading p{font-size:.72rem;line-height:1.5}
+.occupancy-bootstrap .oh-list-heading>small{font-size:.69rem;line-height:1.5}
+.occupancy-bootstrap .oh-tabs{gap:1.2rem;flex-wrap:wrap}
+.occupancy-bootstrap .oh-tabs>span{font-size:.75rem;padding:.55rem 0;line-height:1.5}
+.occupancy-bootstrap .oh-tabs>small{font-size:.68rem;line-height:1.5}
+.occupancy-bootstrap .oh-table-scroll{overflow-x:auto}
+.occupancy-bootstrap table{--bs-table-bg:transparent;font-size:.79rem;min-width:740px}
+.occupancy-bootstrap table th{font-size:.65rem;font-weight:600;letter-spacing:.02em;padding:.7rem .85rem;background:#f8f9f7;border-color:#eef0ed;color:#7d858f}
+.occupancy-bootstrap table td{font-size:.78rem;padding:.75rem .85rem;line-height:1.5;border-color:#eef0ed;box-shadow:none}
+.occupancy-bootstrap table tbody tr:hover{background:#fafaf7}
+.occupancy-bootstrap table small{font-size:.69rem;line-height:1.5;margin-top:.2rem}
+.occupancy-bootstrap .oh-avatar{width:34px;height:34px;background:#f3f1eb;color:#92774c;font-size:.73rem}
+.occupancy-bootstrap .oh-badge{display:inline-block;font-size:.68rem;border-radius:20px;padding:.35rem .6rem}
+.occupancy-bootstrap [data-history-empty]{font-size:.76rem;line-height:1.5;padding:1rem .5rem;margin:0;color:#92969d;text-align:center}
+.occupancy-bootstrap .oh-table-footer{padding-top:.75rem;font-size:.72rem;line-height:1.5}
+.occupancy-bootstrap .oh-note,.occupancy-bootstrap .oh-warning{font-size:.72rem;line-height:1.6}
+.occupancy-bootstrap .oh-warning{padding:.8rem 1rem;border-radius:9px;background:#f7f2e8;border:1px solid #e9dfca}
+@media(max-width:1100px){.occupancy-bootstrap .oh-filters{grid-template-columns:repeat(3,minmax(0,1fr))}.occupancy-bootstrap .oh-filters .btn{align-self:end}}
+@media(max-width:600px){.occupancy-bootstrap .oh-heading{flex-direction:column;align-items:stretch}.occupancy-bootstrap .oh-stats{grid-template-columns:1fr;gap:.65rem}.occupancy-bootstrap .oh-stats section{padding:.9rem}.occupancy-bootstrap .oh-card{padding:1rem}.occupancy-bootstrap .oh-search{flex-direction:column;align-items:stretch}.occupancy-bootstrap .oh-search-field{width:100%}.occupancy-bootstrap .oh-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.occupancy-bootstrap .oh-filters .btn{grid-column:1/-1}.occupancy-bootstrap .oh-list-heading{flex-direction:column;align-items:flex-start}.occupancy-bootstrap .oh-tabs{gap:.85rem}.dashboard-header:has(.oh-breadcrumb) .account-label{display:none}.dashboard-header .oh-breadcrumb{font-size:.72rem;gap:.35rem;flex:1;min-width:0}.oh-breadcrumb svg{width:17px;height:17px}}
+.occupancy-bootstrap .oh-state-trigger{min-height:42px;height:42px;padding:.6rem .75rem;border-radius:9px;font-size:.78rem}.occupancy-bootstrap .oh-state-menu{padding:.3rem;border-radius:9px}.occupancy-bootstrap .oh-state-menu button{font-size:.75rem;min-height:34px;border-radius:6px}

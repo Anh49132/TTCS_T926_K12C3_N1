@@ -63,11 +63,11 @@
         _ => "M5 3h10l4 4v14H5ZM14 3v5h5M8 12h8m-8 4h8"
     };
 }
-<div class="sidebar-scroll compact-sidebar">
+<div class="sidebar-scroll compact-sidebar bootstrap-sidebar">
 <a class="sidebar-brand" href="/"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="@Icon("home")" /></svg><span><strong>NhàTốt</strong><small>Sống đúng nơi</small></span></a>
-@if (!admin) { <div class="compact-sidebar-profile"><span class="tenant-avatar">@System.Globalization.StringInfo.GetNextTextElement(name).ToUpperInvariant()</span><div><strong>Xin chào, @name</strong><small>@(owner ? "Chủ nhà" : "Quản lý tòa nhà")</small></div></div> }
-<nav aria-label="Menu chức năng">
-<a class="sidebar-link @(path is "/" or "/Home" or "/Home/Index" ? "is-active" : "")" href="/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon("home")" /></svg><span>Tổng quan</span></a>
+@if (!admin) { <div class="compact-sidebar-profile d-flex align-items-center"><span class="tenant-avatar">@System.Globalization.StringInfo.GetNextTextElement(name).ToUpperInvariant()</span><div><strong>Xin chào, @name</strong><small>@(owner ? "Chủ nhà" : "Quản lý tòa nhà")</small></div></div> }
+<nav class="nav flex-column" aria-label="Menu chức năng">
+<a class="sidebar-link nav-link @(path is "/" or "/Home" or "/Home/Index" ? "is-active" : "")" href="/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon("home")" /></svg><span>Tổng quan</span></a>
 @foreach (var group in items.Where(x => allowed.Contains(x.Module)).GroupBy(x => x.Group)) {
 <section data-menu-group="@group.Key">
 @if (!string.IsNullOrEmpty(group.Key)) { <h2>@group.Key</h2> }
@@ -76,7 +76,7 @@
     var selected = (path.Equals(target, StringComparison.OrdinalIgnoreCase) || (target == "/HoSo/DanhSach" && path.Equals("/HoSo/Xem", StringComparison.OrdinalIgnoreCase))) &&
         (item.Url.Contains("section=") ? item.Url.EndsWith("section=" + section) : string.IsNullOrEmpty(section)) &&
         (target != "/ManagedAccounts" || (item.Url.Contains("role=CHU_NHA") ? roleFilter == "CHU_NHA" : roleFilter != "CHU_NHA"));
-<a class="sidebar-link @(selected ? "is-active" : "")" href="@item.Url" data-menu-module="@item.Module" aria-current="@(selected ? "page" : null)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon(item.Icon)" /></svg><span>@item.Title</span>@if(item.Module == "YEU_CAU_THUE" && unprocessed > 0){<span class="badge rounded-pill" aria-label="@unprocessed yêu cầu chưa xử lý">@unprocessed</span>}</a>
+<a class="sidebar-link nav-link @(selected ? "is-active" : "")" href="@item.Url" data-menu-module="@item.Module" aria-current="@(selected ? "page" : null)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon(item.Icon)" /></svg><span>@item.Title</span>@if(item.Module == "YEU_CAU_THUE" && unprocessed > 0){<span class="badge rounded-pill" aria-label="@unprocessed yêu cầu chưa xử lý">@unprocessed</span>}</a>
 }
 </section>
 }

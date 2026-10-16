@@ -1,4 +1,4 @@
-﻿using System.Globalization;
+using System.Globalization;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 using Microsoft.Data.Sqlite;
@@ -33,7 +33,7 @@ public partial class PhongTroController(AppDbContext db, DichVuPhongService room
         }));
     }
     [HttpGet]
-    public async Task<IActionResult> ChiTietToaNha(int id, string? tuKhoa, int? tang, string? trangThai, int trang = 1, CancellationToken ct = default, string? loaiPhong = null)
+    public async Task<IActionResult> ChiTietToaNha(int id, string? tuKhoa, int? tang, string? trangThai, int trang = 1, CancellationToken ct = default, string? loaiPhong = null, string? thanhToan = null, string? sapXep = null)
     {
         if (CurrentAccountId() is not { } actor) return Forbid();
         if (!await db.ToaNhas.AnyAsync(x => x.Id == id, ct)) return NotFound();
@@ -46,6 +46,35 @@ public partial class PhongTroController(AppDbContext db, DichVuPhongService room
             DienTichMin = all.Count == 0 ? null : all.Min(x => x.DienTich), DienTichMax = all.Count == 0 ? null : all.Max(x => x.DienTich),
             QuanLy = await db.TaiKhoans.Where(x => x.Id == building.QuanLyId).Select(x => x.HoTen).SingleOrDefaultAsync(ct),
             Anh = await (from a in db.AnhPhongs join p in db.PhongTros on a.PhongId equals p.Id where p.ToaNhaId == id && !a.DangChoXoa orderby p.Id, a.ThuTu select a.DuongDanAnhNho).FirstOrDefaultAsync(ct) };
+        var businessToday = DateOnly.FromDateTime((clock ?? new SystemTimeProvider()).UtcNow.AddHours(7));
+        model.XemTaiChinh = !User.IsInRole("QUAN_LY") && await HttpContext.RequestServices.GetRequiredService<PermissionService>().AllowsAsync("TAI_CHINH");
+        if (!model.XemTaiChinh && !string.IsNullOrWhiteSpace(thanhToan)) return Forbid();
+        model.ThanhToan = new[] { "CHUA_CO", "CHUA_TRA", "MOT_PHAN", "DA_TRA", "QUA_HAN", "CHO_XAC_NHAN" }.Contains(thanhToan) ? thanhToan : null;
+        model.SapXep = new[] { "ma_desc", "gia_asc", "gia_desc", "tang_asc" }.Contains(sapXep) ? sapXep! : "ma_asc";
+        model.KyThanhToan = businessToday.ToString("MM/yyyy");
+        if (model.XemTaiChinh)
+        {
+            var bills = await (from bill in db.HoaDons.AsNoTracking()
+                join contract in db.HopDongs on bill.HopDongId equals contract.Id
+                where db.PhongTros.Any(room => room.Id == contract.PhongId && room.ToaNhaId == id) && bill.Thang == businessToday.Month && bill.Nam == businessToday.Year && bill.TrangThai == "DA_PHAT_HANH"
+                select new { Bill = bill, contract.PhongId }).ToListAsync(ct);
+            var billIds = bills.Select(x => x.Bill.Id).ToList();
+            var payments = await db.ThanhToans.AsNoTracking().Where(x => billIds.Contains(x.HoaDonId)).ToListAsync(ct);
+            var offsets = await CanTruHoaDonQueries.LayAsync(db, billIds);
+            foreach (var group in bills.GroupBy(x => x.PhongId))
+            {
+                long total = 0, paid = 0; bool overdue = false, pending = false;
+                foreach (var item in group)
+                {
+                    var confirmed = checked(payments.Where(x => x.HoaDonId == item.Bill.Id && x.TrangThai == "DA_XAC_NHAN").Sum(x => x.SoTien) + offsets.GetValueOrDefault(item.Bill.Id));
+                    total = checked(total + item.Bill.TongTien); paid = checked(paid + Math.Min(item.Bill.TongTien, confirmed));
+                    var unpaid = confirmed < item.Bill.TongTien;
+                    overdue |= unpaid && item.Bill.HanThanhToan < businessToday;
+                    pending |= unpaid && payments.Any(x => x.HoaDonId == item.Bill.Id && x.TrangThai == "CHO_XAC_NHAN");
+                }
+                model.ThanhToanPhongs[group.Key] = ThanhToanPhongSummary.Create(total, paid, overdue, pending);
+            }
+        }
         model.LoaiPhong = loaiPhong;
         model.LoaiPhongs = all.Select(x => x.LoaiPhong).Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => x!).Distinct().Order().ToList();
         var matchingRooms = string.IsNullOrWhiteSpace(model.TuKhoa) ? new List<int>() : await (from h in db.HopDongs join k in db.KhachThues on h.KhachDungTenId equals k.Id
@@ -53,6 +82,15 @@ public partial class PhongTroController(AppDbContext db, DichVuPhongService room
             select h.PhongId).ToListAsync(ct);
         var filtered = all.Where(x => (tang == null || x.Tang == tang) && (string.IsNullOrEmpty(trangThai) || x.TrangThai == trangThai)
             && (string.IsNullOrEmpty(loaiPhong) || x.LoaiPhong == loaiPhong) && (string.IsNullOrEmpty(model.TuKhoa) || x.MaPhong.Contains(model.TuKhoa, StringComparison.OrdinalIgnoreCase) || matchingRooms.Contains(x.Id))).ToList();
+        if (model.ThanhToan != null) filtered = filtered.Where(x => (model.ThanhToanPhongs.GetValueOrDefault(x.Id)?.Ma ?? "CHUA_CO") == model.ThanhToan).ToList();
+        filtered = (model.SapXep switch
+        {
+            "ma_desc" => filtered.OrderByDescending(x => x.MaPhong).ThenBy(x => x.Id),
+            "gia_asc" => filtered.OrderBy(x => x.GiaThue).ThenBy(x => x.MaPhong),
+            "gia_desc" => filtered.OrderByDescending(x => x.GiaThue).ThenBy(x => x.MaPhong),
+            "tang_asc" => filtered.OrderBy(x => x.Tang).ThenBy(x => x.MaPhong),
+            _ => filtered.OrderBy(x => x.MaPhong).ThenBy(x => x.Id)
+        }).ToList();
         model.TongKetQua = filtered.Count; model.Trang = Math.Clamp(trang, 1, model.TongTrang);
         var rooms = filtered.Skip((model.Trang - 1) * 8).Take(8).ToList(); var ids = rooms.Select(x => x.Id).ToList();
         var today = DateOnly.FromDateTime((clock ?? new SystemTimeProvider()).UtcNow.AddHours(7));

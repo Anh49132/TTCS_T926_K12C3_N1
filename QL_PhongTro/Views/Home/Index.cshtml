@@ -63,6 +63,7 @@ else
 }
 
 @section Styles {
+    @if (User.IsInRole("CHU_NHA")) { <link rel="stylesheet" href="~/css/owner-bootstrap.css" asp-append-version="true" /> }
     @if (!signedIn) { <link rel="stylesheet" href="~/css/home-landing.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/home-reference-hero.css" asp-append-version="true" /> }
 }
 @section Scripts {

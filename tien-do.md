@@ -1,3 +1,135 @@
+### 17/10/2026 – Căn giãn dòng Lịch sử cư trú
+- Thu khoảng đệm thống kê, bộ lọc, tab, dòng bảng và trạng thái rỗng; chỉ CSS, giữ chức năng tra cứu.
+
+### 17/10/2026 – Làm mới Lịch sử cư trú bằng Bootstrap
+- Đồng bộ thống kê, tìm kiếm/bộ lọc 42px, bảng/badge/trạng thái rỗng và nút xuất; CSS riêng occupancy-bootstrap responsive, giữ quyền và dữ liệu lịch sử.
+- Build đạt; Edge 360/768/1440px không tràn ngang, 3 thống kê, tìm/lọc trạng thái, áp dụng ngày và CSV đạt. Kiểm tra chỉ đọc; chưa push.
+
+### 17/10/2026 – Căn giãn dòng Nhật ký phòng
+- Thu khoảng đệm thẻ, tab, bộ lọc, timeline, hồ sơ liên quan và form ghi chú; chỉ CSS, giữ chức năng và dữ liệu.
+
+### 17/10/2026 – Làm mới Nhật ký phòng bằng Bootstrap
+- Đồng bộ thẻ tóm tắt, tab/bộ lọc 42px, timeline, form ghi chú và hồ sơ liên quan; CSS riêng room-journal-bootstrap, giữ audit/POST/CSRF và xuất CSV.
+- Build đạt; Edge 360/768/1440px không tràn ngang, tìm/lọc sự kiện/ngày, reset ghi chú, CSRF và export đạt. Không lưu ghi chú thử; chưa push.
+
+### 17/10/2026 – Căn giãn dòng Chỉnh sửa phòng
+- Thu khoảng đệm thẻ/cảnh báo, nhãn/ô nhập và dòng dịch vụ; chỉ CSS, giữ các thao tác và dữ liệu.
+
+### 17/10/2026 – Làm mới Chỉnh sửa phòng bằng Bootstrap
+- Đồng bộ form-control/form-select, thẻ/icon, cảnh báo hợp đồng, trạng thái, tiện nghi, ảnh và nút lưu/hủy; CSS riêng room-edit-bootstrap chỉ nạp khi sửa. Giữ POST, quyền và lưu dịch vụ/ảnh riêng.
+- Build đạt; Edge 360/768/1440px không tràn ngang, mã phòng hiện tại, định dạng VND, state picker/Escape, CSRF và Hủy đạt. Không lưu phòng/dịch vụ/ảnh thử; chưa push.
+
+### 17/10/2026 – Căn giãn dòng Chi tiết phòng
+- Thu khoảng đệm thẻ, tab, dòng thông tin cơ bản/hợp đồng/chi phí và footer; chỉ CSS, giữ dữ liệu và liên kết.
+
+### 17/10/2026 – Làm mới Chi tiết phòng bằng Bootstrap
+- Đồng bộ heading/tab, thẻ thông tin/ảnh/hợp đồng/chi phí/ghi chú, badge và nút sửa; CSS riêng room-detail-bootstrap responsive. Giữ dữ liệu, quyền và ghi chú các chức năng chưa kết nối.
+- Build đạt; Edge 360/768/1440px không tràn ngang, 6 thông tin, ảnh/liên kết mở ảnh, lịch sử/chỉnh sửa và trạng thái nút chưa hỗ trợ đạt. Kiểm tra chỉ đọc; chưa push.
+
+### 17/10/2026 – Căn giãn dòng Tạo nhanh phòng
+- Thu khoảng đệm thẻ, nhãn/trường nhập, hướng dẫn, trạng thái, dòng xem trước và footer; giữ logic tạo loạt.
+
+### 17/10/2026 – Làm mới Tạo nhanh phòng bằng Bootstrap
+- Đồng bộ thẻ, form-control/form-select 44px, thông tin bổ sung, trạng thái, khung xem trước và nút thao tác; CSS riêng room-bulk-bootstrap, giữ logic tạo loạt/validation/CSRF.
+- Build đạt; Edge 360/768/1440px không tràn ngang, xem trước 15 phòng/mã đến 305/giá/sức chứa/trạng thái, mở bổ sung và Hủy đạt. Không tạo loạt thử; chưa push.
+
+### 17/10/2026 – Căn giãn dòng Thêm phòng mới
+- Thu padding thẻ, khoảng cách nhãn/ô nhập/tiện nghi, vùng ảnh và footer; giữ chức năng form.
+
+### 17/10/2026 – Làm mới Thêm phòng bằng Bootstrap
+- Form-control/form-select, thẻ và icon, trạng thái, tiện nghi có viền chọn, vùng tải ảnh, ghi chú và nút lưu/hủy đồng bộ; stylesheet room-create-bootstrap chỉ nạp khi tạo phòng, giữ logic form.
+- Build đạt; Edge 360/768/1440px không tràn ngang; chọn tiện nghi, đếm ghi chú, định dạng VND, CSRF và Hủy đạt. Không tạo phòng thử; chưa push.
+
+### 17/10/2026 – Căn giãn dòng Quản lý phòng
+- Thu khoảng đệm thống kê, tab, toolbar, dòng bảng và phân trang; căn gọn dòng phụ, giữ ô lọc 42px và các thao tác.
+
+### 17/10/2026 – Làm mới Quản lý phòng bằng Bootstrap
+- Đồng bộ thống kê, tab, toolbar 42px, bảng/trạng thái/phân trang và nút thao tác; CSS riêng room-management-bootstrap, giữ logic tìm/lọc/export/quyền.
+- Build đạt; Edge 360/768/1440px không tràn ngang, dialog thêm phòng, list/grid, phân trang, sắp xếp, CSV, tìm kiếm, lọc tòa/trạng thái đạt. Không sửa dữ liệu; chưa push.
+
+### 17/10/2026 – Căn giãn dòng Cấu hình điện nước
+- Thu padding thẻ và khoảng cách heading/tab/nhãn/nhóm cách tính/ghi chú/tóm tắt, giữ ô nhập 44px và logic form.
+
+### 17/10/2026 – Làm mới Cấu hình điện nước bằng Bootstrap
+- Đồng bộ thẻ, tab, lựa chọn cách tính 2 cột, ô nhập 44px, phạm vi, hiệu lực, tóm tắt và ví dụ; CSS riêng utility-bootstrap responsive, giữ cách tính/validation/POST/CSRF hiện có.
+- Build đạt; Edge 360/768/1440px không tràn ngang, chuyển đồng hồ/người và bật-tắt input, tổng minh họa 425.000/275.000/240.000 đ, Hủy và CSRF đạt, không lỗi JS. Không lưu cấu hình thử; chưa push.
+
+### 17/10/2026 – Căn giãn dòng Chỉnh sửa tòa nhà
+- Thu padding thẻ, khoảng cách heading/tab/nhãn/trường nhập, tiện ích và footer; chỉ CSS, giữ chiều cao ô nhập và chức năng.
+
+### 17/10/2026 – Làm mới Chỉnh sửa tòa nhà bằng Bootstrap
+- Đồng bộ thẻ thông tin, tab, form-control/form-select 44px, tiện ích, khung ảnh/tóm tắt và nút lưu/hủy; CSS riêng building-edit-bootstrap responsive. Giữ validation, CSRF, quyền và POST hiện có.
+- Build đạt; Edge 360/768/1440px không tràn ngang, dữ liệu ban đầu/xem trước địa chỉ/6 tiện ích/tab/Hủy đạt. Không lưu dữ liệu thử. Đã xem ảnh desktop; chưa push.
+
+### 17/10/2026 – Đồng bộ breadcrumb Chỉnh sửa tòa nhà
+- Đổi các dấu › thành / giống Chi tiết tòa nhà; giữ icon, tên tòa và liên kết điều hướng.
+
+### 17/10/2026 – Rút gọn nhãn lọc thanh toán
+- Đổi nhãn mặc định thành Thanh toán theo yêu cầu; vẫn lọc tháng hiện tại.
+
+### 17/10/2026 – Triển khai lọc thanh toán và sắp xếp phòng
+- Chi tiết tòa nhà lọc hóa đơn đã phát hành trong tháng Việt Nam hiện tại: chưa có/chưa trả/một phần/đã trả/quá hạn/chờ xác nhận. Số dư trừ thu đã xác nhận và cấn trừ cọc; không đổi dữ liệu/schema. Trạng thái ưu tiên đã trả, quá hạn, chờ xác nhận, một phần, chưa trả.
+- Sắp xếp mã tăng/giảm, giá tăng/giảm, tầng tăng trước phân trang; giữ query qua tab và phân trang. Hiển thị trạng thái/số còn nợ theo phòng. Quản lý không thấy tài chính, query giả trả 403.
+- Build đạt, 6 test trạng thái/số dư đạt; Edge 360/768/1440px, lọc/sắp xếp/phân trang và quyền quản lý đạt. Demo chạy lại; chưa push.
+
+### 17/10/2026 – Đồng bộ breadcrumb hồ sơ với Tổng quan
+- Bỏ nền/viền biểu tượng nhà, dùng icon nét 21px màu xám, dấu / và chữ 1rem cùng kiểu Tổng quan; giữ liên kết và responsive.
+
+### 17/10/2026 – Đồng bộ dấu breadcrumb Chi tiết tòa nhà
+- Đổi dấu › thành / giữa Quản lý tòa nhà và Chi tiết tòa nhà, thống nhất các dấu phân cách.
+
+### 17/10/2026 – Căn giãn dòng Chi tiết tòa nhà
+- Thu khoảng cách tiêu đề, thẻ thông tin/thống kê, tab, toolbar và hàng bảng phòng; đồng bộ khoảng cách dòng phụ. Chỉ CSS, giữ dữ liệu và chức năng.
+
+### 17/10/2026 – Làm mới Chi tiết tòa nhà bằng Bootstrap
+- Đồng bộ thẻ thông tin/thống kê, progress, trạng thái, toolbar lọc 42px, tab, bảng và phân trang; CSS riêng building-detail-bootstrap, giữ quyền và logic dữ liệu.
+- Build đạt; Edge 360/768/1440px không tràn ngang, thống kê/tìm kiếm rỗng/lọc tầng/danh sách-lưới/link chỉnh sửa đạt. Kiểm tra chỉ đọc, chưa push.
+
+### 17/10/2026 – Căn giãn dòng Thêm tòa nhà
+- Thu padding thẻ, khoảng cách heading/trường nhập và lựa chọn loại hình; đồng bộ line-height mô tả, nhãn và hướng dẫn. Chỉ CSS, giữ chức năng form.
+
+### 17/10/2026 – Làm mới Thêm tòa nhà bằng Bootstrap
+- Đồng bộ thẻ thông tin, ô nhập 44px, lựa chọn loại hình, khung tóm tắt và nút thao tác; căn khoảng cách và bố cục responsive, giữ validation và logic lưu.
+- Build đạt; Edge 360/768/1440px không tràn ngang, xem trước tên/số tầng/địa chỉ/loại hình, CSRF và Hủy đạt. Không lưu tòa nhà thử. Đã xem ảnh desktop; chưa push.
+
+### 17/10/2026 – Căn hàng tìm kiếm/lọc tòa nhà
+- Ô tìm và dropdown khu vực/tình trạng cùng 42px, icon/chữ căn giữa và gap đồng đều; mobile ô tìm full-width, hai lọc co đều. Chỉ CSS.
+
+### 17/10/2026 – Thu giãn cách quản lý tòa nhà
+- Đồng bộ khoảng cách thẻ thống kê, panel, toolbar và padding dòng bảng; giữ nội dung và chức năng. Chỉ CSS building-bootstrap.
+
+### 17/10/2026 – Làm mới quản lý tòa nhà Bootstrap
+- Thẻ thống kê/tổng quan/việc chú ý, toolbar Bootstrap và bảng responsive gọn đồng bộ; CSS giới hạn building-bootstrap. Giữ tìm kiếm, lọc, danh sách/lưới, sắp xếp/tháng và quyền thao tác.
+- Build đạt; Edge owner 360/768/1440px không tràn ngang, 4 stats/search/empty/grid-list/sort/month/add link đạt; không sửa dữ liệu. Đã xem ảnh data/building-bootstrap-1440.png; demo đã chạy lại, chưa push.
+
+### 17/10/2026 – Thu giãn dòng sidebar
+- Giảm khoảng cách nhóm menu, heading, profile/logo và padding từng link; desktop link 36px, mobile 40px. Chỉ CSS sidebar, giữ quyền và điều hướng.
+
+### 17/10/2026 – Làm mới sidebar workspace bằng Bootstrap
+- Bootstrap nav/nav-link với icon, khoảng cách và nhóm menu đồng đều; profile, logo và trạng thái active champagne, badge gọn. CSS riêng bootstrap-sidebar, không đổi lọc quyền/MenuAsync hay tenant drawer.
+- Build đạt; Edge owner desktop/mobile giữ menu/badge/active, điều hướng tòa nhà, mở sidebar/đóng Escape đạt, không tràn ngang. Đã xem ảnh data/sidebar-bootstrap-1440.png; demo đã chạy lại, chưa push.
+
+### 17/10/2026 – Đổi dấu phân cách breadcrumb hồ sơ
+- Đổi dấu › thành / theo ảnh; giữ bố cục còn lại.
+
+### 17/10/2026 – Breadcrumb Bootstrap Hồ sơ của tôi
+- Thay ký tự nhà bằng SVG trong nút nền nhạt, breadcrumb Bootstrap với dấu › và active rõ, căn giữa dọc/giảm gap mobile. Chỉ áp dụng HoSo/CuaToi.
+- Build đạt; Edge 360/768/1440px không tràn ngang, trang hồ sơ và liên kết bảo mật vẫn hoạt động. Demo đã chạy lại.
+
+### 17/10/2026 – Thu khoảng cách khối nhận chuyển khoản
+- Căn gọn heading/mô tả, trường ngân hàng/số tài khoản, hướng dẫn QR và nhóm nút; ẩn dòng lỗi rỗng để không chiếm khoảng trắng. Chỉ CSS bank-settings, không sửa dữ liệu hay logic lưu.
+
+### 17/10/2026 – Thu giãn dòng hồ sơ cá nhân
+- Giảm khoảng đệm thẻ và dòng tài khoản, căn đều heading, avatar và bảo mật; chỉ CSS personal-bootstrap, không đổi dữ liệu.
+
+### 17/10/2026 – Làm mới Hồ sơ của tôi bằng Bootstrap
+- Grid profile/bảo mật và thông tin tài khoản, thẻ Bootstrap, avatar viết hoa và badge xác thực, dòng thông tin compact responsive. Giữ dữ liệu model, đổi mật khẩu, logout POST/CSRF và khối ngân hàng hiện có.
+- Build đạt; Edge owner 360/768/1440px không tràn ngang, 6 dòng facts + ID header, bank section, CSRF logout và link đổi mật khẩu đạt. Không sửa dữ liệu tài khoản/ngân hàng. Đã xem ảnh data/personal-profile-1440.png; demo đã chạy lại, chưa push.
+
+### 17/10/2026 – Làm mới tổng quan chủ nhà Bootstrap
+- Cân heading/bộ lọc, ba thẻ chỉ số, thu tiền/tình trạng phòng và thẻ việc cần xử lý, dùng nút Bootstrap và spacing/type đồng bộ. CSS chỉ nạp cho Home chủ nhà và scope owner-bootstrap; không thay dữ liệu/logic tài chính.
+- Build đạt; Edge owner 360/768/1440px không tràn ngang, đủ 3 chỉ số; chọn khoảng biểu đồ 3 tháng, cơ sở và tháng đạt; liên kết tạo hóa đơn còn nguyên. Không tạo/sửa nghiệp vụ. Đã xem ảnh data/owner-bootstrap-1440.png; demo đã chạy lại, chưa push.
+
 ### 17/10/2026 – Làm mới Đổi mật khẩu bằng Bootstrap
 - Đồng bộ thẻ trắng, nhãn bảo mật và ba ô mật khẩu với nhóm auth; spacing gọn, nút rõ. Giữ trường, validation, CSRF và quy trình đổi mật khẩu.
 - Build đạt; Edge sau đăng nhập tenant3 tại 360/768/1440px không tràn ngang; ba trường required và hiện/ẩn độc lập đạt. Không gửi đổi mật khẩu. Đã xem ảnh data/change-bootstrap-1440.png; demo đã chạy lại, chưa push.
