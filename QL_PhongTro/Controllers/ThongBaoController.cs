@@ -195,13 +195,14 @@ public sealed class ThongBaoController(
         return View("~/Views/HoaDonDichVu/Details.cshtml", model);
     }
 
-    [HttpPost, ValidateAntiForgeryToken]
+    [HttpPost, ValidateAntiForgeryToken, RequestSizeLimit(6 * 1024 * 1024),
+     RequestFormLimits(MultipartBodyLengthLimit = 6 * 1024 * 1024)]
     public async Task<IActionResult> BaoCaoThanhToan(int hoaDonId, decimal? soTien, DateOnly? ngayThanhToan,
-        string? hinhThucThanhToan, CancellationToken cancellationToken)
+        string? hinhThucThanhToan, IFormFile? anhChungTu, CancellationToken cancellationToken)
     {
         try
         {
-            await paymentReports.GuiAsync(Actor, hoaDonId, soTien, ngayThanhToan, hinhThucThanhToan, cancellationToken);
+            await paymentReports.GuiAsync(Actor, hoaDonId, soTien, ngayThanhToan, hinhThucThanhToan, anhChungTu, cancellationToken);
             TempData["PaymentReportSuccess"] = "Đã gửi báo cáo thanh toán. Hóa đơn đang chờ chủ nhà xác nhận.";
         }
         catch (GhiThuValidationException ex)
@@ -215,6 +216,23 @@ public sealed class ThongBaoController(
         }
 
         return RedirectToAction(nameof(HoaDon), new { id = hoaDonId });
+    }
+
+    [HttpPost, ValidateAntiForgeryToken]
+    public async Task<IActionResult> HuyBaoCaoThanhToan(int hoaDonId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var result = await paymentReports.HuyAsync(Actor, hoaDonId, cancellationToken);
+            TempData[result.DaHuy ? "PaymentReportSuccess" : "PaymentReportError"] = result.DaHuy
+                ? "Đã hủy báo cáo thanh toán. Bạn có thể gửi báo cáo mới."
+                : "Báo cáo không còn ở trạng thái chờ xác nhận nên không thể hủy.";
+            return RedirectToAction(nameof(ChiTiet), new { maHoaDon = result.MaHoaDon });
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return Forbid();
+        }
     }
 
     [HttpGet]

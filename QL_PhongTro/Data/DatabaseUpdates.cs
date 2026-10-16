@@ -99,6 +99,8 @@ public static class DatabaseUpdates
                 .Where(column => requireAccountSecurity || table != "tai_khoan" || column is not ("email_confirmed" or "is_deleted"));
             if (schemaVersion < 35 && table == "thanh_toan")
                 columns = columns.Where(column => column != "hinh_thuc_bao_cao");
+            if (schemaVersion < 36 && table == "thanh_toan")
+                columns = columns.Where(column => column is not ("anh_chung_tu_key" or "anh_chung_tu_content_type" or "anh_chung_tu_so_byte"));
             if(schemaVersion<32 && table=="thanh_ly_hop_dong")columns=columns.Where(column=>column!="tien_phat");
             if(schemaVersion<32 && table=="chi_tiet_khau_tru")columns=columns.Where(column=>column!="loai_khoan");
             if (schemaVersion < 30 && table == "bao_hong") columns = columns.Where(column => column != "phien_ban");
@@ -489,8 +491,7 @@ public static class DatabaseUpdates
         if (version < 32) ChamDutHopDongSchema.Upgrade(c);
         if (version < 33) XacNhanTatToanSchema.Upgrade(c);
         if (version < 34) BranchSchemaReconciliation.Upgrade(c);
-        if (version < 35) ReportPerformanceSchema.Upgrade(c);
-        if (version < 36) EmailGuiLogSchema.Upgrade(c);
+        if (version < 35) InvoicePaymentReportSchema.Upgrade(c);
         Check(path);
         Console.WriteLine($"Database updated to version {CurrentVersion}. Existing business rows preserved.");
     }

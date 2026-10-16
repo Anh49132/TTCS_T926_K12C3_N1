@@ -246,9 +246,12 @@ public partial class HoaDonDichVuController(AppDbContext db, DichVuService servi
         ViewData["ToaNhaId"] = context.ToaNhaId;
         var model = await InvoiceViewAsync(await db.HoaDons.AsNoTracking().Include(x => x.ChiTiet).SingleAsync(x => x.Id == id), false);
         await invoices.FillRelationsAsync(model);
-        model.LichSuNhap = await invoices.LichSuNhapAsync(AccountId, id);
+        model.LichSuNhap = User.IsInRole("CHU_NHA") ? await invoices.LichSuNhapAsync(AccountId, id) : [];
         var collection = HttpContext.RequestServices.GetRequiredService<GhiThuHoaDonService>();
         model.ThanhToan = await collection.ChiTietAsync(AccountId, id);
+        model.BaoCaoChoXacNhan = await db.ThanhToans.AsNoTracking()
+            .Where(x => x.HoaDonId == id && x.TrangThai == "CHO_XAC_NHAN")
+            .OrderByDescending(x => x.Id).FirstOrDefaultAsync();
         model.HomNay = collection.HomNay;
         model.TenNguoiGhiThu = await db.TaiKhoans.Where(x => x.Id == AccountId).Select(x => x.HoTen).SingleAsync();
         if (model.HoaDon.TrangThai == "DA_PHAT_HANH") model.LyDoChanHuy = await invoices.LyDoChanHuyAsync(id);

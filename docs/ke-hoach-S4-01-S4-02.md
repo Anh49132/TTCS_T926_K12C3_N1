@@ -151,7 +151,7 @@ Các điểm nối backlog: S4-03 chỉ tính nợ từ khoản xác nhận/cấ
 
 | Câu hỏi | Đề xuất và phần bị ảnh hưởng |
 | --- | --- |
-| Tiền mặt có bắt buộc ảnh không? | Chuyển khoản bắt buộc ảnh; tiền mặt tùy PO. Chưa chốt thì chưa nghiệm thu luồng tiền mặt; có thể tiếp tục phần chuyển khoản |
+| Tiền mặt có bắt buộc ảnh không? | PO đã chốt: Chuyển khoản bắt buộc ảnh chứng từ; Tiền mặt cho phép bỏ trống. Backend phải kiểm tra quy tắc này. |
 | Có duyệt thao tác từ chối kèm lý do không? | Nên có để xử lý báo sai, khách thấy lý do và được gửi báo mới; không tự đánh dấu mở rộng AC này đã được PO duyệt |
 | Nhiều báo chờ cùng hóa đơn có được tổng vượt dư nợ không? | Đề xuất tổng chờ ≤ dư nợ tại lúc gửi; khi đã có báo chờ, mặc định form bằng phần còn chưa được báo và hiển thị cả dư nợ thực lẫn tổng chờ. Đây là điều chỉnh so với mặc định bằng toàn dư nợ trong đề xuất ban đầu, cần PO duyệt |
 | Chủ nhà xác nhận số tiền/ngày/hình thức khác báo được không? | Đề xuất xác nhận nguyên nội dung, sai thì từ chối/gửi lại; không sửa báo đã gửi |
@@ -168,9 +168,12 @@ Ghi quyết định PO có ngày và cập nhật AC/test trước triển khai 
 | Retry gửi/xác nhận, hai request đồng thời | Một báo/một lần thu đúng khóa; không tăng tiền lần hai |
 | Hai báo khác nhau hoặc báo và thu trực tiếp cùng xác nhận | Không thu vượt; thao tác thua nhận xung đột/tải lại |
 | Hủy/từ chối báo chờ | Giữ lịch sử; tiền không đổi; không xác nhận tiếp |
+| Khách hủy báo cáo đang chờ | Đổi báo cáo sang `DA_HUY` trong transaction; không xóa lịch sử, hóa đơn vẫn phát hành và form gửi báo cáo mở lại |
+| Hủy báo cáo sau khi đã xác nhận | Bị từ chối; khoản thanh toán đã xác nhận không đổi |
 | Hủy báo đối đầu xác nhận | Chỉ một trạng thái cuối; không có báo hủy mà vẫn sinh thu |
 | Hủy lần thu ghi nhầm 1.000.000 sau trả đủ | Có lý do/người/thời điểm; đã thu giảm còn 2.000.000, nợ lại 1.000.000; báo nguồn không xác nhận lại |
 | Tiền 0, âm, lẻ đồng, vượt nợ; ngày tương lai | Backend từ chối, không tạo báo/thu/tệp mồ côi |
+| Chuyển khoản không có ảnh / Tiền mặt không có ảnh | Chuyển khoản bị từ chối; Tiền mặt được phép tiếp tục |
 | Hóa đơn nháp/hủy/hết nợ | Chặn gửi và ghi thu, kể cả request giả |
 | Hợp đồng kết thúc nhưng còn nợ cũ | Được báo/thu cho hóa đơn cũ thuộc mình đã phát hành |
 | Khách khác/chủ nhà khác/QUAN_LY/ADMIN ghi | 403; ADMIN chỉ đọc; quyền module NONE bị chặn |

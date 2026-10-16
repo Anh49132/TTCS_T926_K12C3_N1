@@ -68,6 +68,7 @@ public class LichHenMigrationTests : IDisposable
         LocalDatabaseInitializer.Create(_dbPath, _seedPath);
 
         Assert.Equal("36", Scalar("SELECT COALESCE(MAX(version),0) FROM app_schema_version"));
+        Assert.Equal("36", Scalar("SELECT COALESCE(MAX(version),0) FROM app_schema_version"));
         Assert.Equal("2", Scalar("SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name IN"
             + " ('yeu_cau_thue_lich_su','yeu_cau_thue_thong_bao')"));
         DatabaseUpdates.Check(_dbPath);
@@ -81,7 +82,7 @@ public class LichHenMigrationTests : IDisposable
 
         DatabaseUpdates.Update(_dbPath, _seedPath);
 
-        Assert.Equal("34", Scalar("SELECT COALESCE(MAX(version),0) FROM app_schema_version"));
+        Assert.Equal("35", Scalar("SELECT COALESCE(MAX(version),0) FROM app_schema_version"));
         Assert.Equal("1", Scalar("SELECT COUNT(*) FROM sqlite_master WHERE name='yeu_cau_thue_lich_su'"));
         Assert.Equal("1", Scalar("SELECT COUNT(*) FROM sqlite_master WHERE name='yeu_cau_thue_thong_bao'"));
         DatabaseUpdates.Check(_dbPath);
