@@ -68,6 +68,7 @@ public sealed class QuanLyBaoHongController(QuanLyBaoHongService service, BaoHon
         try
         {
             await LoadFilterAsync(filter, ct);
+            ViewData["BaoHongTongQuan"] = await service.TongQuanAsync(ActorId, filter, ct);
             return View(await service.DanhSachLocAsync(ActorId, filter, ct));
         }
         catch (UnauthorizedAccessException) { return Forbid(); }

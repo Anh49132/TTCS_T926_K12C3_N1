@@ -9,6 +9,7 @@
     var actor = int.TryParse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out var actorId) ? actorId : 0;
     var showNotifications = await NotificationPermissions.AllowsAsync("TAI_CHINH")
         && await QL_PhongTro.Services.InvoiceNotificationDispatcher.IsInstalledAsync(NotificationDb);
+    var showRepairs = await NotificationPermissions.AllowsAsync("BAO_HONG");
     var unread = 0;
     if (showNotifications) {
         var published = NotificationDb.HoaDons.Where(x => x.TrangThai == "DA_PHAT_HANH" || x.TrangThai == "DA_HUY").Select(x => x.Id);
@@ -23,6 +24,9 @@
             <a class="@Active("TimTin")" asp-controller="TimTin" asp-action="Index">⌕ <span>Tìm phòng</span></a>
             <a class="@Active("TinDang")" asp-controller="TinDang" asp-action="Index">▤ <span>Tin đăng cho thuê</span></a>
             <a class="@Active("HopDongCuaToi")" asp-controller="HopDongCuaToi" asp-action="Index">▧ <span>Hợp đồng của tôi</span></a>
+            @if (showRepairs) {
+                <a class="@Active("BaoHong")" asp-controller="BaoHong" asp-action="Index"><span aria-hidden="true">⚒</span> <span>Báo hỏng của tôi</span></a>
+            }
             <a class="@Active("YeuCau")" asp-controller="YeuCau" asp-action="Index">▧ <span>Yêu cầu thuê</span></a>
             <a class="@Active("HoSo")" asp-controller="HoSo" asp-action="Xem">○ <span>Hồ sơ của tôi</span></a>
             @if (showNotifications) { <a asp-controller="ThongBao" asp-action="DanhSach">Hóa đơn của tôi</a> }

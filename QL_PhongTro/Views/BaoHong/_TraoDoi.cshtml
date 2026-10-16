@@ -5,7 +5,7 @@
 else {
     <ol class="repair-timeline">
     @foreach (var item in Model.TraoDois) {
-        <li>
+        <li class="@(item.Loai == "TRANG_THAI" ? item.TrangThaiSau == "HOAN_THANH" ? "repair-event-complete" : "repair-event-status" : "repair-event-reply")">
             <strong>@item.TenNguoiGui · Quản lý</strong>
             <time datetime="@item.ThoiDiem.ToString("O")">@item.ThoiDiem.AddHours(7).ToString("dd/MM/yyyy HH:mm")</time>
             @if (item.Loai == "TRANG_THAI") {
