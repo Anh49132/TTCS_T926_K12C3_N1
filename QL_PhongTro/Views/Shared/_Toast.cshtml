@@ -2,6 +2,7 @@
     var success = TempData["Success"] as string;
     success ??= ViewData["ToastSuccess"] as string;
     var error = TempData["Error"] as string;
+    error ??= ViewData["ToastError"] as string;
     if (error is null && !ViewData.ModelState.IsValid)
     {
         error = "Chưa lưu được thông tin. Vui lòng kiểm tra các trường được đánh dấu bên dưới.";

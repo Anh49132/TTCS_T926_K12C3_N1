@@ -93,6 +93,7 @@ public sealed partial class RoomServicesTests
                 var bill = await AddPublishedTenantInvoiceAsync(db, contracts[i], "DEBT-" + i, false, 1, 2026, new(2026, 10, 1));
                 db.ThanhToans.Add(new() { HoaDonId = bill, SoTien = 900000 - i * 100000, NgayThanhToan = new(2026,10,2) });
                 db.ThanhToans.Add(new() { HoaDonId = bill, SoTien = 1, NgayThanhToan = new(2026,10,2), TrangThai = "DA_HUY" });
+                if (i == 0) db.ThanhToans.Add(new() { HoaDonId = bill, SoTien = 75000, NgayThanhToan = new(2026,10,2), TrangThai = "CHO_XAC_NHAN" });
                 if (i < 2)
                 {
                     var old = await AddPublishedTenantInvoiceAsync(db, contracts[i], "DEBT-OLD-" + i, false, 2, 2026, new(2026,9,1));
@@ -114,6 +115,16 @@ public sealed partial class RoomServicesTests
             Assert.Equal(2450000, all.TotalOutstanding);
             Assert.All(all.Rows, x => Assert.Equal("Nguyễn Người Thuê", x.NguoiDungTen));
             Assert.Equal(new long[] {550000,700000,300000,400000,500000}, all.Rows.Select(x=>x.TongConThieu));
+            Assert.Equal(2, all.Rows.Count(x => x.QuaHanNhieuKy));
+            Assert.Equal(75000, all.Rows.SelectMany(x => x.Invoices).Sum(x => x.ChoXacNhan));
+            Assert.All(all.Rows, x => Assert.Equal(x.TongConThieu, x.Invoices.Sum(b => b.TongTien - b.DaThu - b.CanCoc)));
+            foreach (var sort in new[] { "TIEN_GIAM", "TIEN_TANG", "QUAHAN_GIAM", "QUAHAN_TANG" })
+            {
+                var sorted = await service.LayAsync(1, false, null, null, null, null, null, sapXep: sort);
+                var values = sorted.Rows.Select(x => sort.StartsWith("TIEN") ? x.TongConThieu : x.SoNgayQuaHanDaiNhat).ToArray();
+                Assert.Equal(sort.EndsWith("GIAM") ? values.OrderDescending() : values.Order(), values);
+                Assert.Equal(all.TotalOutstanding, sorted.TotalOutstanding);
+            }
             var overdue = await service.LayAsync(1, false, 1, 40, null, null, null);
             Assert.Equal(2, overdue.Rows.Count);
             Assert.All(overdue.Rows, x=>Assert.Equal(42, x.SoNgayQuaHanDaiNhat));
@@ -138,11 +149,27 @@ public sealed partial class RoomServicesTests
         Assert.Contains("Nguyễn Người Thuê",text);
         Assert.Contains("900000",text);
         Assert.Equal(5,text.Split("\r\n").Length); // header, two rows, total, trailing newline
+        Assert.Contains("toa-1_qh-0-20_tien-350000-500000", csv.Content.Headers.ContentDisposition!.FileNameStar);
+        var empty = await owner.GetStringAsync("/CongNo?tienTu=999999999");
+        Assert.Contains("Không có kết quả phù hợp", System.Net.WebUtility.HtmlDecode(empty));
+        using (var db = Context())
+        {
+            var row = (await new CongNoService(db, clock).LayAsync(1, false, null, null, null, null, null)).Rows.First(x => x.QuaHanNhieuKy);
+            var detail = await owner.GetAsync("/CongNo/Phong/" + row.PhongId);
+            Assert.Equal(HttpStatusCode.OK, detail.StatusCode);
+            var html = System.Net.WebUtility.HtmlDecode(await detail.Content.ReadAsStringAsync());
+            Assert.All(row.Invoices, x => Assert.Contains(x.MaHoaDon, html));
+            Assert.Contains("Chờ xác nhận", html);
+            Assert.Equal(HttpStatusCode.NotFound, (await owner.GetAsync("/CongNo/Phong/2147483647")).StatusCode);
+            using var other = web.CreateClient(new() { AllowAutoRedirect = false }); await Login(other, "other");
+            Assert.Equal(HttpStatusCode.Forbidden, (await other.GetAsync("/CongNo/Phong/" + row.PhongId)).StatusCode);
+        }
         Assert.Equal(HttpStatusCode.Forbidden,(await owner.GetAsync("/CongNo?toaNhaId=2")).StatusCode);
         Assert.Equal(HttpStatusCode.Forbidden,(await owner.GetAsync("/CongNo/ExportCsv?toaNhaId=2")).StatusCode);
         using var tenant=web.CreateClient(new(){AllowAutoRedirect=false}); await Login(tenant,"tenant");
         foreach(var url in new[]{"/CongNo","/CongNo/ExportCsv","/Modules/TAI_CHINH?section=cong-no"})
             Assert.Equal(HttpStatusCode.Forbidden,(await tenant.GetAsync(url)).StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, (await tenant.GetAsync("/CongNo/Phong/1")).StatusCode);
     }
 
     [Fact]

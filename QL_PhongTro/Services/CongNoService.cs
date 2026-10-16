@@ -7,8 +7,12 @@ namespace QL_PhongTro.Services;
 public sealed class CongNoService(AppDbContext db, ITimeProvider clock)
 {
     public async Task<CongNoIndexViewModel> LayAsync(int actorId, bool admin, int? toaNhaId,
-        int? quaHanTu, int? quaHanDen, long? tienTu, long? tienDen)
+        int? quaHanTu, int? quaHanDen, long? tienTu, long? tienDen,
+        string? timKiem = null, string sapXep = "PHONG", string tinhTrang = "TAT_CA")
     {
+        if (quaHanTu < 0 || quaHanDen < 0 || tienTu < 0 || tienDen < 0 ||
+            quaHanTu > quaHanDen || tienTu > tienDen)
+            throw new ArgumentException("Bộ lọc phải không âm và giá trị từ không được lớn hơn đến.");
         var actor = await db.TaiKhoans.AsNoTracking().SingleOrDefaultAsync(x => x.Id == actorId && x.DangHoatDong && !x.IsDeleted);
         if (actor is null || actor.VaiTro is not ("CHU_NHA" or "ADMIN") || admin != (actor.VaiTro == "ADMIN"))
             throw new UnauthorizedAccessException();
@@ -26,7 +30,7 @@ public sealed class CongNoService(AppDbContext db, ITimeProvider clock)
             join profile in db.KhachThues.AsNoTracking() on contract.KhachDungTenId equals profile.Id into profiles
             from profile in profiles.DefaultIfEmpty()
             where bill.TrangThai == "DA_PHAT_HANH" && (!toaNhaId.HasValue || building.Id == toaNhaId)
-            select new { bill.Id, bill.TongTien, bill.HanThanhToan, PhongId = room.Id, room.MaPhong,
+            select new { bill.Id, bill.MaHoaDon, bill.Thang, bill.Nam, bill.TongTien, bill.HanThanhToan, ToaNhaId = building.Id, PhongId = room.Id, room.MaPhong,
                 TenToaNha = building.TenToaNha, Name = profile == null ? "Chưa có người đứng tên" : profile.HoTen })
             .ToListAsync();
         var ids = invoices.Select(x => x.Id).ToList();
@@ -34,21 +38,43 @@ public sealed class CongNoService(AppDbContext db, ITimeProvider clock)
             .GroupBy(x => x.HoaDonId).Select(g => new { Id = g.Key, Total = g.Sum(x => x.SoTien) })
             .ToDictionaryAsync(x => x.Id, x => x.Total);
         var offsets = await CanTruHoaDonQueries.LayAsync(db, ids);
+        var pending = await db.ThanhToans.AsNoTracking().Where(x => ids.Contains(x.HoaDonId) && x.TrangThai == "CHO_XAC_NHAN")
+            .GroupBy(x => x.HoaDonId).Select(g => new { Id = g.Key, Total = g.Sum(x => x.SoTien) })
+            .ToDictionaryAsync(x => x.Id, x => x.Total);
         await transaction.CommitAsync();
         var today = DateOnly.FromDateTime(clock.UtcNow.AddHours(7));
         var rows = invoices.Select(x => new { Invoice = x,
                 Remaining = Math.Max(0L, checked(x.TongTien - paid.GetValueOrDefault(x.Id) - offsets.GetValueOrDefault(x.Id))) })
             .Where(x => x.Remaining > 0)
-            .GroupBy(x => new { x.Invoice.PhongId, x.Invoice.MaPhong, x.Invoice.TenToaNha })
+            .GroupBy(x => new { x.Invoice.PhongId, x.Invoice.MaPhong, x.Invoice.TenToaNha, x.Invoice.ToaNhaId })
             .Select(g => new CongNoRowViewModel(g.Key.PhongId, g.Key.MaPhong, g.Key.TenToaNha,
                 string.Join(", ", g.Select(x => x.Invoice.Name).Distinct()), g.Count(), g.Sum(x => x.Remaining),
-                g.Max(x => Math.Max(0, today.DayNumber - x.Invoice.HanThanhToan.DayNumber))))
+                g.Max(x => Math.Max(0, today.DayNumber - x.Invoice.HanThanhToan.DayNumber)))
+            {
+                ToaNhaId = g.Key.ToaNhaId,
+                Invoices = g.OrderBy(x => x.Invoice.HanThanhToan).ThenBy(x => x.Invoice.Id).Select(x => new CongNoInvoice(
+                    x.Invoice.Id, x.Invoice.MaHoaDon, x.Invoice.Thang, x.Invoice.Nam, x.Invoice.Name,
+                    x.Invoice.TongTien, paid.GetValueOrDefault(x.Invoice.Id), offsets.GetValueOrDefault(x.Invoice.Id),
+                    x.Remaining, x.Invoice.HanThanhToan, Math.Max(0, today.DayNumber - x.Invoice.HanThanhToan.DayNumber), pending.GetValueOrDefault(x.Invoice.Id))).ToList()
+            })
             .Where(x => !quaHanTu.HasValue || x.SoNgayQuaHanDaiNhat >= Math.Max(0, quaHanTu.Value))
             .Where(x => !quaHanDen.HasValue || x.SoNgayQuaHanDaiNhat <= Math.Max(0, quaHanDen.Value))
             .Where(x => !tienTu.HasValue || x.TongConThieu >= Math.Max(0, tienTu.Value))
             .Where(x => !tienDen.HasValue || x.TongConThieu <= Math.Max(0, tienDen.Value))
-            .OrderBy(x => x.TenToaNha).ThenBy(x => x.MaPhong).ToList();
+            .Where(x => tinhTrang != "QUA_HAN" || x.SoNgayQuaHanDaiNhat > 0)
+            .Where(x => tinhTrang != "CHUA_QUA_HAN" || x.SoNgayQuaHanDaiNhat == 0)
+            .Where(x => string.IsNullOrWhiteSpace(timKiem) || x.MaPhong.Contains(timKiem.Trim(), StringComparison.OrdinalIgnoreCase) || x.NguoiDungTen.Contains(timKiem.Trim(), StringComparison.OrdinalIgnoreCase))
+            .ToList();
+        rows = (sapXep switch
+        {
+            "TIEN_GIAM" => rows.OrderByDescending(x => x.TongConThieu).ThenBy(x => x.PhongId),
+            "TIEN_TANG" => rows.OrderBy(x => x.TongConThieu).ThenBy(x => x.PhongId),
+            "QUAHAN_GIAM" => rows.OrderByDescending(x => x.SoNgayQuaHanDaiNhat).ThenByDescending(x => x.TongConThieu).ThenBy(x => x.PhongId),
+            "QUAHAN_TANG" => rows.OrderBy(x => x.SoNgayQuaHanDaiNhat).ThenBy(x => x.PhongId),
+            _ => rows.OrderBy(x => x.TenToaNha).ThenBy(x => x.MaPhong).ThenBy(x => x.PhongId)
+        }).ToList();
         return new() { ToaNhaId = toaNhaId, QuaHanTu = quaHanTu, QuaHanDen = quaHanDen,
-            TienTu = tienTu, TienDen = tienDen, Buildings = buildings, Rows = rows };
+            TienTu = tienTu, TienDen = tienDen, Buildings = buildings, Rows = rows,
+            TimKiem = timKiem?.Trim() ?? "", SapXep = sapXep, TinhTrang = tinhTrang };
     }
 }
