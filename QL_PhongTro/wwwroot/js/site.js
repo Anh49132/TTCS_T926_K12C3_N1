@@ -7,6 +7,25 @@
     const accountToggle = document.getElementById('account-toggle');
     const popover = document.getElementById('account-popover');
     if (!sidebar || !toggle) return;
+    // One visible hamburger replaces the redundant home icon in the header.
+    const header = toggle.closest('.dashboard-header');
+    if (header) {
+        const pageTitle = header.querySelector('.page-title');
+        if (pageTitle && document.body.classList.contains('role-admin') && pageTitle.textContent.trim() === 'Trang chủ') pageTitle.textContent = 'Tổng quan';
+        toggle.classList.add('header-sidebar-toggle');
+        toggle.classList.remove('owner-mobile-menu');
+        toggle.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>';
+        const home = header.querySelector('a.owner-header-home, nav a:has(svg)');
+        if (home) {
+            const item = home.closest('li.breadcrumb-item');
+            if (item) item.remove();
+            else {
+                const separator = home.nextElementSibling;
+                if (separator?.tagName === 'SPAN' && separator.textContent.trim() === '/') separator.remove();
+                home.remove();
+            }
+        }
+    }
     const mobile = window.matchMedia('(max-width: 767px)');
     let collapsed = false;
     let mobileOpen = false;

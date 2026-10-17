@@ -1,6 +1,6 @@
 @model QL_PhongTro.ViewModels.HoSoCaNhanViewModel
 @{ ViewData["Title"] = "Hồ sơ của tôi"; }
-<div class="owner-profiles op-personal personal-bootstrap">
+<div class="owner-profiles op-personal personal-bootstrap @(User.IsInRole("ADMIN") ? "admin-personal-bootstrap" : "")">
     <header class="op-heading mb-4"><span class="personal-kicker">TÀI KHOẢN CÁ NHÂN</span><h1 class="fw-bold mt-2">Hồ sơ của tôi</h1><p>Quản lý thông tin tài khoản và bảo mật của bạn.</p></header>
     <div class="row g-4 align-items-start">
         <div class="col-12 col-xl-4">

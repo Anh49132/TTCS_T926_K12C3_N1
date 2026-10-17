@@ -30,6 +30,7 @@
 @if (User.IsInRole("CHU_NHA")) { <link rel="stylesheet" href="~/css/owner-dashboard.css" asp-append-version="true" /> }
 @if (useHomepageTheme && !isTenant) { <link rel="stylesheet" href="~/css/dashboard-spacing.css" asp-append-version="true" /> }
 <link rel="stylesheet" href="~/css/sidebar-bootstrap.css" asp-append-version="true" />
+@if (User.IsInRole("ADMIN")) { <link rel="stylesheet" href="~/css/admin-dashboard-bootstrap.css" asp-append-version="true" /> }
 </head>
 <body class="@(useHomepageTheme ? "homepage-dashboard-theme" : "") @roleClass">
 <a class="skip-link" href="#main-content">Đến nội dung chính</a>
@@ -51,7 +52,23 @@ else
 <button type="button" class="sidebar-backdrop" id="sidebar-backdrop" aria-label="Đóng thanh điều hướng" hidden></button>
 <div class="dashboard-main" id="dashboard-main">
 <header class="dashboard-header">
-@if (ViewContext.RouteData.Values["controller"]?.ToString() == "HoSo")
+@if (User.IsInRole("ADMIN"))
+{
+<button type="button" id="sidebar-toggle" class="icon-button header-sidebar-toggle" aria-label="Ẩn hoặc hiện thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg></button>
+@if (ViewContext.RouteData.Values["controller"]?.ToString() == "ManagedAccounts" && (ViewContext.RouteData.Values["action"]?.ToString() is "ChangeRole" or "Create"))
+{
+<nav class="admin-account-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="ManagedAccounts" asp-action="Index">Quản lý tài khoản</a><span aria-hidden="true">/</span><strong aria-current="page">@ViewData["Title"]</strong></nav>
+}
+else if (ViewContext.RouteData.Values["controller"]?.ToString() == "PhongTro" && (ViewContext.RouteData.Values["action"]?.ToString() is "TaoToaNha" or "ChiTietToaNha" or "SuaToaNha"))
+{
+<nav class="admin-account-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="PhongTro" asp-action="ToaNha">Quản lý tòa nhà</a><span aria-hidden="true">/</span>@if (ViewContext.RouteData.Values["action"]?.ToString() == "SuaToaNha") { <a asp-controller="PhongTro" asp-action="ChiTietToaNha" asp-route-id="@Context.Request.RouteValues["id"]">Chi tiết tòa nhà</a><span aria-hidden="true">/</span> }<strong aria-current="page">@ViewData["Title"]</strong></nav>
+}
+else
+{
+<span class="page-title">@(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "Tổng quan" : ViewData["Title"])</span>
+}
+}
+else if (ViewContext.RouteData.Values["controller"]?.ToString() == "HoSo")
 {
 <button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
 @if (ViewContext.RouteData.Values["action"]?.ToString() == "CuaToi") {

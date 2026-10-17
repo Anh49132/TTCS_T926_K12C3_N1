@@ -1,3 +1,54 @@
+### 18/10/2026 – Căn giãn dòng quản lý tài khoản
+- Thu gọn padding bộ lọc/hàng bảng, khoảng cách nhóm thao tác; line-height 1.5, nhãn cách ô 6px. Giữ control 44px, chỉ CSS.
+- Diff và HTTP CSS đạt; chưa nghiệm thu trực quan thiết bị thật.
+
+### 18/10/2026 – Bootstrap quản lý tài khoản
+- Header/nút tạo, thẻ bộ lọc 44px, bảng hover, badge và nhóm thao tác inline; CSS managed-accounts-bootstrap riêng, responsive. Giữ form/CSRF/quyền và liên kết.
+- Build và HTTP danh sách/lọc Admin đạt, CSRF giữ nguyên. Chưa nghiệm thu trực quan 360px/Safari; không thay đổi tài khoản.
+
+### 18/10/2026 – Căn giãn dòng sidebar Admin
+- Menu desktop 40px, thu khoảng cách mục/nhóm và brand; mobile giữ 44px. Chỉ CSS Admin.
+- Diff và HTTP CSS đạt; chưa kiểm chứng trực quan.
+
+### 18/10/2026 – Bootstrap sidebar Admin
+- Căn icon/nhãn/badge theo cùng track, menu 42px (mobile 44px), active champagne/hover/focus rõ, brand và khoảng cách đồng bộ. Chỉ CSS Admin, giữ quyền và liên kết.
+- Diff và HTTP CSS đạt; chưa kiểm chứng trực quan thiết bị thật.
+
+### 18/10/2026 – Đồng bộ tiêu đề tổng quan Admin
+- Header Trang chủ đổi thành Tổng quan cho Admin, kiểu chữ/cụm ba gạch đồng bộ chủ nhà. Không đổi tiêu đề trang công khai.
+- Node syntax và diff đạt.
+
+### 18/10/2026 – Bỏ icon home còn lại header chủ nhà
+- Xử lý cả shortcut home ngoài nav và dấu phân cách, giữ nút ba gạch/tiêu đề.
+- Node syntax và diff đạt.
+
+### 18/10/2026 – Nút ba gạch trên header
+- Thay icon home và dấu phân cách đầu breadcrumb bằng nút ba gạch hiện rõ trên desktop/mobile; dùng lại sidebar-toggle và logic ẩn/hiện/inert hiện có.
+- Node syntax và diff đạt; chưa kiểm chứng tương tác trực quan.
+
+### 18/10/2026 – Bỏ thẻ chào tài khoản sidebar
+- Bỏ thẻ Xin chào/tên/vai trò trong sidebar theo ảnh yêu cầu; giữ menu tài khoản trên header.
+
+### 18/10/2026 – Đồng bộ tài khoản Admin với chủ nhà
+- Đồng bộ avatar 34px, typography, padding/viền/hover, mũi tên xuống và popover theo nút chủ nhà; giữ tên/vai trò Admin. Chỉ CSS.
+- Diff và HTTP CSS đạt; chưa nghiệm thu trực quan.
+
+### 18/10/2026 – Nút tài khoản Admin
+- Nền sáng, avatar champagne, tên/vai trò và chevron có màu rõ; hover/focus/open đồng bộ Bootstrap, popover bo góc/bóng. CSS scoped header Admin.
+- Diff và HTTP CSS đạt; chưa kiểm chứng tương tác trực quan.
+
+### 18/10/2026 – Căn tìm kiếm cạnh avatar Admin
+- Chuyển khoảng trống flex sang trước ô tìm kiếm, đưa tìm kiếm/chuông sát tài khoản ở tổng quan Admin; giữ tìm kiếm ẩn trên mobile và avatar bên phải.
+- Diff và HTTP CSS đạt.
+
+### 18/10/2026 – Căn giãn dòng tổng quan Admin
+- Thu gọn khoảng đệm thẻ thống kê, bảng hoạt động và trạng thái; line-height nội dung 1.5, giữ khoảng cách dòng phụ 4px. Chỉ CSS Admin.
+- Diff và HTTP CSS đạt; chưa nghiệm thu trực quan thiết bị thật.
+
+### 18/10/2026 – Bootstrap tổng quan Admin
+- CSS admin-dashboard-bootstrap chỉ nạp ADMIN: thống kê, bố cục vai trò/hoạt động/trạng thái, bảng hover/align-middle và spacing responsive. Giữ dữ liệu/quyền/liên kết.
+- Build và HTTP admin đạt; owner không nạp CSS Admin. Chưa nghiệm thu trực quan 360px/Safari.
+
 ### 18/10/2026 – Dropdown Bootstrap trạng thái/mức độ báo hỏng
 - Menu Bootstrap riêng chủ nhà cho trl-status/trl-priority, giữ select và change, đồng bộ reset; không ảnh hưởng giao diện khách thuê.
 - Node syntax, diff và HTTP JS/CSS đạt; chưa nghiệm thu tương tác trực quan.
@@ -925,3 +976,95 @@ Gộp origin/feature/S4-07/ui-improvements (0784cf5) vào dev928b2e2. Chỉ xung
 - Thêm Trợ lý AI cho tài khoản đã đăng nhập: câu hỏi tự do, ngữ cảnh tạm server, gợi ý theo vai trò, liên kết nghiệp vụ, responsive360px. Gemini tự gọi công cụ đọc hóa đơn/công nợ, báo hỏng, phòng và kỳ hợp đồng; backend kiểm tra tài khoản/quyền/module/sở hữu, chặn quản lý xem tài chính. Không cho AI chạy SQL hoặc ghi nghiệp vụ.
 - `run.bat` nhận Gemini__ApiKey/Gemini__Model từ `.env.local` bị ignore; khóa chỉ ở header server→Google, không xuất hiện frontend. Không đổi schema/DB/tài khoản. CSRF/no-store, 2.000 ký tự/câu, 10 câu/phút/tài khoản, hội thoại30phút, xử lý quota/timeout và giữ câu hỏi để thử lại.
 - Build/10kiểm thử mới đạt (`data/chatbot-tests/chatbot-final.trx`). Edge gọi Gemini thật trên bản sao đạt hội thoại khách/nối tiếp, chặn quản lý tài chính, chủ nhà tổng hợp phòng theo tòa; desktop/360px, reset/Escape đã kiểm tra và xem ảnh (`data/chatbot-qa/browser-check-562c7346`). Có timeout thử nghiệm ban đầu, không cam kết độ ổn định API. Server QA đã dừng. Chưa full suite/Safari/thiết bị thật/push. Hướng dẫn và giới hạn: `docs/chatbot-gemini.md`.
+
+### 18/10/2026 – Đồng bộ thanh đầu trang trên toàn bộ giao diện Admin
+- Nạp CSS Admin tại layout chung thay vì riêng Tổng quan; dùng chung nút 3 gạch, tiêu đề, ô tìm kiếm bên cạnh chuông và tài khoản trên mọi trang Admin. Giữ kích thước/căn hàng của Tổng quan và tên trang hiện tại; không tác động bố cục vai trò khác.
+- Build Razor thành công, 0 lỗi (cảnh báo NU1900/ImageSharp/nullable có sẵn). HTTP 200 và kiểm tra header/CSS duy nhất đạt ở Tổng quan, tài khoản, phân quyền, nhật ký, tòa nhà và báo cáo; trang chủ nhà không nạp CSS Admin. `/BaoHong` trả 403 theo quyền hiện tại. `git diff --check` đạt. Chưa kiểm tra trực quan trình duyệt/mobile/Safari; không đổi nghiệp vụ, schema hoặc DB. Chưa commit/push thay đổi mới.
+
+### 18/10/2026 – Dropdown Bootstrap bộ lọc tài khoản Admin
+- Hai bộ lọc Vai trò/Trạng thái dùng Bootstrap Dropdown: cao 44px, bo góc, viền và focus vàng nhẹ, menu có bóng và tô mục đang chọn. Đồng bộ select gốc để giữ query lọc và lựa chọn từ server; khi JavaScript không chạy vẫn dùng select gốc.
+- Build đạt 0 lỗi (cảnh báo cũ); node --check và git diff --check đạt. Chưa kiểm tra trực quan/mobile. Không đổi nghiệp vụ hoặc schema/DB; chưa push.
+
+### 18/10/2026 – Bootstrap trang Đổi vai trò tài khoản
+- Thẻ Bootstrap rộng tối đa 600px, biểu tượng và tiêu đề, vùng tên tài khoản, khung lưu ý, dropdown vai trò và nhóm nút cao 44px; khoảng cách thống nhất, nút xếp dọc trên màn nhỏ. Giữ nguyên POST/CSRF/Id/OriginalRole và nghiệp vụ.
+- Build đạt 0 lỗi (cảnh báo cũ), node --check và git diff --check đạt. HTTP GET trang đổi vai trò đạt 200, kiểm tra trường form/CSRF và tài nguyên giao diện; không gửi đổi vai trò thật. Chưa xác minh trực quan/mobile/Safari. Không đổi schema/DB, chưa push.
+
+### 18/10/2026 – Căn khoảng cách trang Đổi vai trò
+- Giảm padding thẻ về 20px, giữ 16px trên mobile; khoảng cách các khối 16px, dòng nội dung 1.5, tên tài khoản cách nhãn 4px. Nhóm nút cách đường phân cách 16px, giữ chiều cao 44px.
+- Chỉ sửa CSS, kiểm tra git diff --check; chưa kiểm tra trực quan trình duyệt. Không đổi chức năng hoặc DB.
+
+### 18/10/2026 – Bootstrap trang Tạo tài khoản Admin
+- Đồng bộ thẻ 600px, biểu tượng/tiêu đề và khung hướng dẫn với Đổi vai trò; ô nhập cao 44px, placeholder/autocomplete, dropdown Bootstrap vai trò, nhóm nút và khoảng cách 16px. CSS riêng trang, nút toàn chiều ngang trên mobile.
+- Build đạt 0 lỗi (cảnh báo cũ), git diff --check đạt. GET /ManagedAccounts/Create 200; kiểm tra trường dữ liệu, CSRF, CSS/JS; không tạo tài khoản hoặc gửi email. Chưa kiểm tra trực quan/mobile/Safari. Không đổi backend/schema/DB; chưa push.
+
+### 18/10/2026 – Căn giãn dòng trang Tạo tài khoản
+- Dùng grid gap 16px cho form, bỏ margin Bootstrap bị cộng dồn; nhãn cách ô 6px, nhóm nút cách trường cuối 16px và cách đường phân cách 16px. Ẩn vùng validation rỗng, thông báo/lỗi giãn dòng 1.5. Phạm vi CSS chỉ trang Tạo tài khoản.
+- git diff --check đạt; chỉ thay CSS, không build lại hoặc gửi tạo tài khoản. Chưa kiểm tra trực quan/mobile.
+
+### 18/10/2026 – Breadcrumb Đổi vai trò tài khoản
+- Thêm liên kết Quản lý tài khoản giữa nút menu và Đổi vai trò tài khoản. Đồng bộ font 16px, gap 12px, màu liên kết và dấu / theo breadcrumb chi tiết phòng của chủ nhà; có aria-current và co dòng màn nhỏ.
+- Build đạt 0 lỗi (cảnh báo cũ), diff --check đạt; HTTP GET trang 200 và liên kết /ManagedAccounts đúng. Chưa kiểm tra trực quan/mobile. Không đổi nghiệp vụ/DB; chưa push.
+
+### 18/10/2026 – Đồng bộ breadcrumb Tạo tài khoản
+- Trang Tạo tài khoản dùng chung breadcrumb với Đổi vai trò: nút menu, liên kết Quản lý tài khoản, dấu / và tên trang hiện tại; dùng cùng CSS và responsive.
+- Build đạt 0 lỗi (cảnh báo cũ), diff --check đạt. HTTP 200 và breadcrumb/liên kết đúng trên cả hai trang; chưa kiểm tra trực quan. Không đổi nghiệp vụ/DB; chưa push.
+
+### 18/10/2026 – Đồng bộ Bootstrap Hồ sơ Admin
+- Hồ sơ Admin dùng toàn chiều ngang khung dashboard, lưới Bootstrap gutter 16px, thẻ viền/bo góc 12px, avatar 72px, hàng thông tin căn cột và giãn dòng 1.5. Nút bảo mật cao 44px, đổi mật khẩu màu chính, đăng xuất viền; bố cục dọc trên mobile. Chỉ gắn class riêng Admin.
+- Build đạt 0 lỗi (cảnh báo cũ), diff --check đạt. GET /HoSo/CuaToi 200 ở Admin/chủ nhà; kiểm tra class riêng Admin, phần bảo mật và CSRF còn đủ. Chưa kiểm tra trực quan/mobile/Safari; không đổi backend/schema/DB, chưa push.
+
+### 18/10/2026 – Căn giãn dòng Hồ sơ Admin
+- Hàng thông tin padding dọc 12px, tiêu đề thẻ cách đường phân cách 12px; mô tả bảo mật và tên/vai trò có khoảng cách gọn, bỏ margin cuối form đăng xuất. Giữ line-height 1.5 và khoảng cách các thẻ 16px; chỉ áp dụng Admin.
+- git diff --check đạt; thay CSS nên không build lại. Chưa kiểm tra trực quan/mobile; không đổi nghiệp vụ hoặc DB.
+
+### 18/10/2026 – Bootstrap Quản lý tòa nhà Admin
+- Đồng bộ khung toàn chiều ngang, tiêu đề 28px, thẻ thống kê viền nhấn vàng, icon 36px, lưới/khoảng cách 16px, panel bo góc 12px; bộ lọc cao 44px, bảng Bootstrap căn giữa dọc và nút Chi tiết dạng viền. Responsive cột tổng hợp xếp dọc, thống kê 2 cột và bộ lọc xuống hàng ở màn nhỏ. CSS chỉ Admin, giữ dữ liệu và thao tác cũ.
+- git diff --check đạt; GET trang 200 và CSS cập nhật được phục vụ. Chỉ CSS nên không build lại. Chưa kiểm tra trực quan/mobile/Safari; không đổi nghiệp vụ/schema/DB, chưa push.
+
+### 18/10/2026 – Căn giãn dòng Quản lý tòa nhà Admin
+- Thu gọn khoảng cách nhãn/số/mô tả thống kê, tiêu đề panel cách nội dung 14px; hàng bảng padding dọc 10px, ghi chú phụ cách 4px và line-height 1.5. Giữ khoảng cách các thẻ 16px; CSS chỉ Admin.
+- git diff --check đạt. Chỉ CSS, không build lại; chưa xác minh trực quan/mobile. Không đổi dữ liệu/nghiệp vụ.
+
+### 18/10/2026 – Bootstrap Thêm tòa nhà Admin
+- Đồng bộ layout hai cột với khung Admin, thẻ bo góc 12px, tiêu đề/biểu tượng, ô nhập nền trắng cao 44px, nhãn cách 6px và lưới gap 16px. Thẻ tóm tắt rõ cột, nhóm nút lưu/hủy đồng chiều cao; dưới 1000px xếp một cột, mobile ô nhập/nút tự co.
+- diff --check đạt; GET /PhongTro/TaoToaNha 200, CSRF và CSS mới được phục vụ. Chỉ CSS nên không build lại, không gửi tạo tòa. Chưa kiểm tra trực quan/mobile/Safari. Không đổi nghiệp vụ/schema/DB; chưa push.
+
+### 18/10/2026 – Căn giãn dòng Thêm tòa nhà Admin
+- Padding thẻ 16px; tiêu đề khối cách nội dung 14px, khoảng cách dọc các trường 14px, dòng trợ giúp cách 4px và line-height 1.5. Thu gọn lựa chọn loại hình, căn lại tên/mô tả và các hàng tóm tắt; ẩn validation rỗng. CSS chỉ Admin.
+- git diff --check đạt; chỉ CSS, không build hoặc gửi tạo tòa. Chưa kiểm tra trực quan/mobile; không đổi nghiệp vụ/DB.
+
+### 18/10/2026 – Breadcrumb Thêm tòa nhà Admin
+- Thêm Quản lý tòa nhà / Thêm tòa nhà sau nút menu, dùng chung kiểu breadcrumb của Tạo tài khoản và liên kết về PhongTro/ToaNha.
+- Build đạt 0 lỗi (cảnh báo cũ), diff --check đạt; HTTP trang và đích liên kết 200, breadcrumb đúng. Chưa kiểm tra trực quan/mobile. Không đổi nghiệp vụ/DB; chưa push.
+
+### 18/10/2026 – Bootstrap Chi tiết tòa nhà Admin
+- Đồng bộ tiêu đề, nút 44px, tổng quan, thống kê viền vàng và danh sách phòng với dashboard Admin; thẻ bo góc 12px, khoảng cách 16px, nhãn/giá trị rõ cột, bộ lọc cao đều và bảng căn giữa dọc. Responsive giữ thống kê 2 cột, nút/bộ lọc xuống hàng; chỉ CSS Admin.
+- diff --check đạt; HTTP chi tiết tòa nhà 200 và CSS mới phục vụ đúng. Không build lại vì chỉ CSS; chưa kiểm tra trực quan/mobile/Safari. Không đổi nghiệp vụ/schema/DB; chưa push.
+
+### 18/10/2026 – Căn giãn dòng Chi tiết tòa nhà Admin
+- Tổng quan padding/gap 16px, địa chỉ cách dữ kiện 12px; thống kê và mô tả giãn dòng 1.5. Bỏ margin thừa ở tiêu đề danh sách/form lọc, hàng bảng padding dọc 10px, dòng phụ cách 4px. Giữ khoảng cách các khối 16px; CSS chỉ Admin.
+- git diff --check đạt; chỉ CSS nên không build lại. Chưa kiểm tra trực quan/mobile; không đổi nghiệp vụ hoặc DB.
+
+### 18/10/2026 – Breadcrumb Chi tiết tòa nhà Admin
+- Thêm Quản lý tòa nhà / Chi tiết tòa nhà sau nút menu, dùng chung breadcrumb với Tạo tài khoản và Thêm tòa nhà. Liên kết về danh sách tòa nhà.
+- Build đạt 0 lỗi (cảnh báo cũ), diff --check đạt; HTTP chi tiết 200 và breadcrumb/liên kết đúng. Chưa kiểm tra trực quan/mobile; không đổi nghiệp vụ/DB, chưa push.
+
+### 18/10/2026 – Bootstrap Chỉnh sửa tòa nhà Admin
+- Đồng bộ khung editor với trang Thêm tòa nhà: thẻ 12px, khoảng cách 16px, tiêu đề 28px, input nền trắng cao 44px, focus vàng nhẹ, sidebar 300px và tóm tắt viền nhấn. Tab và nhóm nút lưu/hủy đồng bộ; responsive sidebar xuống dưới. CSS chỉ Admin, giữ form/validation/POST cũ.
+- git diff --check đạt; GET trang sửa 200, CSRF và CSS mới được phục vụ; không gửi cập nhật tòa. Chỉ CSS nên không build lại. Chưa kiểm tra trực quan/mobile/Safari; không đổi nghiệp vụ/schema/DB, chưa push.
+
+### 18/10/2026 – Căn giãn dòng Chỉnh sửa tòa nhà Admin
+- Khoảng cách dọc các trường và sau tiêu đề khối 14px; tóm tắt/mô tả/ghi chú line-height 1.5, nhãn phụ cách 4px. Căn margin phần ảnh, số liệu và lưu ý; ẩn validation rỗng. Giữ CSS trong phạm vi Admin.
+- git diff --check đạt; chỉ CSS, không build lại hoặc gửi cập nhật. Chưa kiểm tra trực quan/mobile; không đổi nghiệp vụ/DB.
+
+### 18/10/2026 – Breadcrumb Chỉnh sửa tòa nhà Admin
+- Thêm Quản lý tòa nhà / Chỉnh sửa tòa nhà sau nút menu, dùng chung CSS với Tạo tài khoản; liên kết về danh sách tòa nhà.
+- Build đạt 0 lỗi (cảnh báo cũ), diff --check đạt; HTTP trang sửa 200 và breadcrumb/liên kết đúng. Chưa kiểm tra trực quan/mobile; không đổi nghiệp vụ/DB, chưa push.
+
+### 18/10/2026 – Thêm cấp Chi tiết tòa nhà trong breadcrumb sửa tòa Admin
+- Breadcrumb: Quản lý tòa nhà / Chi tiết tòa nhà / Chỉnh sửa tòa nhà; liên kết chi tiết giữ đúng id tòa đang sửa, dùng CSS chung như Tạo tài khoản.
+- Build đạt 0 lỗi (cảnh báo cũ), diff --check đạt; HTTP xác minh thứ tự ba cấp, id tòa và liên kết chi tiết 200. Chưa kiểm tra trực quan/mobile; không đổi nghiệp vụ/DB, chưa push.
+
+### 18/10/2026 – Chuẩn bị đẩy giao diện Admin
+- Theo yêu cầu push nhánh feature/fix/UI-hoan-thien-du-an. Fetch xác nhận HEAD và origin cùng nền (0 ahead/0 behind). Phạm vi gồm dashboard/header/sidebar, tài khoản, hồ sơ, tòa nhà và tài liệu tiến độ; không stage DB/data/credential hoặc test csproj.
+- Build gần nhất đạt 0 lỗi; HTTP các trang/breadcrumb đã kiểm tra theo từng mục; node --check cho site.js và account-filter-dropdowns.js đạt, diff --check đạt. Chưa kiểm tra trực quan/mobile/Safari hoặc full test nghiệp vụ.
