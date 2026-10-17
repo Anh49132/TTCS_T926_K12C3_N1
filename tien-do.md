@@ -1068,3 +1068,187 @@ Gộp origin/feature/S4-07/ui-improvements (0784cf5) vào dev928b2e2. Chỉ xung
 ### 18/10/2026 – Chuẩn bị đẩy giao diện Admin
 - Theo yêu cầu push nhánh feature/fix/UI-hoan-thien-du-an. Fetch xác nhận HEAD và origin cùng nền (0 ahead/0 behind). Phạm vi gồm dashboard/header/sidebar, tài khoản, hồ sơ, tòa nhà và tài liệu tiến độ; không stage DB/data/credential hoặc test csproj.
 - Build gần nhất đạt 0 lỗi; HTTP các trang/breadcrumb đã kiểm tra theo từng mục; node --check cho site.js và account-filter-dropdowns.js đạt, diff --check đạt. Chưa kiểm tra trực quan/mobile/Safari hoặc full test nghiệp vụ.
+
+### 18/10/2026 – Bootstrap Cấu hình điện nước Admin
+- Đồng bộ tiêu đề, tab, thẻ 12px, nhãn/ô nhập 44px nền trắng, focus vàng, lựa chọn cách tính và thẻ tóm tắt với giao diện tòa nhà Admin. Nhóm lưu/hủy cao đều; responsive sidebar xuống dưới và lựa chọn xếp dọc trên mobile. Giữ nguyên giá, kỳ áp dụng, form và backend.
+- git diff --check đạt; HTTP trang 200, CSRF và CSS cập nhật được phục vụ. Chỉ CSS nên không build lại; không gửi thay đổi cấu hình. Chưa kiểm tra trực quan/mobile/Safari; không đổi schema/DB, chưa push.
+
+### 18/10/2026 – Căn giãn dòng Cấu hình điện nước Admin
+- Căn khoảng cách sau tiêu đề và giữa trường 14px, lựa chọn cách tính cách dọc 8px; bỏ margin dư của lựa chọn phạm vi, đồng bộ mô tả/tóm tắt/ví dụ line-height 1.5 và ẩn validation rỗng. Chỉ CSS Admin.
+- git diff --check đạt; không build lại vì chỉ CSS, không gửi thay đổi cấu hình. Chưa kiểm tra trực quan/mobile; không đổi nghiệp vụ/DB.
+
+### 18/10/2026 – Breadcrumb Cấu hình điện nước Admin
+- Thêm Quản lý tòa nhà / Cấu hình điện nước sau nút menu, dùng chung CSS với Tạo tài khoản và liên kết về danh sách tòa nhà.
+- Build đạt 0 lỗi (cảnh báo cũ), diff --check đạt; HTTP trang cấu hình 200 và breadcrumb/liên kết đúng. Chưa kiểm tra trực quan/mobile; không đổi nghiệp vụ/DB, chưa push.
+
+### 18/10/2026 – Bootstrap Nhật ký hoạt động Admin
+- Gom bộ lọc vào thẻ trắng, ô nhập/select cao 44px, nhóm nút và tiêu đề đồng bộ Admin. Bảng Bootstrap hover nằm trong khung bo góc, cột có kích thước rõ, nội dung dài tự ngắt, chi tiết thay đổi giữ nguyên; cuộn ngang trong khung trên mobile.
+- Build đạt 0 lỗi (cảnh báo cũ), diff --check đạt; HTTP nhật ký và GET có bộ lọc 200, CSS mới tải đúng. Không sửa nội dung nhật ký hoặc backend/DB. Chưa kiểm tra trực quan/mobile/Safari; chưa push.
+
+### 18/10/2026 – Căn giãn dòng Nhật ký hoạt động
+- Hàng nhật ký padding 12px, line-height 1.5; câu mô tả và tóm tắt cách 6px, phần xem chi tiết và thông báo có nhịp cách đều. Giữ bộ lọc cách 16px và ô nhập cao 44px.
+- git diff --check đạt; chỉ CSS, không build lại. Chưa kiểm tra trực quan/mobile; không sửa dữ liệu nhật ký hoặc nghiệp vụ.
+
+### 18/10/2026 – Dropdown Bootstrap bộ lọc nhật ký
+- Người thực hiện/Nhóm thông tin dùng Bootstrap Dropdown cao 44px, menu bo góc/bóng nhẹ, tô mục được chọn và focus vàng. Đồng bộ select gốc để giữ query lọc và lựa chọn từ server; không có JS vẫn dùng select gốc.
+- Build đạt 0 lỗi (cảnh báo cũ), node --check và diff --check đạt; GET trang/tài nguyên JS 200, trường gốc và asset đúng. Chưa kiểm tra tương tác trực quan/mobile; không đổi nghiệp vụ/DB, chưa push.
+
+### 18/10/2026 – Đồng bộ giao diện Báo hỏng & bảo trì Admin
+- Đồng bộ kích thước Bootstrap dashboard: tiêu đề 28px, control 44px, thống kê viền vàng/thẻ 12px, khoảng cách 16px, bảng chữ 13px và khung chi tiết 340px. Màn nhỏ xếp khung chi tiết dưới danh sách, bảng cuộn trong khung. CSS riêng Admin.
+- Mã thực tế trang /Modules/BAO_HONG là dữ liệu minh họa với nút disabled; giữ nguyên trạng thái và nhãn minh họa, không nối CRUD hoặc thay dữ liệu. diff --check đạt, HTTP trang/CSS 200. Chỉ CSS nên không build lại; chưa kiểm tra trực quan/mobile/Safari, chưa push.
+
+### 18/10/2026 – Căn giãn dòng Báo hỏng & bảo trì Admin
+- Thu gọn hàng danh sách padding dọc 10px, đồng bộ line-height 1.5; căn khoảng cách tiêu đề/mô tả, liên hệ, lịch hẹn và lịch sử xử lý trong khung chi tiết theo nhịp 4/8/12/16px. Chỉ CSS Admin, giữ trạng thái dữ liệu minh họa/nút disabled.
+- git diff --check đạt; không build lại vì chỉ CSS. Chưa kiểm tra trực quan/mobile; không đổi nghiệp vụ/DB.
+
+### 18/10/2026 – Đồng bộ Bootstrap Báo cáo Admin
+- Bộ lọc dùng CSS grid căn hàng, tự chia 3/2/1 cột theo màn hình; thẻ KPI nhấn vàng, số liệu 26px và mô tả 12px. Đồng bộ khoảng cách 16px, header biểu đồ và bảng theo dashboard. CSS chỉ Admin, giữ nguyên dữ liệu/công thức báo cáo và dropdown Bootstrap có sẵn.
+- diff --check đạt, GET /BaoCao và CSS 200. Chỉ CSS nên không build lại; chưa kiểm tra trực quan/mobile/Safari, không đổi nghiệp vụ/DB, chưa push.
+
+### 18/10/2026 – Căn giãn dòng Báo cáo Admin
+- Thu gọn khoảng cách nhãn/số/mô tả KPI theo nhịp 8/6px; header biểu đồ padding dọc 14px, dòng phụ cách 4px; hàng bảng padding dọc 10px và line-height 1.5. Bộ lọc giữ nhãn cách ô 6px, các khối cách 16px; chỉ CSS Admin.
+- git diff --check đạt; chỉ CSS nên không build lại. Chưa kiểm tra trực quan/mobile; không đổi dữ liệu/công thức hoặc DB.
+
+### 18/10/2026 – Bootstrap Công nợ Admin
+- Đồng bộ tiêu đề 28px, thẻ 12px, bộ lọc/nút cao 44px, khoảng cách 16px; thẻ thống kê nhấn vàng, bảng Bootstrap chữ rõ và badge gọn. Tổng hợp xuống một cột trên màn nhỏ, thống kê 2 cột mobile. Giữ dropdown Bootstrap và chức năng lọc/xuất/chi tiết có sẵn; CSS chỉ Admin.
+- diff --check đạt; GET /CongNo và CSS 200. Chỉ CSS nên không build lại; chưa kiểm tra trực quan/mobile/Safari, không đổi tính nợ/backend/DB, chưa push.
+
+### 18/10/2026 – Căn giãn dòng Công nợ Admin
+- Căn tiêu đề thẻ padding dọc 14px, hàng bảng 10px; thu gọn nhịp nhãn/số/mô tả KPI, dòng phụ cách 4px. Bộ lọc gap dọc 14px, nội dung trợ giúp/ưu tiên/phân trang line-height 1.5. CSS chỉ Admin.
+- git diff --check đạt; chỉ CSS nên không build lại, chưa kiểm tra trực quan/mobile. Không đổi dữ liệu/công thức công nợ hoặc DB.
+
+### 18/10/2026 – Tinh chỉnh Bootstrap Quản lý tòa nhà Admin
+- Cân lại chiều cao/margin thống kê, đồng bộ hai panel tổng hợp và thu gọn vùng biểu đồ trống. Các dropdown bộ lọc thực tế (details/summary) cùng cao 44px với ô tìm kiếm; nút đổi kiểu hiển thị rõ trạng thái chọn. CSS chỉ Admin, không đổi dữ liệu hoặc thao tác.
+- git diff --check đạt; chỉ CSS nên không build lại. Chưa kiểm tra trực quan/mobile/Safari; chưa push.
+
+### 18/10/2026 – Căn lại giãn dòng tổng quan tòa nhà Admin
+- Cân nhịp nhãn/số/mô tả thống kê 4–6px; tiêu đề panel, chú giải biểu đồ và số tổng hợp có khoảng cách gọn; ghi chú hàng bảng line-height 1.5 và cách dòng chính 4px. Giữ khoảng cách khối 16px, không đổi bố cục mobile.
+- git diff --check đạt; chỉ CSS, chưa kiểm tra trực quan/mobile. Không đổi chức năng hoặc DB; chưa push.
+
+### 18/10/2026 – Bootstrap Quản lý phòng Admin
+- Đồng bộ thống kê nhấn vàng, thẻ 12px, tiêu đề 28px, khoảng cách 16px; bộ lọc/nút 44px, bảng và badge dễ đọc, Chi tiết dạng nút viền. Responsive giữ thống kê 2 cột, nhóm nút/bộ lọc xuống hàng. CSS chỉ Admin, giữ form và nghiệp vụ phòng.
+- GET /PhongTro và CSS 200, diff --check đạt. Chỉ CSS nên không build lại; chưa kiểm tra trực quan/mobile/Safari. Không đổi backend/DB; chưa push.
+
+### 18/10/2026 – Căn giãn dòng Quản lý phòng Admin
+- Thu gọn khoảng cách số/mô tả thống kê, header và bộ lọc padding dọc 14px, hàng bảng 10px; dòng phụ phòng/khách thuê cách 4px và line-height 1.5. Chỉ CSS Admin, giữ chức năng và dữ liệu.
+- git diff --check đạt; không build lại vì chỉ CSS. Chưa kiểm tra trực quan/mobile; chưa push.
+
+### 18/10/2026 – Bootstrap Thêm phòng Admin
+- Đồng bộ thẻ 12px, tiêu đề 28px, khoảng cách 16px, ô nhập 44px nền trắng/focus vàng, lựa chọn trạng thái/tiện nghi cao đều và khung tải ảnh rộng rõ. Responsive một cột dưới 1000px, trường và tiện nghi xếp dọc trên mobile. CSS chỉ Admin, giữ validation/POST và tải ảnh hiện có.
+- diff --check đạt; GET /PhongTro/Create 200, CSRF và CSS tải đúng; không tạo phòng. Chỉ CSS nên không build lại. Chưa kiểm tra trực quan/mobile/Safari; không đổi nghiệp vụ/DB, chưa push.
+
+### 18/10/2026 – Căn giãn dòng Thêm phòng Admin
+- Khoảng cách dọc trường/tiêu đề khối 14px, dòng trợ giúp cách 4px, hướng dẫn trạng thái cách 8px và line-height 1.5. Cân nhịp tiện nghi, số đã chọn, khung tải ảnh; ẩn validation rỗng. Chỉ CSS Admin.
+- git diff --check đạt; chỉ CSS nên không build lại. Chưa kiểm tra trực quan/mobile; không đổi chức năng/DB, chưa push.
+
+### 18/10/2026 – Breadcrumb Thêm phòng Admin
+- Thêm Quản lý phòng / Thêm phòng cạnh nút menu, dùng chung CSS với Tạo tài khoản và liên kết về danh sách phòng.
+- Build đạt 0 lỗi (cảnh báo cũ), diff --check đạt; HTTP trang thêm/đích danh sách 200 và breadcrumb đúng. Chưa kiểm tra trực quan/mobile; không đổi nghiệp vụ/DB, chưa push.
+
+### 18/10/2026 – Bootstrap Tạo nhanh phòng Admin
+- Đồng bộ thẻ 12px, tiêu đề 28px, lưới gap 16px, ô nhập 44px nền trắng và focus vàng; thẻ xem trước dễ đọc, nút cùng kích thước. Responsive một cột dưới 1000px, trường xếp dọc mobile. CSS chỉ Admin, giữ logic xem trước/tạo loạt và validation.
+- GET /PhongTro/CreateBulk 200 và CSRF còn đủ; git diff --check đạt. Chỉ CSS nên không build lại; chưa kiểm tra trực quan/mobile/Safari, không gửi tạo phòng hoặc đổi DB; chưa push.
+
+### 18/10/2026 – Căn giãn dòng Tạo nhanh phòng Admin
+- Khoảng cách dọc trường/tiêu đề khối 14px; hướng dẫn cách ô 4px, nội dung xem trước line-height 1.5 và hàng tóm tắt đều nhịp. Ẩn validation rỗng; chỉ CSS Admin.
+- git diff --check đạt; chỉ CSS nên không build lại. Chưa kiểm tra trực quan/mobile; không đổi logic hoặc DB, chưa push.
+
+### 18/10/2026 – Breadcrumb Tạo nhanh phòng Admin
+- Thêm Quản lý phòng / Tạo nhanh phòng cạnh nút menu, dùng chung CSS như Tạo tài khoản/Thêm phòng và liên kết về danh sách phòng.
+- Build đạt 0 lỗi (cảnh báo cũ), diff --check đạt; HTTP hai trang thêm/tạo nhanh 200, breadcrumb và liên kết đúng. Chưa kiểm tra trực quan/mobile; không đổi nghiệp vụ/DB, chưa push.
+
+### 18/10/2026 – Bootstrap Chi tiết phòng Admin
+- Đồng bộ tiêu đề/tab, thẻ bo góc 12px, khoảng cách 16px, nhãn/giá trị rõ ràng; nút cao 44px, ảnh tỷ lệ 4:3, tiện nghi và khu hợp đồng/giá thuê đồng bộ. Responsive một cột dưới 1000px, ảnh/thông tin 2 cột mobile. CSS chỉ Admin, giữ dữ liệu/quyền/chức năng hiện có.
+- GET chi tiết phòng 200, git diff --check đạt. Chỉ CSS nên không build lại; chưa kiểm tra trực quan/mobile/Safari. Không đổi nghiệp vụ/DB, chưa push.
+
+### 18/10/2026 – Căn giãn dòng Chi tiết phòng Admin
+- Tiêu đề khối cách nội dung 14px, lưới thông tin và đường phân cách theo nhịp 14px; căn tên/mô tả khách thuê, giá thuê và phí dịch vụ, line-height 1.5. Giữ ảnh và các khối chính cách đều; chỉ CSS Admin.
+- git diff --check đạt; không build lại vì chỉ CSS. Chưa kiểm tra trực quan/mobile; không đổi dữ liệu hoặc nghiệp vụ, chưa push.
+
+### 18/10/2026 – Breadcrumb Chi tiết phòng Admin
+- Thêm Quản lý phòng / Chi tiết phòng [mã phòng] cạnh nút menu, dùng chung CSS như Tạo tài khoản và liên kết về danh sách phòng; tên phòng lấy từ tiêu đề hiện tại.
+- Build đạt 0 lỗi (cảnh báo cũ), diff --check đạt; HTTP chi tiết 200 và breadcrumb/liên kết đúng. Chưa kiểm tra trực quan/mobile; không đổi nghiệp vụ/DB, chưa push.
+
+### 18/10/2026 – Bootstrap Chỉnh sửa phòng Admin
+- Đồng bộ thẻ 12px, khoảng cách 16px, tiêu đề 28px, cảnh báo hợp đồng và ô nhập 44px nền trắng/focus vàng với Thêm phòng. Nút đồng kích thước, responsive một cột dưới 1000px; CSS chỉ Admin, giữ form và cơ chế lưu dịch vụ riêng hiện có.
+- GET trang sửa 200 và CSRF còn đủ; diff --check đạt. Chỉ CSS nên không build lại; chưa kiểm tra trực quan/mobile/Safari, không gửi cập nhật hoặc đổi DB; chưa push.
+
+### 18/10/2026 – Căn giãn dòng Chỉnh sửa phòng Admin
+- Khoảng cách dọc trường và sau tiêu đề khối 14px, hướng dẫn cách ô 4px và line-height 1.5; thu gọn khung lưu ý hợp đồng, ẩn validation rỗng. CSS chỉ Admin.
+- git diff --check đạt; chỉ CSS nên không build lại. Chưa kiểm tra trực quan/mobile; không đổi chức năng hoặc DB, chưa push.
+
+### 18/10/2026 – Breadcrumb Chỉnh sửa phòng Admin
+- Thêm Quản lý phòng / Chỉnh sửa phòng [mã phòng] cạnh nút menu, dùng chung CSS với Tạo tài khoản và liên kết về danh sách phòng.
+- Build đạt 0 lỗi (cảnh báo cũ), diff --check đạt; HTTP trang sửa 200 và breadcrumb/liên kết đúng. Chưa kiểm tra trực quan/mobile; không đổi nghiệp vụ/DB, chưa push.
+
+### 18/10/2026 – Thêm mã phòng vào breadcrumb Chỉnh sửa phòng Admin
+- Breadcrumb gồm Quản lý phòng / [mã phòng] / Chỉnh sửa phòng [mã phòng]. Mã lấy từ model, liên kết chi tiết bằng RoomId hiện tại; dùng CSS chung như Tạo tài khoản.
+- Build đạt 0 lỗi (cảnh báo cũ), diff --check đạt; HTTP xác minh mã, thứ tự ba cấp và liên kết chi tiết đúng id trả 200. Chưa kiểm tra trực quan/mobile; không đổi nghiệp vụ/DB, chưa push.
+
+### 18/10/2026 – Bỏ mã phòng ở mục cuối breadcrumb sửa phòng Admin
+- Mục hiện tại hiển thị Chỉnh sửa phòng, giữ mã phòng ở cấp liên kết giữa theo yêu cầu.
+- Build đạt 0 lỗi (cảnh báo cũ), HTTP kiểm tra caption đúng; diff --check đạt. Không đổi tiêu đề nội dung/nghiệp vụ/DB, chưa push.
+
+### 18/10/2026 – Bootstrap Nhật ký phòng Admin
+- Đồng bộ tiêu đề 28px, thẻ 12px, khoảng cách 16px, thông tin phòng dễ đọc; bộ lọc/ô ghi chú/nút cao 44px và focus vàng. Giữ tab, lịch sử, ghi chú và quyền hiện tại; CSS chỉ Admin.
+- HTTP nhật ký phòng 200, diff --check đạt. Chỉ CSS nên không build lại; chưa kiểm tra trực quan/mobile/Safari, không gửi ghi chú hoặc đổi DB; chưa push.
+
+### 18/10/2026 – Căn giãn dòng Nhật ký phòng Admin
+- Cân nhịp nhãn/giá trị tóm tắt 4px, thu gọn khoảng cách tab và sự kiện; nội dung lịch sử/ghi chú/tài liệu line-height 1.5, nhóm nút cách 12px. CSS chỉ Admin.
+- git diff --check đạt; chỉ CSS nên không build lại. Chưa kiểm tra trực quan/mobile; không đổi nhật ký hoặc nghiệp vụ/DB, chưa push.
+
+### 18/10/2026 – Breadcrumb Nhật ký phòng Admin
+- Thêm Quản lý phòng / Nhật ký phòng cạnh nút menu, dùng chung CSS với Tạo tài khoản; liên kết về danh sách phòng.
+- Build đạt 0 lỗi (cảnh báo cũ), diff --check đạt; HTTP nhật ký 200 và breadcrumb/liên kết đúng. Chưa kiểm tra trực quan/mobile; không đổi nghiệp vụ/DB, chưa push.
+
+### 18/10/2026 – Bootstrap Tin đăng cho thuê Admin
+- Đồng bộ thẻ thống kê nhấn vàng, tiêu đề 28px, khoảng cách 16px và panel bo góc 12px; bộ lọc/control 44px, bảng chữ rõ, tab cuộn trên màn nhỏ. CSS riêng Admin, giữ bộ lọc/thao tác/quyền tin đăng hiện có.
+- GET /TinDang/QuanLy và CSS 200, git diff --check đạt. Chỉ CSS nên không build lại; chưa kiểm tra trực quan/mobile/Safari. Không đổi nghiệp vụ/DB, chưa push.
+
+### 18/10/2026 – Căn giãn dòng Tin đăng Admin
+- Thu gọn nhịp số/mô tả thống kê, tiêu đề danh sách và bộ lọc padding dọc 14px, hàng bảng 10px; dòng phụ cách 4px và line-height 1.5. Chỉ CSS Admin, giữ chức năng/dữ liệu.
+- git diff --check đạt; không build lại vì chỉ CSS. Chưa kiểm tra trực quan/mobile; chưa push.
+
+### 18/10/2026 – Bootstrap Yêu cầu thuê & lịch xem Admin
+- Đồng bộ tiêu đề 28px, thẻ thống kê nhấn vàng/bo góc 12px, control 44px; bảng và khung chi tiết chữ rõ, khoảng cách 16px. Giữ responsive, bộ lọc, dữ liệu và quyền nghiệp vụ; CSS chỉ Admin.
+- GET /YeuCau 200, diff --check đạt. Chỉ CSS nên không build lại; chưa kiểm tra trực quan/mobile/Safari. Không đổi backend/DB, chưa push.
+
+### 18/10/2026 – Căn giãn dòng Yêu cầu thuê Admin
+- Cân nhịp số/mô tả thống kê; hàng bảng padding dọc 10px, dòng phụ cách 4px, header chi tiết 14px. Tên/mô tả người thuê, dữ kiện và lời nhắn line-height 1.5, lưới chi tiết gap dọc 12px. CSS chỉ Admin.
+- git diff --check đạt; chỉ CSS nên không build lại. Chưa kiểm tra trực quan/mobile; không đổi nghiệp vụ/DB, chưa push.
+
+### 18/10/2026 – Bootstrap Chi tiết yêu cầu thuê Admin
+- Đồng bộ tiêu đề 28px, thẻ 12px, thanh tiến trình chữ rõ, thông tin khách/phòng và lịch hẹn; input/nút 44px nền trắng, focus vàng và khoảng cách 16px. Responsive khung lịch hẹn xuống dưới dưới 1000px; CSS chỉ Admin, giữ dữ liệu/POST/quyền hiện tại.
+- GET chi tiết yêu cầu 200, diff --check đạt. Chỉ CSS nên không build lại; chưa kiểm tra trực quan/mobile/Safari, không gửi thao tác nghiệp vụ hoặc đổi DB; chưa push.
+
+### 18/10/2026 – Căn giãn dòng Chi tiết yêu cầu thuê Admin
+- Cân tiêu đề/nội dung thẻ, tên/mô tả khách và phòng cách 4px; contact margin 12px, lưới dữ kiện gap dọc 12px. Lời nhắn, lịch hẹn và lịch sử line-height 1.5, giữ phạm vi CSS Admin.
+- git diff --check đạt; chỉ CSS nên không build lại. Chưa kiểm tra trực quan/mobile; không đổi chức năng/DB, chưa push.
+
+### 18/10/2026 – Breadcrumb Chi tiết yêu cầu Admin
+- Thêm Yêu cầu thuê & lịch xem / Chi tiết yêu cầu [mã] cạnh nút menu, dùng chung CSS với Tạo tài khoản; liên kết về /YeuCau.
+- Build đạt 0 lỗi (cảnh báo cũ), diff --check đạt; HTTP chi tiết 200 và breadcrumb/liên kết đúng. Chưa kiểm tra trực quan/mobile; không đổi nghiệp vụ/DB, chưa push.
+
+### 18/10/2026 – Bootstrap Hợp đồng & người ở ghép Admin
+- Đồng bộ thẻ thống kê viền vàng, icon 38px, panel 12px, bộ lọc/nút 44px; bảng có viền và khoảng cách dễ đọc. Mobile thống kê xếp dọc và tìm kiếm toàn chiều ngang. CSS chỉ Admin, giữ dữ liệu/quyền và chức năng hiện có.
+- GET /HopDong 200, diff --check đạt. Chỉ CSS nên không build lại; chưa kiểm tra trực quan/mobile/Safari. Không đổi nghiệp vụ/DB, chưa push.
+
+### 18/10/2026 – Căn giãn dòng Hợp đồng Admin
+- Cân nhịp thống kê, bộ lọc cách hàng tìm kiếm 12px; nhãn/ô cách 6px, hàng bảng padding dọc 10px và dòng phụ cách 4px. Tiêu đề/mô tả/tab line-height 1.5; chỉ CSS Admin.
+- git diff --check đạt; chỉ CSS nên không build lại. Chưa kiểm tra trực quan/mobile; không đổi chức năng/DB, chưa push.
+
+### 18/10/2026 – Bootstrap Lập hợp đồng Admin
+- Đồng bộ thẻ và tiêu đề khối có đường phân cách, ô nhập/select và nút 44px, nhãn dễ đọc, phần tóm tắt rõ cột và phòng được chọn nổi nhẹ. Responsive một cột dưới 1000px. CSS chỉ Admin, giữ dữ liệu/validation/luồng lập hợp đồng.
+- GET /HopDong/Create 200, diff --check đạt. Chỉ CSS nên không build lại; chưa kiểm tra trực quan/mobile/Safari. Không tạo hợp đồng hoặc đổi DB; chưa push.
+
+### 18/10/2026 – Căn giãn dòng Lập hợp đồng Admin
+- Khoảng cách sau tiêu đề và giữa trường 14px, nhãn cách ô 6px; hàng tóm tắt padding dọc 10px, dòng trợ giúp line-height 1.5. Cân khung phòng/chỉ số và ẩn validation rỗng; chỉ CSS Admin.
+- git diff --check đạt; chỉ CSS nên không build lại. Chưa kiểm tra trực quan/mobile; không đổi nghiệp vụ/DB, chưa push.
+
+### 18/10/2026 – Breadcrumb Lập hợp đồng Admin
+- Thêm Hợp đồng & người ở ghép / Lập hợp đồng thuê cạnh nút menu, dùng chung CSS với Tạo tài khoản; liên kết về /HopDong.
+- Build đạt 0 lỗi (cảnh báo cũ), diff --check đạt; HTTP trang tạo 200 và breadcrumb/liên kết đúng. Chưa kiểm tra trực quan/mobile; không đổi nghiệp vụ/DB, chưa push.
+
+### 18/10/2026 – Đẩy bổ sung giao diện Admin theo yêu cầu
+- Fetch xác nhận nhánh local/remote cùng nền. Đưa vào commit 6 file giao diện/tiến độ: CSS Admin, nhật ký và dropdown, layout breadcrumb, tài liệu; không gồm DB/data/credential/test project.
+- Build gần nhất đạt 0 lỗi; các trang/breadcrumb đã kiểm tra HTTP theo từng mục. node --check audit-dropdowns.js và diff --check đạt. Chưa full test nghiệp vụ hoặc kiểm tra trực quan/mobile/Safari.

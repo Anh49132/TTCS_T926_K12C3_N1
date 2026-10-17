@@ -59,6 +59,22 @@ else
 {
 <nav class="admin-account-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="ManagedAccounts" asp-action="Index">Quản lý tài khoản</a><span aria-hidden="true">/</span><strong aria-current="page">@ViewData["Title"]</strong></nav>
 }
+else if (ViewContext.RouteData.Values["controller"]?.ToString() == "PhongTro" && (ViewContext.RouteData.Values["action"]?.ToString() is "Create" or "CreateBulk" or "Details" or "Edit" or "NhatKyPhong"))
+{
+<nav class="admin-account-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="PhongTro" asp-action="Index">Quản lý phòng</a><span aria-hidden="true">/</span>@if (ViewContext.RouteData.Values["action"]?.ToString() == "Edit") { <a asp-controller="PhongTro" asp-action="Details" asp-route-id="@ViewData["RoomId"]">@((Model as QL_PhongTro.ViewModels.TaoPhongViewModel)?.MaPhong)</a><span aria-hidden="true">/</span> }<strong aria-current="page">@(ViewContext.RouteData.Values["action"]?.ToString() == "Edit" ? "Chỉnh sửa phòng" : ViewData["Title"])</strong></nav>
+}
+else if (ViewContext.RouteData.Values["controller"]?.ToString() == "HopDong" && ViewContext.RouteData.Values["action"]?.ToString() == "Create")
+{
+<nav class="admin-account-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="HopDong" asp-action="Index">Hợp đồng &amp; người ở ghép</a><span aria-hidden="true">/</span><strong aria-current="page">@ViewData["Title"]</strong></nav>
+}
+else if (ViewContext.RouteData.Values["controller"]?.ToString() == "LichHen" && ViewContext.RouteData.Values["action"]?.ToString() == "ChiTiet")
+{
+<nav class="admin-account-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="YeuCau" asp-action="Index">Yêu cầu thuê &amp; lịch xem</a><span aria-hidden="true">/</span><strong aria-current="page">@ViewData["Title"]</strong></nav>
+}
+else if (ViewContext.RouteData.Values["controller"]?.ToString() == "DichVu" && ViewContext.RouteData.Values["action"]?.ToString() == "DienNuoc")
+{
+<nav class="admin-account-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="PhongTro" asp-action="ToaNha">Quản lý tòa nhà</a><span aria-hidden="true">/</span><strong aria-current="page">@ViewData["Title"]</strong></nav>
+}
 else if (ViewContext.RouteData.Values["controller"]?.ToString() == "PhongTro" && (ViewContext.RouteData.Values["action"]?.ToString() is "TaoToaNha" or "ChiTietToaNha" or "SuaToaNha"))
 {
 <nav class="admin-account-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="PhongTro" asp-action="ToaNha">Quản lý tòa nhà</a><span aria-hidden="true">/</span>@if (ViewContext.RouteData.Values["action"]?.ToString() == "SuaToaNha") { <a asp-controller="PhongTro" asp-action="ChiTietToaNha" asp-route-id="@Context.Request.RouteValues["id"]">Chi tiết tòa nhà</a><span aria-hidden="true">/</span> }<strong aria-current="page">@ViewData["Title"]</strong></nav>
@@ -243,5 +259,3 @@ else if (showNotificationBell)
 }
 </body>
 </html>
-
-
