@@ -119,6 +119,7 @@
         </footer>
     }
     @if (User.IsInRole("KHACH_THUE")) { <script src="~/js/tenant-sidebar.js" asp-append-version="true"></script> }
+    <partial name="_AiChat" />
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
