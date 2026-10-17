@@ -1,0 +1,53 @@
+/* People tab: Bootstrap controls and consistent card spacing. */
+.contract-reference .ref-residents{line-height:1.5}
+.contract-reference .ref-residents .ref-capacity-large{gap:.75rem;padding:.875rem;border-radius:10px;background:#f7f8f9;margin-bottom:.75rem}
+.contract-reference .ref-residents .ref-capacity-large strong{font-size:1.5rem}
+.contract-reference .ref-residents .ref-capacity-large strong small{font-size:.8125rem;font-weight:500}
+.contract-reference .ref-residents .ref-capacity progress{height:8px;min-width:100px}
+.contract-reference .ref-residents .ref-resident-row{gap:.625rem;padding:.75rem;border-radius:10px;margin-bottom:.75rem;background:#fff}
+.contract-reference .ref-residents .ref-resident-row>span:not(.ref-avatar):not(.ref-person-badge):not(.ref-person-state){font-size:.75rem;color:#6b7480;overflow-wrap:anywhere}
+.contract-reference .ref-residents .ref-person-state{font-size:.6875rem;background:#edf6ee;color:#39764b;padding:.3125rem .625rem;border-radius:20px;line-height:1.5}
+.contract-reference .ref-residents .ref-person-badge{margin:0;font-size:.6875rem;padding:.3125rem .5rem}
+.contract-reference .ref-residents .ref-empty{padding:1rem;border:1px dashed #dce1e7;border-radius:9px;background:#fafbfc;color:#838b97;font-size:.8125rem;line-height:1.6;text-align:center}
+.contract-reference .ref-residents .ref-add-tabs{display:inline-flex;flex-wrap:wrap;gap:.25rem;border:1px solid #e5e7eb;padding:.25rem;margin:0 0 .875rem;border-radius:9px;background:#f5f5f4}
+.contract-reference .ref-residents .ref-add-tabs a{padding:.625rem 1rem;margin:0;border:0;border-radius:6px;font-size:.8125rem;line-height:1.5;color:#747d88;text-decoration:none}
+.contract-reference .ref-residents .ref-add-tabs a.is-active{background:#30343b;color:#fff;font-weight:600;box-shadow:0 1px 3px #25282d12}
+.contract-reference .ref-residents .ref-date-notice{padding:.625rem .75rem;margin:0 0 .875rem;border:1px solid #e4e6e9;border-radius:9px;background:#f7f8fa;color:#626d7b;font-size:.75rem;line-height:1.6}
+.contract-reference .ref-residents .ref-account-search label,.contract-reference .ref-residents .ref-resident-fields label{display:block;font-size:.8125rem;font-weight:600;line-height:1.5;margin-bottom:.375rem}
+.contract-reference .ref-residents .ref-account-search>div{display:flex;align-items:stretch;gap:.625rem}
+.contract-reference .ref-residents .form-control{width:100%;min-width:0;min-height:44px;height:auto;padding:.625rem .75rem;font-size:.8125rem;line-height:1.5;color:#30343b;border:1px solid #dfe3e8;border-radius:8px;box-shadow:none;background:#fff}
+.contract-reference .ref-residents .form-control:focus{border-color:#bfa77a;outline:2px solid #bfa77a55;outline-offset:1px}
+.contract-reference .ref-residents .ref-account-search .btn{flex-shrink:0;white-space:normal}
+.contract-reference .ref-residents .ref-account-search small,.contract-reference .ref-residents .ref-resident-fields small{display:block;font-size:.75rem;color:#7b8490;line-height:1.5;margin-top:.25rem}
+.contract-reference .ref-residents .ref-resident-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin-bottom:.75rem}
+.contract-reference .ref-residents .ref-resident-fields>div{min-width:0}
+.contract-reference .ref-residents .ref-field-full{grid-column:1/-1}
+.contract-reference .ref-residents .text-danger{display:block;font-size:.75rem;line-height:1.5;margin-top:.25rem}
+.contract-reference .ref-residents .text-danger:empty{display:none}
+.contract-reference .ref-residents .ref-account-confirm{padding:.875rem;margin-top:.875rem;border:1px solid #e5e8ec;border-radius:10px;background:#fafbfc}
+.contract-reference .ref-residents .ref-resident-footer{display:flex;align-items:center;flex-wrap:wrap;gap:.625rem;margin-top:.875rem;padding-top:.875rem;border-top:1px solid #e9eaec}
+.contract-reference .ref-residents .ref-resident-footer p{flex:1;margin:0;min-width:180px;font-size:.75rem;color:#77808d;line-height:1.6}
+.contract-reference .ref-residents .ref-room{display:flex;gap:.75rem;align-items:center;background:#f7f8f9;padding:.875rem;border-radius:10px;margin-bottom:.75rem;min-width:0}
+.contract-reference .ref-residents .ref-room>div{min-width:0}
+.contract-reference .ref-residents .ref-room strong{display:block;font-size:.875rem;line-height:1.5;overflow-wrap:anywhere}
+.contract-reference .ref-residents .ref-room small{display:block;font-size:.75rem;line-height:1.6;margin-top:.25rem;color:#7c8592;overflow-wrap:anywhere}
+.contract-reference .ref-residents .ref-checklist{padding:0;margin:0;list-style:none}
+.contract-reference .ref-residents .ref-checklist li{padding:.375rem 0;font-size:.8125rem;line-height:1.5}
+.contract-reference .ref-residents .ref-side>.contract-card>.contract-note{display:block;margin-top:.75rem;line-height:1.6}
+.contract-reference .ref-residents em{font-style:normal;color:#b84d4d}
+@media(max-width:600px){.contract-reference .ref-residents .ref-resident-fields{grid-template-columns:1fr;gap:.875rem}.contract-reference .ref-residents .ref-account-search>div{flex-direction:column}.contract-reference .ref-residents .ref-account-search .btn{width:100%}.contract-reference .ref-residents .ref-add-tabs{display:flex;width:100%}.contract-reference .ref-residents .ref-add-tabs a{flex:1;text-align:center;padding:.625rem .5rem}.contract-reference .ref-residents .ref-resident-row{display:grid;grid-template-columns:40px minmax(0,1fr);gap:.5rem .75rem}.contract-reference .ref-residents .ref-resident-row>.ref-avatar{grid-row:1/3}.contract-reference .ref-residents .ref-resident-row>span:not(.ref-avatar),.contract-reference .ref-residents .ref-resident-row>strong{grid-column:2;justify-self:start;margin:0}.contract-reference .ref-residents .ref-capacity-large{padding:.875rem}.contract-reference .ref-residents .ref-resident-footer p{flex-basis:100%;min-width:0}.contract-reference .ref-residents .ref-resident-footer .btn{flex:1}.contract-reference .ref-residents .ref-card-title>a{white-space:normal}}
+
+/* Even spacing between headings, fields and supporting text. */
+.contract-reference .ref-residents .ref-card-title{margin-bottom:.75rem}
+.contract-reference .ref-residents .ref-card-title small{margin-top:.25rem;line-height:1.5}
+.contract-reference .ref-residents .ref-resident-fields label,.contract-reference .ref-residents .ref-account-search label{line-height:1.4;margin-bottom:.375rem}
+.contract-reference .ref-residents .ref-account-search{margin-bottom:0}
+.contract-reference .ref-residents .resident-create-form{margin:0}
+.contract-reference .ref-residents .ref-person strong,.contract-reference .ref-residents .ref-person small{line-height:1.5}
+.contract-reference .ref-residents .ref-side .ref-facts>div{padding:.5rem 0;line-height:1.5}
+.contract-reference .ref-residents .ref-room{padding:.75rem;margin-bottom:.625rem}
+.contract-reference .ref-residents .ref-room small{margin-top:.125rem;line-height:1.5}
+.contract-reference .ref-residents .ref-notice{padding:.625rem .75rem;margin-top:.75rem;line-height:1.55}
+.contract-reference .ref-residents .contract-note{line-height:1.55}
+.contract-reference .ref-residents .ref-side>.contract-card>.contract-note{margin-top:.625rem;line-height:1.55}
+@media(max-width:600px){.contract-reference .ref-residents .ref-resident-fields{gap:.75rem}}

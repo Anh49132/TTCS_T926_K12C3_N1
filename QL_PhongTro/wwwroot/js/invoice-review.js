@@ -1,5 +1,35 @@
 (() => {
     const settings = document.getElementById('review-settings');
+
+    // Keep native form values while presenting Bootstrap dropdown menus.
+    if(settings && document.querySelector('.invoice-setup-bootstrap, .review-bootstrap') && window.bootstrap?.Dropdown){
+        for(const id of ['building','month']){
+            const select=settings.querySelector('#'+id);if(!select)continue;
+            const wrapper=document.createElement('div');wrapper.className='dropdown setup-select-dropdown';
+            const trigger=document.createElement('button');trigger.type='button';trigger.id=id+'-dropdown';trigger.className='btn dropdown-toggle setup-select-toggle';trigger.setAttribute('data-bs-toggle','dropdown');trigger.setAttribute('aria-expanded','false');
+            const label=settings.querySelector('label[for="'+id+'"]');if(label){label.htmlFor=trigger.id;trigger.setAttribute('aria-label',label.textContent.trim());}
+            const caption=document.createElement('span');trigger.append(caption);
+            const menu=document.createElement('ul');menu.className='dropdown-menu setup-select-menu';menu.setAttribute('aria-labelledby',trigger.id);const choices=[];
+            function sync(){caption.textContent=select.selectedOptions[0]?.textContent || 'Chọn';choices.forEach(button=>{const current=button.dataset.value===select.value;button.classList.toggle('active',current);if(current)button.setAttribute('aria-current','true');else button.removeAttribute('aria-current');});}
+            for(const option of select.options){const item=document.createElement('li');const button=document.createElement('button');button.type='button';button.className='dropdown-item';button.dataset.value=option.value;button.textContent=option.textContent;button.disabled=option.disabled;button.addEventListener('click',()=>{select.value=option.value;select.dispatchEvent(new Event('change',{bubbles:true}));});item.append(button);menu.append(item);choices.push(button);}
+            select.after(wrapper);wrapper.append(trigger,menu);select.hidden=true;select.tabIndex=-1;select.addEventListener('change',sync);select.addEventListener('invalid',event=>{event.preventDefault();trigger.focus();trigger.classList.add('is-invalid');});select.addEventListener('change',()=>trigger.classList.remove('is-invalid'));settings.addEventListener('reset',()=>setTimeout(sync,0));sync();
+            trigger.addEventListener('shown.bs.dropdown',()=>menu.querySelector('.active')?.scrollIntoView({block:'nearest'}));
+        }
+    }
+
+    // Bootstrap menus retain the existing floor/sort change listeners.
+    if(document.querySelector('.review-bootstrap') && window.bootstrap?.Dropdown){
+        for(const id of ['floor-filter','room-sort']){
+            const select=document.getElementById(id);if(!select)continue;
+            const wrapper=document.createElement('div');wrapper.className='dropdown setup-select-dropdown';
+            const trigger=document.createElement('button');trigger.type='button';trigger.id=id+'-dropdown';trigger.className='btn dropdown-toggle setup-select-toggle';trigger.setAttribute('data-bs-toggle','dropdown');trigger.setAttribute('aria-expanded','false');trigger.setAttribute('aria-label',select.getAttribute('aria-label') || id);
+            const caption=document.createElement('span');trigger.append(caption);
+            const menu=document.createElement('ul');menu.className='dropdown-menu setup-select-menu';menu.setAttribute('aria-labelledby',trigger.id);const choices=[];
+            function sync(){caption.textContent=select.selectedOptions[0]?.textContent || '';choices.forEach(button=>{const current=button.dataset.value===select.value;button.classList.toggle('active',current);if(current)button.setAttribute('aria-current','true');else button.removeAttribute('aria-current');});}
+            for(const option of select.options){const item=document.createElement('li');const button=document.createElement('button');button.type='button';button.className='dropdown-item';button.dataset.value=option.value;button.textContent=option.textContent;button.disabled=option.disabled;button.addEventListener('click',()=>{select.value=option.value;select.dispatchEvent(new Event('change',{bubbles:true}));});item.append(button);menu.append(item);choices.push(button);}
+            select.after(wrapper);wrapper.append(trigger,menu);select.hidden=true;select.tabIndex=-1;select.addEventListener('change',sync);sync();
+        }
+    }
     const openButtons = [...document.querySelectorAll('[data-review-open]')];
     const dialog = document.getElementById('issue-confirmation');
     const issue = document.getElementById('issue-date');

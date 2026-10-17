@@ -14,7 +14,7 @@
 }
 else
 {
-<div class="role-home">
+<div class="role-home @(isAdmin ? "admin-dashboard-bootstrap" : "")">
     <header class="role-home-heading">
         <div>
             <p class="role-kicker">@(isAdmin ? "QUẢN TRỊ HỆ THỐNG" : isTenant ? "KHÔNG GIAN KHÁCH THUÊ" : "TỔNG QUAN VẬN HÀNH")</p>
@@ -38,7 +38,7 @@ else
         </section>
         <section class="latte-admin-grid">
             <article class="dashboard-panel"><div class="panel-heading"><h2>Phân bổ vai trò người dùng</h2></div><div class="role-donut"><strong>@dashboard.Roles.Sum(x => x.Count)<small>tài khoản</small></strong></div><div class="role-distribution">@foreach (var role in dashboard.Roles) { <p><span>● @role.Name</span><strong>@role.Count</strong></p> }</div></article>
-            <article class="dashboard-panel"><div class="panel-heading"><h2>Hoạt động hệ thống gần đây</h2><a href="/NhatKy">Xem tất cả →</a></div><div class="latte-table-scroll"><table class="latte-table"><thead><tr><th>Người dùng</th><th>Hành động</th><th>Thời gian</th></tr></thead><tbody>@foreach (var activity in dashboard.Activities) { <tr><td>@(activity.TenNguoiThucHien ?? "Hệ thống")</td><td>@activity.HanhDong</td><td>@activity.ThoiDiem.AddHours(7).ToString("HH:mm dd/MM")</td></tr> }@if (dashboard.Activities.Count == 0) { <tr><td colspan="3" class="latte-empty">Chưa có hoạt động được ghi nhận.</td></tr> }</tbody></table></div></article>
+            <article class="dashboard-panel"><div class="panel-heading"><h2>Hoạt động hệ thống gần đây</h2><a href="/NhatKy">Xem tất cả →</a></div><div class="latte-table-scroll"><table class="latte-table table table-hover align-middle mb-0"><thead><tr><th>Người dùng</th><th>Hành động</th><th>Thời gian</th></tr></thead><tbody>@foreach (var activity in dashboard.Activities) { <tr><td>@(activity.TenNguoiThucHien ?? "Hệ thống")</td><td>@activity.HanhDong</td><td>@activity.ThoiDiem.AddHours(7).ToString("HH:mm dd/MM")</td></tr> }@if (dashboard.Activities.Count == 0) { <tr><td colspan="3" class="latte-empty">Chưa có hoạt động được ghi nhận.</td></tr> }</tbody></table></div></article>
             <article class="dashboard-panel"><div class="panel-heading"><h2>Trạng thái hệ thống</h2></div><div class="system-status"><p><span class="status-dot"></span><strong>Ứng dụng</strong><small>Đang hoạt động</small></p><p><span class="status-dot"></span><strong>Database</strong><small>Dữ liệu đang được tải</small></p><p><strong>Sao lưu dữ liệu gần nhất</strong><small>Chưa có thông tin sao lưu</small></p></div></article>
         </section>
         <section class="dashboard-panel-grid latte-bottom-grid"><article class="dashboard-panel"><partial name="_DashboardRequests" model="dashboard" /></article><article class="dashboard-panel"><partial name="_DashboardRooms" model="dashboard" /></article></section>

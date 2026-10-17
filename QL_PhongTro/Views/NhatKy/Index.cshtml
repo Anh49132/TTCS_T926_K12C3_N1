@@ -3,10 +3,12 @@
 @{
     ViewData["Title"] = "Nhật ký hoạt động";
 }
-<p class="eyebrow">HỆ THỐNG</p>
+<div class="audit-bootstrap">
+<header class="audit-heading"><p class="eyebrow">HỆ THỐNG</p>
 <h1>Nhật ký hoạt động</h1>
 <p>Xem ai đã thêm, sửa hoặc xóa thông tin. Thời gian hiển thị theo giờ Việt Nam; tên và vai trò là thông tin tại lúc thực hiện.</p>
-<form method="get" class="row g-3 mb-4">
+</header>
+<form method="get" class="row g-3 audit-filters">
     <div class="col-md-3"><label asp-for="TuNgay" class="form-label">Từ ngày</label><input asp-for="TuNgay" type="date" class="form-control" /></div>
     <div class="col-md-3"><label asp-for="DenNgay" class="form-label">Đến ngày</label><input asp-for="DenNgay" type="date" class="form-control" /></div>
     <div class="col-md-3"><label asp-for="NguoiThucHienId" class="form-label">Người thực hiện</label><select asp-for="NguoiThucHienId" class="form-select"><option value="">Tất cả</option>
@@ -15,10 +17,10 @@
     <div class="col-md-3"><label asp-for="LoaiDoiTuong" class="form-label">Nhóm thông tin</label><select asp-for="LoaiDoiTuong" class="form-select"><option value="">Tất cả</option>
     @foreach (var type in NhatKyViewModel.Types) { <option value="@type.Key">@type.Value</option> }
     </select></div>
-    <div><button class="btn btn-primary" type="submit">Lọc nhật ký</button> <a asp-action="Index" class="btn btn-outline-secondary">Xóa bộ lọc</a></div>
+    <div class="col-12 d-flex flex-wrap gap-2"><button class="btn btn-primary" type="submit">Lọc nhật ký</button> <a asp-action="Index" class="btn btn-outline-secondary">Xóa bộ lọc</a></div>
 </form>
-<p>@Model.Total hoạt động · Trang @Model.Page/@Model.Pages</p>
-<div class="table-responsive"><table class="table align-top"><thead><tr><th>STT</th><th>Thời điểm</th><th>Người thực hiện</th><th>Vai trò</th><th>Thao tác</th><th>Thông tin liên quan</th><th>Nội dung thay đổi</th></tr></thead><tbody>
+<p class="audit-count">@Model.Total hoạt động · Trang @Model.Page/@Model.Pages</p>
+<div class="table-responsive audit-table-wrap"><table class="table table-hover align-top audit-table mb-0"><thead><tr><th>STT</th><th>Thời điểm</th><th>Người thực hiện</th><th>Vai trò</th><th>Thao tác</th><th>Thông tin liên quan</th><th>Nội dung thay đổi</th></tr></thead><tbody>
 @{ var auditStt = (Model.Page - 1) * 50; }
 @foreach (var row in Model.Rows) {
 auditStt++;
@@ -55,3 +57,6 @@ var display = AuditDisplay.Describe(row);
 <a class="btn btn-outline-primary" asp-action="Index" asp-route-page="@pageNumber" asp-route-tuNgay="@Model.TuNgay?.ToString("yyyy-MM-dd")" asp-route-denNgay="@Model.DenNgay?.ToString("yyyy-MM-dd")" asp-route-nguoiThucHienId="@Model.NguoiThucHienId" asp-route-loaiDoiTuong="@Model.LoaiDoiTuong">@(pageNumber < Model.Page ? "Trang trước" : "Trang sau")</a>
 }
 </nav>
+</div>
+@section Styles { <link rel="stylesheet" href="~/css/audit-bootstrap.css" asp-append-version="true" /> }
+@section Scripts { <script src="~/js/audit-dropdowns.js" asp-append-version="true"></script> }

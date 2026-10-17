@@ -65,7 +65,6 @@
 }
 <div class="sidebar-scroll compact-sidebar bootstrap-sidebar">
 <a class="sidebar-brand" href="/"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="@Icon("home")" /></svg><span><strong>NhàTốt</strong><small>Sống đúng nơi</small></span></a>
-@if (!admin) { <div class="compact-sidebar-profile d-flex align-items-center"><span class="tenant-avatar">@System.Globalization.StringInfo.GetNextTextElement(name).ToUpperInvariant()</span><div><strong>Xin chào, @name</strong><small>@(owner ? "Chủ nhà" : "Quản lý tòa nhà")</small></div></div> }
 <nav class="nav flex-column" aria-label="Menu chức năng">
 <a class="sidebar-link nav-link @(path is "/" or "/Home" or "/Home/Index" ? "is-active" : "")" href="/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon("home")" /></svg><span>Tổng quan</span></a>
 @foreach (var group in items.Where(x => allowed.Contains(x.Module)).GroupBy(x => x.Group)) {

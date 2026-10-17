@@ -36,6 +36,33 @@
 .personal-bootstrap .personal-security p{margin-bottom:.75rem;line-height:1.5}
 @media(max-width:575px){.personal-bootstrap .op-facts>div{gap:.25rem;padding:.65rem 0}.personal-bootstrap .op-profile-banner{padding:1.1rem}.personal-bootstrap .op-card{padding:1rem}}
 /* Bootstrap breadcrumb for the personal profile header. */
+/* Admin profile uses the dashboard card sizes and spacing. */
+.admin-personal-bootstrap{max-width:none;padding-top:0;font-size:.8125rem;line-height:1.5}
+.admin-personal-bootstrap .op-heading h1{font-size:1.75rem;line-height:1.3;margin-top:.375rem!important;margin-bottom:.375rem;letter-spacing:-.04rem}
+.admin-personal-bootstrap .op-heading p{font-size:.875rem;line-height:1.5}
+.admin-personal-bootstrap .row{--bs-gutter-x:1rem;--bs-gutter-y:1rem}
+.admin-personal-bootstrap .op-card{padding:1.25rem;border:1px solid #e4e7eb!important;border-radius:12px;box-shadow:0 2px 8px #25282d04!important;margin-bottom:1rem}
+.admin-personal-bootstrap .op-profile-banner{padding:1.5rem 1.25rem;gap:.875rem;background:linear-gradient(180deg,#faf7f0,#fff)}
+.admin-personal-bootstrap .op-profile-banner .op-avatar{width:72px;height:72px;font-size:1.5rem}
+.admin-personal-bootstrap .op-profile-banner h2{margin-bottom:.5rem;font-size:1.125rem;line-height:1.4}
+.admin-personal-bootstrap .op-badge{border-radius:20px;padding:.375rem .625rem;font-size:.6875rem;line-height:1.5}
+.admin-personal-bootstrap .personal-card-heading{padding-bottom:.75rem;margin-bottom:0}
+.admin-personal-bootstrap .op-facts>div{grid-template-columns:minmax(140px,30%) minmax(0,1fr);gap:1rem;padding:.75rem 0}
+.admin-personal-bootstrap .op-facts>div:last-child{padding-bottom:0}
+.admin-personal-bootstrap .op-facts dt,.admin-personal-bootstrap .op-facts dd{font-size:.8125rem;line-height:1.5}
+.admin-personal-bootstrap .op-facts dd{color:#30343b;font-weight:500}
+.admin-personal-bootstrap .personal-security p{margin:.375rem 0 .875rem;font-size:.8125rem;line-height:1.5}
+.admin-personal-bootstrap .personal-security h2{margin-bottom:0;line-height:1.5}
+.admin-personal-bootstrap .personal-security form{margin-bottom:0}
+.admin-personal-bootstrap .op-profile-banner h2{line-height:1.5;margin-bottom:.375rem}
+.admin-personal-bootstrap .op-profile-banner>div{min-width:0}
+.admin-personal-bootstrap .op-heading{margin-bottom:1rem!important}
+.admin-personal-bootstrap .btn{min-height:44px;border-radius:8px;font-size:.8125rem;line-height:1.5}
+.admin-personal-bootstrap .personal-security .btn-outline-dark{background:#30343b;border-color:#30343b;color:#fff}
+.admin-personal-bootstrap .personal-security .btn-outline-dark:hover{background:#25282d;border-color:#25282d}
+.admin-personal-bootstrap .personal-logout{background:#fff;border-color:#dfe3e8;color:#606b79}
+@media(max-width:1199px){.admin-personal-bootstrap .op-profile-banner{flex-direction:row;text-align:left!important}.admin-personal-bootstrap .row>div>.op-card:last-child{margin-bottom:0}}
+@media(max-width:575px){.admin-personal-bootstrap .op-heading h1{font-size:1.5rem}.admin-personal-bootstrap .row{--bs-gutter-x:0}.admin-personal-bootstrap .op-card{padding:1rem}.admin-personal-bootstrap .op-facts>div{grid-template-columns:1fr;gap:.25rem;padding:.75rem 0}.admin-personal-bootstrap .op-profile-banner .op-avatar{width:60px;height:60px;font-size:1.25rem}}
 .op-personal-breadcrumb .breadcrumb{--bs-breadcrumb-divider:'/';gap:0;font-size:1rem;line-height:1.5;flex-wrap:nowrap;min-width:0}
 .op-personal-breadcrumb .breadcrumb-item{display:flex;align-items:center}
 .op-personal-breadcrumb .breadcrumb-item>a{display:inline-flex;align-items:center;justify-content:center;width:21px;height:21px;background:transparent;border:0;border-radius:0;color:#25282D80}

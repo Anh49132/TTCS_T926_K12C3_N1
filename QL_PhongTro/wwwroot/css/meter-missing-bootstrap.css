@@ -1,0 +1,29 @@
+.missing-bootstrap{font-size:.8125rem;line-height:1.5;color:#25282d;min-width:0}
+.missing-bootstrap .mp-missing-heading{padding-right:2rem;margin-bottom:.875rem}
+.missing-bootstrap .mp-missing-heading h2{font-size:1.25rem;font-weight:750;line-height:1.4;margin:0 0 .375rem}
+.missing-bootstrap .mp-missing-heading p{font-size:.8125rem;color:#7e8793;line-height:1.5;margin:0}
+.missing-bootstrap .mp-missing-alert{padding:.75rem .875rem;margin:0 0 .875rem;border:1px solid #ebdfc8;border-radius:10px;background:#f8f3e8;gap:.625rem;line-height:1.5;font-size:.8125rem;color:#80683d}
+.missing-bootstrap .mp-symbol{background:#b39763}
+.missing-bootstrap .mp-list-label{margin:0 0 .625rem;font-size:.75rem;font-weight:600;line-height:1.5;color:#7a838f}
+.missing-bootstrap .mp-missing-list{gap:.75rem}
+.missing-bootstrap .mp-room{display:flex;flex-direction:row;align-items:flex-start;gap:.75rem;border:1px solid #e4e7eb;border-radius:12px;padding:.875rem;box-shadow:0 2px 6px #25282d03}
+.missing-bootstrap .mp-room-icon{width:38px;height:38px;flex:0 0 38px;border-radius:10px;font-size:1.375rem;background:#e9eaec;color:#687280}
+.missing-bootstrap .mp-room h3{font-size:.875rem;font-weight:700;line-height:1.5;margin:0 0 .25rem;overflow-wrap:anywhere}
+.missing-bootstrap .mp-room p{font-size:.75rem;line-height:1.5;margin:0 0 .5rem;color:#7e8793}
+.missing-bootstrap .mp-badge{display:inline-block;padding:.3125rem .5rem;font-size:.625rem;line-height:1.5;border-radius:6px;background:#f7efdf;color:#947443;white-space:normal}
+.missing-bootstrap .mp-room-actions{margin-top:.625rem}
+.missing-bootstrap .mp-room .mp-button{display:inline-flex;align-items:center;justify-content:center;width:auto;flex:1 1 100px;min-height:44px;margin:0;padding:.625rem .75rem;border:1px solid #d8dde4;border-radius:8px;font-size:.75rem;font-weight:600;line-height:1.5;white-space:normal;color:#30343b;background:#fff}
+.missing-bootstrap .mp-room .mp-button:first-child:not(:only-child){background:#30343b;border-color:#30343b;color:#fff}
+.missing-bootstrap .mp-room .mp-button:hover{background:#f5f5f4;border-color:#bfa77a;color:#30343b}
+.missing-bootstrap .mp-note{padding:.75rem .875rem;margin:.875rem 0 0;background:#f5f6f8;border-radius:9px;font-size:.75rem;line-height:1.5;color:#7e8793}
+.mp-drawer{padding:1.5rem 1.25rem 0}
+.mp-drawer .mp-close{display:grid;place-items:center;right:1rem;top:1rem;width:36px;height:36px;padding:0;background:#f5f5f4;border:1px solid #e4e7eb;border-radius:8px;font-size:1.375rem;line-height:1}
+.mp-drawer footer{margin-top:.75rem;padding:.75rem 0;border-color:#e9eaec}
+.mp-drawer footer .mp-button{min-height:44px;border-radius:8px;font-size:.8125rem;line-height:1.5}
+@media(max-width:420px){.mp-drawer{padding:1.25rem 1rem 0}.missing-bootstrap .mp-room{padding:.875rem;gap:.625rem}.missing-bootstrap .mp-room-icon{width:32px;height:32px;flex-basis:32px}.missing-bootstrap .mp-room-actions{flex-direction:column}.missing-bootstrap .mp-room .mp-button{flex:auto;width:100%}}
+
+/* Keep room labels and supporting copy on a consistent rhythm. */
+.missing-bootstrap .mp-missing-heading p,.missing-bootstrap .mp-list-label{line-height:1.5}
+.missing-bootstrap .mp-room p strong{line-height:inherit}
+.missing-bootstrap .mp-room-actions .mp-button{margin:0}
+.missing-bootstrap .mp-empty{margin:0;line-height:1.5;padding:1rem}

@@ -1,21 +1,20 @@
 @model QL_PhongTro.ViewModels.PhatHanhThangViewModel
 @{ViewData["Title"]="Tạo hóa đơn tháng";var missing=Model.BoQua.Count(x=>x.ThieuChiSo);var existing=Model.BoQua.Count(x=>x.TrangThai=="DA_CO_HOA_DON");}
-@section Styles {<link rel="stylesheet" href="~/css/monthly-invoices.css" asp-append-version="true"/><link rel="stylesheet" href="~/css/invoice-review.css" asp-append-version="true"/><link rel="stylesheet" href="~/css/invoice-flow.css" asp-append-version="true"/>}
+@section Styles {<link rel="stylesheet" href="~/css/monthly-invoices.css" asp-append-version="true"/><link rel="stylesheet" href="~/css/invoice-review.css" asp-append-version="true"/><link rel="stylesheet" href="~/css/invoice-flow.css" asp-append-version="true"/><link rel="stylesheet" href="~/css/invoice-setup-bootstrap.css" asp-append-version="true"/>}
 @section Scripts {<script src="~/js/invoice-review.js" asp-append-version="true"></script>}
-<div class="monthly-invoices invoice-flow">
-<a asp-action="Management">← Quay lại quản lý hóa đơn</a>
+<div class="monthly-invoices invoice-flow invoice-setup-bootstrap">
 <header class="mi-heading"><div><h1>Tạo hóa đơn tháng</h1><p>Chọn kỳ và kiểm tra dữ liệu trước khi tạo hóa đơn nháp.</p></div></header>
 <div asp-validation-summary="All" class="text-danger"></div>
 <form method="get" asp-action="Monthly" id="review-settings">
 <div class="flow-columns">
-<section class="mi-card"><h2>Thông tin kỳ hóa đơn</h2><div class="flow-fields">
+<section class="mi-card card"><h2>Thông tin kỳ hóa đơn</h2><div class="flow-fields">
 <div><label for="building">Tòa nhà *</label><select id="building" name="toaNhaId" asp-items="Model.ToaNhas" class="form-select" required><option value="">Chọn tòa nhà</option></select></div>
 <div><label for="month">Kỳ áp dụng *</label><div class="d-flex gap-2"><select id="month" name="thang" class="form-select">@for(var m=1;m<=12;m++){<option value="@m" selected="@(m==Model.Thang)">Tháng @m</option>}</select><input name="nam" value="@Model.Nam" type="number" min="1900" max="9998" class="form-control" required aria-label="Năm"/></div></div>
 <div><label for="issue-date">Ngày phát hành dự kiến *</label><input id="issue-date" name="ngayPhatHanh" value="@Model.NgayPhatHanh.ToString("yyyy-MM-dd")" type="date" class="form-control" required/></div>
 <div><label for="due-date">Hạn thanh toán *</label><input id="due-date" name="hanThanhToan" value="@Model.HanThanhToan.ToString("yyyy-MM-dd")" type="date" class="form-control" required/><small>Mặc định 7 ngày sau ngày phát hành.</small></div>
 </div><hr/><h2>Cách tính áp dụng</h2><ul class="flow-methods"><li><strong>Tiền phòng theo hợp đồng</strong><small>Tính theo kỳ hạn và số ngày áp dụng trong tháng.</small></li><li><strong>Điện, nước theo chỉ số</strong><small>Sử dụng chỉ số đã chốt và đơn giá có hiệu lực ngày chốt.</small></li><li><strong>Dịch vụ cố định</strong><small>Tính các dịch vụ đang áp dụng cho phòng.</small></li><li><strong>Khoản khoán theo đầu người</strong><small>Tính theo số người được ghi nhận trong kỳ.</small></li></ul></section>
-<section class="mi-card"><h2>Trạng thái dữ liệu kỳ @Model.Thang.ToString("00")/@Model.Nam</h2><p>Của tòa và kỳ đang hiển thị. Kiểm tra lại sau khi đổi thông tin.</p><div class="flow-metrics compact"><div><strong>@Model.TongPhong</strong><small>Phòng trong kỳ</small></div><div><strong>@Model.DuKien.Count</strong><small>Đủ điều kiện</small></div><div><strong>@missing</strong><small>Thiếu chỉ số</small></div><div><strong>@existing</strong><small>Đã có hóa đơn</small></div></div>
-@if(Model.BoQua.Count>0){<div class="alert alert-warning"><h3>@Model.BoQua.Count phòng sẽ bị bỏ qua</h3><table class="table"><tbody>@foreach(var r in Model.BoQua.Take(8)){<tr><th>@r.MaPhong</th><td>@r.LyDo</td></tr>}</tbody></table><a asp-controller="ChiSoDienNuoc" asp-action="Index">Xem tiến độ chốt chỉ số →</a></div>}
+<section class="mi-card card"><h2>Trạng thái dữ liệu kỳ @Model.Thang.ToString("00")/@Model.Nam</h2><p>Của tòa và kỳ đang hiển thị. Kiểm tra lại sau khi đổi thông tin.</p><div class="flow-metrics compact"><div><strong>@Model.TongPhong</strong><small>Phòng trong kỳ</small></div><div><strong>@Model.DuKien.Count</strong><small>Đủ điều kiện</small></div><div><strong>@missing</strong><small>Thiếu chỉ số</small></div><div><strong>@existing</strong><small>Đã có hóa đơn</small></div></div>
+@if(Model.BoQua.Count>0){<div class="alert alert-warning"><h3>@Model.BoQua.Count phòng sẽ bị bỏ qua</h3><div class="table-responsive"><table class="table table-hover align-middle"><tbody>@foreach(var r in Model.BoQua.Take(8)){<tr><th>@r.MaPhong</th><td>@r.LyDo</td></tr>}</tbody></table></div><a asp-controller="ChiSoDienNuoc" asp-action="Index">Xem tiến độ chốt chỉ số →</a></div>}
 @if(!Model.SanSang){<div class="alert alert-info">Chức năng hóa đơn chưa sẵn sàng hoặc chưa có tòa nhà.</div>}
 </section></div>
 <footer class="mi-card flow-actions"><a asp-action="Management" class="btn btn-outline-secondary">Hủy</a><button class="btn btn-dark" disabled="@(!Model.SanSang)">Kiểm tra dữ liệu kỳ hóa đơn</button></footer>

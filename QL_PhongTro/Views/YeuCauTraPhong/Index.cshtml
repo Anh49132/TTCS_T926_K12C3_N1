@@ -8,12 +8,12 @@
     var available = Model.Contracts.Where(x => x.TrangThai == "DANG_HIEU_LUC" && x.NgayKetThuc > Model.HomNay).ToList();
     var pages = Math.Max(1, (Model.Rows.Count + 19) / 20);
 }
-@section Styles { <link rel="stylesheet" href="~/css/checkout-request.css" asp-append-version="true" /> }
-<div class="checkout-requests">
+@section Styles { <link rel="stylesheet" href="~/css/checkout-request.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/checkout-request-bootstrap.css" asp-append-version="true" /> }
+<div class="checkout-requests checkout-bootstrap">
 <header><div><h1>Yêu cầu trả phòng trước hạn</h1><p>@(Model.IsOwner ? "Tiếp nhận đề nghị, thống nhất ngày bàn giao và chuẩn bị trả phòng." : "Gửi ngày dự kiến và lý do để trao đổi với chủ nhà trước khi bàn giao phòng.")</p></div><a class="btn btn-outline-secondary" asp-controller="@(Model.IsOwner ? "HopDong" : "HopDongCuaToi")" asp-action="Index">Quay lại hợp đồng</a></header>
-<p class="cr-note">Gửi hoặc tiếp nhận yêu cầu chưa làm kết thúc hợp đồng, chưa tạo hóa đơn và chưa trừ tiền cọc. Hai bên vẫn cần bàn giao, chốt chỉ số và đối chiếu bảng tất toán.</p>
+<p class="cr-note alert" role="note"><span class="cr-info-icon" aria-hidden="true">i</span>Gửi hoặc tiếp nhận yêu cầu chưa làm kết thúc hợp đồng, chưa tạo hóa đơn và chưa trừ tiền cọc. Hai bên vẫn cần bàn giao, chốt chỉ số và đối chiếu bảng tất toán.</p>
 @if(!Model.IsOwner){
-<section class="cr-card"><h2>Gửi yêu cầu mới</h2>
+<section class="cr-card card"><h2>Gửi yêu cầu mới</h2>
 @if(available.Count==0){<p>Không có hợp đồng do bạn đứng tên đủ điều kiện trả trước hạn. Yêu cầu cần hợp đồng đang hiệu lực và ngày đề nghị trước ngày kết thúc; người ở ghép cần trao đổi với người đứng tên.</p>}
 else {<form asp-action="Gui" method="post" class="cr-form">
 <label>Hợp đồng <span>*</span><select name="hopDongId" class="form-select" required><option value="">Chọn hợp đồng</option>@foreach(var c in available){<option value="@c.Id" selected="@(c.Id==Model.HopDongId)">@c.MaHopDong · @c.Phong · @c.ToaNha · hết hạn @c.NgayKetThuc.ToString("dd/MM/yyyy")</option>}</select></label>
@@ -22,9 +22,9 @@ else {<form asp-action="Gui" method="post" class="cr-form">
 <p class="cr-wide cr-muted">Ngày đề nghị từ hôm nay và trước ngày hết hợp đồng. Mỗi hợp đồng chỉ có một yêu cầu đang xử lý. Bạn có thể hủy khi chủ nhà chưa tiếp nhận.</p>
 <button class="btn btn-dark" type="submit">Gửi yêu cầu trả phòng</button></form>}
 </section>}
-<section class="cr-card"><h2>@(Model.IsOwner ? "Yêu cầu của khách thuê" : "Yêu cầu đã gửi") <small>@Model.Rows.Count yêu cầu · @Model.Rows.Count(x=>x.Request.TrangThai=="MOI") chờ tiếp nhận</small></h2>
-<form method="get" class="cr-filter"><label>Lọc theo hợp đồng<select name="hopDongId" class="form-select"><option value="">Tất cả hợp đồng</option>@foreach(var c in Model.Contracts){<option value="@c.Id" selected="@(c.Id==Model.HopDongId)">@c.MaHopDong · @c.Phong</option>}</select></label><button class="btn btn-outline-secondary">Lọc</button><a href="/YeuCauTraPhong">Bỏ lọc</a></form>
-@if(Model.Rows.Count==0){<p class="cr-empty">Chưa có yêu cầu trả phòng trong danh sách này.</p>}
+<section class="cr-card card"><h2>@(Model.IsOwner ? "Yêu cầu của khách thuê" : "Yêu cầu đã gửi") <small>@Model.Rows.Count yêu cầu · @Model.Rows.Count(x=>x.Request.TrangThai=="MOI") chờ tiếp nhận</small></h2>
+<form method="get" class="cr-filter d-flex flex-wrap"><label>Lọc theo hợp đồng<select name="hopDongId" class="form-select"><option value="">Tất cả hợp đồng</option>@foreach(var c in Model.Contracts){<option value="@c.Id" selected="@(c.Id==Model.HopDongId)">@c.MaHopDong · @c.Phong</option>}</select></label><button class="btn btn-dark" type="submit">Lọc yêu cầu</button><a class="btn btn-outline-secondary" href="/YeuCauTraPhong">Bỏ lọc</a></form>
+@if(Model.Rows.Count==0){<div class="cr-empty"><span class="cr-empty-icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 3h8l4 4v14H6Z"/><path d="M14 3v5h4M9 12h6M9 16h4"/></svg></span><h3>Chưa có yêu cầu trả phòng</h3><p>Chưa có yêu cầu trả phòng trong danh sách này.</p><small>Yêu cầu sẽ hiển thị tại đây khi khách thuê gửi đề nghị phù hợp với bộ lọc.</small></div>}
 @foreach(var row in Model.Rows.Skip((Model.Page-1)*20).Take(20)){
 var r=row.Request; var active=row.TrangThaiHopDong=="DANG_HIEU_LUC";
 <article class="cr-request" id="request-@r.Id"><header><div><h3>TP-@r.Id.ToString("D6") · Phòng @row.Phong</h3><p>@row.ToaNha · @row.MaHopDong · @row.Khach</p></div><span class="cr-state state-@r.TrangThai">@State(r.TrangThai)</span></header>

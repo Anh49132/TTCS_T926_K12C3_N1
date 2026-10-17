@@ -1,15 +1,23 @@
 @model QL_PhongTro.ViewModels.CreateManagedAccountViewModel
 @{ ViewData["Title"] = "Tạo tài khoản"; }
-<section class="auth-card">
-<h1>Tạo tài khoản</h1>
-<p>Mật khẩu tạm sẽ được gửi qua email. Người nhận phải đổi mật khẩu trước khi sử dụng hệ thống.</p>
+<section class="accounts-bootstrap account-role-page account-create-page">
+<div class="card account-role-card">
+<div class="card-header"><span class="account-role-icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="7" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3m4-14v6m-3-3h6"/></svg></span><div><h1>Tạo tài khoản</h1><p>Cấp tài khoản truy cập hệ thống NhàTốt.</p></div></div>
+<div class="card-body">
+<div class="alert account-role-notice" role="note">Mật khẩu tạm sẽ được gửi qua email. Người nhận phải đổi mật khẩu trước khi sử dụng hệ thống.</div>
 <form asp-action="Create" method="post">
 <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-<div class="mb-3"><label asp-for="HoTen">Họ tên</label><input asp-for="HoTen" class="form-control" maxlength="100" required /><span asp-validation-for="HoTen" class="text-danger"></span></div>
-<div class="mb-3"><label asp-for="Email">Email</label><input asp-for="Email" type="email" class="form-control" maxlength="254" required /><span asp-validation-for="Email" class="text-danger"></span></div>
-<div class="mb-3"><label asp-for="SoDienThoai">Số điện thoại</label><input asp-for="SoDienThoai" type="tel" class="form-control" pattern="0[0-9]{9}" maxlength="10" required /><span asp-validation-for="SoDienThoai" class="text-danger"></span></div>
+<div class="mb-3"><label asp-for="HoTen">Họ tên</label><input asp-for="HoTen" class="form-control" maxlength="100" autocomplete="name" placeholder="Nhập họ và tên" required /><span asp-validation-for="HoTen" class="text-danger"></span></div>
+<div class="mb-3"><label asp-for="Email">Email</label><input asp-for="Email" type="email" class="form-control" maxlength="254" autocomplete="email" placeholder="Nhập địa chỉ email" required /><span asp-validation-for="Email" class="text-danger"></span></div>
+<div class="mb-3"><label asp-for="SoDienThoai">Số điện thoại</label><input asp-for="SoDienThoai" type="tel" class="form-control" pattern="0[0-9]{9}" maxlength="10" autocomplete="tel" inputmode="tel" placeholder="Nhập số điện thoại 10 chữ số" required /><span asp-validation-for="SoDienThoai" class="text-danger"></span></div>
 <div class="mb-3"><label asp-for="VaiTro">Vai trò</label><select asp-for="VaiTro" class="form-select"><option value="CHU_NHA">Chủ nhà</option><option value="QUAN_LY">Quản lý toà nhà</option><option value="ADMIN">Quản trị viên (Admin)</option></select><span asp-validation-for="VaiTro" class="text-danger"></span></div>
+<div class="account-role-actions d-flex flex-wrap gap-2">
 <button class="btn btn-primary" type="submit">Tạo và gửi email</button>
 <a asp-action="Index" class="btn btn-outline-secondary">Quay lại danh sách</a>
+</div>
 </form>
+</div>
+</div>
 </section>
+@section Styles { <link rel="stylesheet" href="~/css/managed-accounts-bootstrap.css" asp-append-version="true" /> }
+@section Scripts { <script src="~/js/account-filter-dropdowns.js" asp-append-version="true"></script> }
