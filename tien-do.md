@@ -1,3 +1,75 @@
+### 17/10/2026 – Căn giãn dòng Tạo tin đăng
+- Thu padding thẻ/nhóm ô chọn, khoảng cách nhãn/trường nhập, thông báo, xem trước và footer; chỉ áp dụng create-mode, giữ logic form.
+
+### 17/10/2026 – Tinh chỉnh Tạo tin đăng Bootstrap
+- Thêm scope create-mode, nhấn thẻ thông tin, nhóm ô chọn/phòng và thông số nền nhẹ, footer lưu và tiện nghi đồng bộ.
+- Build và Edge 360/768/1440px đạt, không tràn ngang; xem trước tiêu đề/mô tả và Hủy/CSRF đạt. Không tạo tin thử; chưa push.
+
+### 17/10/2026 – Căn giãn dòng form tin đăng
+- Thu khoảng đệm thẻ, nhãn/ô nhập, nhóm thông tin phòng, dịch vụ và footer; chỉ CSS, giữ logic lưu và xem trước.
+
+### 17/10/2026 – Làm mới form Chỉnh sửa tin đăng bằng Bootstrap
+- Đồng bộ thẻ/form 44px, thông số, ảnh, xem trước/liên hệ/hiển thị và nút thao tác; stylesheet listing-form-bootstrap dùng chung form tạo/sửa, giữ logic POST/quyền.
+- Build đạt; Edge form sửa 360/768/1440px không tràn ngang, cập nhật xem trước tiêu đề/mô tả, CSRF và Hủy đạt. Không lưu nội dung thử; chưa push.
+
+### 17/10/2026 – Đổi nhãn thao tác Đăng tin
+- Đổi Tin đăng công khai thành Đăng tin trong menu trạng thái, giữ nguyên xử lý.
+
+### 17/10/2026 – Căn giãn dòng Tin đăng cho thuê
+- Thu khoảng đệm thống kê, tab, bộ lọc, dòng bảng và phân trang; chỉ CSS, giữ tìm/lọc và trạng thái tin.
+
+### 17/10/2026 – Làm mới Tin đăng cho thuê bằng Bootstrap
+- Đồng bộ thống kê, thông báo, tab/dropdown 42px, bảng/badge/menu thao tác và phân trang; CSS riêng listing-manage-bootstrap, giữ quyền và trạng thái tin.
+- Build đạt; Edge 360/768/1440px không tràn ngang, thống kê/tìm kiếm/lọc trạng thái/sắp xếp đạt. Không đổi dữ liệu tin; chưa push.
+
+### 17/10/2026 – Căn giãn dòng Sửa đơn giá
+- Thu khoảng đệm thẻ, dòng bảng, nhãn/ô nhập, phạm vi và tóm tắt; chỉ CSS, giữ logic đơn giá và hiệu lực.
+
+### 17/10/2026 – Làm mới Sửa đơn giá bằng Bootstrap
+- Đồng bộ bảng mức giá, thẻ/form 44px, phạm vi, tóm tắt, lịch sử và nút lưu/hủy; CSS riêng service-price-bootstrap, giữ logic hiệu lực/phiên bản/quyền và POST.
+- Build đạt; Edge 360/768/1440px không tràn ngang, xem trước mức giá/kỳ áp dụng, CSRF và Hủy đạt. Không lưu giá thử; chưa push.
+
+### 17/10/2026 – Căn giãn dòng Thêm dịch vụ
+- Thu khoảng đệm thẻ, nhãn/ô nhập, lựa chọn cách tính, dòng tóm tắt và footer; chỉ CSS, giữ logic form.
+
+### 17/10/2026 – Làm mới Thêm dịch vụ bằng Bootstrap
+- Đồng bộ form-control/form-select 44px, thẻ, cách tính phí, phạm vi, hiệu lực, tóm tắt và nút lưu/hủy; CSS riêng service-create-bootstrap, giữ validation/quyền/POST.
+- Build đạt; Edge 360/768/1440px không tràn ngang, xem trước tên/đơn giá/cách tính, CSRF và Hủy đạt. Không lưu dịch vụ thử; chưa push.
+
+### 17/10/2026 – Bỏ nút Cấu hình điện nước
+- Bỏ nút Cấu hình điện nước trong header Dịch vụ & đơn giá theo yêu cầu.
+
+### 17/10/2026 – Căn giãn dòng Dịch vụ & đơn giá
+- Thu khoảng đệm thẻ, tab, bộ lọc, dòng bảng và trạng thái rỗng; chỉ CSS, giữ chức năng và đơn giá.
+
+### 17/10/2026 – Làm mới Dịch vụ & đơn giá bằng Bootstrap
+- Đồng bộ thống kê, nút thao tác, tab/bộ lọc 42px, bảng dịch vụ và thẻ giải thích; CSS riêng service-bootstrap, giữ logic giá/quyền và chức năng chưa hỗ trợ.
+- Build đạt; Edge 360/768/1440px không tràn ngang, thống kê, lọc cách tính và sắp xếp trên tòa đã có dịch vụ đạt. Không đổi đơn giá; chưa push.
+
+### 17/10/2026 – Bỏ liên kết quay lại trên chi tiết hồ sơ
+- Bỏ Quay lại danh sách theo yêu cầu; giữ breadcrumb điều hướng.
+
+### 17/10/2026 – Căn giãn dòng Chi tiết hồ sơ khách thuê
+- Thu padding thẻ, heading, dòng thông tin cá nhân/thuê và bảng hợp đồng; chỉ CSS, giữ quyền và dữ liệu.
+
+### 17/10/2026 – Làm mới Chi tiết hồ sơ khách thuê bằng Bootstrap
+- Đồng bộ banner/avatar/badge, dòng thông tin cá nhân, giấy tờ, thuê hiện tại/quyền truy cập và bảng hợp đồng; CSS riêng profile-detail-bootstrap, giữ quyền/che dữ liệu và endpoint ảnh giấy tờ.
+- Build đạt; Edge 360/768/1440px không tràn ngang, 5 thông tin cá nhân, giấy tờ/bảng hợp đồng và link quay lại đạt. Chỉ đọc dữ liệu; chưa push.
+
+### 17/10/2026 – Dropdown Bootstrap bộ lọc hồ sơ khách thuê
+- Hai select tòa nhà/tình trạng được nâng cấp thành dropdown Bootstrap 44px, mũi tên và mục active champagne; giữ select gốc gửi POST, nhãn truy cập và CSRF.
+- Build và Edge 360/768/1440px đạt; chọn hai dropdown/gửi lọc đúng, tìm kiếm và liên kết hồ sơ đạt. Không sửa dữ liệu; chưa push.
+
+### 17/10/2026 – Đồng bộ breadcrumb Hồ sơ khách thuê
+- Thay ký tự nhà bằng SVG nét 21px giống Tổng quan; thống nhất chữ 1rem, dấu / và gap, giữ liên kết điều hướng.
+
+### 17/10/2026 – Căn giãn dòng Hồ sơ khách thuê
+- Thu khoảng đệm thống kê, bộ lọc, dòng bảng và phân trang; căn gọn dòng phụ, giữ chức năng tra cứu và dữ liệu.
+
+### 17/10/2026 – Làm mới Hồ sơ khách thuê bằng Bootstrap
+- Đồng bộ 4 thẻ thống kê, bộ lọc 44px, bảng responsive/badge/phân trang và nút xem hồ sơ; CSS riêng tenant-profiles-bootstrap. Giữ quyền, che thông tin cá nhân và POST lọc/CSRF.
+- Build đạt; Edge 360/768/1440px không tràn ngang, thống kê, tìm kiếm rỗng, lọc tòa/trạng thái, CSRF và link hồ sơ đạt. Chỉ đọc dữ liệu; chưa push.
+
 ### 17/10/2026 – Căn giãn dòng Lịch sử cư trú
 - Thu khoảng đệm thống kê, bộ lọc, tab, dòng bảng và trạng thái rỗng; chỉ CSS, giữ chức năng tra cứu.
 

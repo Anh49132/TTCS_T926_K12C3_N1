@@ -1,0 +1,49 @@
+.listing-manage-bootstrap{max-width:1440px;margin:0 auto;line-height:1.5}
+.listing-manage-bootstrap .lm-heading{gap:1rem;margin-bottom:.875rem}
+.listing-manage-bootstrap .lm-heading h1{font-size:clamp(1.5rem,2.3vw,2rem);line-height:1.25;letter-spacing:-.025em;margin-bottom:.35rem}
+.listing-manage-bootstrap .lm-heading p{font-size:.82rem;line-height:1.5}
+.listing-manage-bootstrap .lm-primary{min-height:42px;padding:.65rem 1rem;border-radius:9px;font-size:.78rem;font-weight:600;display:inline-flex;align-items:center;justify-content:center}
+.listing-manage-bootstrap .alert,.listing-manage-bootstrap .lm-warning{padding:.8rem 1rem;border-radius:10px;font-size:.74rem;line-height:1.5;margin-bottom:.875rem}
+.listing-manage-bootstrap .lm-warning{background:#f7f2e8;border:1px solid #e9dfca}
+.listing-manage-bootstrap .lm-stats{gap:1rem;margin-bottom:.875rem}
+.listing-manage-bootstrap .lm-stats>button,.listing-manage-bootstrap .lm-panel{border:1px solid #e6e9eb;border-radius:13px;box-shadow:0 3px 12px #25282d03;background:#fff;min-width:0}
+.listing-manage-bootstrap .lm-stats>button{padding:.9rem;text-align:left}
+.listing-manage-bootstrap .lm-stats>button>span{font-size:.76rem;line-height:1.5;gap:.5rem;align-items:center}
+.listing-manage-bootstrap .lm-stats i{display:grid;place-items:center;width:32px;height:32px;border-radius:9px;background:#bfa77a19;color:#92774c}
+.listing-manage-bootstrap .lm-stats i svg{width:19px;height:19px;stroke:currentColor}
+.listing-manage-bootstrap .lm-stats strong{font-size:1.9rem;line-height:1.3;margin-top:.45rem}
+.listing-manage-bootstrap .lm-stats small{font-size:.72rem}
+.listing-manage-bootstrap .lm-stats p{font-size:.7rem;line-height:1.5;margin:.3rem 0 0}
+.listing-manage-bootstrap .lm-panel{overflow:hidden}
+.listing-manage-bootstrap .lm-panel-heading{padding:.9rem 1.1rem .5rem;gap:.75rem}
+.listing-manage-bootstrap .lm-panel-heading h2{font-size:1rem;line-height:1.5}
+.listing-manage-bootstrap .lm-panel-heading h2>span{font-size:.65rem;border-radius:20px;padding:.25rem .5rem}
+.listing-manage-bootstrap .lm-panel-heading>small{font-size:.68rem;line-height:1.5}
+.listing-manage-bootstrap .lm-tabs{gap:1.2rem;padding-inline:1.1rem;flex-wrap:nowrap;overflow-x:auto}
+.listing-manage-bootstrap .lm-tabs button{font-size:.75rem;line-height:1.5;padding:.55rem 0;white-space:nowrap}
+.listing-manage-bootstrap .lm-filters{padding:.75rem 1.1rem;gap:.65rem;align-items:center;flex-wrap:wrap}
+.listing-manage-bootstrap .lm-search-field{min-height:42px;border-radius:9px;background:#fafaf9;min-width:0;flex:1 1 280px}
+.listing-manage-bootstrap .lm-search-field input.form-control{height:40px;background:transparent;border:0;box-shadow:none;font-size:.78rem}
+.listing-manage-bootstrap .lm-filters>.form-select{height:42px;border:1px solid #e3e7e9;border-radius:9px;padding:.6rem 2rem .6rem .75rem;font-size:.77rem;min-width:0;flex:1 1 170px;width:auto}
+.listing-manage-bootstrap .lm-table-scroll{overflow-x:auto}
+.listing-manage-bootstrap table{--bs-table-bg:transparent;min-width:1000px;font-size:.78rem}
+.listing-manage-bootstrap table th{font-size:.65rem;font-weight:600;letter-spacing:.02em;padding:.7rem 1rem;background:#f8f9f7;color:#7d858f;border-color:#eef0ed}
+.listing-manage-bootstrap table td{font-size:.78rem;line-height:1.5;padding:.75rem 1rem;border-color:#eef0ed;box-shadow:none}
+.listing-manage-bootstrap table tr[hidden]{display:none!important}
+.listing-manage-bootstrap table tbody tr:hover{background:#fafaf7}
+.listing-manage-bootstrap table small{font-size:.68rem;line-height:1.5;margin-top:.2rem}
+.listing-manage-bootstrap .lm-room{gap:.75rem;min-width:240px}
+.listing-manage-bootstrap .lm-room img{width:64px;height:60px;object-fit:cover;border-radius:8px}
+.listing-manage-bootstrap .lm-room strong{font-size:.8rem;line-height:1.5}
+.listing-manage-bootstrap .lm-badge{display:inline-block;font-size:.67rem;border-radius:20px;padding:.35rem .6rem;white-space:nowrap}
+.listing-manage-bootstrap .lm-edit-button{width:32px;height:32px;border-radius:8px}
+.listing-manage-bootstrap .lm-action-popup{border-radius:9px;padding:.3rem}
+.listing-manage-bootstrap .lm-action-popup button,.listing-manage-bootstrap .lm-action-popup a{font-size:.74rem;border-radius:6px;padding:.55rem}
+.listing-manage-bootstrap .lm-pagination{padding:.8rem 1.1rem;font-size:.72rem;line-height:1.5;gap:.75rem;flex-wrap:wrap}
+.listing-manage-bootstrap .lm-pagination select{width:auto;font-size:.72rem;min-height:34px;border-radius:7px;padding:.4rem 1.8rem .4rem .6rem}
+.listing-manage-bootstrap .lm-pagination button,.listing-manage-bootstrap #lm-page{min-width:30px;min-height:30px;border-radius:7px}
+.listing-manage-bootstrap .lm-panel-note{font-size:.7rem;line-height:1.6;padding:.75rem 1.1rem}
+.listing-manage-bootstrap #lm-empty{padding:1.5rem 1rem;text-align:center;font-size:.76rem;color:#92969d}
+@media(max-width:1000px){.listing-manage-bootstrap .lm-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.listing-manage-bootstrap .lm-search-field{flex-basis:100%}}
+@media(max-width:600px){.listing-manage-bootstrap .lm-heading{flex-direction:column;align-items:stretch}.listing-manage-bootstrap .lm-stats{gap:.65rem}.listing-manage-bootstrap .lm-stats>button{padding:.85rem}.listing-manage-bootstrap .lm-stats strong{font-size:1.5rem}.listing-manage-bootstrap .lm-warning{display:flex;flex-wrap:wrap;gap:.5rem}.listing-manage-bootstrap .lm-warning>a{margin-left:0}.listing-manage-bootstrap .lm-panel-heading{flex-wrap:wrap;padding:.9rem}.listing-manage-bootstrap .lm-filters{padding:.85rem .9rem}.listing-manage-bootstrap .lm-tabs{padding-inline:.9rem;gap:1rem}.listing-manage-bootstrap .lm-filters>.form-select{flex-basis:100%;width:100%}}
+.listing-manage-bootstrap .lm-select-trigger{min-height:42px;border-radius:9px;font-size:.77rem;padding:.6rem .75rem}.listing-manage-bootstrap .lm-select-menu{border-radius:9px;padding:.3rem}.listing-manage-bootstrap .lm-select-menu button{min-height:34px;font-size:.75rem;border-radius:6px}

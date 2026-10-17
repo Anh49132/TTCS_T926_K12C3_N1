@@ -5,7 +5,7 @@ else if (Model.Id > 0) { <partial name="_OwnerProfile" model="Model" /> }
 else { <h1>Hồ sơ khách thuê</h1><p>Chưa có hồ sơ để hiển thị.</p> }
 @section Styles {
     @if (Model.LaChuHoSo) { <link rel="stylesheet" href="~/css/tenant-account.css" asp-append-version="true" /> }
-    else { <link rel="stylesheet" href="~/css/owner-profiles.css" asp-append-version="true" /> }
+    else { <link rel="stylesheet" href="~/css/owner-profiles.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/profile-detail-bootstrap.css" asp-append-version="true" /> }
 }
 @section Scripts {
     @if (Model.LaChuHoSo) { <script src="~/js/tenant-account.js" asp-append-version="true"></script> }
