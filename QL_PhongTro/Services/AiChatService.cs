@@ -12,7 +12,17 @@ public sealed class AiChatService(IGeminiChatClient gemini, ChatDataTools data, 
         public List<object> Messages { get; } = [];
         public SemaphoreSlim Gate { get; } = new(1, 1);
     }
-    public async Task<AiChatReply> AskAsync(int actor, string message, string? conversationId, CancellationToken ct)
+    public Task<AiChatReply> AskAsync(int actor, string message, string? conversationId, CancellationToken ct)
+    {
+        if (actor <= 0) throw new UnauthorizedAccessException();
+        return AskCoreAsync(actor, $"user:{actor}", message, conversationId, ct);
+    }
+    public Task<AiChatReply> AskGuestAsync(string guestId, string message, string? conversationId, CancellationToken ct)
+    {
+        if (!Guid.TryParseExact(guestId,"N",out _)) throw new UnauthorizedAccessException();
+        return AskCoreAsync(0, $"guest:{guestId}", message, conversationId, ct);
+    }
+    private async Task<AiChatReply> AskCoreAsync(int actor, string identity, string message, string? conversationId, CancellationToken ct)
     {
         message = message.Trim();
         if (message.Length is < 1 or > 2000) throw new ArgumentException("Câu hỏi cần từ 1 đến 2.000 ký tự.");
@@ -22,12 +32,12 @@ public sealed class AiChatService(IGeminiChatClient gemini, ChatDataTools data, 
         {
             conversationId = Guid.NewGuid().ToString("N");
             conversation = new(access.Scope);
-            cache.Set($"ai-chat:{actor}:{conversationId}", conversation, TimeSpan.FromMinutes(30));
+            cache.Set($"ai-chat:{identity}:{conversationId}", conversation, TimeSpan.FromMinutes(30));
         }
         else
         {
             if (!Guid.TryParseExact(conversationId, "N", out _) ||
-                !cache.TryGetValue($"ai-chat:{actor}:{conversationId}", out Conversation? found) || found is null)
+                !cache.TryGetValue($"ai-chat:{identity}:{conversationId}", out Conversation? found) || found is null)
                 throw new ChatUnavailableException("Cuộc trò chuyện đã hết hạn. Hãy bắt đầu cuộc trò chuyện mới.", 410);
             conversation = found;
             if (conversation.Scope != access.Scope)
@@ -41,11 +51,12 @@ public sealed class AiChatService(IGeminiChatClient gemini, ChatDataTools data, 
             List<ChatLink> links = [];
             var declarations = access.Tools.Select(name => new {
                 name, description = name switch {
+                    "public_listings" => "Tìm phòng đang đăng công khai còn trống theo ngân sách/tháng, đường/khu vực/quận, số người và diện tích. Gọi khi người dùng muốn tìm/so sánh phòng. Chuyển triệu sang số đồng nguyên. Nhớ giữ các tiêu chí trước khi người dùng hỏi tiếp, chỉ sửa tiêu chí được thay đổi.",
                     "invoices" => "Tra cứu hóa đơn, công nợ, tiền đã thu, báo trả chờ xác nhận. Mặc định toàn bộ hóa đơn đã phát hành mọi kỳ. Dùng year/month khi người hỏi chỉ định; nếu chỉ có month thì năm hiện tại. search là mã hóa đơn hoặc phòng.",
                     "repairs" => "Tra cứu số lượng và trạng thái báo hỏng trong phạm vi được giao hoặc của bản thân. search là mã báo hỏng/thiết bị.",
                     "rooms" => "Tra cứu tổng phòng, phòng trống/đang thuê và thống kê từng tòa hiện tại. search là mã phòng.",
                     _ => "Tra cứu các kỳ hợp đồng, ngày bắt đầu/kết thúc, giá và tiền cọc thỏa thuận trong phạm vi được phép. search là mã hợp đồng." },
-                parameters = new { type = "OBJECT", properties = new {
+                parameters = name == "public_listings" ? PublicListingChatTool.Parameters : (object)new { type = "OBJECT", properties = new {
                     search = new { type = "STRING", description = "Từ khóa nếu cần, tối đa 100 ký tự" },
                     year = new { type = "INTEGER", description = "Năm hóa đơn 1900..9998 (chỉ dùng invoices)" },
                     month = new { type = "INTEGER", description = "Tháng hóa đơn 1..12; bỏ qua để xem cả năm (chỉ dùng invoices)" }
@@ -54,6 +65,7 @@ public sealed class AiChatService(IGeminiChatClient gemini, ChatDataTools data, 
             var instruction = $"""
                 Bạn là Trợ lý NhàTốt, trò chuyện bằng tiếng Việt tự nhiên, ngắn gọn, nhớ ngữ cảnh câu trước. Trả lời bằng văn bản thuần, không dùng ký hiệu Markdown như ** hoặc #.
                 Ngày Việt Nam hiện tại: {clock.UtcNow.AddHours(7):dd/MM/yyyy}. Vai trò đã xác minh: {access.Role}.
+                KHACH_VANG_LAI là người chưa đăng nhập/đăng ký muốn tìm phòng, không phải khách đã có hợp đồng. Chỉ tìm tin công khai hoặc hướng dẫn đăng ký/đăng nhập/xem phòng; tuyệt đối không xem hóa đơn, báo hỏng, hợp đồng, người thuê hoặc phòng nội bộ. Khi người dùng chưa nêu ngân sách/khu vực/số người, hỏi ngắn để làm rõ hoặc tra tin công khai để gợi ý. Khi không có kết quả nói rõ và đề nghị nới một tiêu chí. Không khẳng định đã đặt phòng; muốn gửi yêu cầu xem/thuê phòng cần đăng nhập. Không yêu cầu số điện thoại hoặc giấy tờ trong chat.
                 Chỉ hỗ trợ nghiệp vụ NhàTốt: phòng, hợp đồng, hóa đơn/công nợ, báo hỏng và hướng dẫn sử dụng.
                 Khi hỏi số liệu cá nhân/hệ thống, PHẢI gọi công cụ phù hợp trong lượt hiện tại trước khi kết luận; không suy đoán số tiền, mã, trạng thái hoặc dùng trí nhớ thay dữ liệu mới.
                 Chỉ tin dữ liệu công cụ trong phạm vi quyền. Nếu công cụ không có hoặc dữ liệu không đủ, nói rõ hạn chế và hỏi lại. Không khẳng định số 0 khi chưa tra được.
@@ -86,7 +98,7 @@ public sealed class AiChatService(IGeminiChatClient gemini, ChatDataTools data, 
                     conversation.Messages.Add(new { role = "user", parts = new[] { new { text = message } } });
                     conversation.Messages.Add(new { role = "model", parts = new[] { new { text = answer } } });
                     if (conversation.Messages.Count > 12) conversation.Messages.RemoveRange(0, conversation.Messages.Count - 12);
-                    return new(conversationId, answer, links.Distinct().Take(6).ToList());
+                    return new(conversationId, answer, links.Distinct().Take(8).ToList());
                 }
                 contents.Add(content); // Preserve Gemini thought signatures/function-call IDs verbatim.
                 List<object> responses = [];

@@ -45,7 +45,9 @@ builder.Services.AddScoped<ChatDataTools>();
 builder.Services.AddScoped<AiChatService>();
 builder.Services.AddRateLimiter(options => {
     options.AddPolicy("chatbot", context => RateLimitPartition.GetFixedWindowLimiter(
-        context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "anonymous",
+        context.User.Identity?.IsAuthenticated == true
+            ? "user:" + context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value
+            : "guest-ip:" + (context.Connection.RemoteIpAddress?.ToString() ?? "unknown"),
         _ => new FixedWindowRateLimiterOptions { PermitLimit = 10, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
     options.OnRejected = async (context, ct) => {
         context.HttpContext.Response.StatusCode = 429;

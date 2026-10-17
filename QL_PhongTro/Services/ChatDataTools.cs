@@ -12,6 +12,7 @@ public sealed class ChatDataTools(AppDbContext db, ITimeProvider clock)
 {
     public async Task<(string Role, HashSet<string> Tools, string Scope)> AccessAsync(int actor, CancellationToken ct)
     {
+        if (actor == 0) return ("KHACH_VANG_LAI", ["public_listings"], "public-listings-only");
         var account = await db.TaiKhoans.AsNoTracking().SingleOrDefaultAsync(x => x.Id == actor && x.DangHoatDong
             && !x.IsDeleted && x.EmailConfirmed && !x.MustChangePassword, ct);
         if (account?.VaiTro is not ("KHACH_THUE" or "CHU_NHA" or "QUAN_LY" or "ADMIN")) throw new UnauthorizedAccessException();
@@ -20,7 +21,7 @@ public sealed class ChatDataTools(AppDbContext db, ITimeProvider clock)
             && (x.AccessLevel == "READ" || x.AccessLevel == "WRITE" || x.AccessLevel == "FULL"))
             .Select(x => x.ModuleCode).ToListAsync(ct);
         bool Allowed(string module) => role == "ADMIN" || permissions.Contains(module);
-        HashSet<string> tools = [];
+        HashSet<string> tools = ["public_listings"];
         if (role != "QUAN_LY" && Allowed("TAI_CHINH")) tools.Add("invoices");
         if (Allowed("BAO_HONG")) tools.Add("repairs");
         if (role != "KHACH_THUE" && Allowed("PHONG_TRO")) tools.Add("rooms");
@@ -36,6 +37,7 @@ public sealed class ChatDataTools(AppDbContext db, ITimeProvider clock)
     {
         var access = await AccessAsync(actor, ct);
         if (!access.Tools.Contains(tool)) throw new UnauthorizedAccessException();
+        if (tool == "public_listings") return await new PublicListingChatTool(db, clock).SearchAsync(args, ct);
         var role = access.Role;
         var buildingIds = db.ToaNhas.Where(x => role == "ADMIN" || role == "CHU_NHA" && x.ChuNhaId == actor
             || role == "QUAN_LY" && x.QuanLyId == actor).Select(x => x.Id);

@@ -110,7 +110,7 @@ public sealed partial class BaoHongTests
     }
 
     [Fact]
-    public async Task ChatHttpRequiresAuthenticationCsrfAndAppliesRateLimit()
+    public async Task ChatHttpRequiresCsrfAndAppliesAccountRateLimit()
     {
         using var f=new Fixture();Managers(f);
         var password=Guid.NewGuid().ToString("N")+"Aa1!";
@@ -120,7 +120,7 @@ public sealed partial class BaoHongTests
             services.RemoveAll<IGeminiChatClient>();services.AddSingleton<IGeminiChatClient>(new ChatFake(replies));
         }));
         using var anonymous=web.CreateClient(new(){AllowAutoRedirect=false});
-        Assert.Equal(HttpStatusCode.Unauthorized,(await anonymous.PostAsJsonAsync("/api/chatbot",new{message="Hi"})).StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest,(await anonymous.PostAsJsonAsync("/api/chatbot",new{message="Hi"})).StatusCode);
         using var client=await FilterLogin(web,password,"tenant@test.local");
         Assert.Equal(HttpStatusCode.BadRequest,(await client.PostAsJsonAsync("/api/chatbot",new{message="Hi"})).StatusCode);
         var page=await client.GetStringAsync("/BaoHong");
