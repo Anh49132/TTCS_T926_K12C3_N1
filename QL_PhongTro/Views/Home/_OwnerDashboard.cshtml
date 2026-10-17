@@ -16,10 +16,10 @@
         _ => "M4 21V3h16v18M8 7h2m4 0h2M8 11h2m4 0h2M10 21v-5h4v5"
     };
 }
-<div class="owner-overview">
+<div class="owner-overview owner-bootstrap">
     <header class="owner-heading">
         <div><h1>@greeting, @(User.Identity?.Name ?? "bạn")</h1><p>Chào @(User.Identity?.Name ?? "bạn"), có @(Model.YeuCauChoXuLy + Model.UnlistedRoomCount + Model.MeterAlerts.Sum(x => x.SoPhongConThieu)) việc đang chờ anh xử lý.</p></div>
-        <div class="owner-heading-actions"><a class="owner-button" href="/HoaDonDichVu/Monthly">＋ Tạo hóa đơn</a><span class="owner-updated"><i aria-hidden="true"></i>Cập nhật lúc @today.ToString("HH:mm") · @today.ToString("dd/MM/yyyy")</span></div>
+        <div class="owner-heading-actions"><a class="owner-button btn btn-dark" href="/HoaDonDichVu/Monthly">＋ Tạo hóa đơn</a><span class="owner-updated"><i aria-hidden="true"></i>Cập nhật lúc @today.ToString("HH:mm") · @today.ToString("dd/MM/yyyy")</span></div>
     </header>
 
     <form class="owner-overview-filters" action="/" method="get" aria-label="Lọc tổng quan">
@@ -38,7 +38,7 @@
                 }
             </nav>
         </details>
-        <noscript><button type="submit" class="owner-button">Áp dụng</button></noscript>
+        <noscript><button type="submit" class="owner-button btn btn-dark">Áp dụng</button></noscript>
     </form>
 
     <section class="owner-stats owner-stats-three" aria-label="Số liệu tổng quan">
@@ -46,19 +46,19 @@
             (Label: "Phòng trống", Value: Model.PhongTrong.ToString(), Unit: "phòng", Note: Model.UnlistedRoomsAvailable ? $"{Model.PhongTrong - Model.UnlistedRoomCount} đã đăng tin · {Model.UnlistedRoomCount} chưa đăng tin" : "Theo dõi tình trạng phòng", Url: "/PhongTro?trangThaiFilter=TRONG", Icon: "door", Link: "Xem phòng trống"),
             (Label: "Phòng đang thuê", Value: Model.PhongDangThue.ToString(), Unit: $"/ {Model.TongPhong} phòng", Note: $"Tỷ lệ lấp đầy {rate.ToString("0.#", CultureInfo.GetCultureInfo("vi-VN"))}%", Url: "/PhongTro?trangThaiFilter=DANG_THUE", Icon: "key", Link: "Quản lý phòng đang thuê") })
         {
-            <a class="owner-stat owner-summary-card" href="@stat.Url"><div class="owner-stat-heading"><span>@stat.Label</span><span class="owner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon(stat.Icon)" /></svg></span></div><div class="owner-stat-value">@stat.Value <small>@stat.Unit</small></div><p>@stat.Note</p><div class="owner-stat-link">@stat.Link <span class="owner-stat-arrow" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M4 4h8v8" /></svg></span></div></a>
+            <a class="owner-stat owner-summary-card shadow-sm" href="@stat.Url"><div class="owner-stat-heading"><span>@stat.Label</span><span class="owner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon(stat.Icon)" /></svg></span></div><div class="owner-stat-value">@stat.Value <small>@stat.Unit</small></div><p>@stat.Note</p><div class="owner-stat-link">@stat.Link <span class="owner-stat-arrow" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M4 4h8v8" /></svg></span></div></a>
         }
-        <a class="owner-stat owner-summary-card owner-summary-finance" href="/HoaDonDichVu"><div class="owner-stat-heading"><span>Tiền còn phải thu</span><span class="owner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h15V4H6a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h14V7H6a2 2 0 0 1-2-1ZM15 12h6v5h-6Z M17 14.5h.01" /></svg></span></div><div class="owner-stat-value">— <small>đ</small></div><p>Chưa có tổng hợp công nợ</p><div class="owner-stat-link">Xem công nợ tháng này <span class="owner-stat-arrow" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M4 4h8v8" /></svg></span></div></a>
+        <a class="owner-stat owner-summary-card owner-summary-finance shadow-sm" href="/HoaDonDichVu"><div class="owner-stat-heading"><span>Tiền còn phải thu</span><span class="owner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h15V4H6a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h14V7H6a2 2 0 0 1-2-1ZM15 12h6v5h-6Z M17 14.5h.01" /></svg></span></div><div class="owner-stat-value">— <small>đ</small></div><p>Chưa có tổng hợp công nợ</p><div class="owner-stat-link">Xem công nợ tháng này <span class="owner-stat-arrow" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M4 4h8v8" /></svg></span></div></a>
     </section>
     <section class="owner-main-grid" aria-label="Tổng quan vận hành">
-        <article class="owner-panel owner-revenue">
+        <article class="owner-panel owner-revenue shadow-sm">
             <div class="owner-panel-heading"><h2>Tình hình thu tiền</h2><details class="owner-period-picker"><summary aria-label="Chọn khoảng thời gian thu tiền"><span class="owner-period-label">6 tháng gần nhất</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" /></svg></summary><div class="owner-period-menu"><button type="button" data-period="6" aria-pressed="true">6 tháng gần nhất<span aria-hidden="true">✓</span></button><button type="button" data-period="3" aria-pressed="false">3 tháng gần nhất<span aria-hidden="true">✓</span></button><button type="button" data-period="12" aria-pressed="false">12 tháng gần nhất<span aria-hidden="true">✓</span></button></div><select hidden aria-hidden="true" tabindex="-1"><option value="6">6 tháng gần nhất</option><option value="3">3 tháng gần nhất</option><option value="12">12 tháng gần nhất</option></select></details></div>
             <div class="owner-revenue-legend" aria-label="Chú giải biểu đồ"><span><i class="collected"></i>Đã thu</span><span><i class="receivable"></i>Phải thu</span></div>
             <div class="owner-revenue-summary"><strong>— <small>đ</small></strong><span>Chưa có dữ liệu thu tiền</span></div>
             <div class="owner-chart" aria-label="Chưa có dữ liệu để vẽ biểu đồ thu tiền"><div class="owner-chart-grid"></div><p>Biểu đồ sẽ hiển thị khi có dữ liệu thanh toán.</p></div>
             <div class="owner-chart-months" data-current-month="@today.ToString("yyyy-MM")">@for (var i = 5; i >= 0; i--) { <span>@today.AddMonths(-i).ToString("MM/yyyy")</span> }</div>
         </article>
-        <article class="owner-panel owner-occupancy">
+        <article class="owner-panel owner-occupancy shadow-sm">
             <div class="owner-panel-heading"><h2>Tình trạng phòng</h2><a class="owner-occupancy-link" href="/PhongTro">Chi tiết <span class="owner-stat-arrow" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M4 4h8v8" /></svg></span></a></div>
             <div class="owner-occupancy-body">
                 <div class="owner-donut" style="--occupied-angle: @(occupiedAngle)deg; --reserved-angle: @(reservedAngle)deg" role="img" aria-label="Tỷ lệ phòng đang thuê @rate.ToString("0.#") phần trăm"><div><strong>@rate.ToString("0.#", CultureInfo.GetCultureInfo("vi-VN"))%</strong><span>Lấp đầy</span></div></div>

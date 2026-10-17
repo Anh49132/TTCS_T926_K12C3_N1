@@ -1,0 +1,40 @@
+/* Owner overview only; preserve shared workspace navigation and business data. */
+.owner-overview.owner-bootstrap{max-width:1440px;margin:0 auto;color:#25282D}
+.owner-bootstrap .owner-heading{align-items:flex-start;gap:1.5rem;margin-bottom:1.25rem}
+.owner-bootstrap .owner-heading h1{font-size:clamp(1.5rem,2.3vw,2rem);font-weight:700;letter-spacing:-.035em;line-height:1.25;margin-bottom:.5rem}
+.owner-bootstrap .owner-heading p{font-size:.85rem;line-height:1.6;color:#7a828a;margin:0}
+.owner-bootstrap .owner-heading-actions{gap:.65rem}.owner-bootstrap .owner-button{min-height:42px;padding:.65rem 1rem;border-radius:9px;font-size:.8rem;font-weight:600;white-space:nowrap}
+.owner-bootstrap .owner-updated{font-size:.65rem;color:#8a9197}
+.owner-bootstrap .owner-overview-filters{gap:.65rem;margin-bottom:1.25rem}
+.owner-bootstrap .owner-filter-dropdown>summary{min-height:40px;padding:.6rem .8rem;border-radius:9px;border-color:#e4e7e9;font-size:.78rem;background:#fff}
+.owner-bootstrap .owner-filter-menu{padding:.35rem;border-radius:10px;border:1px solid #e5e7e9;box-shadow:0 8px 24px #25282d12}
+.owner-bootstrap .owner-filter-menu a,.owner-bootstrap .owner-filter-menu button{padding:.5rem .65rem;font-size:.77rem;border-radius:6px}
+.owner-bootstrap .owner-stats.owner-stats-three{gap:1rem;margin-bottom:1.25rem}
+.owner-bootstrap .owner-stats-three .owner-summary-card{padding:1.25rem;border:1px solid #e5e8ea;border-radius:14px;box-shadow:0 3px 12px #25282d03!important;transition:border-color .15s,box-shadow .15s}
+.owner-bootstrap .owner-summary-card:hover{border-color:#c9b894;box-shadow:0 6px 18px #25282d08!important}
+.owner-bootstrap .owner-stat-heading{font-size:.83rem;color:#6d767e;align-items:center;min-height:32px}
+.owner-bootstrap .owner-stats-three .owner-icon{width:34px;height:34px;flex-basis:34px;border-radius:10px;background:#f2f3f0;color:#737b82}
+.owner-bootstrap .owner-stats-three .owner-summary-finance .owner-icon{background:#bfa77a1c;color:#92774c}
+.owner-bootstrap .owner-stats-three .owner-stat-value{font-size:2.15rem;font-weight:700;letter-spacing:-.04em;line-height:1.2;margin-top:.8rem;min-height:42px}
+.owner-bootstrap .owner-stats-three .owner-stat-value small{font-size:.73rem;font-weight:400;letter-spacing:0;text-decoration:none}
+.owner-bootstrap .owner-stats-three .owner-summary-card p{font-size:.72rem;line-height:1.5;margin:.6rem 0 .85rem;min-height:1rem}
+.owner-bootstrap .owner-stats-three .owner-stat-link{font-size:.73rem;padding-top:.8rem;border-top:1px solid #eceeed}
+.owner-bootstrap .owner-main-grid{grid-template-columns:minmax(0,1.8fr) minmax(300px,1fr);gap:1.25rem;margin-bottom:1.5rem}
+.owner-bootstrap .owner-panel{padding:1.35rem;border:1px solid #e5e8ea;border-radius:14px;box-shadow:0 3px 12px #25282d03!important;min-width:0}
+.owner-bootstrap .owner-panel-heading{gap:1rem;margin-bottom:1rem;align-items:center}.owner-bootstrap .owner-panel-heading h2{font-size:1rem;font-weight:650;line-height:1.4;margin:0}
+.owner-bootstrap .owner-period-picker>summary{font-size:.72rem;min-height:36px;border-radius:8px;border-color:#e4e7e9}
+.owner-bootstrap .owner-revenue-legend{font-size:.68rem;gap:1rem}.owner-bootstrap .owner-revenue-summary{margin:1rem 0}.owner-bootstrap .owner-revenue-summary strong{font-size:1.8rem}.owner-bootstrap .owner-revenue-summary>span{font-size:.73rem;color:#7c858e}
+.owner-bootstrap .owner-chart{height:170px;border-radius:10px;background:#fafbf9;overflow:hidden}.owner-bootstrap .owner-chart p{font-size:.75rem;color:#8a9299;text-align:center;padding:1rem;line-height:1.6}
+.owner-bootstrap .owner-chart-months{font-size:.63rem;margin-top:.85rem;color:#8a9299;gap:.35rem}
+.owner-bootstrap .owner-occupancy-body{gap:1.25rem;align-items:center;margin:1.25rem 0}
+.owner-bootstrap .owner-room-legend{font-size:.74rem;min-width:0}.owner-bootstrap .owner-room-legend>div{margin-bottom:.7rem;gap:.5rem}.owner-bootstrap .owner-room-legend dd{font-variant-numeric:tabular-nums;font-weight:600}
+.owner-bootstrap .owner-occupancy-note{padding:1rem;background:#bfa77a12;border:1px solid #bfa77a20;border-radius:10px}.owner-bootstrap .owner-occupancy-note strong{font-size:.77rem;line-height:1.5}.owner-bootstrap .owner-occupancy-note .owner-occupancy-link{font-size:.7rem;margin-top:.35rem}
+.owner-bootstrap .owner-work-heading{margin-bottom:1rem}.owner-bootstrap .owner-work-heading h2{font-size:1.2rem;line-height:1.4}.owner-bootstrap .owner-work-heading p{font-size:.78rem;line-height:1.6}
+.owner-bootstrap .owner-work-grid{gap:1rem}.owner-bootstrap .owner-work-card{border:1px solid #e5e8ea;border-radius:14px;padding:1.15rem;background:#fff;min-width:0}
+.owner-bootstrap .owner-work-card header h3{font-size:.85rem;line-height:1.4}.owner-bootstrap .owner-work-caption{font-size:.72rem;line-height:1.6}.owner-bootstrap .owner-work-row{padding:.8rem 0}.owner-bootstrap .owner-work-row strong{font-size:.78rem}.owner-bootstrap .owner-work-row small{font-size:.68rem;line-height:1.6}
+.owner-bootstrap .owner-work-card footer{gap:.65rem;flex-wrap:wrap}.owner-bootstrap .owner-work-card footer,.owner-bootstrap .owner-work-card footer a{font-size:.7rem;line-height:1.5}
+.owner-bootstrap .owner-shortcuts{border-radius:12px;padding:1rem 1.25rem;margin-top:1.25rem}.owner-bootstrap .owner-footer{font-size:.65rem;color:#8a9299;margin-top:1.5rem}
+.owner-bootstrap a:focus-visible,.owner-bootstrap button:focus-visible,.owner-bootstrap summary:focus-visible{outline:3px solid #BFA77A;outline-offset:3px}
+@media(max-width:1100px){.owner-bootstrap .owner-main-grid{grid-template-columns:1fr}.owner-bootstrap .owner-occupancy-body{justify-content:center}.owner-bootstrap .owner-occupancy .owner-room-legend{flex:1;max-width:400px}}
+@media(max-width:700px){.owner-bootstrap .owner-heading{flex-direction:column;gap:.85rem}.owner-bootstrap .owner-heading-actions{align-items:flex-start}.owner-bootstrap .owner-heading h1{font-size:1.5rem}.owner-bootstrap .owner-heading p{font-size:.78rem}.owner-bootstrap .owner-stats.owner-stats-three{grid-template-columns:1fr;gap:.75rem}.owner-bootstrap .owner-stats-three .owner-summary-card{padding:1rem}.owner-bootstrap .owner-stats-three .owner-stat-value{font-size:1.9rem}.owner-bootstrap .owner-panel{padding:1rem}.owner-bootstrap .owner-panel-heading{flex-wrap:wrap}.owner-bootstrap .owner-chart{height:150px}.owner-bootstrap .owner-work-grid{grid-template-columns:1fr}.owner-bootstrap .owner-work-heading{flex-wrap:wrap;gap:.5rem}.owner-bootstrap .owner-shortcuts{flex-wrap:wrap;gap:1rem}.owner-bootstrap .owner-footer{flex-wrap:wrap;gap:.5rem}.owner-bootstrap .owner-overview-filters{flex-wrap:wrap}}
+@media(prefers-reduced-motion:reduce){.owner-bootstrap .owner-summary-card{transition:none}}

@@ -1,4 +1,4 @@
-﻿@model QL_PhongTro.ViewModels.QuanLyDichVuViewModel
+@model QL_PhongTro.ViewModels.QuanLyDichVuViewModel
 @using QL_PhongTro.Services
 @using QL_PhongTro.Models
 @using System.Globalization
@@ -21,8 +21,8 @@
     var statusDate = DichVuService.KySau();
     if (statusDate <= latest.TuNgay) { statusDate = new DateOnly(latest.TuNgay.Year, latest.TuNgay.Month, 1).AddMonths(1); }
 }
-<div class="service-price-page">
-<header class="sp-heading"><div><h1>@latest.DichVu.TenDichVu</h1><p>Quản lý mức giá và thiết lập thời điểm áp dụng cho từng phòng.</p></div><a class="sp-back" asp-action="Index" asp-route-toaNhaId="@Model.ToaNhaId"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 6-6 6 6 6M4 12h16"/></svg><span>Quay lại đơn giá</span></a></header>
+<div class="service-price-page service-price-bootstrap">
+<header class="sp-heading"><div><h1>@latest.DichVu.TenDichVu</h1><p>Quản lý mức giá và thiết lập thời điểm áp dụng cho từng phòng.</p></div><a class="sp-back btn btn-outline-secondary" asp-action="Index" asp-route-toaNhaId="@Model.ToaNhaId"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 6-6 6 6 6M4 12h16"/></svg><span>Quay lại đơn giá</span></a></header>
 <div class="sp-layout sp-edit-layout"><aside class="sp-price-list"><section class="sp-card sp-building"><span class="sp-building-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V7h7v14M11 21V3h9v18M2 21h20M7 10h1m-1 4h1m6-7h3m-3 4h3m-3 4h3M7 21v-4m7 4v-3h3v3"/></svg></span><div><small>KHU NHÀ ĐANG QUẢN LÝ</small><strong>@Model.TenToaNha</strong><p>@ViewData["PriceBuildingAddress"] · @ViewData["PriceBuildingRooms"] phòng / căn hộ</p></div><details class="sp-building-picker"><summary class="sp-building-link" aria-label="Đổi tòa nhà" title="Đổi tòa nhà"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m7 10 5 5 5-5"/></svg></summary><div class="sp-building-menu">@foreach(var building in (ViewData["PriceBuildingOptions"] as List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem> ?? [])){<a asp-action="ChuyenToaSuaGia" asp-route-toaNhaId="@building.Value" asp-route-dichVuId="@Model.DichVuId" class="@(building.Value==Model.ToaNhaId.ToString()?"selected":"")">@building.Text @if(building.Value==Model.ToaNhaId.ToString()){<span>✓</span>}</a>}</div></details></section><div class="sp-list-heading"><div><h2>Bảng mức giá hiện tại</h2><p>Chọn một loại giá để chỉnh sửa mức áp dụng.</p></div><span class="sp-badge">@priceRows.Count loại giá</span></div><section class="sp-card sp-price-table"><table><thead><tr><th>Loại giá</th><th>Đơn vị tính</th><th>Mức giá (VND)</th><th>Phạm vi</th><th></th></tr></thead><tbody>
 @foreach(var price in priceRows){
 <tr class="@(price.DichVuId==Model.DichVuId?"selected":"")"><td><div class="sp-price-name"><span class="sp-price-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@PriceIcon(price.DichVu.MaDichVu)"/></svg></span><div><a asp-action="Manage" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-dichVuId="@price.DichVuId">@price.DichVu.TenDichVu</a>@if(price.DichVuId==Model.DichVuId){<small>Đang chỉnh sửa</small>}</div></div></td><td>@price.DonViTinh</td><td><strong>@(price.DaChotGia?price.DonGia.ToString("N0",vn):"Chưa thiết lập")</strong></td><td><span>@roomCounts.GetValueOrDefault(price.DichVuId) phòng</span><small class="sp-scope-note">Đã chọn dịch vụ</small></td><td><a asp-action="Manage" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-dichVuId="@price.DichVuId" aria-label="Sửa giá @price.DichVu.TenDichVu">›</a></td></tr>}
@@ -41,7 +41,7 @@
         <div class="col-sm-6 sp-first-period"><small>KỲ ÁP DỤNG ĐẦU TIÊN</small><strong id="sp-period">@(Model.TuNgay.HasValue ? "Tháng " + Model.TuNgay.Value.Month + ", " + Model.TuNgay.Value.Year : "Chọn ngày áp dụng")</strong></div><div class="col-12"><section class="sp-summary"><h3>Tóm tắt trước khi lưu</h3><p><span>@latest.DonGia.ToString("N0",vn)</span> → <strong id="sp-new-summary">@(Model.DonGia?.ToString("N0",vn)??"—")</strong> đ / @latest.DonViTinh</p><small>@Math.Max(0,Model.SoPhongApDung-Model.SoPhongGiaRieng) phòng dùng giá chung · @Model.TenToaNha</small></section><p class="sp-notice">Giá mới áp dụng cho kỳ có ngày chốt từ ngày hiệu lực đã chọn; trùng ngày sẽ bị từ chối. Hóa đơn đã phát hành giữ nguyên đơn giá cũ.</p></div>
         <div class="col-12 d-flex flex-wrap gap-2 sp-save-actions">
 
-            <a class="btn btn-outline-secondary" asp-action="Index" asp-route-toaNhaId="@Model.ToaNhaId">Hủy</a><button class="btn btn-primary" name="initial" value="false">✓ Lưu thay đổi</button>
+            <a class="btn btn-outline-secondary" asp-action="Index" asp-route-toaNhaId="@Model.ToaNhaId">Hủy</a><button class="btn btn-dark" name="initial" value="false">✓ Lưu thay đổi</button>
         </div>
 
     </form>
@@ -75,6 +75,6 @@
     <form asp-action="Delete" method="post"><input name="toaNhaId" value="@Model.ToaNhaId" type="hidden" /><input name="dichVuId" value="@Model.DichVuId" type="hidden" /><button class="btn btn-outline-danger">Xác nhận xóa dịch vụ</button></form></details>
 }
 </section></div>
-@section Styles { <link rel="stylesheet" href="~/css/service-price.css" asp-append-version="true" /> }
+@section Styles { <link rel="stylesheet" href="~/css/service-price.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/service-price-bootstrap.css" asp-append-version="true" /> }
 
 @section Scripts {<partial name="_ValidationScriptsPartial"/><script>document.getElementById('DonGia')?.addEventListener('input',function(){document.getElementById('sp-new-summary').textContent=Number(this.value||0).toLocaleString('vi-VN');});document.getElementById('TuNgay')?.addEventListener('change',function(){const [year,month]=this.value.split('-');document.getElementById('sp-period').textContent=this.value?'Tháng '+Number(month)+', '+year:'Chọn ngày áp dụng';});</script>}

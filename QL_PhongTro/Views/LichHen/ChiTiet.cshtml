@@ -1,4 +1,4 @@
-﻿@model QL_PhongTro.ViewModels.LichHenChiTietViewModel
+@model QL_PhongTro.ViewModels.LichHenChiTietViewModel
 @using System.Globalization
 @using QL_PhongTro.Models
 @using QL_PhongTro.Services
@@ -228,7 +228,7 @@ else{
 </div></div>
 
 }
-@section Styles { @if(Model.LaChuNha){<link rel="stylesheet" href="~/css/request-detail.css" asp-append-version="true" />} }
+@section Styles { @if(Model.LaChuNha){<link rel="stylesheet" href="~/css/request-detail.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/request-detail-bootstrap.css" asp-append-version="true" />} }
 @section Scripts {
 <script src="~/js/lich-hen.js" asp-append-version="true"></script>
 }

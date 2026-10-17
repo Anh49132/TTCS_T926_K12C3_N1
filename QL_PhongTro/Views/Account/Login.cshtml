@@ -91,7 +91,7 @@
         })();
     </script>
 }
-<main class="login-page">
+<main class="login-page login-bootstrap container-fluid p-0">
     <aside class="login-photo" aria-label="Không gian sống ấm cúng">
         <a class="login-brand" href="/" aria-label="NhàTốt, về trang chủ"><img src="~/images/nhatot-logo.svg" alt="NhàTốt - SỐNG ĐÚNG NƠI" height="38" /></a>
         <div class="login-story">
@@ -103,8 +103,8 @@
     </aside>
     <section class="login-panel" aria-labelledby="login-title">
         <a class="login-brand" href="/" aria-label="NhàTốt, về trang chủ"><img src="~/images/nhatot-logo.svg" alt="NhàTốt - SỐNG ĐÚNG NƠI" height="38" /></a>
-        <div class="login-card" id="auth-content">
-            <h1 id="login-title">Chào mừng bạn trở lại</h1>
+        <div class="login-card card border-0 shadow-sm" id="auth-content">
+            <span class="login-welcome-tag badge rounded-pill mb-3">CHÀO MỪNG ĐẾN VỚI NHÀTỐT</span><h1 id="login-title" class="fw-bold">Chào mừng bạn trở lại</h1>
             <p class="login-description">Đăng nhập để lưu căn yêu thích, theo dõi lịch hẹn và kết nối với chủ nhà uy tín.</p>
             @if (TempData["PasswordSuccess"] is string success) { <div class="alert alert-success" role="status">@success</div> }
             @if (ViewData["TimeoutMessage"] is string timeout) { <div class="alert alert-warning" role="alert">@timeout</div> }
@@ -129,13 +129,17 @@
                     <span asp-validation-for="MatKhau" class="text-danger"></span>
                 </div>
                 <div class="login-options">
-                    <label class="login-remember"><input asp-for="RememberMe" /> Ghi nhớ đăng nhập</label>
+                    <label class="login-remember form-check-label"><input asp-for="RememberMe" class="form-check-input" /> Ghi nhớ đăng nhập</label>
                     <a asp-action="ForgotPassword">Quên mật khẩu?</a>
                 </div>
                 <div class="mb-3 text-warning d-none" id="lockoutAlert"><div class="alert alert-warning mb-0" role="alert"><strong id="lockoutMessage">Tài khoản đã bị khoá.</strong><div class="mt-2"><span class="badge bg-warning text-dark" id="countdownTimer"></span></div></div></div>
-                <button type="submit" class="btn login-submit" id="loginSubmitBtn">Đăng nhập</button>
+                <button type="submit" class="btn btn-dark login-submit" id="loginSubmitBtn">Đăng nhập</button>
             </form>
             <p class="login-bottom">Chưa có tài khoản?<a asp-action="Register">Đăng ký miễn phí</a></p>
         </div>
     </section>
 </main>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/login-bootstrap.css" asp-append-version="true" />
+}

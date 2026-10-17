@@ -10,10 +10,10 @@
     var appointments = all.Where(x => x.TrangThai == "DA_HEN_LICH" && x.LichHen.HasValue && DateOnly.FromDateTime(x.LichHen.Value.AddHours(7)) == today).OrderBy(x => x.LichHen).ToList();
     var monthCount = all.Count(x => x.NgayTao.AddHours(7).Year == today.Year && x.NgayTao.AddHours(7).Month == today.Month);
 }
-<div class="owner-requests or-reference">
+<div class="owner-requests or-reference requests-bootstrap">
 @if(TempData["YeuCauOk"] is string message){<p class="text-success" role="status">@message</p>}
 @if(TempData["YeuCauError"] is string error){<p class="text-danger" role="alert">@error</p>}
-<header class="or-heading"><div><h1>Yêu cầu thuê &amp; lịch xem</h1><p>Theo dõi nhu cầu thuê và kết nối với người thuê phù hợp.</p></div><button type="button" class="or-button" id="or-export"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 15v5h14v-5" /></svg><span>Xuất danh sách</span></button></header>
+<header class="or-heading"><div><h1>Yêu cầu thuê &amp; lịch xem</h1><p>Theo dõi nhu cầu thuê và kết nối với người thuê phù hợp.</p></div><button type="button" class="or-button btn btn-dark" id="or-export"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 15v5h14v-5" /></svg><span>Xuất danh sách</span></button></header>
 <section class="or-stats">
 <article><span class="or-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="6" width="16" height="14" rx="2"/><path d="M4 13h5l2 3h2l2-3h5M8 6V4h8v2"/></svg></span><div><span>Tổng yêu cầu tháng này</span><strong>@monthCount.ToString("D2")</strong><small>Từ đầu tháng đến hôm nay</small></div></article>
 <article><span class="or-icon amber"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg></span><div><span>Chờ xử lý</span><strong>@pending.ToString("D2")</strong><small>@overdue yêu cầu quá 24 giờ</small></div></article>
@@ -21,7 +21,7 @@
 <article><span class="or-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="m8 12 3 3 5-6"/></svg></span><div><span>Đã duyệt</span><strong>@approved.ToString("D2")</strong><small>Sẵn sàng tạo hợp đồng</small></div></article>
 </section>
 <div class="or-layout"><section class="or-card or-list">
-<nav class="or-tabs" aria-label="Lọc nhanh yêu cầu"><a asp-action="Index" asp-route-toaNhaId="@Model.ToaNhaId" class="@(Model.TrangThai == null ? "active" : "")">Tất cả <span>@all.Count</span></a>@foreach (var state in TrangThaiYeuCau.Labels) { <a asp-action="Index" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-trangThai="@state.Key" class="@(Model.TrangThai == state.Key ? "active" : "")">@state.Value <span>@all.Count(x => x.TrangThai == state.Key)</span></a> }</nav>
+<nav class="or-tabs nav" aria-label="Lọc nhanh yêu cầu"><a asp-action="Index" asp-route-toaNhaId="@Model.ToaNhaId" class="@(Model.TrangThai == null ? "active" : "")">Tất cả <span>@all.Count</span></a>@foreach (var state in TrangThaiYeuCau.Labels) { <a asp-action="Index" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-trangThai="@state.Key" class="@(Model.TrangThai == state.Key ? "active" : "")">@state.Value <span>@all.Count(x => x.TrangThai == state.Key)</span></a> }</nav>
 <form method="get" asp-action="Index" class="or-filters"><div class="or-search-field"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><input id="or-search" type="search" placeholder="Tìm tên, số điện thoại..." aria-label="Tìm yêu cầu" /></div><select name="toaNhaId" aria-label="Tòa nhà" onchange="this.form.requestSubmit()"><option value="">Tất cả tòa nhà</option>@foreach(var building in Model.ToaNhaOptions){<option value="@building.Value" selected="@(Model.ToaNhaId?.ToString()==building.Value)">@building.Text</option>}</select><label class="or-month-field"><span class="visually-hidden">Tháng gửi yêu cầu</span><input id="or-month" type="month" aria-label="Tháng gửi yêu cầu" /></label><input type="hidden" name="trangThai" value="@Model.TrangThai"/></form>
 <div class="or-scroll"><table id="or-table"><thead><tr><th>Người thuê</th><th>Phòng / Căn hộ</th><th>Ngày gửi ↓</th><th>Trạng thái</th><th><span class="visually-hidden">Thao tác</span></th></tr></thead><tbody>
 @foreach(var item in Model.YeuCaus.OrderByDescending(x=>x.NgayTao)){

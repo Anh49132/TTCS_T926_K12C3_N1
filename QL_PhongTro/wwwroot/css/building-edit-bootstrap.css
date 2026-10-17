@@ -1,0 +1,47 @@
+/* Scoped Bootstrap presentation for the existing edit form. */
+.building-edit-bootstrap{max-width:1440px;margin:0 auto;line-height:1.5}
+.building-edit-bootstrap .be-heading{margin-bottom:.875rem;gap:1rem}
+.building-edit-bootstrap .be-heading h1{font-size:clamp(1.5rem,2.3vw,2rem);line-height:1.25;letter-spacing:-.025em;margin-bottom:.3rem}
+.building-edit-bootstrap .be-heading p{font-size:.82rem;line-height:1.5}
+.building-edit-bootstrap .be-code{font-size:.72rem;padding:.5rem .7rem;border-radius:8px;background:#f2eee5;color:#92774c;white-space:nowrap}
+.building-edit-bootstrap .be-tabs{gap:1.5rem;margin-bottom:.875rem;border-color:#e6e9eb;flex-wrap:nowrap}
+.building-edit-bootstrap .be-tabs a{font-size:.78rem;padding:.6rem .15rem;line-height:1.5}
+.building-edit-bootstrap .be-layout{grid-template-columns:minmax(0,1fr) 300px;gap:1rem;align-items:start}
+.building-edit-bootstrap .be-sections,.building-edit-bootstrap .be-aside{gap:1rem;min-width:0}
+.building-edit-bootstrap .be-card{padding:1rem!important;border:1px solid #e6e9eb;border-radius:13px!important;box-shadow:0 3px 12px #25282d03;min-width:0}
+.building-edit-bootstrap .be-section-heading{gap:.75rem!important;padding-bottom:.65rem;margin-bottom:.75rem!important;border-bottom:1px solid #eef0ed}
+.building-edit-bootstrap .be-section-icon{width:36px!important;height:36px!important;flex:0 0 36px!important;border-radius:9px!important;background:#bfa77a19!important;color:#92774c}
+.building-edit-bootstrap .be-section-icon svg{width:20px;height:20px}
+.building-edit-bootstrap .be-section-heading h2{font-size:.95rem!important;line-height:1.4!important;margin:0 0 .2rem!important}
+.building-edit-bootstrap .be-section-heading p{font-size:.74rem!important;line-height:1.5!important}
+.building-edit-bootstrap .be-fields{gap:.75rem 1rem!important;align-items:start}
+.building-edit-bootstrap .be-fields label{font-size:.77rem!important;line-height:1.5!important;margin-bottom:.3rem!important;color:#4c5660}
+.building-edit-bootstrap .be-fields .form-control,.building-edit-bootstrap .be-fields .form-select{height:44px!important;padding:.65rem .8rem!important;border:1px solid #e3e7e9;border-radius:9px!important;font-size:.8rem!important;line-height:1.4!important;background-color:#fafaf9}
+.building-edit-bootstrap .be-fields .form-select{padding-right:2rem!important}
+.building-edit-bootstrap .be-fields textarea.form-control{height:auto!important;min-height:88px}
+.building-edit-bootstrap .be-fields input[readonly]{background:#f3f4f1;border-style:dashed;color:#969da4}
+.building-edit-bootstrap .be-fields :focus{border-color:#bfa77a;box-shadow:0 0 0 .18rem #bfa77a26;outline:0;background-color:#fff}
+.building-edit-bootstrap .be-unit input{padding-right:4.1rem!important}
+.building-edit-bootstrap .be-unit>span{top:0!important;height:44px!important;display:flex;align-items:center;font-size:.7rem!important}
+.building-edit-bootstrap .be-address-preview{margin-top:.75rem!important;padding:.7rem!important;border-radius:8px!important;font-size:.73rem!important;background:#f8f8f5}
+.building-edit-bootstrap .be-amenities{margin-top:.85rem!important;gap:.6rem 1rem!important;padding-top:.7rem!important;border-top:1px solid #eef0ed}
+.building-edit-bootstrap .be-amenities legend{font-size:.77rem!important;margin-bottom:.5rem!important}
+.building-edit-bootstrap .be-amenities label{font-size:.77rem!important;line-height:1.5!important;margin:0!important}
+.building-edit-bootstrap .be-amenities input{width:16px;height:16px;accent-color:#bfa77a}
+.building-edit-bootstrap .be-image{border-radius:9px;aspect-ratio:1.4;object-fit:cover}
+.building-edit-bootstrap .be-image-heading h2,.building-edit-bootstrap .be-current h2{font-size:.9rem}
+.building-edit-bootstrap .be-change-image{border-radius:8px;font-size:.75rem;min-height:38px}
+.building-edit-bootstrap .be-image-note{font-size:.69rem;line-height:1.5}
+.building-edit-bootstrap .be-current>strong{font-size:.95rem;line-height:1.5}
+.building-edit-bootstrap .be-current-stats{margin-top:.85rem;padding-top:.85rem}
+.building-edit-bootstrap .be-current-stats b{font-size:1.7rem;color:#78623d;line-height:1.3}
+.building-edit-bootstrap .be-current-stats small,.building-edit-bootstrap .be-occupancy,.building-edit-bootstrap .be-updated{font-size:.7rem;line-height:1.5}
+.building-edit-bootstrap .be-notice{background:#f7f2e8;border-color:#e9dfca}
+.building-edit-bootstrap .be-notice p{font-size:.73rem;line-height:1.5;margin-bottom:.5rem}
+.building-edit-bootstrap .be-manage-rooms{font-size:.75rem;line-height:1.5}
+.building-edit-bootstrap .be-footer{margin-top:.875rem;padding-top:.875rem;gap:1rem}
+.building-edit-bootstrap .be-footer .btn{min-height:42px;border-radius:9px;padding:.65rem 1rem;font-size:.8rem;font-weight:600;display:inline-flex;align-items:center;justify-content:center}
+.building-edit-bootstrap .text-danger{font-size:.72rem;line-height:1.5}.building-edit-bootstrap .text-danger:empty{display:none}
+@media(max-width:1100px){.building-edit-bootstrap .be-layout{grid-template-columns:minmax(0,1fr) 260px}.building-edit-bootstrap #be-general .be-fields{grid-template-columns:repeat(2,minmax(0,1fr))}.building-edit-bootstrap #be-general .be-fields>div:first-child{grid-column:1/-1}}
+@media(max-width:850px){.building-edit-bootstrap .be-layout{grid-template-columns:1fr}.building-edit-bootstrap .be-aside{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.building-edit-bootstrap .be-notice{grid-column:1/-1}}
+@media(max-width:600px){.building-edit-bootstrap .be-card{padding:1rem!important}.building-edit-bootstrap #be-general .be-fields,.building-edit-bootstrap #be-address .be-fields,.building-edit-bootstrap #be-size .be-fields,.building-edit-bootstrap #be-manager .be-fields,.building-edit-bootstrap .be-aside{grid-template-columns:1fr}.building-edit-bootstrap .be-heading{align-items:flex-start}.building-edit-bootstrap .be-code{font-size:.65rem}.building-edit-bootstrap .be-tabs{gap:1rem}.building-edit-bootstrap .be-footer{align-items:stretch;flex-direction:column}.building-edit-bootstrap .be-footer>div{margin:0;display:flex}.building-edit-bootstrap .be-footer .btn{flex:1}.dashboard-header:has(.be-header-breadcrumb) .account-label{display:none}.dashboard-header .be-header-breadcrumb{font-size:.72rem;gap:.35rem;flex:1;min-width:0}.be-header-breadcrumb svg{width:17px;height:17px}}

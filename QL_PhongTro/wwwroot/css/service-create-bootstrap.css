@@ -1,0 +1,56 @@
+.service-create-bootstrap{max-width:1440px;margin:0 auto;line-height:1.5}
+.service-create-bootstrap .sc-heading{gap:1rem;margin-bottom:.875rem}
+.service-create-bootstrap .sc-heading h1{font-size:clamp(1.5rem,2.3vw,2rem);line-height:1.25;letter-spacing:-.025em;margin-bottom:.3rem}
+.service-create-bootstrap .sc-heading p{font-size:.82rem;line-height:1.5}
+.service-create-bootstrap .sc-heading>span{font-size:.7rem;padding:.45rem .65rem;border-radius:8px;background:#f2eee5;color:#92774c}
+.service-create-bootstrap .sc-layout{grid-template-columns:minmax(0,1fr) 300px;gap:1rem;align-items:start}
+.service-create-bootstrap .sc-main,.service-create-bootstrap .sc-aside{gap:1rem;min-width:0}
+.service-create-bootstrap .sc-card{padding:1rem;border:1px solid #e6e9eb;border-radius:13px;box-shadow:0 3px 12px #25282d03;min-width:0}
+.service-create-bootstrap .sc-card-heading{gap:.75rem;padding-bottom:.65rem;margin-bottom:.75rem;border-bottom:1px solid #eef0ed}
+.service-create-bootstrap .sc-icon{width:36px;height:36px;flex:0 0 36px;border-radius:9px;background:#bfa77a19;color:#92774c}
+.service-create-bootstrap .sc-icon svg{width:20px;height:20px;stroke:#92774c}
+.service-create-bootstrap .sc-card-heading h2{font-size:.95rem;line-height:1.4;margin:0 0 .2rem}
+.service-create-bootstrap .sc-card-heading p{font-size:.74rem;line-height:1.5;margin:0}
+.service-create-bootstrap .sc-fields{gap:.75rem 1rem}
+.service-create-bootstrap .sc-fields>div{min-width:0}
+.service-create-bootstrap label{font-size:.77rem;line-height:1.5;margin-bottom:.3rem}
+.service-create-bootstrap .form-control,.service-create-bootstrap .form-select{height:44px;border:1px solid #e3e7e9;border-radius:9px;padding:.65rem .8rem;font-size:.8rem;line-height:1.4;background-color:#fafaf9;min-width:0}
+.service-create-bootstrap .form-select{padding-right:2rem}
+.service-create-bootstrap textarea.form-control{height:auto;min-height:90px;resize:vertical}
+.service-create-bootstrap .form-select[multiple]{height:auto;min-height:100px}
+.service-create-bootstrap .form-control:focus,.service-create-bootstrap .form-select:focus{border-color:#bfa77a;box-shadow:0 0 0 .18rem #bfa77a26;background-color:#fff;outline:0}
+.service-create-bootstrap input:disabled{background:#f3f4f1;border-style:dashed;color:#969da4}
+.service-create-bootstrap .sc-unit input{padding-right:2.5rem}
+.service-create-bootstrap .sc-unit>span{top:0;height:44px;display:flex;align-items:center;font-size:.7rem}
+.service-create-bootstrap small,.service-create-bootstrap .sc-muted{font-size:.7rem;line-height:1.5}
+.service-create-bootstrap .sc-methods{gap:.65rem;margin-bottom:.875rem}
+.service-create-bootstrap .sc-methods>label{padding:.85rem;border-radius:10px;gap:.6rem;min-height:80px;margin:0;border-color:#e3e7e9}
+.service-create-bootstrap .sc-methods>label:has(input:checked){border-color:#bfa77a;background:#bfa77a10}
+.service-create-bootstrap .sc-methods strong{font-size:.78rem;line-height:1.5}
+.service-create-bootstrap .sc-methods small{font-size:.69rem;line-height:1.5}
+.service-create-bootstrap input[type=radio],.service-create-bootstrap input[type=checkbox]{accent-color:#bfa77a}
+.service-create-bootstrap .sc-formula,.service-create-bootstrap .sc-notice{padding:.8rem;border-radius:9px;font-size:.72rem;line-height:1.5;background:#f8f8f5}
+.service-create-bootstrap .sc-scope{gap:.65rem}
+.service-create-bootstrap .sc-scope label{min-height:40px;padding:.65rem;border:1px solid #eef0ed;border-radius:8px;margin:0;font-size:.74rem}
+.service-create-bootstrap .sc-room-grid{gap:.6rem}
+.service-create-bootstrap .sc-room-grid label{border-radius:8px;padding:.65rem;font-size:.75rem}
+.service-create-bootstrap .sc-summary{border-top:3px solid #bfa77a}
+.service-create-bootstrap .sc-summary-heading{font-size:.9rem;line-height:1.5;padding-bottom:.85rem}
+.service-create-bootstrap .sc-summary-name{gap:.75rem;margin:.75rem 0}
+.service-create-bootstrap .sc-summary-name strong{font-size:.85rem;line-height:1.5;overflow-wrap:anywhere}
+.service-create-bootstrap .sc-summary-price{padding:1rem;border-radius:10px;background:#f8f8f5;margin:.75rem 0}
+.service-create-bootstrap .sc-summary-price strong{font-size:1.8rem;line-height:1.3;color:#78623d}
+.service-create-bootstrap .sc-summary dl>div{font-size:.74rem;line-height:1.5;gap:.75rem;margin:.75rem 0}
+.service-create-bootstrap .sc-summary dd{overflow-wrap:anywhere}
+.service-create-bootstrap .sc-summary-footer{font-size:.68rem;line-height:1.5;padding:.75rem;border-radius:8px}
+.service-create-bootstrap .sc-explanation{padding:1rem;border:1px solid #e9dfca;border-radius:12px;background:#f7f2e8}
+.service-create-bootstrap .sc-explanation h3{font-size:.8rem;line-height:1.5}
+.service-create-bootstrap .sc-explanation p{font-size:.71rem;line-height:1.6}
+.service-create-bootstrap .sc-footer{margin-top:.875rem;padding-top:.875rem;gap:1rem}
+.service-create-bootstrap .sc-button{min-height:42px;border-radius:9px;padding:.65rem 1rem;font-size:.8rem;font-weight:600;display:inline-flex;align-items:center;justify-content:center}
+.service-create-bootstrap .text-danger{font-size:.72rem;line-height:1.5}.service-create-bootstrap .text-danger:empty,.service-create-bootstrap .validation-summary-valid{display:none}
+@media(max-width:1100px){.service-create-bootstrap .sc-layout{grid-template-columns:minmax(0,1fr) 260px}.service-create-bootstrap .sc-methods{grid-template-columns:1fr}}
+@media(max-width:850px){.service-create-bootstrap .sc-layout{grid-template-columns:1fr}.service-create-bootstrap .sc-aside{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.service-create-bootstrap .sc-card{padding:1rem}.service-create-bootstrap .sc-fields,.service-create-bootstrap .sc-name-fields,.service-create-bootstrap .sc-aside{grid-template-columns:1fr}.service-create-bootstrap .sc-heading>span{display:none}.service-create-bootstrap .sc-footer{flex-direction:column;align-items:stretch}.service-create-bootstrap .sc-footer>div{display:flex;margin:0}.service-create-bootstrap .sc-button{flex:1}.dashboard-header:has(.sc-header-breadcrumb) .account-label{display:none}.dashboard-header .sc-header-breadcrumb{font-size:.72rem;gap:.35rem;flex:1;min-width:0}.sc-header-breadcrumb svg{width:17px;height:17px}}
+
+.service-create-bootstrap .sc-summary dl>div{margin:.6rem 0;padding-top:.35rem;padding-bottom:.35rem}.service-create-bootstrap .sc-summary-name{padding-top:.5rem;padding-bottom:.5rem}
