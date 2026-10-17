@@ -7,10 +7,9 @@
     var simulateError = Context.Request.Query["simulateError"].ToString();
 }
 <div class="contract-page contract-details-reference contract-reference">
-    <a class="ref-back" asp-action="Index">← &nbsp; Quay lại danh sách hợp đồng</a>
-    <div class="contract-heading ref-heading">
+    <div class="contract-heading ref-heading d-flex flex-wrap">
         <div><div class="ref-title"><h1>Hợp đồng @Model.HopDong.MaHopDong</h1><span class="ref-state state-@Model.HopDong.TrangThai">● &nbsp; @state</span></div><p>Phòng @Model.Phong · @Model.ToaNha</p></div>
-        <div class="ref-heading-actions">
+        <div class="ref-heading-actions d-flex flex-wrap gap-2">
             @if(User.IsInRole("CHU_NHA") && Model.XemTaiChinh){
                 @if(Model.HopDong.TrangThai=="DANG_HIEU_LUC"){<a class="btn btn-primary" asp-controller="TraPhong" asp-action="Nhap" asp-route-id="@Model.HopDong.Id">Xử lý trả phòng</a>}
                 <a class="btn btn-outline-secondary" asp-controller="TatToan" asp-action="ChiTiet" asp-route-id="@Model.HopDong.Id">Bảng tất toán</a>
@@ -27,7 +26,7 @@
     @if (TempData["ContractSuccess"] is {} message) { <div class="alert alert-success">@message</div> }
     @if (TempData["ContractWarning"] is {} warning) { <div class="alert alert-warning">@warning</div> }
     <div asp-validation-summary="All" class="text-danger" role="alert"></div>
-    <nav class="lease-detail-tabs ref-tabs" aria-label="Các mục hợp đồng">
+    <nav class="lease-detail-tabs ref-tabs nav nav-tabs" aria-label="Các mục hợp đồng">
         <a class="@(!people ? "is-active" : "")" asp-action="Details" asp-route-id="@Model.HopDong.Id" aria-current="@(!people ? "page" : null)">Tổng quan</a>
         <a class="@(people ? "is-active" : "")" asp-action="Details" asp-route-id="@Model.HopDong.Id" asp-route-tab="people" aria-current="@(people ? "page" : null)">Người ở cùng (@count)</a>
         @if (Model.XemTaiChinh) { <a asp-action="Details" asp-route-id="@Model.HopDong.Id" asp-fragment="contract-bills">Hóa đơn liên quan</a> }
@@ -39,4 +38,6 @@
     <link rel="stylesheet" href="~/css/contracts.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/contract-details.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/contract-reference.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/contract-detail-bootstrap.css" asp-append-version="true" />
+    @if (people) { <link rel="stylesheet" href="~/css/contract-residents-bootstrap.css" asp-append-version="true" /> }
 }

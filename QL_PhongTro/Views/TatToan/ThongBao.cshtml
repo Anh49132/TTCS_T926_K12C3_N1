@@ -1,2 +1,23 @@
-@{ ViewData["Title"]="Bảng tất toán"; }
-<h1>Bảng tất toán</h1><div class="alert alert-warning">@ViewData["Message"]</div><a class="btn btn-outline-secondary" asp-action="Index">Về danh sách tất toán</a>
+@{ ViewData["Title"] = "Bảng tất toán"; }
+@section Styles {
+    <link rel="stylesheet" href="~/css/checkout-notice-bootstrap.css" asp-append-version="true" />
+}
+<div class="checkout-notice settlement-notice">
+    <header class="mb-4">
+        <h1>Bảng tất toán</h1>
+        <p>Tra cứu thông tin đối chiếu tiền cọc và công nợ khi trả phòng.</p>
+    </header>
+    <section class="card checkout-notice-card" aria-labelledby="settlement-notice-title">
+        <div class="card-body">
+            <span class="checkout-notice-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6Z"/><path d="M14 3v5h4M9 12h6M9 16h4"/></svg>
+            </span>
+            <h2 id="settlement-notice-title">Thông tin bảng tất toán</h2>
+            <div class="alert checkout-notice-message" role="status">@ViewData["Message"]</div>
+            <p class="checkout-notice-help">Bạn có thể quay lại danh sách để kiểm tra các hợp đồng và bảng tất toán hiện có.</p>
+            <div class="d-flex flex-wrap justify-content-center gap-2">
+                <a class="btn btn-dark" asp-action="Index"><span aria-hidden="true">←</span> Về danh sách tất toán</a>
+            </div>
+        </div>
+    </section>
+</div>

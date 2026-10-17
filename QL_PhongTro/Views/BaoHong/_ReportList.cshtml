@@ -14,7 +14,7 @@
         <symbol id="trl-tool" viewBox="0 0 24 24"><path d="M14 4a5 5 0 0 0-6 6l-5 5a2 2 0 0 0 3 3l5-5a5 5 0 0 0 6-6l-3 3-3-3 3-3Z"/></symbol>
         <symbol id="trl-search-icon" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></symbol>
     </defs></svg>
-    <nav class="trl-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index">Trang chủ</a><span aria-hidden="true">›</span><span aria-current="page">@(owner ? "Báo hỏng tại tòa nhà của tôi" : "Báo hỏng của tôi")</span></nav>
+    @if (!owner) { <nav class="trl-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index">Trang chủ</a><span aria-hidden="true">›</span><span aria-current="page">@(owner ? "Báo hỏng tại tòa nhà của tôi" : "Báo hỏng của tôi")</span></nav> }
     <header class="trl-heading"><div><h1>@ViewData["Title"]</h1><p>@(owner ? "Theo dõi tiến độ tại các tòa nhà bạn hiện sở hữu." : "Xem lại các sự cố bạn đã gửi.")</p></div>@if (!owner) { <a class="trl-create" asp-action="Create"><span aria-hidden="true">＋</span> Gửi báo hỏng</a> }</header>
     <section class="trl-stats" aria-label="@(paged ? "Thống kê báo hỏng trên trang hiện tại" : "Thống kê báo hỏng")">
         <div class="trl-total"><span class="trl-icon" aria-hidden="true"><svg><use href="#trl-clipboard"/></svg></span><strong>@reports.Count</strong><span>báo hỏng@(paged ? " trên trang" : "")</span></div>
@@ -26,15 +26,15 @@
         <div class="trl-toolbar">
             <h2 id="trl-list-title">@(paged ? "Báo hỏng trên trang " + page : "Tất cả báo hỏng") <span>@reports.Count</span></h2>
             <form class="trl-filters" data-repair-filters hidden role="search" aria-label="Bộ lọc báo hỏng">
-                <div class="trl-search"><svg aria-hidden="true"><use href="#trl-search-icon"/></svg><label class="trl-sr" for="trl-search">Tìm báo hỏng trên trang hiện tại</label><input id="trl-search" type="search" placeholder="Tìm mã báo hỏng, thiết bị, phòng" maxlength="200" autocomplete="off" /></div>
-                <label class="trl-sr" for="trl-status">Lọc trạng thái</label><select id="trl-status"><option value="">Tất cả trạng thái</option>@foreach (var state in states) { <option value="@state.Code">@state.Name</option> }</select>
-                <label class="trl-sr" for="trl-priority">Lọc mức độ</label><select id="trl-priority"><option value="">Tất cả mức độ</option><option value="GAP">Gấp</option><option value="THUONG">Thường</option></select>
-                <button type="submit" class="trl-apply">Áp dụng</button>
+                <div class="trl-search"><svg aria-hidden="true"><use href="#trl-search-icon"/></svg><label class="trl-sr" for="trl-search">Tìm báo hỏng trên trang hiện tại</label><input class="form-control" id="trl-search" type="search" placeholder="Tìm mã báo hỏng, thiết bị, phòng" maxlength="200" autocomplete="off" /></div>
+                <label class="trl-sr" for="trl-status">Lọc trạng thái</label><select class="form-select" id="trl-status"><option value="">Tất cả trạng thái</option>@foreach (var state in states) { <option value="@state.Code">@state.Name</option> }</select>
+                <label class="trl-sr" for="trl-priority">Lọc mức độ</label><select class="form-select" id="trl-priority"><option value="">Tất cả mức độ</option><option value="GAP">Gấp</option><option value="THUONG">Thường</option></select>
+                <button type="submit" class="trl-apply btn btn-dark">Áp dụng</button>
             </form>
         </div>
         @if (paged) { <p class="trl-page-note">Thống kê, tìm kiếm và bộ lọc áp dụng cho tối đa 20 báo hỏng trên trang @(page).</p> }
         <div class="trl-table-wrap">
-            <table class="trl-table"><caption class="trl-sr">Danh sách báo hỏng, trang @(page)</caption>
+            <table class="trl-table table table-hover align-middle mb-0"><caption class="trl-sr">Danh sách báo hỏng, trang @(page)</caption>
                 <thead><tr><th scope="col">Thiết bị / Mã báo hỏng</th><th scope="col">Phòng / Tòa nhà</th><th scope="col">Trạng thái</th><th scope="col">Mức độ</th><th scope="col">Thời điểm gửi</th><th scope="col">Thao tác</th></tr></thead>
                 <tbody>
                 @foreach (var row in reports) {

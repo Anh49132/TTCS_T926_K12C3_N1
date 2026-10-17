@@ -5,7 +5,7 @@
     var vn = CultureInfo.GetCultureInfo("vi-VN");
 }
 
-<article class="bc-page" data-revenue-report>
+<article class="bc-page report-bootstrap" data-revenue-report>
     <header class="bc-heading">
         <div>
             <p class="bc-eyebrow">TÀI CHÍNH · BÁO CÁO</p>
@@ -15,33 +15,33 @@
         <form asp-controller="BaoCao" asp-action="Index" method="get" class="bc-filter-form">
             <div class="bc-filter-group">
                 <label for="toaNhaId" class="bc-label">Tòa nhà</label>
-                <select name="toaNhaId" id="toaNhaId" class="bc-select" asp-for="ToaNhaId" asp-items="Model.DanhSachToaNha"></select>
+                <select name="toaNhaId" id="toaNhaId" class="bc-select form-select" asp-for="ToaNhaId" asp-items="Model.DanhSachToaNha"></select>
             </div>
             <div class="bc-filter-group bc-range-group">
                 <span class="bc-label">Từ tháng</span>
                 <div class="bc-inline-inputs">
-                    <select name="tuThang" id="tuThang" class="bc-select-small" aria-label="Từ tháng">
+                    <select name="tuThang" id="tuThang" class="bc-select-small form-select" aria-label="Từ tháng">
                         @for (var month = 1; month <= 12; month++)
                         {
                             <option value="@month" selected="@(Model.TuThang == month)">T@(month.ToString("D2"))</option>
                         }
                     </select>
-                    <input name="tuNam" id="tuNam" type="number" min="1900" max="9999" value="@Model.TuNam" class="bc-input-year" aria-label="Từ năm" required />
+                    <input name="tuNam" id="tuNam" type="number" min="1900" max="9999" value="@Model.TuNam" class="bc-input-year form-control" aria-label="Từ năm" required />
                 </div>
             </div>
             <div class="bc-filter-group bc-range-group">
                 <span class="bc-label">Đến tháng</span>
                 <div class="bc-inline-inputs">
-                    <select name="denThang" id="denThang" class="bc-select-small" aria-label="Đến tháng">
+                    <select name="denThang" id="denThang" class="bc-select-small form-select" aria-label="Đến tháng">
                         @for (var month = 1; month <= 12; month++)
                         {
                             <option value="@month" selected="@(Model.DenThang == month)">T@(month.ToString("D2"))</option>
                         }
                     </select>
-                    <input name="denNam" id="denNam" type="number" min="1900" max="9999" value="@Model.DenNam" class="bc-input-year" aria-label="Đến năm" required />
+                    <input name="denNam" id="denNam" type="number" min="1900" max="9999" value="@Model.DenNam" class="bc-input-year form-control" aria-label="Đến năm" required />
                 </div>
             </div>
-            <span class="bc-filter-limit">Tối đa 12 tháng</span><button type="submit" class="bc-button">Xem báo cáo</button><a class="bc-reset" href="/BaoCao">Đặt lại</a>
+            <span class="bc-filter-limit">Tối đa 12 tháng</span><button type="submit" class="bc-button btn btn-dark">Xem báo cáo</button><a class="bc-reset btn btn-outline-secondary" href="/BaoCao">Đặt lại</a>
         </form>
     </header>
 
@@ -87,7 +87,7 @@
                 <div class="bc-table-meta">Số tháng: <strong>@Model.ChiTietTheoThang.Count</strong> / tối đa 12</div>
             </header>
             <div class="bc-table-container">
-                <table class="bc-table">
+                <table class="bc-table table table-hover align-middle mb-0">
                     <thead>
                         <tr>
                             <th scope="col">Tháng</th>
@@ -134,7 +134,7 @@
                 </div>
             </header>
             <div class="bc-table-container">
-                <table class="bc-table">
+                <table class="bc-table table table-hover align-middle mb-0">
                     <thead>
                         <tr>
                             <th scope="col">Tòa nhà</th>
@@ -171,5 +171,7 @@
 </article>
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/bao-cao.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/revenue-dashboard.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/bao-cao.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/revenue-dashboard.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/report-bootstrap.css" asp-append-version="true" />
 }
+
+@section Scripts { <script src="~/js/report-dropdowns.js" asp-append-version="true"></script> }

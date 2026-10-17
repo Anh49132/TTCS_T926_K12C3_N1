@@ -1,3 +1,252 @@
+### 18/10/2026 – Dropdown Bootstrap trạng thái/mức độ báo hỏng
+- Menu Bootstrap riêng chủ nhà cho trl-status/trl-priority, giữ select và change, đồng bộ reset; không ảnh hưởng giao diện khách thuê.
+- Node syntax, diff và HTTP JS/CSS đạt; chưa nghiệm thu tương tác trực quan.
+
+### 18/10/2026 – Bỏ breadcrumb phụ báo hỏng chủ nhà
+- Bỏ dòng Trang chủ › Báo hỏng tại tòa nhà của tôi trong nội dung chủ nhà; giữ header và điều hướng khách thuê.
+
+### 18/10/2026 – Căn giãn dòng báo hỏng chủ nhà
+- Thu gọn padding thống kê, toolbar, hàng bảng và empty state; đồng nhất line-height 1.5, giữ ô nhập/nút 44px. Chỉ CSS scoped chủ nhà.
+- Diff và HTTP CSS đạt; chưa nghiệm thu trực quan thiết bị thật.
+
+### 18/10/2026 – Bootstrap báo hỏng chủ nhà
+- Form-control/form-select, nút Bootstrap và bảng hover; CSS owner-repairs-bootstrap chỉ nạp cho chủ nhà, chỉnh thống kê, bộ lọc 44px, empty state và khoảng cách responsive. Giữ quyền/hooks và dữ liệu.
+- Build và HTTP chủ nhà đạt; CSS/table/filter/empty hooks đạt. Chưa nghiệm thu trực quan 360px/Safari hoặc danh sách có báo hỏng.
+
+### 18/10/2026 – Dropdown Bootstrap đến tháng báo cáo
+- Áp dụng dropdown cùng kiểu cho denThang, giữ giá trị GET và nhãn truy cập Đến tháng.
+- Node syntax, diff và HTTP JS đạt; chưa nghiệm thu tương tác trực quan.
+
+### 18/10/2026 – Dropdown Bootstrap tòa và từ tháng báo cáo
+- Nâng toaNhaId/tuThang sang dropdown Bootstrap cuộn, dấu chọn và bóng nhẹ; giữ select/name để GET và fallback. Không tự gửi bộ lọc.
+- Build, Node syntax và diff đạt; chưa nghiệm thu tương tác trực quan.
+
+### 18/10/2026 – Căn giãn dòng báo cáo doanh thu
+- Thu gọn padding bộ lọc/KPI/biểu đồ và hàng bảng; thống nhất line-height nội dung 1.5, khoảng cách dòng phụ 4–6px. Chỉ CSS, giữ ô nhập 44px.
+- Diff và HTTP CSS đạt; chưa nghiệm thu trực quan thiết bị thật.
+
+### 18/10/2026 – Bootstrap báo cáo doanh thu/lấp đầy
+- Form-select/form-control, nút và bảng Bootstrap; CSS report-bootstrap riêng cho bộ lọc 44px, thẻ KPI, khung biểu đồ/bảng và khoảng cách responsive. Giữ công thức/dữ liệu và query bộ lọc.
+- Build và HTTP báo cáo đạt; CSS/table/fields và tổng demo 7.370.000 đạt. Chưa nghiệm thu trực quan 360px/Safari; không đổi dữ liệu.
+
+### 18/10/2026 – Căn giãn dòng chi tiết công nợ
+- Thu gọn padding dialog, thông tin phòng, ghi chú và hàng bảng; thống nhất line-height 1.5, dòng phụ cách 4px. Chỉ CSS.
+- Diff và HTTP CSS đạt; chưa nghiệm thu trực quan thiết bị thật.
+
+### 18/10/2026 – Bootstrap chi tiết công nợ phòng
+- Bảng Bootstrap hover/responsive; CSS dialog bo góc/bóng, nút đóng gọn, tổng nợ tách ô nổi bật, số tiền và dòng tổng canh phải; mobile xuống dòng. Giữ dữ liệu và liên kết.
+- Build và HTTP phòng 6 đạt, số nợ giữ nguyên. Chưa nghiệm thu trực quan 360px/Safari; không thay đổi nghiệp vụ.
+
+### 18/10/2026 – Cố định hàng ngang ô lọc công nợ
+- Cố định track nhãn 18px + gap 6px + ô 44px cho mọi trường và dropdown; nút cùng chiều cao/canh đáy, menu vẫn absolute.
+- Diff và HTTP CSS đạt; chưa kiểm chứng trực quan.
+
+### 18/10/2026 – Đồng đều nhãn và control bộ lọc công nợ
+- Dùng cùng track nhãn 18px/gap 6px cho label gốc và dropdown Bootstrap, bỏ margin control gây lệch baseline; khoảng cách cột 12px, hàng 18px, nút canh đáy.
+- Diff và HTTP CSS đạt; chưa nghiệm thu trực quan.
+
+### 18/10/2026 – Căn thẳng hàng bộ lọc công nợ
+- Đồng nhất nhãn 18px, cách ô 6px, control/nút 44px; bỏ padding lồng và khoảng đệm dư giữa hai hàng. Cho dropdown tràn ra ngoài thẻ để menu không bị cắt, responsive 3/1 cột.
+- Diff và HTTP CSS đạt; chưa kiểm chứng trực quan.
+
+### 18/10/2026 – Dropdown Bootstrap tòa nhà công nợ
+- Áp dụng dropdown cùng kiểu cho toaNhaId, giữ giá trị GET và nút Áp dụng.
+- Kiểm tra cú pháp JS, diff và HTTP asset đạt; chưa kiểm tra tương tác trực quan.
+
+### 18/10/2026 – Dropdown Bootstrap bộ lọc công nợ
+- Đổi trạng thái/sắp xếp/hiển thị sang dropdown Bootstrap, giữ select name và GET, hỗ trợ reset/change và fallback không JS. Menu bo góc/bóng/dấu chọn.
+- Node kiểm tra cú pháp, diff và HTTP asset đạt; chưa nghiệm thu tương tác trực quan.
+
+### 18/10/2026 – Căn giãn dòng công nợ
+- Thu gọn khoảng đệm bộ lọc/thống kê/hàng bảng; thống nhất line-height 1.5, giữ ô nhập 44px và nghiệp vụ. Chỉ CSS.
+- Diff và HTTP CSS đạt; chưa nghiệm thu trực quan thiết bị thật.
+
+### 18/10/2026 – Bootstrap công nợ
+- CSS debt-bootstrap scoped: bộ lọc 44px, thống kê, bảng responsive/hover, tiền canh phải và nút/phân trang đồng bộ, responsive. Giữ fields/hooks và tính công nợ.
+- Build và HTTP danh sách/bộ lọc đạt; CSS/table/filter/export/detail hooks đạt. Chưa nghiệm thu trực quan 360px/Safari; không đổi dữ liệu.
+
+### 18/10/2026 – Căn giãn dòng hộp thoại ghi thu
+- Thu gọn khoảng cách tiêu đề/thống kê/trường/người xác nhận/footer; line-height 1.5 và dòng phụ cách 4px. Giữ ô nhập/nút 44px, chỉ CSS scoped #ic-dialog.
+- Diff và HTTP CSS đạt; chưa nghiệm thu trực quan thiết bị thật.
+
+### 18/10/2026 – Bootstrap hộp thoại ghi thu tiền
+- Form-control/form-select, ô 44px, thẻ tổng tiền, nút đóng, footer và CSS scoped #ic-dialog; bo góc/bóng/backdrop, responsive một cột. Giữ dialog, ID/hooks, CSRF và nghiệp vụ.
+- Build và HTTP form/Bootstrap controls/CSRF đạt; chưa nghiệm thu trực quan mở dialog 360px/Safari. Không ghi thu.
+
+### 18/10/2026 – Bỏ liên kết quay lại ở chi tiết thu tiền
+- Bỏ liên kết Quay lại quản lý hóa đơn trên tiêu đề theo yêu cầu, giữ breadcrumb header.
+
+### 18/10/2026 – Breadcrumb chi tiết hóa đơn
+- Thêm Quản lý hóa đơn giữa trang chủ và tên phòng tại Details cho chủ nhà/admin; đồng bộ icon, kiểu chữ, màu, khoảng cách/mobile với chi tiết tòa.
+
+### 18/10/2026 – Rút gọn tiêu đề điều hướng hóa đơn
+- Bỏ tiền tố Chi tiết hóa đơn và dấu chấm giữa trên tiêu đề/breadcrumb chi tiết, giữ tên phòng; xem trước giữ nguyên.
+
+### 18/10/2026 – Căn giãn dòng chi tiết hóa đơn
+- Thu gọn padding thẻ, hàng khoản mục, thông tin và lịch sử trống; thống nhất line-height 1.5 và khoảng cách dòng phụ 4px. Chỉ CSS.
+- Diff và HTTP CSS đạt; chưa nghiệm thu trực quan thiết bị thật.
+
+### 18/10/2026 – Bootstrap chi tiết hóa đơn/thu tiền
+- CSS invoice-collection-bootstrap scoped: tiêu đề dài, thống kê, bảng Bootstrap hover, tiến độ, thông tin và empty state; nút Bootstrap, responsive. Giữ ID/data hooks và nghiệp vụ thu tiền.
+- Build và HTTP chi tiết đạt; CSS/table/form/CSRF hooks đạt. Chưa nghiệm thu trực quan 360px/Safari; không ghi thu.
+
+### 18/10/2026 – Dropdown Bootstrap tầng/sắp xếp kiểm tra hóa đơn
+- Nâng floor-filter/room-sort sang dropdown cùng kiểu tòa/tháng; giữ select ID và phát change để lọc/sắp xếp hiện có.
+- Node kiểm tra cú pháp, diff và HTTP JS/CSS đạt; chưa nghiệm thu tương tác trực quan.
+
+### 18/10/2026 – Dropdown Bootstrap tòa/tháng kết quả kiểm tra
+- Dùng lại dropdown building/month của trang Setup trên Monthly, CSS scoped review-bootstrap; giữ select/name/change để kiểm tra lại kỳ và cảnh báo dữ liệu thay đổi.
+- Node kiểm tra cú pháp, diff và HTTP JS/CSS đạt; chưa nghiệm thu tương tác trực quan.
+
+### 18/10/2026 – Bỏ điều hướng phụ trên kết quả kiểm tra
+- Bỏ breadcrumb trong nội dung và liên kết Thay đổi thông tin kỳ theo yêu cầu; giữ breadcrumb trên header.
+
+### 18/10/2026 – Rút gọn breadcrumb kết quả kiểm tra
+- Bỏ kỳ tháng/năm khỏi mục hiện tại trên breadcrumb, giữ “Kết quả kiểm tra”; tiêu đề nội dung vẫn giữ kỳ để đối chiếu.
+
+### 18/10/2026 – Thêm bước tạo hóa đơn trong breadcrumb
+- Thêm liên kết Tạo hóa đơn giữa Quản lý hóa đơn và kết quả kỳ; giữ tòa/năm/tháng khi về Setup và kiểu hiển thị đồng bộ chi tiết tòa.
+
+### 18/10/2026 – Breadcrumb kết quả kiểm tra kỳ
+- Thêm Quản lý hóa đơn giữa trang chủ và tiêu đề kỳ; đồng bộ kiểu icon/chữ/khoảng cách và mobile với chi tiết tòa. Chỉ action Monthly.
+- Build và HTTP breadcrumb/Management/current page đạt; chưa nghiệm thu trực quan thiết bị thật.
+
+### 18/10/2026 – Căn giãn dòng kết quả kiểm tra hóa đơn
+- Thu gọn padding thẻ/hàng bảng, khoảng cách bộ lọc, thống kê và phần kết quả; thống nhất line-height 1.5 và dòng hướng dẫn 1.55. Giữ ô nhập/nút và nghiệp vụ, chỉ CSS.
+- Diff và HTTP CSS đạt; chưa nghiệm thu trực quan thiết bị thật.
+
+### 18/10/2026 – Bootstrap kết quả kiểm tra kỳ hóa đơn
+- CSS invoice-review-bootstrap riêng: bộ lọc 44px, thống kê/tổng tiền, bảng Bootstrap hover, tabs và thẻ kết quả; thanh xác nhận cuối nội dung không che danh sách; responsive. Giữ quyền, form, ID/hooks và tính tiền.
+- Build và HTTP Monthly đạt; CSS/table/form/CSRF hooks đạt. Chưa nghiệm thu trực quan 360px/Safari; không tạo/phát hành hóa đơn.
+
+### 18/10/2026 – Dropdown Bootstrap tòa/tháng tạo hóa đơn
+- Nâng 2 select building/month sang dropdown Bootstrap bo góc, bóng nhẹ, cuộn, hover/dấu chọn; giữ select/name/change và fallback. Đồng bộ label, xử lý invalid đưa focus về nút.
+- Node kiểm tra cú pháp, diff và HTTP JS/CSS đạt; chưa nghiệm thu tương tác trực quan/thiết bị thật. Không tạo hóa đơn.
+
+### 18/10/2026 – Bỏ liên kết quay lại ở tạo hóa đơn
+- Bỏ liên kết trên tiêu đề theo yêu cầu, giữ breadcrumb Quản lý hóa đơn.
+
+### 18/10/2026 – Breadcrumb tạo hóa đơn tháng
+- Thêm Quản lý hóa đơn giữa trang chủ và Tạo hóa đơn tháng; liên kết Management, đồng bộ icon/cỡ chữ/khoảng cách/màu và mobile với breadcrumb chi tiết tòa. Chỉ áp dụng action Setup.
+- Build và HTTP breadcrumb/liên kết/current page đạt; chưa nghiệm thu trực quan thiết bị thật.
+
+### 18/10/2026 – Căn giãn dòng tạo hóa đơn tháng
+- Thu gọn khoảng cách trường, thẻ thống kê, cách tính và bảng phòng bỏ qua; căn line-height 1.5, giữ ô nhập/nút 44px. Chỉ CSS.
+- Diff và HTTP CSS đạt; chưa nghiệm thu trực quan trên thiết bị thật.
+
+### 18/10/2026 – Bootstrap tạo hóa đơn tháng
+- Thẻ Bootstrap, bảng responsive/hover và CSS invoice-setup-bootstrap riêng: form 44px, thống kê rõ, cảnh báo/bảng phòng bỏ qua, cách tính và nút đồng bộ. Căn line-height 1.5, mobile một cột.
+- Build và HTTP Setup đạt; CSS/fields/form hook đạt. Chưa nghiệm thu trực quan 360px/Safari; không tạo hóa đơn.
+
+### 18/10/2026 – Đổi nhãn nút hóa đơn
+- Đổi nút mở xác nhận phát hành hàng loạt thành “Áp dụng” theo yêu cầu; giữ hành vi.
+
+### 18/10/2026 – Dropdown Bootstrap trạng thái hóa đơn
+- Áp dụng dropdown cùng kiểu tòa/tháng cho trạng thái; giữ select trangThai và nút Lọc.
+- Node kiểm tra cú pháp, diff và HTTP JS đạt. Chưa kiểm chứng tương tác trực quan.
+
+### 18/10/2026 – Dropdown Bootstrap tòa nhà/tháng hóa đơn
+- Nâng 2 select bộ lọc sang dropdown Bootstrap có cuộn, hover, dấu chọn và menu bo góc/đổ bóng; giữ select/name để GET và fallback. Khởi tạo trước guard dialog để hoạt động ở tab chờ xác nhận; không tự gửi form.
+- Node kiểm tra cú pháp, diff và HTTP JS/CSS đạt; chưa nghiệm thu tương tác trực quan trên trình duyệt/thiết bị thật.
+
+### 18/10/2026 – Bootstrap và giãn dòng quản lý hóa đơn
+- CSS invoice-management-bootstrap riêng: thống kê gọn, bộ lọc grid responsive, bảng hover/align-middle, mã dài xuống dòng, cột tiền canh phải, badge rõ và khoảng cách dòng 1.5. Giữ hooks, quyền, CSRF và nghiệp vụ.
+- Build và HTTP danh sách/tab chờ xác nhận đạt, CSS/CSRF đạt; chưa nghiệm thu trực quan 360px/Safari. Không thay đổi hóa đơn.
+
+### 18/10/2026 – Dropdown Bootstrap chọn kỳ tiến độ
+- Nâng select kỳ thành Bootstrap dropdown có cuộn, bo góc, hover và dấu chọn; giữ select/name thang để GET/xuất CSV và fallback khi thiếu JS/Bootstrap. Không tự gửi form khi chọn, vẫn bấm Xem.
+- Node kiểm tra cú pháp và HTTP JS/CSS đạt; chưa nghiệm thu tương tác trực quan/thiết bị thật.
+
+### 18/10/2026 – Căn giãn dòng phòng còn thiếu chỉ số
+- Thu gọn khoảng cách tiêu đề/cảnh báo/thẻ phòng; căn tên, quản lý, trạng thái, nhóm nút và hướng dẫn với line-height 1.5. Giữ nút 44px, chỉ CSS.
+- Diff và HTTP CSS đạt; chưa nghiệm thu trực quan thiết bị thật.
+
+### 18/10/2026 – Bootstrap phòng còn thiếu chỉ số
+- Thẻ Bootstrap, nhóm nút tách riêng trạng thái, nút 44px và CSS meter-missing-bootstrap cho bảng trượt/trang độc lập; căn nội dung, đóng và thông báo, responsive. Giữ liên kết phòng/chỉ số và dữ liệu.
+- Build, HTTP standalone/drawer, 2 nhóm nút và liên kết chỉ số đạt; chưa nghiệm thu trực quan 360px/Safari. Không đổi dữ liệu nghiệp vụ.
+
+### 18/10/2026 – Căn giãn dòng tiến độ chốt chỉ số
+- Thu gọn padding thẻ thống kê, tiêu đề bảng và hàng; thống nhất line-height 1.5 và khoảng cách dòng phụ 2–4px, giữ nút/ô nhập 44px. Chỉ CSS.
+- Diff và HTTP CSS đạt; chưa nghiệm thu trực quan thiết bị thật.
+
+### 18/10/2026 – Bootstrap tiến độ chốt chỉ số
+- Form-control/form-select, nút Bootstrap và bảng responsive/hover; CSS meter-progress-bootstrap riêng cho thống kê, cảnh báo, bộ lọc, bảng và khoảng cách. Giữ ID/data hooks lọc/xuất/phòng thiếu và logic nghiệp vụ.
+- Build đạt; HTTP trang tiến độ và liên kết phòng thiếu đạt, CSS mới/filter/export hooks đạt. Chưa nghiệm thu trực quan 360px/Safari; không thay đổi nghiệp vụ.
+
+### 17/10/2026 – Căn giãn dòng chỉ số điện nước
+- Thu gọn thẻ thống kê, bộ lọc và khoảng đệm hàng phòng; căn nhãn/ô nhập, mô tả và lỗi; giữ chiều cao ô nhập và grid nghiệp vụ. Chỉ CSS.
+- Diff và HTTP CSS đạt; chưa nghiệm thu trực quan thiết bị thật.
+
+### 17/10/2026 – Bootstrap chỉ số điện nước
+- CSS meter-bootstrap riêng: bộ lọc trong thẻ, thống kê/tiến độ rõ hơn, ô nhập 42–44px, nhãn/bảng/nút đồng bộ; Bootstrap form-control/form-select và nhóm nút. Giữ grid biểu mẫu, ID/data hooks, CSRF và khóa kỳ/lưu từng phòng.
+- Build đạt; HTTP chủ nhà/quản lý đạt, CSS/form/input/bộ lọc/CSRF đúng. Chưa nghiệm thu trực quan 360px/Safari; không lưu chỉ số thử.
+
+### 17/10/2026 – Căn giãn dòng gia hạn hợp đồng
+- Thu gọn padding thẻ, khoảng cách tiêu đề/trường/nút; căn nhãn với ô nhập, dòng hướng dẫn cách 4px và line-height 1.5. Giữ ô nhập 44px, chỉ CSS.
+- Diff và HTTP CSS đạt; chưa nghiệm thu trực quan trên thiết bị thật.
+
+### 17/10/2026 – Bootstrap gia hạn hợp đồng
+- Thẻ biểu mẫu giới hạn 880px, tiêu đề/icon, mã hợp đồng, form-control 44px và nhóm lưu/hủy; CSS contract-renewal-bootstrap riêng, mobile một cột. Giữ trường, validation, CSRF và nghiệp vụ.
+- Build và HTTP gia hạn đạt; CSS/field/CSRF đạt. Chưa nghiệm thu trực quan 360px/Safari; không gửi gia hạn vào DB.
+
+### 17/10/2026 – Căn giãn dòng thông báo bảng tất toán
+- Căn riêng padding thẻ và khoảng cách biểu tượng/tiêu đề/thông báo/nút, line-height 1.5; giữ nút 44px, không ảnh hưởng thông báo trả phòng.
+
+### 17/10/2026 – Bootstrap thông báo bảng tất toán
+- Dùng thẻ/alert/nút Bootstrap và CSS thông báo hiện có, thêm biểu tượng tài liệu, tiêu đề và hướng dẫn quay lại; giữ thông báo nghiệp vụ gốc. Khoảng cách gọn, responsive theo CSS dùng chung.
+- Build và HTTP màn hình chưa có bảng tất toán đạt, liên kết quay lại đạt; không đổi dữ liệu. Chưa nghiệm thu trực quan thiết bị thật/Safari.
+
+### 17/10/2026 – Căn giãn dòng thông báo trả phòng
+- Thu gọn padding và khoảng cách biểu tượng/tiêu đề/thông báo/nút; line-height nội dung 1.5, giữ nút 44px. Chỉ CSS.
+- Diff và HTTP CSS đạt; chưa nghiệm thu trực quan trên thiết bị thật.
+
+### 17/10/2026 – Bootstrap thông báo ghi nhận trả phòng
+- Thẻ Bootstrap có biểu tượng, tiêu đề, thông báo nghiệp vụ gốc và nút quay lại 44px; CSS riêng checkout-notice-bootstrap, responsive. Không đổi controller/dữ liệu.
+- Build và HTTP màn hình thiếu chỉ số đạt, CSS/nút quay lại đạt; chưa nghiệm thu trực quan 360px/Safari. Không gửi thao tác trả phòng.
+
+### 17/10/2026 – Căn giãn dòng yêu cầu trả phòng
+- Thu gọn padding thẻ/bộ lọc/empty state, thống nhất line-height nội dung 1.5 và khoảng cách trường; giữ ô nhập/nút 44px. Chỉ CSS.
+- Diff và HTTP CSS đạt; chưa nghiệm thu trực quan trên thiết bị thật.
+
+### 17/10/2026 – Bootstrap yêu cầu trả phòng trước hạn
+- CSS checkout-request-bootstrap riêng: tiêu đề, thông báo, bộ lọc và nút 44px, số yêu cầu, empty state có biểu tượng; căn thẻ yêu cầu/form và responsive 360px bằng CSS. Giữ quyền, query, validation và POST.
+- Build đạt; HTTP chủ nhà/khách thuê cả danh sách và lọc hợp đồng đạt, CSS mới/empty state đạt. Chưa nghiệm thu trực quan 360px/Safari và trạng thái có yêu cầu; không gửi yêu cầu demo.
+
+### 17/10/2026 – Căn giãn dòng tab người ở cùng
+- Thu gọn khoảng cách danh sách, sức chứa, form thêm người và thẻ bên phải; nhãn cách ô 6px, dòng phụ 2–4px, khoảng cách trường 12px; giữ ô nhập 44px. Chỉ CSS.
+- Diff và HTTP CSS đạt; chưa nghiệm thu trực quan trên thiết bị thật.
+
+### 17/10/2026 – Bootstrap tab người ở cùng
+- CSS riêng contract-residents-bootstrap chỉ nạp ở tab người ở: sức chứa, danh sách, thẻ phòng, nhóm chọn cách thêm và form-control 44px. Căn nhãn/khoảng cách, responsive form một cột; giữ quyền, field, CSRF và xử lý nghiệp vụ.
+- Build đạt; HTTP cả mode account/manual đạt, CSRF/form/CSS đúng; tổng quan không nạp CSS người ở. Chưa nghiệm thu trực quan 360px/Safari; không thêm người thử vào DB.
+
+### 17/10/2026 – Bỏ liên kết quay lại trên chi tiết hợp đồng
+- Bỏ liên kết đầu trang theo yêu cầu; vẫn dùng menu và breadcrumb để điều hướng.
+
+### 17/10/2026 – Căn giãn dòng chi tiết hợp đồng
+- Thu gọn hàng thông tin, thẻ tài chính/người ở; thống nhất line-height 1.5, khoảng cách dòng phụ 4px, giữa thẻ 16px. Đồng bộ lịch sử, tài liệu và điều khoản; chỉ CSS.
+- Diff và HTTP CSS đạt; chưa nghiệm thu trực quan trên thiết bị thật.
+
+### 17/10/2026 – Bootstrap chi tiết hợp đồng
+- Thanh nút nghiệp vụ riêng dưới tiêu đề; Bootstrap tabs, bảng responsive/hover; CSS contract-detail-bootstrap căn thẻ thông tin, tài chính 2 cột, người ở và khoảng cách đồng nhất. Mobile xuống một cột; giữ điều kiện quyền, liên kết, dữ liệu và thao tác.
+- Build đạt; đăng nhập chủ nhà, tổng quan và tab người ở HTTP 200, CSS mới đạt. Chưa nghiệm thu trực quan 360px/Safari; không gửi thay đổi nghiệp vụ.
+
+### 17/10/2026 – Căn giãn dòng trang lập hợp đồng
+- Đồng nhất khoảng cách nhãn/ô nhập 6px, giữa trường 12px và giữa thẻ 16px; thu gọn dòng tóm tắt, hướng dẫn và thanh nút. Giữ chiều cao ô nhập 44px, chỉ đổi CSS.
+- Diff và HTTP CSS đạt; chưa nghiệm thu trực quan trên thiết bị thật.
+
+### 17/10/2026 – Bootstrap trang lập hợp đồng
+- Dùng form-control/form-select và bảng Bootstrap; CSS riêng contract-create-bootstrap với nhãn phía trên, ô nhập 44px, thẻ bo 12px, màu charcoal/gold, tóm tắt và thanh nút cuối biểu mẫu không che nội dung. Responsive một cột ở màn hình nhỏ, giữ ID/validation/CSRF/nghiệp vụ.
+- Build đạt; HTTP trang Create trống, CSS Bootstrap và CSRF đạt. Demo không có yêu cầu đủ điều kiện trong danh sách; yêu cầu 7 trả 403 nên chưa kiểm chứng trạng thái đã chọn. Chưa nghiệm thu trực quan 360px/Safari và chưa gửi tạo hợp đồng.
+
+### 17/10/2026 – Căn giãn dòng danh sách hợp đồng
+- Căn line-height tiêu đề/nội dung, giảm padding hàng và thẻ; thống nhất khoảng cách khối 16px, nhãn và mô tả 4–6px. Bỏ gutter dọc Bootstrap dư trong thẻ thống kê. Chỉ đổi CSS.
+- Kiểm tra diff và CSS phục vụ HTTP; chưa nghiệm thu trực quan trên thiết bị thật.
+
+### 17/10/2026 – Bootstrap danh sách hợp đồng
+- Đưa nút trả phòng/tất toán vào thanh nghiệp vụ dưới tiêu đề; dùng Bootstrap grid, form-select, form-control, table-hover và CSS riêng contracts-bootstrap cho trang danh sách. Giữ quyền, ID bộ lọc và liên kết nghiệp vụ.
+- Build đạt; HTTP đăng nhập chủ nhà và danh sách đạt, tải CSS mới, 2 hợp đồng demo. Chưa nghiệm thu trực quan trên thiết bị 360px/Safari. Không thay đổi CSDL.
+
 ### 17/10/2026 – Căn giãn dòng Chi tiết yêu cầu thuê
 - Thu khoảng đệm thẻ/tiến trình, dòng thông tin khách/phòng, lời nhắn và form lịch hẹn; chỉ CSS, giữ các thao tác nghiệp vụ.
 

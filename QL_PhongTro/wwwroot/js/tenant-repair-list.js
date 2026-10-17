@@ -1,6 +1,20 @@
 (() => {
     const page = document.querySelector('[data-tenant-repairs]');
     if (!page) return;
+    if(page.classList.contains('owner-repair-list') && window.bootstrap?.Dropdown){
+        for(const id of ['trl-status','trl-priority']){
+            const select=page.querySelector('#'+id);if(!select)continue;
+            const wrapper=document.createElement('div');wrapper.className='dropdown repair-select-dropdown';
+            const trigger=document.createElement('button');trigger.type='button';trigger.id=id+'-dropdown';trigger.className='btn dropdown-toggle repair-select-toggle';trigger.setAttribute('data-bs-toggle','dropdown');trigger.setAttribute('aria-expanded','false');trigger.setAttribute('aria-label',id==='trl-status'?'Lọc trạng thái':'Lọc mức độ');
+            const caption=document.createElement('span');trigger.append(caption);
+            const menu=document.createElement('ul');menu.className='dropdown-menu repair-select-menu';menu.setAttribute('aria-labelledby',trigger.id);const choices=[];
+            function sync(){caption.textContent=select.selectedOptions[0]?.textContent || '';choices.forEach(button=>{const current=button.dataset.value===select.value;button.classList.toggle('active',current);if(current)button.setAttribute('aria-current','true');else button.removeAttribute('aria-current');});}
+            for(const option of select.options){const item=document.createElement('li');const button=document.createElement('button');button.type='button';button.className='dropdown-item';button.dataset.value=option.value;button.textContent=option.textContent;button.addEventListener('click',()=>{select.value=option.value;select.dispatchEvent(new Event('change',{bubbles:true}));});item.append(button);menu.append(item);choices.push(button);}
+            select.after(wrapper);wrapper.append(trigger,menu);select.hidden=true;select.tabIndex=-1;select.addEventListener('change',sync);sync();
+            page.querySelector('[data-reset-filters]')?.addEventListener('click',()=>setTimeout(sync,0));
+            select.form?.addEventListener('reset',()=>setTimeout(sync,0));
+        }
+    }
     const rows = [...page.querySelectorAll('[data-repair-row]')];
     const search = page.querySelector('#trl-search');
     const status = page.querySelector('#trl-status');

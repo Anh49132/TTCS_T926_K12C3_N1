@@ -1,5 +1,21 @@
 (() => {
 const page=document.querySelector('[data-meter-progress]');if(!page)return;
+// Enhance the native month selector; keep it available without JavaScript.
+const monthSelect=page.querySelector('#thang');
+if(monthSelect && window.bootstrap?.Dropdown){
+ const wrapper=document.createElement('div');wrapper.className='dropdown mp-month-dropdown';
+ const trigger=document.createElement('button');trigger.type='button';trigger.className='btn dropdown-toggle mp-month-toggle';
+ trigger.id='progress-month-toggle';trigger.setAttribute('data-bs-toggle','dropdown');trigger.setAttribute('aria-expanded','false');trigger.setAttribute('aria-label','Chọn kỳ ghi chỉ số');
+ const caption=document.createElement('span');trigger.append(caption);
+ const menu=document.createElement('ul');menu.className='dropdown-menu mp-month-menu';menu.setAttribute('aria-labelledby',trigger.id);
+ const choices=[];
+ function syncMonth(){caption.textContent=monthSelect.selectedOptions[0]?.textContent || 'Chọn kỳ';choices.forEach(button=>{const selected=button.dataset.value===monthSelect.value;button.classList.toggle('active',selected);if(selected)button.setAttribute('aria-current','true');else button.removeAttribute('aria-current');});}
+ for(const option of monthSelect.options){const item=document.createElement('li');const button=document.createElement('button');button.type='button';button.className='dropdown-item';button.dataset.value=option.value;button.textContent=option.textContent;button.addEventListener('click',()=>{monthSelect.value=option.value;monthSelect.dispatchEvent(new Event('change',{bubbles:true}));});item.append(button);menu.append(item);choices.push(button);}
+ monthSelect.parentElement.insertAdjacentElement('afterend',wrapper);wrapper.append(trigger,menu);
+ monthSelect.parentElement.hidden=true;monthSelect.tabIndex=-1;
+ monthSelect.addEventListener('change',syncMonth);monthSelect.form?.addEventListener('reset',()=>setTimeout(syncMonth,0));syncMonth();
+ trigger.addEventListener('shown.bs.dropdown',()=>menu.querySelector('.active')?.scrollIntoView({block:'nearest'}));
+}
 const search=page.querySelector('[data-building-search]'),status=page.querySelector('[data-building-status]'),rows=[...page.querySelectorAll('[data-export-row]')];
 const normalize=value=>value.toLocaleLowerCase('vi').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d');
 function filter(){let count=0;rows.forEach(row=>{row.hidden=!normalize(row.dataset.buildingName).includes(normalize(search.value.trim())) || (!!status.value && row.dataset.state!==status.value);if(!row.hidden)count++;});page.querySelector('[data-progress-empty]').hidden=count>0;}

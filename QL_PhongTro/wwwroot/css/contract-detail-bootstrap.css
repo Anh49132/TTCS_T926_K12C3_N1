@@ -1,0 +1,65 @@
+/* Contract detail refinements over the shared Bootstrap components. */
+.contract-details-reference.contract-reference{padding:0;line-height:1.5}
+.contract-details-reference.contract-reference .ref-back{margin-bottom:1rem;color:#6b7380;font-size:.8125rem}
+.contract-details-reference.contract-reference .ref-heading{align-items:flex-start!important;gap:1rem!important;margin-bottom:1rem!important}
+.contract-details-reference.contract-reference .ref-title{gap:.75rem}
+.contract-details-reference.contract-reference .ref-title h1{font-size:1.75rem;line-height:1.3;letter-spacing:-.04rem}
+.contract-details-reference.contract-reference .ref-heading p{font-size:.875rem;line-height:1.5;margin:.375rem 0 0}
+.contract-details-reference.contract-reference .ref-heading-actions{width:100%;justify-content:flex-start;margin:0;padding:.875rem 1rem;border:1px solid #e4e7eb;border-radius:12px;background:#fff}
+.contract-details-reference.contract-reference .btn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:.625rem 1rem;line-height:1.5;font-size:.8125rem;font-weight:600;border-radius:8px}
+.contract-details-reference.contract-reference .btn-outline-secondary{border-color:#d8dde4;color:#30343b;background:#fff}
+.contract-details-reference.contract-reference .btn-outline-secondary:hover{border-color:#bfa77a;background:#f5f5f4}
+.contract-details-reference.contract-reference .ref-state{font-size:.75rem;padding:.375rem .75rem;line-height:1.5}
+.contract-details-reference.contract-reference .ref-tabs{gap:.5rem;margin-bottom:1rem!important;padding:0 .25rem;background:transparent}
+.contract-details-reference.contract-reference .ref-tabs a{font-size:.8125rem;padding:.75rem 1rem;line-height:1.5;border-radius:8px 8px 0 0}
+.contract-details-reference.contract-reference .ref-tabs a:hover{background:#eeefef;color:#30343b}
+.contract-details-reference.contract-reference .ref-tabs .is-active{background:#f3efe6;color:#897044;border-color:#bfa77a}
+.contract-details-reference.contract-reference .ref-workspace{grid-template-columns:minmax(0,1fr) 340px;gap:1rem}
+.contract-details-reference.contract-reference .contract-card.ref-card,.contract-details-reference.contract-reference .ref-main>.contract-card{padding:1rem 1.125rem!important;margin:0 0 1rem!important;border:1px solid #e4e7eb;border-radius:12px;box-shadow:0 2px 6px #25282d03}
+.contract-details-reference.contract-reference .ref-card-title{gap:.625rem;margin-bottom:.75rem;flex-wrap:wrap}
+.contract-details-reference.contract-reference .ref-card-title h2{font-size:1rem;line-height:1.4;font-weight:700}
+.contract-details-reference.contract-reference .ref-card-title>a{font-size:.75rem;color:#75613f}
+.contract-details-reference.contract-reference .ref-icon{width:34px;height:34px;border-radius:9px;background:#f4efe5;color:#9a8050}
+.contract-details-reference.contract-reference .ref-icon.neutral{background:#e9eaec;color:#5e6775}
+.contract-details-reference.contract-reference .ref-fact-columns{gap:1rem;padding-top:.625rem}
+.contract-details-reference.contract-reference .ref-fact-columns>dl+dl{padding-left:1rem}
+.contract-details-reference.contract-reference .ref-facts>div{grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:.75rem;padding:.375rem 0;font-size:.8125rem;line-height:1.5;align-items:start}
+.contract-details-reference.contract-reference .ref-facts dd{font-weight:500;line-height:1.5}
+.contract-details-reference.contract-reference .ref-notice{padding:.625rem .75rem;margin:.75rem 0 0;border-radius:8px;background:#f7f2e8;color:#80683d;font-size:.75rem;line-height:1.6}
+.contract-details-reference.contract-reference .ref-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}
+.contract-details-reference.contract-reference .ref-metrics-three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.contract-details-reference.contract-reference .ref-metrics>div{padding:.875rem;border-radius:9px;background:#f8f9fa;min-width:0}
+.contract-details-reference.contract-reference .ref-metrics small{font-size:.75rem;margin-bottom:.25rem;line-height:1.5}
+.contract-details-reference.contract-reference .ref-metrics strong{display:block;font-size:1rem;line-height:1.5}
+.contract-details-reference.contract-reference .ref-person{padding:.75rem;border-radius:9px;gap:.75rem;margin-bottom:.5rem;min-width:0;flex-wrap:wrap}
+.contract-details-reference.contract-reference .ref-person>div{flex:1;min-width:0}
+.contract-details-reference.contract-reference .ref-person strong{font-size:.8125rem;overflow-wrap:anywhere}
+.contract-details-reference.contract-reference .ref-person small{font-size:.75rem;line-height:1.5;overflow-wrap:anywhere;margin-top:.25rem}
+.contract-details-reference.contract-reference .ref-person-badge{display:inline-block;padding:.25rem .5rem;border-radius:6px;font-size:.625rem;line-height:1.5;background:#f4efe5;color:#897044;margin:.25rem 0 .25rem .25rem}
+.contract-details-reference.contract-reference .ref-avatar{width:40px;height:40px;flex:0 0 40px;background:#e9eaec;color:#626b77}
+.contract-details-reference.contract-reference .ref-capacity{padding:.75rem;border-radius:9px;margin-bottom:.5rem;gap:.5rem;flex-wrap:wrap}
+.contract-details-reference.contract-reference .ref-capacity strong{font-size:1.5rem;line-height:1.3}
+.contract-details-reference.contract-reference .ref-full{width:100%;margin-top:.125rem}
+.contract-details-reference.contract-reference .ref-table-frame{border-radius:8px}
+.contract-details-reference.contract-reference .ref-table th{padding:.75rem;font-size:.6875rem;background:#f7f8f9;color:#67707c}
+.contract-details-reference.contract-reference .ref-table td{padding:.75rem;font-size:.8125rem;line-height:1.5}
+.contract-details-reference.contract-reference .ref-bill{gap:.5rem;padding:.875rem;line-height:1.5;border-radius:8px}
+.contract-details-reference.contract-reference .ref-action{padding:.75rem;border-radius:8px;line-height:1.5;min-height:42px}
+.contract-details-reference.contract-reference .contract-note{font-size:.75rem;line-height:1.6;margin:.5rem 0 0}
+@media(max-width:1100px){.contract-details-reference.contract-reference .ref-workspace{grid-template-columns:minmax(0,1fr)}.contract-details-reference.contract-reference .ref-side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 1rem}}
+@media(max-width:600px){.contract-details-reference.contract-reference .ref-title h1{font-size:1.375rem}.contract-details-reference.contract-reference .ref-heading-actions{padding:.75rem;display:grid!important;grid-template-columns:1fr 1fr}.contract-details-reference.contract-reference .ref-heading-actions .btn{width:100%;white-space:normal;padding:.625rem .5rem}.contract-details-reference.contract-reference .ref-heading-actions form{min-width:0}.contract-details-reference.contract-reference .ref-tabs{gap:0}.contract-details-reference.contract-reference .ref-tabs a{padding:.625rem .75rem;font-size:.75rem}.contract-details-reference.contract-reference .ref-side{display:block}.contract-details-reference.contract-reference .ref-fact-columns{grid-template-columns:1fr;gap:0}.contract-details-reference.contract-reference .ref-fact-columns>dl+dl{padding:.5rem 0 0;margin-top:.5rem;border-left:0;border-top:1px solid #e9eaec}.contract-details-reference.contract-reference .ref-metrics-three{grid-template-columns:1fr}.contract-details-reference.contract-reference .ref-metrics>div{padding:.75rem}.contract-details-reference.contract-reference .ref-metrics strong{font-size:.875rem}.contract-details-reference.contract-reference .contract-card.ref-card{padding:1rem!important}.contract-details-reference.contract-reference .ref-person-badge{margin-left:0}}
+@media print{.contract-details-reference.contract-reference .ref-heading-actions,.contract-details-reference.contract-reference .ref-tabs,.contract-details-reference.contract-reference .ref-back{display:none!important}.contract-details-reference.contract-reference .ref-workspace{display:block}}
+
+/* Shared vertical rhythm for detail rows and supporting text. */
+.contract-details-reference.contract-reference .ref-card-title h2{margin:0;line-height:1.4}
+.contract-details-reference.contract-reference .ref-facts dt,.contract-details-reference.contract-reference .ref-facts dd{margin:0;line-height:1.5}
+.contract-details-reference.contract-reference .ref-metrics span{display:block;line-height:1.5}
+.contract-details-reference.contract-reference .ref-person.compact{padding:.625rem .75rem;margin-bottom:.5rem}
+.contract-details-reference.contract-reference .ref-notice,.contract-details-reference.contract-reference .contract-note{line-height:1.55}
+.contract-details-reference.contract-reference .cd-history{padding:.75rem 0;line-height:1.5}
+.contract-details-reference.contract-reference .cd-history>span,.contract-details-reference.contract-reference .cd-history>small{display:block;margin-top:.25rem;line-height:1.5}
+.contract-details-reference.contract-reference .cd-extra-clauses h3{line-height:1.4;margin-bottom:.375rem}
+.contract-details-reference.contract-reference .cd-extra-clauses p{margin-bottom:0;line-height:1.6}
+.contract-details-reference.contract-reference .cd-documents-empty small,.contract-details-reference.contract-reference .cd-document-file small{display:block;margin-top:.25rem;line-height:1.5}
+.contract-details-reference.contract-reference .ref-action{padding:.625rem .75rem;line-height:1.5}
+.contract-details-reference.contract-reference .ref-bill{padding:.75rem 0;row-gap:.25rem;line-height:1.5}

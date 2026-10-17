@@ -1,0 +1,56 @@
+.payment-management.invoice-bootstrap{padding:0;max-width:none;min-width:0;font-size:.8125rem;line-height:1.5;color:#25282d}
+.invoice-bootstrap .mi-heading{gap:1rem;align-items:center;margin-bottom:1rem;flex-wrap:wrap}
+.invoice-bootstrap .mi-heading h1{font-size:1.75rem;line-height:1.3;letter-spacing:-.04rem;margin:0 0 .375rem}
+.invoice-bootstrap .mi-heading p{font-size:.875rem;line-height:1.5;margin:0;color:#7a838f}
+.invoice-bootstrap .btn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:.625rem 1rem;border-radius:8px;font-size:.8125rem;line-height:1.5;font-weight:600}
+.invoice-bootstrap .btn-dark{background:#30343b;border-color:#30343b;color:#fff}
+.invoice-bootstrap .btn-outline-secondary{background:#fff;border-color:#d8dde4;color:#30343b}
+.invoice-bootstrap .flow-metrics{gap:.875rem;margin:0 0 1rem}
+.invoice-bootstrap .mi-card{padding:1rem 1.125rem;border:1px solid #e4e7eb;border-radius:12px;box-shadow:0 2px 6px #25282d03}
+.invoice-bootstrap .flow-metrics .mi-card{min-width:0;min-height:116px;margin:0}
+.invoice-bootstrap .flow-metrics span{display:block;font-size:.75rem;line-height:1.5;color:#77818e;margin:0 0 .5rem}
+.invoice-bootstrap .flow-metrics strong{display:block;font-size:1.5rem;line-height:1.25;margin:0 0 .375rem;overflow-wrap:anywhere}
+.invoice-bootstrap .flow-metrics small{display:block;font-size:.6875rem;line-height:1.5;color:#8a939f;margin:0}
+.invoice-bootstrap .flow-metrics a{color:inherit;text-decoration:none}
+.invoice-bootstrap .pending-metric{border-color:#d9c7a5;background:#fffcf6}
+.invoice-bootstrap .flow-tabs{gap:.5rem;flex-wrap:wrap;margin:0 0 .875rem;padding:0;border-color:#e9eaec}
+.invoice-bootstrap .flow-tabs a{padding:.625rem .75rem;font-size:.8125rem;line-height:1.5;border-radius:7px 7px 0 0;color:#7b8491}
+.invoice-bootstrap .flow-tabs a.active{background:#f4efe5;color:#897044;border-color:#bfa77a}
+.invoice-bootstrap .flow-filters{display:grid;grid-template-columns:minmax(200px,2fr) minmax(150px,1.2fr) minmax(130px,1fr) 100px minmax(150px,1.1fr) auto;gap:.625rem;margin:0 0 1rem}
+.invoice-bootstrap .form-control,.invoice-bootstrap .form-select{min-width:0;min-height:42px;height:auto;padding:.625rem .75rem;font-size:.8125rem;line-height:1.5;border:1px solid #dfe3e8;border-radius:8px;box-shadow:none;background-color:#fff;color:#30343b}
+.invoice-bootstrap .form-select{padding-right:2rem}
+.invoice-bootstrap .form-control:focus,.invoice-bootstrap .form-select:focus{border-color:#bfa77a;outline:2px solid #bfa77a55;outline-offset:1px}
+.invoice-bootstrap .table-responsive{border:1px solid #e9eaec;border-radius:9px;margin:0}
+.invoice-bootstrap .flow-table{margin:0;font-size:.8125rem;min-width:1100px;table-layout:auto}
+.invoice-bootstrap .flow-table thead th{background:#f7f8f9;color:#67717e;padding:.75rem;font-size:.6875rem;font-weight:600;line-height:1.5;white-space:nowrap;border-color:#e9eaec}
+.invoice-bootstrap .flow-table tbody th,.invoice-bootstrap .flow-table tbody td{padding:.875rem .75rem;line-height:1.5;vertical-align:middle;border-color:#e9eaec;background:#fff}
+.invoice-bootstrap .flow-table tbody th{font-size:.75rem;font-weight:600;max-width:190px;white-space:normal;overflow-wrap:anywhere}
+.invoice-bootstrap .flow-table tbody td:nth-child(3){min-width:155px;white-space:normal}
+.invoice-bootstrap .flow-table td strong{font-size:.8125rem;line-height:1.5}
+.invoice-bootstrap .flow-table td small{display:block;margin-top:.25rem;font-size:.6875rem;line-height:1.5;color:#8a939f}
+.invoice-bootstrap .flow-table th:nth-child(7),.invoice-bootstrap .flow-table th:nth-child(8),.invoice-bootstrap .flow-table td:nth-child(7),.invoice-bootstrap .flow-table td:nth-child(8){text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.invoice-bootstrap .flow-badge,.invoice-bootstrap .pw-badge{display:inline-block;font-size:.6875rem;padding:.375rem .625rem;border-radius:20px;line-height:1.5;white-space:normal}
+.invoice-bootstrap .flow-table .btn{font-size:.75rem;min-height:38px;padding:.5rem .75rem;white-space:nowrap}
+.invoice-bootstrap .flow-actions{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:.75rem;margin:.875rem 0 0;padding:.875rem 0 0;border-top:1px solid #e9eaec;position:static}
+.invoice-bootstrap .flow-actions>span{font-size:.75rem;color:#7b8491;margin-right:auto}
+.invoice-bootstrap .flow-pagination{margin-top:1rem;padding-top:.875rem;border-top:1px solid #e9eaec;gap:.75rem;flex-wrap:wrap;font-size:.75rem;line-height:1.5}
+.invoice-bootstrap .flow-pagination .btn{min-width:36px;min-height:36px;padding:.375rem .625rem;font-size:.75rem}
+.invoice-bootstrap .flow-empty{padding:1.5rem 1rem;margin:0;font-size:.8125rem;line-height:1.5}
+@media(max-width:1100px){.invoice-bootstrap .flow-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.invoice-bootstrap .flow-filters{grid-template-columns:repeat(3,minmax(0,1fr))}.invoice-bootstrap .flow-filters input[name=q]{grid-column:span 2}}
+@media(max-width:600px){.invoice-bootstrap .mi-heading h1{font-size:1.5rem}.invoice-bootstrap .mi-heading>.btn{width:100%}.invoice-bootstrap .flow-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}.invoice-bootstrap .flow-metrics .mi-card{padding:.875rem;min-height:105px}.invoice-bootstrap .mi-card{padding:1rem}.invoice-bootstrap .flow-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.invoice-bootstrap .flow-filters input[name=q]{grid-column:1/-1}.invoice-bootstrap .flow-tabs{gap:0}.invoice-bootstrap .flow-tabs a{padding:.625rem .5rem;font-size:.75rem}.invoice-bootstrap .flow-actions .btn{width:100%}.invoice-bootstrap .flow-actions{padding-bottom:3rem}.invoice-bootstrap .flow-pagination{align-items:flex-start;flex-direction:column}.invoice-bootstrap .form-control,.invoice-bootstrap .form-select{min-height:44px}}
+
+/* Bootstrap building and month dropdowns. */
+.invoice-bootstrap .flow-filters>select[hidden]{display:none!important}
+.invoice-bootstrap .invoice-filter-dropdown{min-width:0}
+.invoice-bootstrap .invoice-filter-toggle{display:flex;justify-content:space-between;gap:.75rem;width:100%;min-height:42px;padding:.625rem .75rem;background:#fff;border:1px solid #dfe3e8;border-radius:8px;color:#606b79;font-size:.8125rem;line-height:1.5;font-weight:400;text-align:left}
+.invoice-bootstrap .invoice-filter-toggle>span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.invoice-bootstrap .invoice-filter-toggle:after{flex-shrink:0;color:#78828f}
+.invoice-bootstrap .invoice-filter-toggle:hover,.invoice-bootstrap .invoice-filter-toggle.show{background:#faf8f3;border-color:#bfa77a}
+.invoice-bootstrap .invoice-filter-toggle:focus-visible{outline:3px solid #bfa77a55;outline-offset:2px;box-shadow:none}
+.invoice-bootstrap .invoice-filter-menu{min-width:100%;width:max-content;max-width:min(320px,calc(100vw - 32px));max-height:280px;overflow:auto;padding:.375rem;border:1px solid #e4e7eb;border-radius:10px;box-shadow:0 8px 28px #25282d1a;scrollbar-width:thin;scrollbar-color:#cbbb9a transparent}
+.invoice-bootstrap .invoice-filter-menu .dropdown-item{position:relative;min-height:38px;padding:.5rem 2rem .5rem .75rem;border:0;border-radius:6px;background:#fff;color:#606b79;font-size:.8125rem;line-height:1.5;white-space:normal;overflow-wrap:anywhere;text-align:left}
+.invoice-bootstrap .invoice-filter-menu .dropdown-item:hover,.invoice-bootstrap .invoice-filter-menu .dropdown-item:focus{background:#f5f5f4;color:#30343b}
+.invoice-bootstrap .invoice-filter-menu .dropdown-item.active{background:#f3eddf;color:#8a7040;font-weight:650}
+.invoice-bootstrap .invoice-filter-menu .dropdown-item.active:after{content:'✓';position:absolute;right:.625rem;top:.5rem}
+.invoice-bootstrap .invoice-filter-menu .dropdown-item:disabled{opacity:.5}
+@media(max-width:600px){.invoice-bootstrap .invoice-filter-toggle{min-height:44px}}
