@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Threading.RateLimiting;
+using Microsoft.AspNetCore.RateLimiting;
 
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.Extensions.FileProviders;
@@ -37,6 +39,19 @@ if (args.Contains("--check-email-config"))
 }
 
 builder.Services.AddControllersWithViews();
+builder.Services.Configure<GeminiOptions>(builder.Configuration.GetSection("Gemini"));
+builder.Services.AddHttpClient<IGeminiChatClient, GeminiChatClient>(client => client.Timeout = TimeSpan.FromSeconds(40));
+builder.Services.AddScoped<ChatDataTools>();
+builder.Services.AddScoped<AiChatService>();
+builder.Services.AddRateLimiter(options => {
+    options.AddPolicy("chatbot", context => RateLimitPartition.GetFixedWindowLimiter(
+        context.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value ?? "anonymous",
+        _ => new FixedWindowRateLimiterOptions { PermitLimit = 10, Window = TimeSpan.FromMinutes(1), QueueLimit = 0 }));
+    options.OnRejected = async (context, ct) => {
+        context.HttpContext.Response.StatusCode = 429;
+        await context.HttpContext.Response.WriteAsJsonAsync(new { message = "Bạn gửi quá nhanh. Vui lòng đợi một phút rồi thử lại." }, ct);
+    };
+});
 builder.Services.AddRazorPages();
 builder.Services.AddSingleton<QL_PhongTro.Services.GiayToImageStore>();
 builder.Services.AddSingleton(sp => new QL_PhongTro.Services.RoomImageStore(
@@ -318,6 +333,7 @@ if (!string.IsNullOrWhiteSpace(configuredRoomImagesPath))
 }
 app.UseRouting();
 app.UseAuthentication();
+app.UseRateLimiter();
 app.UseMiddleware<RequirePasswordChangeMiddleware>();
 app.UseMiddleware<TokenBlacklistMiddleware>();
 app.UseAuthorization();

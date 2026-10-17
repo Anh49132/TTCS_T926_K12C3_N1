@@ -12,6 +12,8 @@ rem Optional machine-local settings. This file is ignored by Git.
 rem Explicit environment variables already set in the terminal take precedence.
 if exist ".env.local" (
     for /f "usebackq eol=# tokens=1,* delims==" %%A in (".env.local") do (
+        if /I "%%A"=="Gemini__ApiKey" if not defined Gemini__ApiKey set "Gemini__ApiKey=%%B"
+        if /I "%%A"=="Gemini__Model" if not defined Gemini__Model set "Gemini__Model=%%B"
         if /I "%%A"=="DatabasePath" if not defined DatabasePath set "DatabasePath=%%B"
         if /I "%%A"=="LocalAdmin__Phone" if not defined LocalAdmin__Phone set "LocalAdmin__Phone=%%B"
         if /I "%%A"=="RoomImagesPath" if not defined RoomImagesPath set "RoomImagesPath=%%B"
