@@ -4,7 +4,7 @@
 @using QL_PhongTro.Services
 @using QL_PhongTro.ViewModels
 @{var yeuCau=Model.YeuCau;var ngayHenNhap=Model.LichHenNhap?.ToString("yyyy-MM-dd");var gioHenNhap=Model.LichHenNhap?.ToString("HH':'mm",CultureInfo.InvariantCulture);var lichHenNhap=Model.LichHenNhap?.ToString("yyyy-MM-ddTHH':'mm",CultureInfo.InvariantCulture);var room=ViewData["RequestedRoom"] as PhongTro;var vn=CultureInfo.GetCultureInfo("vi-VN");}
-<div class="request-detail-page">
+<div class="request-detail-page request-detail-bootstrap">
 <header class="rq-heading"><div><h1>Chi tiết yêu cầu thuê &amp; lịch xem</h1><p>@yeuCau.MaYeuCau · Gửi lúc @LichHenService.HienThoiGio(yeuCau.NgayTao) <span class="rq-badge">@LichHenTrangThai.LabelHienThi(yeuCau.TrangThai,yeuCau.DaDoiLich)</span></p></div><a class="rq-button" asp-controller="YeuCau" asp-action="Index"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m10 6-6 6 6 6M4 12h16"/></svg><span>Quay lại danh sách</span></a></header>
 @foreach(var key in new[]{"LichHenOk","LichHenError","LichHenWarning"}){if(TempData[key] is string message){<p class="rq-notification" role="status">@message</p>}}
 <nav class="rq-progress" aria-label="Tiến trình yêu cầu"><div class="done"><span>✓</span><strong>Tiếp nhận<small>@LichHenService.HienThoiGio(yeuCau.NgayTao)</small></strong></div><div class="@(yeuCau.LichHen.HasValue?"done":"")"><span>2</span><strong>Đã liên hệ<small>@(yeuCau.LichHen.HasValue?"Đã ghi nhận lịch hẹn":"Chưa ghi nhận")</small></strong></div><div class="@(yeuCau.TrangThai=="DA_HEN_LICH"?"active":"")"><span>3</span><strong>Hẹn xem phòng<small>@(yeuCau.LichHen.HasValue?"Có lịch xem phòng":"Chưa có lịch hẹn")</small></strong></div><div class="@(yeuCau.TrangThai=="DA_DUYET"?"done":"")"><span>4</span><strong>Kết quả xem<small>@LichHenTrangThai.Label(yeuCau.TrangThai)</small></strong></div><div><span>5</span><strong>Xử lý yêu cầu<small>Duyệt hoặc từ chối</small></strong></div></nav>
@@ -24,7 +24,7 @@
 @if (Model.HienThiNutLapHopDong) {
 @* Cùng luồng lập hợp đồng cho thuê ngay và thuê sau khi xem. *@
 <div class="mb-4">
-    <a class="btn btn-primary" href="@LichHenChiTietViewModel.DuongDanLapHopDong?@($"id={yeuCau.Id}")">Tạo hợp đồng từ yêu cầu</a>
+    <a class="btn btn-dark" href="@LichHenChiTietViewModel.DuongDanLapHopDong?@($"id={yeuCau.Id}")">Tạo hợp đồng từ yêu cầu</a>
     <span class="text-muted">Yêu cầu đã duyệt và phòng đã đặt cọc, sẵn sàng lập hợp đồng.</span>
 </div>
 }
@@ -35,7 +35,7 @@
 <p class="text-muted">Sau khi khách xem phòng và đồng ý thuê, duyệt yêu cầu để giữ phòng và lập hợp đồng. Thao tác này chưa ghi nhận tiền cọc thực thu.</p>
 <form method="post" asp-action="DuyetSauKhiXem" asp-route-id="@yeuCau.Id" class="mb-4">
     <label class="d-flex align-items-center gap-2 mb-3"><input type="checkbox" name="daDongYThue" value="true" required /> Khách đã đồng ý thuê sau khi xem phòng.</label>
-    <button class="btn btn-primary" type="submit">Duyệt thuê sau khi xem</button>
+    <button class="btn btn-dark" type="submit">Duyệt thuê sau khi xem</button>
 </form>
 }
 
@@ -117,7 +117,7 @@
         <input type="hidden" name="LichHenNhap" value="@lichHenNhap" data-role="lich-hen" />
     </div>
     <div class="col-md-4 d-flex align-items-end">
-        <button class="btn btn-primary" type="submit">Xác nhận lịch xem</button>
+        <button class="btn btn-dark" type="submit">Xác nhận lịch xem</button>
     </div>
 </form>
 <p class="text-muted" data-role="canh-bao-trung" data-yeu-cau-id="@yeuCau.Id">
@@ -139,7 +139,7 @@
         <input type="hidden" name="LichHenNhap" value="@lichHenNhap" data-role="lich-hen" />
     </div>
     <div class="col-md-4 d-flex align-items-end">
-        <button class="btn btn-primary" type="submit">Lưu lịch mới</button>
+        <button class="btn btn-dark" type="submit">Lưu lịch mới</button>
     </div>
 </form>
 <p class="text-muted" data-role="canh-bao-trung" data-yeu-cau-id="@yeuCau.Id">

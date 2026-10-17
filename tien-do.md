@@ -1,3 +1,17 @@
+### 17/10/2026 – Căn giãn dòng Chi tiết yêu cầu thuê
+- Thu khoảng đệm thẻ/tiến trình, dòng thông tin khách/phòng, lời nhắn và form lịch hẹn; chỉ CSS, giữ các thao tác nghiệp vụ.
+
+### 17/10/2026 – Làm mới Chi tiết yêu cầu thuê bằng Bootstrap
+- Đồng bộ tiến trình, thẻ khách/phòng, form lịch hẹn 44px, tóm tắt và nút thao tác; CSS riêng request-detail-bootstrap chỉ cho chủ nhà, giữ quyền và POST/CSRF.
+- Build đạt; Edge 360/768/1440px không tràn ngang, tiến trình/khách/form/CSRF/quay lại đạt. Không xác nhận lịch hay đổi yêu cầu; chưa push.
+
+### 17/10/2026 – Căn giãn dòng Yêu cầu thuê & lịch xem
+- Thu khoảng đệm thống kê, tab/bộ lọc, dòng bảng và khung chi tiết/liên hệ; chỉ CSS, giữ các thao tác xử lý yêu cầu.
+
+### 17/10/2026 – Làm mới Yêu cầu thuê & lịch xem bằng Bootstrap
+- Đồng bộ thống kê, tab/bộ lọc, bảng cuộn responsive và panel chi tiết; CSS requests-bootstrap chỉ cho workspace, giữ quyền/luồng duyệt và trạng thái.
+- Build đạt; Edge 360/768/1440px không tràn ngang, thống kê/tìm kiếm/panel/xuất danh sách đạt. Không duyệt hay đổi yêu cầu thử; chưa push.
+
 ### 17/10/2026 – Căn giãn dòng Tạo tin đăng
 - Thu padding thẻ/nhóm ô chọn, khoảng cách nhãn/trường nhập, thông báo, xem trước và footer; chỉ áp dụng create-mode, giữ logic form.
 
