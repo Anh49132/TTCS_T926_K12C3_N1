@@ -1,0 +1,28 @@
+@inject QL_PhongTro.Authorization.PermissionService Permissions
+@{
+    var modules = (await Permissions.MenuAsync()).Select(x=>x.Code).ToHashSet();
+    var accountWrite = await Permissions.AllowsAsync("TAI_KHOAN",true);
+    var links = new[] {
+        ("TAI_KHOAN", "Quản lý tài khoản", "Lọc theo vai trò, trạng thái; khóa tài khoản và thu hồi phiên đăng nhập.", "/ManagedAccounts"),
+        ("TAI_KHOAN", "Tạo tài khoản nội bộ", "Cấp tài khoản Chủ nhà, Quản lý hoặc Admin, gửi mật khẩu tạm qua email.", "/ManagedAccounts/Create"),
+        ("TAI_KHOAN", "Phân quyền", "Xem ma trận quyền đang áp dụng theo vai trò và module.", "/Permissions"),
+        ("TAI_KHOAN", "Nhật ký hoạt động", "Tra cứu đầy đủ thao tác và giá trị trước / sau trên toàn hệ thống.", "/NhatKy"),
+        ("TAI_KHOAN", "Tra cứu gửi thông báo lỗi", "Kiểm tra email thông báo hóa đơn thất bại và các lần thử gửi.", "/EmailGuiLog?TrangThai=THAT_BAI")
+    };
+    var business = new[] {
+        ("PHONG_TRO", "Tòa nhà", "/PhongTro/ToaNha"), ("PHONG_TRO", "Phòng", "/PhongTro"),
+        ("PHONG_TRO", "Dịch vụ và bảng giá", "/DichVu"), ("TIN_DANG", "Tin đăng cho thuê", "/TinDang/QuanLy"),
+        ("YEU_CAU_THUE", "Yêu cầu thuê và lịch hẹn", "/YeuCau"), ("HOP_DONG", "Hợp đồng và người ở ghép", "/HopDong"),
+        ("DIEN_NUOC", "Chỉ số điện nước", "/ChiSoDienNuoc"), ("TAI_CHINH", "Hóa đơn và thanh toán", "/HoaDonDichVu/Management"),
+        ("TAI_CHINH", "Công nợ", "/CongNo"), ("BAO_HONG", "Báo hỏng và bảo trì", "/ChuNhaBaoHong"),
+        ("BAO_CAO", "Doanh thu và tỷ lệ lấp đầy", "/BaoCao")
+    };
+}
+<section class="admin-hub">
+<header><p class="text-secondary">QUẢN TRỊ HỆ THỐNG</p><h1>Tổng quan quản trị</h1><p>Quản lý truy cập, theo dõi hoạt động và tra cứu dữ liệu NhàTốt.</p></header>
+<div class="admin-hub-grid">
+@foreach(var item in links.Where(x=>modules.Contains(x.Item1) && (x.Item4!="/ManagedAccounts/Create" || accountWrite))){<a href="@item.Item4" class="admin-hub-card"><span class="admin-hub-icon" aria-hidden="true">▤</span><h2>@item.Item2</h2><p>@item.Item3</p><span>Mở trang →</span></a>}
+<a href="/Account/ChangePassword" class="admin-hub-card"><span class="admin-hub-icon" aria-hidden="true">⚿</span><h2>Đổi mật khẩu</h2><p>Cập nhật mật khẩu cá nhân để bảo vệ tài khoản quản trị.</p><span>Mở trang →</span></a>
+</div>
+<section class="admin-hub-business"><h2>Tra cứu nghiệp vụ <span class="badge text-bg-secondary">Chỉ xem</span></h2><p>Admin xem dữ liệu toàn hệ thống; các thao tác thêm, sửa, xóa nghiệp vụ dành cho vai trò phụ trách.</p><div class="admin-hub-links">@foreach(var item in business.Where(x=>modules.Contains(x.Item1))){<a href="@item.Item3">@item.Item2 <span aria-hidden="true">→</span></a>}</div></section>
+</section>

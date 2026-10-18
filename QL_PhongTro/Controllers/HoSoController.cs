@@ -78,6 +78,8 @@ public class HoSoController(AppDbContext db, GiayToImageStore images, HoSoAccess
             db.KhachThues.Add(profile);
         }
         profile.HoTen = model.HoTen.Trim();
+        tenant.HoTen = profile.HoTen;
+        tenant.NgayCapNhat = (clock ?? new SystemTimeProvider()).UtcNow;
         profile.SoDienThoai = tenant.SoDienThoai;
         profile.NgaySinh = model.NgaySinh;
         if (!string.IsNullOrEmpty(model.SoCanCuoc)) profile.SoGiayTo = model.SoCanCuoc;

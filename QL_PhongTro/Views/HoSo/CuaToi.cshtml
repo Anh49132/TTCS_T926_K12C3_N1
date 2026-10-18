@@ -5,7 +5,7 @@
     <div class="row g-4 align-items-start">
         <div class="col-12 col-xl-4">
             <section class="op-card op-profile-banner card border-0 shadow-sm text-center" aria-label="Thông tin cá nhân">
-                <span class="op-avatar large mx-auto" aria-hidden="true">@string.Concat(Model.HoTen.Split(' ', StringSplitOptions.RemoveEmptyEntries).TakeLast(2).Select(p => System.Globalization.StringInfo.GetNextTextElement(p))).ToUpperInvariant()</span>
+                <span class="op-avatar large mx-auto" aria-hidden="true"><img src="/PersonalAccount/Avatar" alt="" /></span>
                 <div><h2>@Model.HoTen</h2><span class="op-badge rounded-pill">@Model.VaiTro</span></div>
             </section>
             <section class="op-card card border-0 shadow-sm personal-security" aria-labelledby="personal-security-title">
@@ -17,7 +17,8 @@
         <div class="col-12 col-xl-8">
             <section class="op-card card border-0 shadow-sm" aria-labelledby="personal-info-title">
                 <div class="personal-card-heading"><h2 id="personal-info-title">Thông tin tài khoản</h2><span class="personal-account-id">ID #@Model.Id</span></div>
-                <dl class="op-facts mb-0">
+                <a class="btn btn-dark mb-3" href="/PersonalAccount/Edit">Chỉnh sửa tài khoản</a>
+<dl class="op-facts mb-0">
                     <div><dt>Họ và tên</dt><dd>@Model.HoTen</dd></div>
                     <div><dt>Vai trò</dt><dd>@Model.VaiTro</dd></div>
                     <div><dt>Số điện thoại</dt><dd>@Model.DienThoai</dd></div>

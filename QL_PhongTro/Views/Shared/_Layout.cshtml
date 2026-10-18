@@ -31,6 +31,7 @@
 @if (useHomepageTheme && !isTenant) { <link rel="stylesheet" href="~/css/dashboard-spacing.css" asp-append-version="true" /> }
 <link rel="stylesheet" href="~/css/sidebar-bootstrap.css" asp-append-version="true" />
 @if (User.IsInRole("ADMIN")) { <link rel="stylesheet" href="~/css/admin-dashboard-bootstrap.css" asp-append-version="true" /> }
+@if (User.IsInRole("ADMIN")) { <link rel="stylesheet" href="~/css/admin-access.css" asp-append-version="true" /> }
 </head>
 <body class="@(useHomepageTheme ? "homepage-dashboard-theme" : "") @roleClass">
 <a class="skip-link" href="#main-content">Đến nội dung chính</a>

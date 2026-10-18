@@ -1,8 +1,9 @@
 @model QL_PhongTro.ViewModels.ManagedAccountsViewModel
 @using QL_PhongTro.ViewModels
-@{ ViewData["Title"] = "Quản lý tài khoản"; }
+@inject QL_PhongTro.Authorization.PermissionService Permissions
+@{ ViewData["Title"] = "Quản lý tài khoản"; var write = await Permissions.AllowsAsync("TAI_KHOAN",true); }
 <div class="accounts-bootstrap">
-<header class="accounts-heading d-flex flex-wrap justify-content-between align-items-center gap-3"><div><h1>Quản lý tài khoản</h1><p>Theo dõi tài khoản, vai trò và trạng thái truy cập hệ thống.</p></div><a asp-action="Create" class="btn btn-primary">＋ Tạo tài khoản</a></header>
+<header class="accounts-heading d-flex flex-wrap justify-content-between align-items-center gap-3"><div><h1>Quản lý tài khoản</h1><p>Theo dõi tài khoản, vai trò và trạng thái truy cập hệ thống.</p></div>@if(write){<a asp-action="Create" class="btn btn-primary">＋ Tạo tài khoản nội bộ</a>}</header>
 @if (TempData["AccountMessage"] is string message) { <div class="alert alert-success" role="status">@message</div> }
 @if (TempData["AccountError"] is string error) { <div class="alert alert-danger" role="alert">@error</div> }
 
@@ -22,19 +23,19 @@
 @foreach (var account in Model.Accounts) {
 accountStt++;
 <tr data-account-id="@account.Id"><td>@accountStt</td><td>@account.HoTen</td><td>@account.Email</td><td>@account.SoDienThoai</td><td>@ManagedAccountsViewModel.RoleName(account.VaiTro)</td><td><span class="badge @(account.DangHoatDong ? "text-bg-success" : "text-bg-danger")">@(account.DangHoatDong ? "Đang hoạt động" : "Đã khoá")</span></td><td>@(account.MustChangePassword ? "Chờ đổi mật khẩu" : "Đã thiết lập")</td><td>
-@if (User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value != account.Id.ToString()) {
+@if (write && User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value != account.Id.ToString()) {
 <a asp-action="ChangeRole" asp-route-id="@account.Id" class="btn btn-sm btn-outline-secondary mb-2">Đổi vai trò</a>
 }
-@if (account.VaiTro is "CHU_NHA" or "QUAN_LY") {
+@if (write && User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value != account.Id.ToString()) {
 <form asp-action="SetActive" method="post" class="mb-2" onsubmit="return confirm('@(account.DangHoatDong ? "Khoá tài khoản và chấm dứt mọi phiên đăng nhập?" : "Mở khoá tài khoản này?")');">
 <input type="hidden" name="id" value="@account.Id" /><input type="hidden" name="active" value="@(!account.DangHoatDong ? "true" : "false")" /><input type="hidden" name="confirmed" value="true" />
 <button class="btn btn-sm @(account.DangHoatDong ? "btn-outline-danger" : "btn-outline-success")">@(account.DangHoatDong ? "Khoá" : "Mở khoá")</button>
 </form>
 }
-@if (account.VaiTro is "CHU_NHA" or "QUAN_LY" or "ADMIN" && account.MustChangePassword && account.DangHoatDong) {
+@if (write && account.VaiTro is "CHU_NHA" or "QUAN_LY" or "ADMIN" && account.MustChangePassword && account.DangHoatDong) {
 <form asp-action="Resend" method="post" onsubmit="return confirm('Tạo mật khẩu tạm mới và gửi lại email? Mật khẩu tạm cũ sẽ mất hiệu lực.');"><input type="hidden" name="id" value="@account.Id" /><button class="btn btn-sm btn-outline-secondary">Gửi lại mật khẩu tạm</button></form>
 }
-@if (account.VaiTro is not "ADMIN" && !account.IsDeleted) {
+@if (write && account.VaiTro is not "ADMIN" && !account.IsDeleted) {
 <form asp-action="Delete" method="post" onsubmit="return confirm('Xóa tài khoản này? Email và số điện thoại sẽ dùng đăng ký lại được. Dữ liệu lịch sử được giữ lại.');"><input type="hidden" name="id" value="@account.Id" /><input type="hidden" name="confirmed" value="true" /><button class="btn btn-sm btn-outline-danger">Xóa</button></form>
 }
 </td></tr>

@@ -5,10 +5,55 @@
     const messages = root.querySelector('[data-ai-messages]'), error = root.querySelector('[data-ai-error]');
     const suggestions = root.querySelector('[data-ai-suggestions]'), fresh = root.querySelector('[data-ai-new]');
     let conversationId = null, busy = false;
+    // Keep the launcher and the open panel independently movable.
+    const movable = [];
+    const keepVisible = element => {
+        const box = element.getBoundingClientRect(), gap = 8;
+        const width = document.documentElement.clientWidth, height = window.innerHeight;
+        element.style.left = `${Math.max(gap, Math.min(box.left, width - box.width - gap))}px`;
+        element.style.top = `${Math.max(gap, Math.min(box.top, height - box.height - gap))}px`;
+        element.style.right = 'auto'; element.style.bottom = 'auto';
+    };
+    const makeDraggable = (element, handle) => {
+        let drag = null, suppressClick = false;
+        movable.push(element);
+        handle.addEventListener('pointerdown', event => {
+            if (!event.isPrimary || event.button !== 0 || event.target.closest('button') && handle !== launcher) return;
+            const box = element.getBoundingClientRect();
+            drag = { id: event.pointerId, x: event.clientX, y: event.clientY, left: box.left, top: box.top, moved: false };
+            suppressClick = false;
+            handle.setPointerCapture(event.pointerId);
+        });
+        handle.addEventListener('pointermove', event => {
+            if (!drag || drag.id !== event.pointerId) return;
+            const dx = event.clientX - drag.x, dy = event.clientY - drag.y;
+            if (!drag.moved && Math.hypot(dx, dy) < 6) return;
+            drag.moved = true; element.classList.add('ai-chat-dragging');
+            element.style.left = `${drag.left + dx}px`; element.style.top = `${drag.top + dy}px`;
+            element.style.right = 'auto'; element.style.bottom = 'auto';
+            keepVisible(element);
+        });
+        const finish = event => {
+            if (!drag || drag.id !== event.pointerId) return;
+            suppressClick = drag.moved; drag = null; element.classList.remove('ai-chat-dragging');
+            if (handle.hasPointerCapture(event.pointerId)) handle.releasePointerCapture(event.pointerId);
+        };
+        handle.addEventListener('pointerup', finish);
+        handle.addEventListener('pointercancel', finish);
+        handle.addEventListener('lostpointercapture', finish);
+        handle.addEventListener('click', event => {
+            if (suppressClick) { event.preventDefault(); event.stopImmediatePropagation(); suppressClick = false; }
+        }, true);
+    };
+    makeDraggable(root, launcher);
+    makeDraggable(panel, panel.querySelector('header'));
+    window.addEventListener('resize', () => movable.forEach(element => {
+        if (!element.hidden && element.style.left) keepVisible(element);
+    }));
     const initial = messages.firstElementChild.cloneNode(true);
     const scroll = () => messages.scrollTop = messages.scrollHeight;
     const bubble = (text, role) => { const el = document.createElement('div'); el.className = `ai-chat-message ${role}`; el.textContent = text; messages.append(el); scroll(); return el; };
-    const show = open => { panel.hidden = !open; launcher.setAttribute('aria-expanded', String(open)); if (open) input.focus(); else launcher.focus(); };
+    const show = open => { panel.hidden = !open; launcher.setAttribute('aria-expanded', String(open)); if (open) { if (panel.style.left) keepVisible(panel); input.focus(); } else launcher.focus(); };
     launcher.addEventListener('click', () => show(panel.hidden));
     root.querySelector('[data-ai-close]').addEventListener('click', () => show(false));
     root.addEventListener('keydown', event => { if (event.key === 'Escape' && !panel.hidden) { event.preventDefault(); show(false); } });

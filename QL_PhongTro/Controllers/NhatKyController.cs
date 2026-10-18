@@ -9,6 +9,7 @@ using QL_PhongTro.ViewModels;
 namespace QL_PhongTro.Controllers;
 
 [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme, Roles = "ADMIN")]
+[QL_PhongTro.Authorization.ModuleAccess("TAI_KHOAN")]
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public sealed class NhatKyController(AppDbContext db) : Controller
 {

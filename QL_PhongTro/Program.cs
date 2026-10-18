@@ -56,6 +56,7 @@ builder.Services.AddRateLimiter(options => {
 });
 builder.Services.AddRazorPages();
 builder.Services.AddSingleton<QL_PhongTro.Services.GiayToImageStore>();
+builder.Services.AddScoped<QL_PhongTro.Services.PersonalAvatarStore>();
 builder.Services.AddSingleton(sp => new QL_PhongTro.Services.RoomImageStore(
     sp.GetRequiredService<IWebHostEnvironment>(), sp.GetRequiredService<IConfiguration>()));
 builder.Services.AddScoped<QL_PhongTro.Services.HoSoAccess>();

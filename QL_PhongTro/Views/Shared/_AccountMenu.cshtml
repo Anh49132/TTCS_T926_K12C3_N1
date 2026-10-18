@@ -14,12 +14,13 @@
 <div class="account-popover" id="account-popover" hidden>
 <nav aria-label="Tài khoản cá nhân">
 <a href="@Url.Action(personalAction, "HoSo")" aria-current="@(controller == "HoSo" && action == personalAction ? "page" : null)">Hồ sơ của tôi</a>
+<a href="/PersonalAccount/Edit">Chỉnh sửa tài khoản</a>
 <a href="@Url.Action("ChangePassword", "Account")" aria-current="@(controller == "Account" && action == "ChangePassword" ? "page" : null)">Đổi mật khẩu</a>
 </nav><hr />
 <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm"><button type="submit" id="logoutBtn">Đăng xuất</button></form>
 </div>
 <button type="button" class="account-trigger" id="account-toggle" aria-controls="account-popover" aria-expanded="false">
-<span class="account-avatar" aria-hidden="true">@(owner ? (string.IsNullOrEmpty(initials) ? "N" : initials) : string.IsNullOrWhiteSpace(name) ? "N" : System.Globalization.StringInfo.GetNextTextElement(name).ToUpperInvariant())</span>
+<span class="account-avatar" aria-hidden="true"><img src="/PersonalAccount/Avatar" alt="" /></span>
 <span class="account-label"><strong>@name</strong><small>@roleLabel</small></span><span class="account-chevron" aria-hidden="true">@if (owner) { <svg viewBox="0 0 16 16"><path d="m4 6 4 4 4-4" /></svg> } else { <text>⌃</text> }</span>
 </button>
 } else {

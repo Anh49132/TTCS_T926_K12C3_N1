@@ -4,6 +4,7 @@
 }
 <h1 class="h3">Bảng phân quyền theo vai trò</h1>
 <p class="text-secondary">Cấu hình quyền hiện tại được lưu trong cơ sở dữ liệu.</p>
+@if(User.IsInRole("ADMIN")){<p class="admin-readonly-notice">Admin chỉ xem dữ liệu nghiệp vụ. Cấu hình toàn quyền hoặc quyền ghi từ phiên bản cũ được giới hạn thành chỉ xem; quyền không truy cập vẫn được giữ nguyên.</p>}
 <p>F: toàn quyền · W: ghi trong phạm vi được giao · R: chỉ xem · —: không truy cập · *: chỉ dữ liệu của mình.</p>
 <div class="table-responsive">
     <table class="table table-bordered align-middle" id="permission-matrix">
@@ -20,8 +21,9 @@
             @foreach (var role in Model.Roles)
             {
                 var p = Model.Permissions.SingleOrDefault(p => p.RoleCode == role.Code && p.ModuleCode == module.Code);
-                var label = p?.AccessLevel switch { "FULL" => "F", "WRITE" => "W", "READ" => "R", _ => "—" };
-                <td data-role="@role.Code" data-access="@(p?.AccessLevel ?? "NONE")">@(label + (p?.OwnDataOnly == true ? "*" : ""))</td>
+                var effective = role.Code == "ADMIN" && module.Code != "TAI_KHOAN" && p?.AccessLevel is "FULL" or "WRITE" ? "READ" : p?.AccessLevel ?? "NONE";
+                var label = effective switch { "FULL" => "F", "WRITE" => "W", "READ" => "R", _ => "—" };
+                <td data-role="@role.Code" data-access="@effective" data-configured-access="@(p?.AccessLevel ?? "NONE")">@(label + (p?.OwnDataOnly == true ? "*" : ""))</td>
             }
             </tr>
         }

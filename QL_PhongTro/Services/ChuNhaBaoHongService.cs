@@ -8,17 +8,17 @@ public sealed class ChuNhaBaoHongService(AppDbContext db, BaoHongService tenantS
 {
     private async Task CheckActorAsync(int id, CancellationToken ct)
     {
-        var active = await db.TaiKhoans.AsNoTracking().AnyAsync(x => x.Id == id && x.VaiTro == "CHU_NHA"
-            && x.DangHoatDong && !x.IsDeleted && x.EmailConfirmed && !x.MustChangePassword, ct);
-        var level = await db.RolePermissions.AsNoTracking().Where(x => x.RoleCode == "CHU_NHA" && x.ModuleCode == "BAO_HONG")
+        var role = await db.TaiKhoans.AsNoTracking().Where(x => x.Id == id
+            && x.DangHoatDong && !x.IsDeleted && x.EmailConfirmed && !x.MustChangePassword).Select(x=>x.VaiTro).SingleOrDefaultAsync(ct);
+        var level = await db.RolePermissions.AsNoTracking().Where(x => x.RoleCode == role && x.ModuleCode == "BAO_HONG")
             .Select(x => x.AccessLevel).SingleOrDefaultAsync(ct);
-        if (!active || level is not ("READ" or "WRITE" or "FULL")) throw new UnauthorizedAccessException();
+        if (role is not ("CHU_NHA" or "ADMIN") || level is not ("READ" or "WRITE" or "FULL")) throw new UnauthorizedAccessException();
     }
 
     private IQueryable<BaoHongChiTiet> Rows(int ownerId) =>
         from b in db.BaoHongs.AsNoTracking()
         join p in db.PhongTros on b.PhongId equals p.Id
-        join t in db.ToaNhas on p.ToaNhaId equals t.Id where t.ChuNhaId == ownerId
+        join t in db.ToaNhas on p.ToaNhaId equals t.Id where t.ChuNhaId == ownerId || db.TaiKhoans.Any(x=>x.Id==ownerId && x.VaiTro=="ADMIN")
         join h in db.HopDongs on b.HopDongId equals h.Id
         join a in db.TaiKhoans on b.NguoiBaoId equals a.Id
         select new BaoHongChiTiet { BaoHong = b, MaPhong = p.MaPhong, TenToaNha = t.TenToaNha,

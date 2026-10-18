@@ -9,12 +9,17 @@ using QL_PhongTro.ViewModels;
 namespace QL_PhongTro.Controllers;
 
 [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme, Roles = "ADMIN")]
+[QL_PhongTro.Authorization.ModuleAccess("TAI_KHOAN")]
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public sealed class EmailGuiLogController(AppDbContext db) : Controller
 {
     [HttpGet]
     public async Task<IActionResult> Index(EmailGuiLogViewModel filter)
     {
+        if (!ModelState.IsValid || filter.TuNgay > filter.DenNgay || filter.DenNgay?.Year > 9998
+            || filter.TuNgay?.Year < 1900 || filter.DenNgay?.Year < 1900
+            || (!string.IsNullOrEmpty(filter.TrangThai) && !EmailGuiLogViewModel.TrangThais.ContainsKey(filter.TrangThai)))
+            return BadRequest("Bộ lọc không hợp lệ. Kiểm tra trạng thái và khoảng ngày.");
         if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ||
             !await db.TaiKhoans.AsNoTracking().AnyAsync(a => a.Id == id && a.DangHoatDong && a.VaiTro == "ADMIN" && !a.MustChangePassword)) return Forbid();
 

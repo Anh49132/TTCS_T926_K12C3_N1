@@ -8,7 +8,11 @@
     var dashboard = Model.Dashboard;
 }
 
-@if (isOwner)
+@if (isAdmin)
+{
+    <partial name="_AdminHome" />
+}
+else if (isOwner)
 {
     <partial name="_OwnerDashboard" model="dashboard" />
 }
@@ -27,27 +31,7 @@ else
         }
     </header>
 
-    @if (isAdmin)
-    {
-        <section class="dashboard-stat-grid dashboard-stat-grid-admin" aria-label="Số liệu hệ thống">
-            <a asp-controller="ManagedAccounts" asp-action="Index" class="dashboard-stat"><span class="stat-icon">◎</span><small>Tài khoản hoạt động</small><strong>@dashboard.TongTaiKhoan</strong><span>Xem danh sách →</span></a>
-            <a asp-controller="ManagedAccounts" asp-action="Index" class="dashboard-stat"><span class="stat-icon">♙</span><small>Chủ nhà</small><strong>@dashboard.TongChuNha</strong><span>Quản lý tài khoản →</span></a>
-            <a asp-controller="PhongTro" asp-action="ToaNha" class="dashboard-stat"><span class="stat-icon">▥</span><small>Tòa nhà</small><strong>@dashboard.TongToaNha</strong><span>Xem toàn hệ thống →</span></a>
-            <a asp-controller="PhongTro" asp-action="Index" class="dashboard-stat"><span class="stat-icon">▣</span><small>Phòng đang quản lý</small><strong>@dashboard.TongPhong</strong><span>Xem danh sách →</span></a>
-            <a asp-controller="YeuCau" asp-action="Index" class="dashboard-stat"><span class="stat-icon">◷</span><small>Yêu cầu chờ xử lý</small><strong>@dashboard.YeuCauChoXuLy</strong><span>Xử lý yêu cầu →</span></a>
-        </section>
-        <section class="latte-admin-grid">
-            <article class="dashboard-panel"><div class="panel-heading"><h2>Phân bổ vai trò người dùng</h2></div><div class="role-donut"><strong>@dashboard.Roles.Sum(x => x.Count)<small>tài khoản</small></strong></div><div class="role-distribution">@foreach (var role in dashboard.Roles) { <p><span>● @role.Name</span><strong>@role.Count</strong></p> }</div></article>
-            <article class="dashboard-panel"><div class="panel-heading"><h2>Hoạt động hệ thống gần đây</h2><a href="/NhatKy">Xem tất cả →</a></div><div class="latte-table-scroll"><table class="latte-table table table-hover align-middle mb-0"><thead><tr><th>Người dùng</th><th>Hành động</th><th>Thời gian</th></tr></thead><tbody>@foreach (var activity in dashboard.Activities) { <tr><td>@(activity.TenNguoiThucHien ?? "Hệ thống")</td><td>@activity.HanhDong</td><td>@activity.ThoiDiem.AddHours(7).ToString("HH:mm dd/MM")</td></tr> }@if (dashboard.Activities.Count == 0) { <tr><td colspan="3" class="latte-empty">Chưa có hoạt động được ghi nhận.</td></tr> }</tbody></table></div></article>
-            <article class="dashboard-panel"><div class="panel-heading"><h2>Trạng thái hệ thống</h2></div><div class="system-status"><p><span class="status-dot"></span><strong>Ứng dụng</strong><small>Đang hoạt động</small></p><p><span class="status-dot"></span><strong>Database</strong><small>Dữ liệu đang được tải</small></p><p><strong>Sao lưu dữ liệu gần nhất</strong><small>Chưa có thông tin sao lưu</small></p></div></article>
-        </section>
-        <section class="dashboard-panel-grid latte-bottom-grid"><article class="dashboard-panel"><partial name="_DashboardRequests" model="dashboard" /></article><article class="dashboard-panel"><partial name="_DashboardRooms" model="dashboard" /></article></section>
-        <section class="dashboard-panel-grid latte-shortcuts">
-            <article class="dashboard-panel dashboard-panel-wide"><div class="panel-heading"><div><h2>Quản trị nhanh</h2><p>Các khu vực quản trị toàn hệ thống</p></div></div><div class="quick-link-grid"><a asp-controller="Permissions" asp-action="Index">⚙<strong>Tài khoản &amp; phân quyền</strong><span>Thiết lập quyền truy cập</span></a><a asp-controller="NhatKy" asp-action="Index">◷<strong>Nhật ký hoạt động</strong><span>Theo dõi thay đổi hệ thống</span></a><a asp-controller="TinDang" asp-action="QuanLy">▤<strong>Tin đăng cho thuê</strong><span>Kiểm tra toàn bộ tin đăng</span></a></div></article>
-            <article class="dashboard-panel"><div class="panel-heading"><div><h2>Trạng thái hệ thống</h2><p>Dữ liệu được lấy trực tiếp từ hệ thống</p></div></div><div class="system-status"><p><span class="status-dot"></span><strong>Ứng dụng</strong><small>Đang hoạt động</small></p><p><span class="status-dot"></span><strong>Cơ sở dữ liệu</strong><small>Đã kết nối</small></p></div></article>
-        </section>
-    }
-    else if (isTenant)
+    @if (isTenant)
     {
         @if (dashboard.TenantContracts.Count > 0) {
             @foreach (var contract in dashboard.TenantContracts.Take(3)) {

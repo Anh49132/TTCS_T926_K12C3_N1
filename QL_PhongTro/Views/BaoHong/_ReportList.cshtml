@@ -1,7 +1,7 @@
 @model List<QL_PhongTro.ViewModels.BaoHongChiTiet>
 @{
     var owner = ViewData["LaChuNha"] is true;
-    ViewData["Title"] = owner ? "Báo hỏng tại tòa nhà của tôi" : "Báo hỏng của tôi";
+    ViewData["Title"] = User.IsInRole("ADMIN") ? "Tra cứu báo hỏng và bảo trì" : owner ? "Báo hỏng tại tòa nhà của tôi" : "Báo hỏng của tôi";
     var page = (int)(ViewData["Page"] ?? 1);
     var reports = Model.Take(20).ToList();
     var paged = page > 1 || Model.Count > 20;

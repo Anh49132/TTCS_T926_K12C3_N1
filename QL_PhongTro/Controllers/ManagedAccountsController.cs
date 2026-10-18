@@ -11,11 +11,13 @@ using QL_PhongTro.Data;
 using QL_PhongTro.Models;
 using QL_PhongTro.Services;
 using QL_PhongTro.ViewModels;
+using QL_PhongTro.Authorization;
 
 namespace QL_PhongTro.Controllers;
 
 [Authorize(AuthenticationSchemes = CookieAuthenticationDefaults.AuthenticationScheme, Roles = "ADMIN")]
 [AutoValidateAntiforgeryToken]
+[ModuleAccess("TAI_KHOAN")]
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public sealed class ManagedAccountsController(AppDbContext db, ITemporaryPasswordEmailSender email,
     IOptions<PasswordResetOptions> options) : Controller
@@ -37,10 +39,10 @@ public sealed class ManagedAccountsController(AppDbContext db, ITemporaryPasswor
         });
     }
 
-    [HttpGet]
+    [HttpGet, ModuleAccess("TAI_KHOAN", write: true)]
     public IActionResult Create() => View(new CreateManagedAccountViewModel());
 
-    [HttpPost]
+    [HttpPost, ModuleAccess("TAI_KHOAN", write: true)]
     public async Task<IActionResult> Create(CreateManagedAccountViewModel model)
     {
         model.Email = (model.Email ?? "").Trim().ToLowerInvariant();
@@ -71,7 +73,7 @@ public sealed class ManagedAccountsController(AppDbContext db, ITemporaryPasswor
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpGet]
+    [HttpGet, ModuleAccess("TAI_KHOAN", write: true)]
     public async Task<IActionResult> ChangeRole(int id)
     {
         var account = await db.TaiKhoans.AsNoTracking().SingleOrDefaultAsync(a => !a.IsDeleted && a.Id == id);
@@ -82,7 +84,7 @@ public sealed class ManagedAccountsController(AppDbContext db, ITemporaryPasswor
         });
     }
 
-    [HttpPost]
+    [HttpPost, ModuleAccess("TAI_KHOAN", write: true)]
     public async Task<IActionResult> ChangeRole(ChangeAccountRoleViewModel model)
     {
         await using var tx = await db.Database.BeginTransactionAsync();
@@ -115,7 +117,7 @@ public sealed class ManagedAccountsController(AppDbContext db, ITemporaryPasswor
     }
 
     // Retry after delivery failure without storing a plaintext temporary password.
-    [HttpPost]
+    [HttpPost, ModuleAccess("TAI_KHOAN", write: true)]
     public async Task<IActionResult> Resend(int id)
     {
         await using var tx = await db.Database.BeginTransactionAsync();
@@ -133,7 +135,7 @@ public sealed class ManagedAccountsController(AppDbContext db, ITemporaryPasswor
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpPost]
+    [HttpPost, ModuleAccess("TAI_KHOAN", write: true)]
     public async Task<IActionResult> SetActive(int id, bool active, bool confirmed = false)
     {
         if (!active && !confirmed) return BadRequest("Cần xác nhận khoá tài khoản.");
@@ -141,7 +143,7 @@ public sealed class ManagedAccountsController(AppDbContext db, ITemporaryPasswor
         await using var tx = await db.Database.BeginTransactionAsync();
         var account = await db.TaiKhoans.SingleOrDefaultAsync(a => !a.IsDeleted && a.Id == id);
         if (account is null) return NotFound();
-        if (account.VaiTro is not ("CHU_NHA" or "QUAN_LY")) return Forbid();
+        if (account.VaiTro is not ("CHU_NHA" or "QUAN_LY" or "KHACH_THUE" or "ADMIN")) return Forbid();
         account.DangHoatDong = active;
         account.RefreshTokenHash = null; account.RefreshTokenExpiry = null;
         account.FailedLoginCount = 0; account.LockedUntil = null;
@@ -153,7 +155,7 @@ public sealed class ManagedAccountsController(AppDbContext db, ITemporaryPasswor
         return RedirectToAction(nameof(Index));
     }
 
-    [HttpPost]
+    [HttpPost, ModuleAccess("TAI_KHOAN", write: true)]
     public async Task<IActionResult> Delete(int id, bool confirmed = false)
     {
         if (!confirmed) return BadRequest("Cần xác nhận xóa tài khoản.");

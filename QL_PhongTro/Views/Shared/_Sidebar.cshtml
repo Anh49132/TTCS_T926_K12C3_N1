@@ -1,6 +1,7 @@
 @inject QL_PhongTro.Authorization.PermissionService Permissions
 @{
     var allowed = (await Permissions.MenuAsync()).Select(x => x.Code).ToHashSet();
+    var accountWrite = await Permissions.AllowsAsync("TAI_KHOAN",true);
     var unprocessed = await Permissions.UnprocessedRequestCountAsync();
     var admin = User.IsInRole("ADMIN");
     var owner = User.IsInRole("CHU_NHA");
@@ -13,10 +14,15 @@
     var items = new List<(string Group, string Title, string Url, string Module, string Icon)>();
     if (admin) {
         items.AddRange(new[] {
-            ("", "Tài khoản & phân quyền", "/ManagedAccounts", "TAI_KHOAN", "users"),
-            ("", "Chủ nhà", "/ManagedAccounts?role=CHU_NHA", "TAI_KHOAN", "users"),
-            ("", "Quản lý tòa nhà", "/PhongTro/ToaNha", "PHONG_TRO", "building"),
-            ("", "Tòa nhà & phòng", "/PhongTro", "PHONG_TRO", "home"),
+            ("Quản trị", "Quản lý tài khoản", "/ManagedAccounts", "TAI_KHOAN", "users"),
+            ("Quản trị", "Tạo tài khoản nội bộ", "/ManagedAccounts/Create", "TAI_KHOAN", "users"),
+            ("Quản trị", "Phân quyền", "/Permissions", "TAI_KHOAN", "settings"),
+            ("Quản trị", "Nhật ký hoạt động", "/NhatKy", "TAI_KHOAN", "clock"),
+            ("Quản trị", "Tra cứu gửi thông báo lỗi", "/EmailGuiLog?TrangThai=THAT_BAI", "TAI_KHOAN", "bell"),
+            ("Quản trị", "Đổi mật khẩu", "/Account/ChangePassword", "TAI_KHOAN", "settings"),
+            ("Tra cứu nghiệp vụ", "Tòa nhà", "/PhongTro/ToaNha", "PHONG_TRO", "building"),
+            ("Tra cứu nghiệp vụ", "Phòng", "/PhongTro", "PHONG_TRO", "home"),
+            ("Tra cứu nghiệp vụ", "Dịch vụ & bảng giá", "/DichVu", "PHONG_TRO", "tag"),
             ("", "Tin đăng cho thuê", "/TinDang/QuanLy", "TIN_DANG", "file"),
             ("", "Yêu cầu thuê", "/YeuCau", "YEU_CAU_THUE", "file"),
             ("", "Hợp đồng", "/Modules/HOP_DONG", "HOP_DONG", "file"),
@@ -24,9 +30,7 @@
             ("", "Hóa đơn & thanh toán", "/Modules/TAI_CHINH", "TAI_CHINH", "wallet"),
             ("", "Công nợ", "/Modules/TAI_CHINH?section=cong-no", "TAI_CHINH", "money"),
             ("", "Báo hỏng & bảo trì", "/Modules/BAO_HONG", "BAO_HONG", "tool"),
-            ("", "Báo cáo", "/Modules/BAO_CAO", "BAO_CAO", "chart"),
-            ("", "Nhật ký hoạt động", "/NhatKy", "TAI_KHOAN", "clock"),
-            ("", "Cấu hình hệ thống", "/Permissions?section=cau-hinh", "TAI_KHOAN", "settings")
+            ("", "Báo cáo doanh thu & lấp đầy", "/Modules/BAO_CAO", "BAO_CAO", "chart")
         });
     } else {
         items.Add(("Tài khoản", "Thông tin tài khoản", "/Modules/TAI_KHOAN", "TAI_KHOAN", "users"));
@@ -67,14 +71,14 @@
 <a class="sidebar-brand" href="/"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="@Icon("home")" /></svg><span><strong>NhàTốt</strong><small>Sống đúng nơi</small></span></a>
 <nav class="nav flex-column" aria-label="Menu chức năng">
 <a class="sidebar-link nav-link @(path is "/" or "/Home" or "/Home/Index" ? "is-active" : "")" href="/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon("home")" /></svg><span>Tổng quan</span></a>
-@foreach (var group in items.Where(x => allowed.Contains(x.Module)).GroupBy(x => x.Group)) {
+@foreach (var group in items.Where(x => allowed.Contains(x.Module) && (x.Url != "/ManagedAccounts/Create" || accountWrite)).GroupBy(x => x.Group)) {
 <section data-menu-group="@group.Key">
 @if (!string.IsNullOrEmpty(group.Key)) { <h2>@group.Key</h2> }
 @foreach (var item in group) {
     var target = item.Url.Split('?')[0];
     var selected = (path.Equals(target, StringComparison.OrdinalIgnoreCase) || (target == "/HoSo/DanhSach" && path.Equals("/HoSo/Xem", StringComparison.OrdinalIgnoreCase))) &&
         (item.Url.Contains("section=") ? item.Url.EndsWith("section=" + section) : string.IsNullOrEmpty(section)) &&
-        (target != "/ManagedAccounts" || (item.Url.Contains("role=CHU_NHA") ? roleFilter == "CHU_NHA" : roleFilter != "CHU_NHA"));
+        (target != "/ManagedAccounts" || string.IsNullOrEmpty(section));
 <a class="sidebar-link nav-link @(selected ? "is-active" : "")" href="@item.Url" data-menu-module="@item.Module" aria-current="@(selected ? "page" : null)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon(item.Icon)" /></svg><span>@item.Title</span>@if(item.Module == "YEU_CAU_THUE" && unprocessed > 0){<span class="badge rounded-pill" aria-label="@unprocessed yêu cầu chưa xử lý">@unprocessed</span>}</a>
 }
 </section>

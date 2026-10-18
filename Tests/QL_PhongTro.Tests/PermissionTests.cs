@@ -30,15 +30,16 @@ public sealed partial class PermissionTests : IDisposable
     // Independent expected matrix from the confirmed PO decision, not from seed JSON.
     private readonly string[][] levels = [
         ["READ","READ","NONE","FULL"],
-        ["READ","FULL","READ","FULL"],
-        ["READ","FULL","WRITE","FULL"],
-        ["WRITE","FULL","READ","FULL"],
-        ["READ","FULL","READ","FULL"],
-        ["READ","FULL","WRITE","FULL"],
-        ["READ","FULL","NONE","FULL"],
-        ["WRITE","FULL","WRITE","FULL"],
-        ["NONE","FULL","READ","FULL"]
+        ["READ","FULL","READ","READ"],
+        ["READ","FULL","WRITE","READ"],
+        ["WRITE","FULL","READ","READ"],
+        ["READ","FULL","READ","READ"],
+        ["READ","FULL","WRITE","READ"],
+        ["READ","FULL","NONE","READ"],
+        ["WRITE","FULL","WRITE","READ"],
+        ["NONE","FULL","READ","READ"]
     ];
+
 
     public PermissionTests()
     {
@@ -298,8 +299,7 @@ public sealed partial class PermissionTests : IDisposable
         using var admin = await Login("ADMIN");
         Assert.Equal(HttpStatusCode.OK, (await admin.GetAsync("/PhongTro")).StatusCode);
         foreach (var action in new[] { "Create", "CreateBulk", "TaoToaNha" })
-            Assert.Contains((await admin.GetAsync("/PhongTro/" + action)).StatusCode,
-                new[] { HttpStatusCode.OK, HttpStatusCode.Found });
+            Assert.Equal(HttpStatusCode.Forbidden, (await admin.GetAsync("/PhongTro/" + action)).StatusCode);
         using var owner = await Login("CHU_NHA");
         Assert.Equal(HttpStatusCode.OK,(await owner.GetAsync("/PhongTro/TaoToaNha")).StatusCode);
     }

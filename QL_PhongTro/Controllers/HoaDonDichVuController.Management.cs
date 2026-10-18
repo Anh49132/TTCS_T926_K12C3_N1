@@ -5,12 +5,13 @@ using QL_PhongTro.ViewModels;
 namespace QL_PhongTro.Controllers;
 public partial class HoaDonDichVuController
 {
-    [HttpGet, Authorize(Roles = "CHU_NHA")]
+    [HttpGet, Authorize(Roles = "CHU_NHA,ADMIN")]
     public async Task<IActionResult> Management(int? toaNhaId, int? nam, int? thang, string? trangThai, string? q, int page = 1)
     {
         var today = DateOnly.FromDateTime(Clock.UtcNow.AddHours(7));
         var model = new QuanLyHoaDonViewModel { ToaNhaId = toaNhaId, Nam = nam, Thang = thang, TrangThai = trangThai, Q = q };
-        model.ToaNhas = await db.ToaNhas.AsNoTracking().Where(b => b.ChuNhaId == AccountId)
+        var admin = User.IsInRole("ADMIN");
+        model.ToaNhas = await db.ToaNhas.AsNoTracking().Where(b => admin || b.ChuNhaId == AccountId)
             .OrderBy(b => b.TenToaNha).Select(b => new Microsoft.AspNetCore.Mvc.Rendering.SelectListItem(b.TenToaNha,b.Id.ToString())).ToListAsync();
         if (toaNhaId.HasValue && !model.ToaNhas.Any(b => b.Value == toaNhaId.Value.ToString())) return Forbid();
         foreach(var b in model.ToaNhas) b.Selected = b.Value == toaNhaId?.ToString();
@@ -21,7 +22,7 @@ public partial class HoaDonDichVuController
             join room in db.PhongTros on contract.PhongId equals room.Id
             join building in db.ToaNhas on room.ToaNhaId equals building.Id
             join tenant in db.KhachThues on contract.KhachDungTenId equals tenant.Id
-            where building.ChuNhaId == AccountId
+            where admin || building.ChuNhaId == AccountId
             select new DongQuanLyHoaDon { Id=bill.Id, PhienBan=bill.PhienBan, ToaNhaId=building.Id, MaHoaDon=bill.MaHoaDon,
                 MaPhong=room.MaPhong, TenKhach=tenant.HoTen, Nam=bill.Nam, Thang=bill.Thang,
                 TrangThai=bill.TrangThai, NgayPhatHanh=bill.NgayPhatHanhNghiepVu, HanThanhToan=bill.HanThanhToan,
@@ -49,7 +50,7 @@ public partial class HoaDonDichVuController
         model.DaThuThang=await (from t in db.ThanhToans join h in db.HoaDons on t.HoaDonId equals h.Id
             join c in db.HopDongs on h.HopDongId equals c.Id join r in db.PhongTros on c.PhongId equals r.Id
             join b in db.ToaNhas on r.ToaNhaId equals b.Id
-            where b.ChuNhaId==AccountId && t.TrangThai=="DA_XAC_NHAN"
+            where (admin || b.ChuNhaId==AccountId) && t.TrangThai=="DA_XAC_NHAN"
                 && t.NgayThanhToan>=new DateOnly(today.Year,today.Month,1) && t.NgayThanhToan<=today
             select (long?)t.SoTien).SumAsync() ?? 0;
         var filtered=rows.Where(r=>(!toaNhaId.HasValue || r.ToaNhaId==toaNhaId)

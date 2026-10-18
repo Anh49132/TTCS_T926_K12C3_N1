@@ -16,6 +16,13 @@ public partial class TinDangController(AppDbContext db, YeuCauThueService reques
 {
     private int AccountId => int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : 0;
 
+    [HttpGet, Authorize(Roles = "ADMIN"), ModuleAccess("TIN_DANG")]
+    public async Task<IActionResult> AdminDetails(int id)
+    {
+        var detail = await GetListingAsync(id, requirePublic: false);
+        return detail is null ? NotFound() : View(detail);
+    }
+
     [HttpGet]
     public IActionResult Index()
     {
@@ -65,7 +72,7 @@ public partial class TinDangController(AppDbContext db, YeuCauThueService reques
         return model is null ? NotFound() : View(model);
     }
 
-    [Authorize(Roles = "CHU_NHA,QUAN_LY,ADMIN"), ModuleAccess("TIN_DANG", write: true), HttpGet]
+    [Authorize(Roles = "CHU_NHA,QUAN_LY,ADMIN"), ModuleAccess("TIN_DANG"), HttpGet]
     public async Task<IActionResult> QuanLy()
     {
         if (AccountId == 0) return Forbid();

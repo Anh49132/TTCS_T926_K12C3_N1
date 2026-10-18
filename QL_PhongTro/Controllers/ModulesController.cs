@@ -30,13 +30,13 @@ public class ModulesController(AppDbContext db, ITimeProvider clock) : Controlle
             _ => null
         };
         if (code == "HOP_DONG") return RedirectToAction("Index", "HopDong");
-        if (code == "TAI_CHINH" && section == null && User.IsInRole("CHU_NHA")) return RedirectToAction("Management", "HoaDonDichVu");
-        if (code == "DIEN_NUOC" && (User.IsInRole("QUAN_LY") || User.IsInRole("CHU_NHA"))) return RedirectToAction("Index", "ChiSoDienNuoc");
+        if (code == "TAI_CHINH" && section == null && (User.IsInRole("CHU_NHA") || User.IsInRole("ADMIN"))) return RedirectToAction("Management", "HoaDonDichVu");
+        if (code == "DIEN_NUOC" && (User.IsInRole("QUAN_LY") || User.IsInRole("CHU_NHA") || User.IsInRole("ADMIN"))) return RedirectToAction("Index", "ChiSoDienNuoc");
         if (code == "BAO_HONG")
         {
             if (User.IsInRole("KHACH_THUE")) return RedirectToAction("Index", "BaoHong");
             if (User.IsInRole("QUAN_LY")) return RedirectToAction("Index", "QuanLyBaoHong");
-            if (User.IsInRole("CHU_NHA")) return RedirectToAction("Index", "ChuNhaBaoHong");
+            if (User.IsInRole("CHU_NHA") || User.IsInRole("ADMIN")) return RedirectToAction("Index", "ChuNhaBaoHong");
             return View("BaoHong");
         }
         if (code == "BAO_CAO") return RedirectToAction("Index", "BaoCao");

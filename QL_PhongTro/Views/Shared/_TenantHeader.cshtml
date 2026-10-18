@@ -48,7 +48,7 @@
     <div class="tenant-header-actions">
     @if (showNotifications) { <partial name="_PaymentBell" /> }
     <details class="tenant-account">
-        <summary aria-label="Tài khoản @name"><span class="tenant-avatar" aria-hidden="true">@(string.IsNullOrWhiteSpace(name) ? "K" : System.Globalization.StringInfo.GetNextTextElement(name).ToUpperInvariant())</span><span class="tenant-account-name">@name</span><svg class="tenant-account-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 9 5 5 5-5" /></svg></summary>
+        <summary aria-label="Tài khoản @name"><span class="tenant-avatar" aria-hidden="true"><img src="/PersonalAccount/Avatar" alt="" /></span><span class="tenant-account-name">@name</span><svg class="tenant-account-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 9 5 5 5-5" /></svg></summary>
         <div class="tenant-account-panel">
             <a asp-controller="HoSo" asp-action="Xem">Hồ sơ của tôi</a>
             <a asp-controller="Account" asp-action="ChangePassword">Đổi mật khẩu</a>

@@ -1,3 +1,18 @@
+### 18/10/2026 – Chỉnh sửa tài khoản cá nhân cho bốn vai trò
+- Thêm trang sửa họ tên/SĐT và thay/xóa ảnh đại diện; liên kết từ menu và hồ sơ, ảnh hiện trên header. Đồng bộ tên/SĐT hồ sơ khách, email xác thực và vai trò giữ nguyên.
+- Ảnh private JPG/PNG ≤5MB, xác minh/resize 512px/bỏ metadata, lưu cạnh DB và ignore Git; CSRF, sở hữu, chống trùng SĐT và biểu mẫu cũ ở backend. Không nâng schema, không sửa DB đang dùng.
+- Build, 7 kiểm thử và Edge bản sao DB cho cả bốn vai trò ở desktop/360px đạt. Server QA đã dừng. Bàn giao: [docs/personal-account-20261018.md](docs/personal-account-20261018.md).
+
+### 18/10/2026 – Kéo di chuyển chatbot
+- Kéo bong bóng chat để đổi vị trí; bấm vẫn mở/thu nhỏ. Kéo thanh tiêu đề để di chuyển hộp chat độc lập; nút đóng/đặt lại và nội dung chat giữ thao tác bình thường.
+- Pointer Events hỗ trợ chuột/cảm ứng; có ngưỡng phân biệt bấm và kéo, giữ trong màn hình và căn lại khi resize. Không lưu vị trí hoặc thay đổi API/DB.
+- Edge headless kiểm tra chuột, cảm ứng, bấm mở/đóng, giới hạn màn hình và resize 1440→360 đạt trên trang QA tĩnh dùng đúng CSS/JS. Kết quả trong `data/chat-drag-qa`; chưa thử thiết bị cảm ứng thật. Không khởi động server.
+
+### 18/10/2026 – Giao diện và quyền Admin theo phạm vi đã chốt
+- Menu và tổng quan quản trị mới; đọc ma trận DB, bỏ đặc cách toàn quyền Admin, chặn ghi nghiệp vụ kể cả DB FULL cũ. Seed Admin READ ở tám module nghiệp vụ, FULL ở tài khoản. Không chạy updater/seed hoặc sửa DB hiện dùng.
+- Nối danh sách hóa đơn, chỉ số lịch sử và báo hỏng vào dữ liệu thật; xem chi tiết tin đăng mọi trạng thái. Giữ nhật ký đầy đủ, chỉ đọc. Khóa được tài khoản các vai trò, không tự khóa; giữ gửi mật khẩu tạm và buộc đổi lần đầu.
+- Build và năm kiểm thử trọng tâm đạt; Edge bản sao DB đạt trang/chi tiết và tổng quan desktop/360px. Nhóm rộng còn mười kiểm thử trang công khai với kỳ vọng redirect/nhãn cũ chưa khớp. Bàn giao: [docs/admin-access-20261018.md](docs/admin-access-20261018.md). Server QA đã dừng; chưa push.
+
 ### 18/10/2026 – Căn giãn dòng quản lý tài khoản
 - Thu gọn padding bộ lọc/hàng bảng, khoảng cách nhóm thao tác; line-height 1.5, nhãn cách ô 6px. Giữ control 44px, chỉ CSS.
 - Diff và HTTP CSS đạt; chưa nghiệm thu trực quan thiết bị thật.

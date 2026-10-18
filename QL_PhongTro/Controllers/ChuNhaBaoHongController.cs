@@ -5,7 +5,7 @@ using QL_PhongTro.Authorization;
 using QL_PhongTro.Services;
 namespace QL_PhongTro.Controllers;
 
-[Authorize(Roles = "CHU_NHA"), ModuleAccess("BAO_HONG")]
+[Authorize(Roles = "CHU_NHA,ADMIN"), ModuleAccess("BAO_HONG")]
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 public sealed class ChuNhaBaoHongController(ChuNhaBaoHongService service, BaoHongImageStore images) : Controller
 {
