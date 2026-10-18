@@ -216,7 +216,8 @@ public sealed partial class PermissionTests : IDisposable
             {
                 var marker = "data-menu-module=\"" + modules[m] + "\"";
                 var allowed = levels[m][r] != "NONE";
-                var showMenu = allowed && roles[r] != "KHACH_THUE";
+                var showMenu = allowed && roles[r] != "KHACH_THUE"
+                    && !(roles[r] == "CHU_NHA" && modules[m] == "TAI_KHOAN");
                 Assert.Equal(showMenu,home.Contains(marker));
                 var api = await client.GetAsync("/api/modules/" + modules[m]);
                 Assert.Equal(allowed ? HttpStatusCode.OK : HttpStatusCode.Forbidden,api.StatusCode);

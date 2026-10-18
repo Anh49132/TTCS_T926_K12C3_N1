@@ -1,3 +1,6 @@
+### 18/10/2026 – Bỏ mục tài khoản trùng lặp trên sidebar Chủ nhà
+- Bỏ mục Thông tin tài khoản và nhóm Tài khoản khỏi sidebar Chủ nhà; hồ sơ cá nhân tiếp tục truy cập từ menu tài khoản góc trên. Không đổi quyền backend hoặc DB.
+
 ### 18/10/2026 – Bỏ bảng phân quyền khỏi giao diện Chủ nhà
 - Sửa đường dẫn module Thông tin tài khoản về `/HoSo/CuaToi`; Admin vẫn mở bảng phân quyền. Trang `/Permissions` chỉ cho Admin, vai trò khác nhận 403; không đổi cấu hình quyền trong DB.
 - Kiểm thử HTTP đường dẫn tài khoản của chủ nhà, chặn bảng phân quyền, menu và ma trận Admin; không nâng DB.

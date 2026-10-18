@@ -33,7 +33,7 @@
             ("", "Báo cáo doanh thu & lấp đầy", "/Modules/BAO_CAO", "BAO_CAO", "chart")
         });
     } else {
-        items.Add(("Tài khoản", "Thông tin tài khoản", "/Modules/TAI_KHOAN", "TAI_KHOAN", "users"));
+        if (!owner) items.Add(("Tài khoản", "Thông tin tài khoản", "/Modules/TAI_KHOAN", "TAI_KHOAN", "users"));
         items.Add(("Vận hành", "Quản lý tòa nhà", "/PhongTro/ToaNha", "PHONG_TRO", "building"));
         items.Add(("Vận hành", "Quản lý phòng", "/PhongTro", "PHONG_TRO", "home"));
         if (owner) items.Add(("Vận hành", "Hồ sơ khách thuê", "/HoSo/DanhSach", "HOP_DONG", "users"));
