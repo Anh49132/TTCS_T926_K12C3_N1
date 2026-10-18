@@ -1,3 +1,7 @@
+### 18/10/2026 – Bỏ bảng phân quyền khỏi giao diện Chủ nhà
+- Sửa đường dẫn module Thông tin tài khoản về `/HoSo/CuaToi`; Admin vẫn mở bảng phân quyền. Trang `/Permissions` chỉ cho Admin, vai trò khác nhận 403; không đổi cấu hình quyền trong DB.
+- Kiểm thử HTTP đường dẫn tài khoản của chủ nhà, chặn bảng phân quyền, menu và ma trận Admin; không nâng DB.
+
 ### 18/10/2026 – Email báo và xác nhận thanh toán
 - Thêm email khi khách báo/hủy báo thanh toán và khi chủ nhà xác nhận/từ chối; liên kết mở hóa đơn đúng vai trò. Hàng đợi dùng bảng email_gui_log hiện có, không nâng schema hay gửi bù lịch sử.
 - Kiểm tra lại người nhận/quyền, bỏ thông báo lỗi thời, thử lại tối đa ba lần; Admin lọc riêng email thanh toán. Chờ xác nhận không giảm nợ; lỗi tạo hàng đợi rollback nghiệp vụ.

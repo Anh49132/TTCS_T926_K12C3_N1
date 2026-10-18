@@ -11,7 +11,11 @@ namespace QL_PhongTro.Controllers;
 public class PermissionsController(AppDbContext db, PermissionService permissions) : Controller
 {
     [HttpGet("/Permissions")]
-    public async Task<IActionResult> Index() => View(await MatrixAsync());
+    public async Task<IActionResult> Index()
+    {
+        if (!User.IsInRole("ADMIN")) return Forbid();
+        return View(await MatrixAsync());
+    }
 
     [HttpGet("/api/permissions")]
     public async Task<IActionResult> Data() => Ok(await MatrixAsync());

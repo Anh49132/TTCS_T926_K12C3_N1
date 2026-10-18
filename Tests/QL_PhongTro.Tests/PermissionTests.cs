@@ -194,6 +194,18 @@ public sealed partial class PermissionTests : IDisposable
     }
 
     [Fact]
+    public async Task OwnerAccountMenuOpensOwnProfileAndCannotOpenPermissionMatrix()
+    {
+        using var owner = await Login("CHU_NHA");
+        Assert.Equal(HttpStatusCode.Forbidden, (await owner.GetAsync("/Permissions")).StatusCode);
+        var account = await owner.GetAsync("/Modules/TAI_KHOAN");
+        Assert.Equal(HttpStatusCode.Redirect, account.StatusCode);
+        Assert.Equal("/HoSo/CuaToi", account.Headers.Location?.OriginalString);
+        var home = await owner.GetStringAsync("/");
+        Assert.DoesNotContain("href=\"/Permissions\"", home);
+    }
+
+    [Fact]
     public async Task MenuAndEveryModuleRouteMatchMatrixForAllRoles()
     {
         for(int r=0;r<roles.Length;r++)

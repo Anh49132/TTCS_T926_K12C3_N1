@@ -45,6 +45,7 @@ public class ModulesController(AppDbContext db, ITimeProvider clock) : Controlle
             if (!User.IsInRole("CHU_NHA") && !User.IsInRole("ADMIN")) return Forbid();
             return RedirectToAction(nameof(CongNo));
         }
+        if (code == "TAI_KHOAN" && User.IsInRole("ADMIN")) return Redirect("/Permissions");
         if (code is "PHONG_TRO" or "TAI_KHOAN" or "TIN_DANG") return Redirect(PermissionService.Url(code));
         return View(module);
     }

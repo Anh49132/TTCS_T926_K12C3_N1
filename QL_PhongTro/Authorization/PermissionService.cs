@@ -39,7 +39,7 @@ public sealed class PermissionService(AppDbContext db, IHttpContextAccessor acce
     }
     public static string Url(string code) => code switch
     {
-        "TAI_KHOAN" => "/Permissions",
+        "TAI_KHOAN" => "/HoSo/CuaToi",
         "PHONG_TRO" => "/PhongTro",
         "TIN_DANG" => "/TinDang",
         "BAO_CAO" => "/BaoCao",
