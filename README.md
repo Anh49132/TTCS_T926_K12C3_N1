@@ -60,7 +60,7 @@ dotnet run --project .\QL_PhongTro\QL_PhongTro.csproj -- --create-local-admin
 dotnet run --project .\QL_PhongTro\QL_PhongTro.csproj --launch-profile http
 ```
 
-Updater kiểm tra schema, sao lưu và nâng lên phiên bản hiện hành v22; không tạo lại database. Web không tự nâng schema cũ. Sau khi cập nhật, có thể kiểm tra chỉ đọc bằng `dotnet run --project .\QL_PhongTro\QL_PhongTro.csproj -- --check-database`.
+Updater kiểm tra schema, sao lưu và nâng lên phiên bản hiện hành v41; không tạo lại database. Web không tự nâng schema cũ. Sau khi cập nhật, có thể kiểm tra chỉ đọc bằng `dotnet run --project .\QL_PhongTro\QL_PhongTro.csproj -- --check-database`.
 Truy cập http://localhost:5247. Giữ terminal đang hiện `Now listening on: http://localhost:5247` mở trong lúc sử dụng. Muốn dừng server, bấm vào đúng terminal đó, nhấn Ctrl+C và chờ dấu nhắc `PS C:\...>` xuất hiện lại rồi mới build hoặc chạy lần nữa.
 
 Không cần cập nhật database hoặc tạo ADMIN mỗi lần chạy. Sau khi pull thay đổi schema, chạy updater một lần. Tài khoản mới đang chờ xác nhận thì tiếp tục nhập/gửi lại mã, không cần xóa rồi đăng ký lại.

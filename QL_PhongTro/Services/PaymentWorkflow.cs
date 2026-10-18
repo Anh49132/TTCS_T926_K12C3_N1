@@ -45,12 +45,14 @@ public static class PaymentWorkflow
             "DA_XAC_NHAN" => $"Chủ nhà đã xác nhận {amount} cho hóa đơn {context.MaHoaDon}. Xem số còn phải trả trong hóa đơn.",
             _ => $"Báo trả {amount} của hóa đơn {context.MaHoaDon} bị từ chối. Xem lý do trong hóa đơn và gửi lại nếu cần."
         };
-        db.ThongBaoThanhToans.Add(new() { ThanhToanId = paymentId, NguoiNhanId = recipient.Value, Loai = kind,
+        var notice = new ThongBaoThanhToan { ThanhToanId = paymentId, NguoiNhanId = recipient.Value, Loai = kind,
             TieuDe = title, NoiDung = body, NgayTao = now,
-            DuongDan = (ownerEvent ? $"/HoaDonDichVu/Details/{context.InvoiceId}" : $"/ThongBao/HoaDon/{context.InvoiceId}") + $"#payment-report-{paymentId}" });
+            DuongDan = (ownerEvent ? $"/HoaDonDichVu/Details/{context.InvoiceId}" : $"/ThongBao/HoaDon/{context.InvoiceId}") + $"#payment-report-{paymentId}" };
+        db.ThongBaoThanhToans.Add(notice);
         if (kind != "BAO_MOI")
             await db.ThongBaoThanhToans.Where(x => x.ThanhToanId == paymentId && x.Loai == "BAO_MOI" && x.NgayDoc == null)
                 .ExecuteUpdateAsync(set => set.SetProperty(x => x.NgayDoc, now), ct);
         await db.SaveChangesAsync(ct);
+        await PaymentEmailQueue.EnqueueAsync(db,notice,context.InvoiceId,now,ct);
     }
 }

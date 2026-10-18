@@ -59,7 +59,7 @@ public sealed partial class BaoHongTests
     [InlineData("UPDATE tai_khoan SET is_deleted=1 WHERE id=1")]
     [InlineData("UPDATE tai_khoan SET email_confirmed=0 WHERE id=1")]
     [InlineData("UPDATE tai_khoan SET must_change_password=1 WHERE id=1")]
-    [InlineData("UPDATE tai_khoan SET vai_tro='ADMIN' WHERE id=1")]
+    [InlineData("UPDATE tai_khoan SET vai_tro='KHACH_THUE' WHERE id=1")]
     [InlineData("UPDATE role_permission SET AccessLevel='NONE' WHERE RoleCode='CHU_NHA' AND ModuleCode='BAO_HONG'")]
     [InlineData("DELETE FROM role_permission WHERE RoleCode='CHU_NHA' AND ModuleCode='BAO_HONG'")]
     public async Task OwnerReadChecksLiveAccountAndModulePermission(string change)

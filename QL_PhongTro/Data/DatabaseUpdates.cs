@@ -7,7 +7,7 @@ namespace QL_PhongTro.Data;
 // Append new versions; never rewrite an update already shared with the team.
 public static class DatabaseUpdates
 {
-    internal const int CurrentVersion = 40;
+    internal const int CurrentVersion = 41;
     private static SqliteConnection Open(string path, bool readOnly)
     {
         var c = new SqliteConnection(new SqliteConnectionStringBuilder
@@ -51,6 +51,14 @@ public static class DatabaseUpdates
         }
         if (requireCurrentVersion && schemaVersion != CurrentVersion)
             problems.Add($"app_schema_version: expected {CurrentVersion}, actual {schemaVersion}");
+        if(schemaVersion>=41 && !HasTable(c,"email_bao_hong"))problems.Add("Missing email_bao_hong (v41)");
+        if(schemaVersion>=41 && HasTable(c,"email_bao_hong"))
+        {
+            using var columns=c.CreateCommand();columns.CommandText="PRAGMA table_info(email_bao_hong)";
+            var names=new HashSet<string>();using(var reader=columns.ExecuteReader())while(reader.Read())names.Add(reader.GetString(1));
+            foreach(var name in new[]{"id","bao_hong_id","su_kien","nguoi_nhan_id","vai_tro_nhan","email_nhan","tieu_de","noi_dung","duong_dan","trang_thai","so_lan_gui","ngay_tao","lan_gui_tiep","khoa_xu_ly","khoa_den","ngay_gui","loi"})
+                if(!names.Contains(name))problems.Add("Missing email_bao_hong."+name);
+        }
         var contracts = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "hop_dong", "ky_hop_dong" };
         var services = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "dich_vu", "cau_hinh_dich_vu", "khoi_tao_dich_vu" };
         var invoices = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "hoa_don", "chi_tiet_hoa_don", "hop_dong_dich_vu" };
@@ -502,6 +510,7 @@ public static class DatabaseUpdates
         if (version < 38) OwnerBankSchema.Upgrade(c);
         if (version < 39) PaymentWorkflowSchema.Upgrade(c);
         if (version < 40) CheckoutRequestSchema.Upgrade(c);
+        if (version < 41) RepairEmailSchema.Upgrade(c);
         Check(path);
         Console.WriteLine($"Database updated to version {CurrentVersion}. Existing business rows preserved.");
     }

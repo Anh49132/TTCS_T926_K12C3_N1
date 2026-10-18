@@ -199,6 +199,6 @@ public sealed partial class RoomServicesTests
         using var verify=new SqliteConnection($"Data Source={target};Pooling=False");verify.Open();using var check=verify.CreateCommand();
         check.CommandText="PRAGMA integrity_check";Assert.Equal("ok",check.ExecuteScalar());check.CommandText="PRAGMA foreign_key_check";using(var reader=check.ExecuteReader())Assert.False(reader.Read());
         check.CommandText="SELECT COUNT(*) FROM xac_nhan_tat_toan";Assert.Equal(0L,check.ExecuteScalar());
-        check.CommandText="SELECT MAX(version) FROM app_schema_version";Assert.Equal(40L,check.ExecuteScalar());
+        check.CommandText="SELECT MAX(version) FROM app_schema_version";Assert.Equal(41L,check.ExecuteScalar());
     }
 }

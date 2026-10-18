@@ -157,6 +157,7 @@ public sealed class QuanLyBaoHongService(AppDbContext db, ITimeProvider clock, B
         var action = kind == "TRANG_THAI" ? "DOI_TRANG_THAI" : "PHAN_HOI";
         var metadata = JsonSerializer.Serialize(new { TraoDoiId = item.Id, item.Loai, item.TrangThaiTruoc, item.TrangThaiSau });
         await db.Database.ExecuteSqlInterpolatedAsync($"INSERT INTO nhat_ky_hoat_dong(nguoi_thuc_hien_id,ten_nguoi_thuc_hien,vai_tro_luc_thuc_hien,loai_doi_tuong,doi_tuong_id,hanh_dong,du_lieu_sau,thoi_diem) VALUES({actor.Id},{actor.HoTen},{actor.VaiTro},{"bao_hong"},{id},{action},{metadata},{now})", ct);
+        await RepairEmailQueue.EnqueueAsync(db,report,"CAP_NHAT:"+item.Id,managerId,target,now,ct);
         await tx!.CommitAsync(ct); return item;
     }
 }

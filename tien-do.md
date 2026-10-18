@@ -1,3 +1,13 @@
+### 18/10/2026 – Email báo và xác nhận thanh toán
+- Thêm email khi khách báo/hủy báo thanh toán và khi chủ nhà xác nhận/từ chối; liên kết mở hóa đơn đúng vai trò. Hàng đợi dùng bảng email_gui_log hiện có, không nâng schema hay gửi bù lịch sử.
+- Kiểm tra lại người nhận/quyền, bỏ thông báo lỗi thời, thử lại tối đa ba lần; Admin lọc riêng email thanh toán. Chờ xác nhận không giảm nợ; lỗi tạo hàng đợi rollback nghiệp vụ.
+- 23 kiểm thử liên quan đạt; chưa gửi SMTP thật, pickup vẫn lưu thư local. Không khởi động server. Chi tiết: [docs/payment-email-20261018.md](docs/payment-email-20261018.md).
+
+### 18/10/2026 – Email báo hỏng và cập nhật, schema v41
+- Báo mới gửi chủ nhà/quản lý được phân công; đổi trạng thái/phản hồi gửi khách đã báo và chủ nhà. Hàng đợi cùng transaction, unique chống tạo trùng, kiểm tra lại quyền/người nhận lúc gửi, ba lần retry, tiếp tục sau khởi động lại.
+- Admin có mục email báo hỏng trong tra cứu lỗi gửi; dùng chung SMTP/pickup hiện có, không đổi credential hoặc tự gửi bù lịch sử. Pickup vẫn chỉ tạo thư local.
+- 86 kiểm thử đạt; bản sao v40→v41 giữ nguyên 58 bảng/25.130 dòng, integrity/FK và chạy lặp đạt. Sau khi người dùng cho phép, đã backup/nâng DB đang dùng lên v41, bảo toàn dữ liệu và check schema đạt; hàng đợi rỗng, không gửi bù. Giữ cấu hình pickup, server tắt. Bàn giao: [docs/repair-email-20261018.md](docs/repair-email-20261018.md).
+
 ### 18/10/2026 – Chỉnh sửa tài khoản cá nhân cho bốn vai trò
 - Thêm trang sửa họ tên/SĐT và thay/xóa ảnh đại diện; liên kết từ menu và hồ sơ, ảnh hiện trên header. Đồng bộ tên/SĐT hồ sơ khách, email xác thực và vai trò giữ nguyên.
 - Ảnh private JPG/PNG ≤5MB, xác minh/resize 512px/bỏ metadata, lưu cạnh DB và ignore Git; CSRF, sở hữu, chống trùng SĐT và biểu mẫu cũ ở backend. Không nâng schema, không sửa DB đang dùng.

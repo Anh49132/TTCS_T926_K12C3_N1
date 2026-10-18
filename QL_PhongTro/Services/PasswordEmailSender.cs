@@ -44,12 +44,40 @@ public interface IQueuedInvoiceEmailSender
     Task SendIssuedAsync(string email, string subject, string body, string path);
 }
 
+public interface IRepairEmailSender
+{
+    Task SendRepairAsync(string email,string subject,string body,string path);
+}
+
+public interface IPaymentEmailSender
+{
+    Task SendPaymentAsync(string email,string subject,string body,string path);
+}
+
 public enum EmailDeliveryMode { Pickup, Smtp }
 
 public sealed record EmailDeliveryResult(EmailDeliveryMode Mode, string? PickupDirectory = null, string? PickupFilePath = null);
 
-public sealed class PasswordEmailSender(IOptions<PasswordResetOptions> options, IWebHostEnvironment environment) : IPasswordEmailSender, ITemporaryPasswordEmailSender, IRegistrationEmailSender, IAppointmentEmailSender, IQueuedInvoiceEmailSender
+public sealed class PasswordEmailSender(IOptions<PasswordResetOptions> options, IWebHostEnvironment environment) : IPasswordEmailSender, ITemporaryPasswordEmailSender, IRegistrationEmailSender, IAppointmentEmailSender, IQueuedInvoiceEmailSender, IRepairEmailSender, IPaymentEmailSender
 {
+    public Task SendPaymentAsync(string email,string subject,string body,string path)
+    {
+        if(!Uri.TryCreate(options.Value.PublicBaseUrl,UriKind.Absolute,out var origin)
+            || (origin.Scheme!="https" && !(environment.IsDevelopment() && origin.Scheme=="http" && origin.IsLoopback))
+            || !string.IsNullOrEmpty(origin.UserInfo) || !string.IsNullOrEmpty(origin.Query) || !string.IsNullOrEmpty(origin.Fragment)
+            || !System.Text.RegularExpressions.Regex.IsMatch(path,@"^/(HoaDonDichVu/Details|ThongBao/HoaDon)/[1-9][0-9]*(#payment-report-[1-9][0-9]*)?$"))
+            throw new InvalidOperationException("Liên kết thanh toán không hợp lệ.");
+        return DeliverAsync(email,subject,body+"\n\nXem thanh toán: "+options.Value.PublicBaseUrl.TrimEnd('/')+path);
+    }
+    public Task SendRepairAsync(string email,string subject,string body,string path)
+    {
+        if(!Uri.TryCreate(options.Value.PublicBaseUrl,UriKind.Absolute,out var origin)
+            || (origin.Scheme!="https" && !(environment.IsDevelopment() && origin.Scheme=="http" && origin.IsLoopback))
+            || !string.IsNullOrEmpty(origin.UserInfo) || !string.IsNullOrEmpty(origin.Query) || !string.IsNullOrEmpty(origin.Fragment)
+            || !System.Text.RegularExpressions.Regex.IsMatch(path,@"^/(BaoHong|QuanLyBaoHong|ChuNhaBaoHong)/Details/[1-9][0-9]*$"))
+            throw new InvalidOperationException("Liên kết báo hỏng không hợp lệ.");
+        return DeliverAsync(email,subject,body+"\n\nXem báo hỏng: "+options.Value.PublicBaseUrl.TrimEnd('/')+path);
+    }
     public Task SendIssuedAsync(string email, string subject, string body, string path)
     {
         if (!Uri.TryCreate(options.Value.PublicBaseUrl, UriKind.Absolute, out var origin)

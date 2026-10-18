@@ -156,6 +156,7 @@ public sealed class BaoHongService(AppDbContext db, ITimeProvider clock, BaoHong
             await db.SaveChangesAsync(ct);
             var audit = JsonSerializer.Serialize(new { issue.MaBaoHong, issue.PhongId, issue.HopDongId, issue.MucDo, issue.TrangThai });
             await db.Database.ExecuteSqlInterpolatedAsync($"INSERT INTO nhat_ky_hoat_dong(nguoi_thuc_hien_id,ten_nguoi_thuc_hien,vai_tro_luc_thuc_hien,loai_doi_tuong,doi_tuong_id,hanh_dong,du_lieu_sau,thoi_diem) VALUES({actor.Id},{actor.HoTen},{actor.VaiTro},{"bao_hong"},{issue.Id},{"TAO"},{audit},{now})", ct);
+            await RepairEmailQueue.EnqueueAsync(db,issue,"MOI:"+issue.Id,actorId,null,now,ct);
             await tx!.CommitAsync(ct); return issue;
         }
         catch
