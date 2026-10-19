@@ -112,3 +112,30 @@ body.tenant-sidebar-open{overflow:hidden}/* Bootstrap tenant drawer with consist
 /* Keep signed-in tenant header identical in public and workspace layouts. */
 .role-tenant .tenant-header .tenant-avatar{overflow:hidden}
 .role-tenant .tenant-header .tenant-avatar img{display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit}
+/* Invoice notifications: scoped to the notification pagination landmark. */
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]){max-width:1100px!important;width:100%;margin:0 auto;padding:0!important;color:#25282d;font-size:13px;line-height:1.6}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"])>h1{font-size:24px;font-weight:700;line-height:1.3;letter-spacing:-.3px;margin:0 0 8px}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"])>p{color:#858c96;font-size:13px;line-height:1.6;margin:0 0 24px}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"])>.alert-light{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:240px;padding:32px 20px;border:1px solid #e9eaec!important;border-radius:14px;background:#fff;color:#697380;text-align:center;box-shadow:0 2px 8px #25282d04;margin-bottom:16px}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"])>.alert-light:before{content:'';width:56px;height:56px;display:block;border-radius:16px;background:#f4efe4 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24' fill='none' stroke='%23967b4d' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4'/%3E%3C/svg%3E") center/28px no-repeat}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"])>.card{border:1px solid #e9eaec;border-radius:14px;background:#fff;box-shadow:0 2px 8px #25282d04;margin-bottom:16px!important}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .card-body{padding:20px}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) h2{font-size:16px;line-height:1.5;font-weight:600;margin:0 0 10px;overflow-wrap:anywhere}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .badge{font-size:10px;font-weight:500;padding:5px 9px;border-radius:20px;background:#f3eddf!important;color:#80663a;vertical-align:middle;margin-left:6px}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .card p{font-size:13px;line-height:1.6;margin-bottom:12px;overflow-wrap:anywhere}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .card .text-muted{font-size:12px;color:#858c96!important}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .btn{font-size:12px;line-height:1.5;min-height:40px;padding:9px 14px;border-radius:8px}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .btn-dark{background:#30343b;border-color:#30343b;color:#fff}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .btn-outline-secondary{background:#fff;border-color:#dfe3e8;color:#626974}
+.role-tenant .container>nav[aria-label="Phân trang thông báo"]{justify-content:flex-end;padding:16px 0;border-top:1px solid #e9eaec;color:#858c96;font-size:12px;line-height:1.5;flex-wrap:wrap}
+@media(max-width:600px){.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .card-body{padding:16px}.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"])>.alert-light{min-height:210px;padding:24px 16px}.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .card .btn{width:100%}.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .card form{width:100%}}
+/* Even spacing in invoice notifications. */
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"])>h1{line-height:1.4;margin-bottom:6px}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"])>p{line-height:1.6;margin-bottom:20px}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"])>.alert-light{gap:14px;line-height:1.6;margin-bottom:16px}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .card h2{line-height:1.5;margin-bottom:10px}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .card p{line-height:1.6;margin:0 0 12px}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .card .text-muted{line-height:1.5;margin-bottom:16px}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .card .d-flex{align-items:center;gap:10px!important}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .card form{margin:0}
+.role-tenant .container>nav[aria-label="Phân trang thông báo"]{gap:12px!important;line-height:1.5;padding-top:16px;padding-bottom:16px}

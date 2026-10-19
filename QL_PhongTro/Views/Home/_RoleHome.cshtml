@@ -35,7 +35,7 @@ else
     {
         @if (dashboard.TenantContracts.Count > 0) {
             @foreach (var contract in dashboard.TenantContracts.Take(3)) {
-                <section class="tenant-welcome-card latte-tenant-room tenant-contract-card">
+                <section class="tenant-welcome-card latte-tenant-room tenant-contract-card card shadow-sm">
                     <div><span class="stat-icon">⌂</span><p>Phòng của tôi · @contract.Label</p><h2>Phòng @contract.Room · @contract.Building</h2><span>@contract.Code · @contract.Role · @(contract.Start?.ToString("dd/MM/yyyy") ?? "—") đến @(contract.End?.ToString("dd/MM/yyyy") ?? "—")</span>@if(contract.Rent > 0){<small>@contract.Rent.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")) đ/tháng</small>}</div>
                     <a class="btn btn-primary" asp-controller="HopDongCuaToi" asp-action="Details" asp-route-maHopDong="@contract.Code">Xem hợp đồng →</a>
                 </section>
@@ -47,7 +47,7 @@ else
                 <a class="btn btn-primary" asp-controller="HopDongCuaToi" asp-action="Index">Hợp đồng của tôi →</a>
             </section>
         }
-        <section class="dashboard-stat-grid tenant-stat-grid" aria-label="Tổng quan yêu cầu">
+        <section class="dashboard-stat-grid tenant-stat-grid row g-3" aria-label="Tổng quan yêu cầu">
             <div class="dashboard-stat"><span class="stat-icon">▧</span><small>Hóa đơn cần thanh toán</small><strong>@(dashboard.TenantInvoicesReady ? dashboard.TenantUnpaidInvoices.ToString() : "—")</strong><span>@if(dashboard.TenantInvoicesReady){<a asp-controller="ThongBao" asp-action="DanhSach">Xem hóa đơn →</a>}else{<text>@dashboard.TenantInvoiceMessage</text>}</span></div>
             <div class="dashboard-stat"><span class="stat-icon">＄</span><small>Tổng cần trả</small><strong>@(dashboard.TenantInvoicesReady ? dashboard.TenantAmountDue.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")) + " đ" : "—")</strong><span>Chỉ trừ khoản thanh toán đã xác nhận</span></div>
             <a asp-controller="YeuCau" asp-action="Index" class="dashboard-stat"><span class="stat-icon">▧</span><small>Yêu cầu của tôi</small><strong>@dashboard.YeuCauCuaToi</strong><span>Xem tất cả →</span></a>

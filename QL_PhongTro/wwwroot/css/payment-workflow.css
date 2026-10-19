@@ -6,3 +6,69 @@
 .pw-report-archive{padding:14px 0;border-top:1px solid #edf0f3;scroll-margin-top:95px}@media(min-width:1101px){.pw-tenant-layout.has-pending .pw-tenant-main{display:contents}.pw-tenant-layout.has-pending .pw-tenant-main>.pw-stats{grid-column:1/-1}.pw-tenant-layout.has-pending .pw-tenant-main>section{grid-column:1}.pw-tenant-layout.has-pending .pw-tenant-side{grid-column:2;grid-row:2/span 6}.pw-tenant-layout.has-pending .pw-invoice-facts{grid-template-columns:1fr}}
 .pw-bank-memo{flex-basis:100%;font-size:12px;overflow-wrap:anywhere}.pw-bank-memo small{color:#737b89}.pw-bank-memo strong{display:block;margin-top:4px}
 .payment-management .flow-metrics strong{font-size:clamp(18px,1.35vw,24px);font-variant-numeric:tabular-nums}
+/* Bootstrap card layout for tenant invoice details and payment reporting. */
+.role-tenant .tenant-payment-detail{max-width:1440px;padding:0;margin:auto;font-size:13px;line-height:1.5;min-width:0}
+.role-tenant .tenant-payment-detail .pw-breadcrumb{margin-bottom:16px;font-size:12px;line-height:1.5}
+.role-tenant .tenant-payment-detail .pw-breadcrumb a{text-decoration:none}
+.role-tenant .tenant-payment-detail .pw-heading{display:flex;flex-wrap:wrap;gap:12px 16px;align-items:center;margin-bottom:20px}
+.role-tenant .tenant-payment-detail .pw-heading>div{order:-1;flex:1 1 calc(100% - 160px)}
+.role-tenant .tenant-payment-detail .pw-heading>button{order:-1}
+.role-tenant .tenant-payment-detail .pw-heading h1{font-size:24px;line-height:1.4;font-weight:700;margin:0 0 6px;overflow-wrap:anywhere;letter-spacing:-.3px}
+.role-tenant .tenant-payment-detail .pw-heading p{font-size:12px;line-height:1.6;color:#858c96;margin:0}
+.role-tenant .tenant-payment-detail .btn{min-height:40px;padding:9px 14px;border-radius:8px;font-size:12px;line-height:1.5;font-weight:500}
+.role-tenant .tenant-payment-detail .btn-outline-secondary{background:#fff;border-color:#dfe3e8;color:#626974}
+.role-tenant .tenant-payment-detail .pw-tenant-layout{grid-template-columns:minmax(0,1.8fr) minmax(320px,1fr);gap:16px}
+.role-tenant .tenant-payment-detail .pw-card{padding:20px;border:1px solid #e9eaec;border-radius:14px;box-shadow:0 2px 8px #25282d04;margin-bottom:16px}
+.role-tenant .tenant-payment-detail .pw-card h2{font-size:16px;line-height:1.5;font-weight:600;margin-bottom:16px}
+.role-tenant .tenant-payment-detail .pw-card h3{font-size:14px;line-height:1.5}
+.role-tenant .tenant-payment-detail .pw-stats{gap:12px}
+.role-tenant .tenant-payment-detail .pw-stats .pw-card{padding:18px 20px}
+.role-tenant .tenant-payment-detail .pw-stats span{font-size:12px;line-height:1.5;color:#858c96}
+.role-tenant .tenant-payment-detail .pw-stats strong{font-size:24px;line-height:1.4;margin-top:8px;font-weight:700}
+.role-tenant .tenant-payment-detail .pw-badge{border-radius:20px;padding:5px 9px;font-size:11px;line-height:1.5}
+.role-tenant .tenant-payment-detail .pw-table{font-size:12px;line-height:1.6}
+.role-tenant .tenant-payment-detail .pw-table th,.role-tenant .tenant-payment-detail .pw-table td{padding:12px 10px;border-color:#eeeff0}
+.role-tenant .tenant-payment-detail .pw-table thead th{background:#f7f8f9;color:#697380;font-size:11px;font-weight:600}
+.role-tenant .tenant-payment-detail .pw-totals{margin:16px 0 0}
+.role-tenant .tenant-payment-detail .pw-totals>div{padding:11px 6px;gap:16px;line-height:1.6;border-color:#eeeff0}
+.role-tenant .tenant-payment-detail .pw-totals dt{font-size:12px;font-weight:400;color:#858c96;margin:0}
+.role-tenant .tenant-payment-detail .pw-totals dd{font-size:13px;line-height:1.6;margin:0;overflow-wrap:anywhere}
+.role-tenant .tenant-payment-detail .pw-amount{padding:16px;border:1px solid #ece2d0;background:#fcf8ef;border-radius:10px;margin-bottom:18px}
+.role-tenant .tenant-payment-detail .pw-amount span{font-size:12px;line-height:1.5;color:#92774c}
+.role-tenant .tenant-payment-detail .pw-amount strong{display:block;font-size:24px;line-height:1.4;margin-top:6px;color:#986416}
+.role-tenant .tenant-payment-detail form>label{display:block;font-size:12px;line-height:1.5;font-weight:500;color:#697380;margin:16px 0 6px}
+.role-tenant .tenant-payment-detail form>input:not([type=hidden]):not([type=radio]),.role-tenant .tenant-payment-detail form>textarea{width:100%;min-height:44px;padding:10px 12px;border:1px solid #dfe3e8;border-radius:8px;background:#fff;font-size:13px;line-height:1.5;color:#30343b}
+.role-tenant .tenant-payment-detail .pw-muted{font-size:11px;line-height:1.6;color:#858c96;margin-top:6px}
+.role-tenant .tenant-payment-detail .pw-methods{margin:16px 0;padding:0;border:0;min-width:0;gap:8px}
+.role-tenant .tenant-payment-detail .pw-methods legend{font-size:12px;font-weight:500;line-height:1.5;margin-bottom:6px;color:#697380}
+.role-tenant .tenant-payment-detail .pw-methods label{min-height:44px;border:1px solid #dfe3e8;border-radius:8px;padding:10px;font-size:12px;line-height:1.5;margin:0}
+.role-tenant .tenant-payment-detail .pw-methods label:has(input:checked){background:#faf7ef;border-color:#d8c39f;color:#80663a}
+.role-tenant .tenant-payment-detail .pw-methods input{accent-color:#bfa77a}
+.role-tenant .tenant-payment-detail .pw-upload{padding:14px;border:1px dashed #d8c6a6;border-radius:9px;background:#fcfaf6;line-height:1.6}
+.role-tenant .tenant-payment-detail .pw-upload input{max-width:100%;font-size:12px}
+.role-tenant .tenant-payment-detail .pw-note,.role-tenant .tenant-payment-detail .pw-banner{font-size:12px;line-height:1.6;border-radius:9px}
+.role-tenant .tenant-payment-detail .pw-steps{font-size:12px;line-height:1.6}
+.role-tenant .tenant-payment-detail .pw-steps li+li{margin-top:8px}
+@media(max-width:1100px){.role-tenant .tenant-payment-detail .pw-tenant-layout{grid-template-columns:minmax(0,1fr)}.role-tenant .tenant-payment-detail .pw-tenant-side{display:block}}
+@media(max-width:640px){.role-tenant .tenant-payment-detail .pw-card{padding:16px}.role-tenant .tenant-payment-detail .pw-heading{align-items:stretch}.role-tenant .tenant-payment-detail .pw-heading>div{flex-basis:100%}.role-tenant .tenant-payment-detail .pw-heading h1{font-size:21px}.role-tenant .tenant-payment-detail .pw-heading>button{order:0}.role-tenant .tenant-payment-detail .pw-stats strong{font-size:21px}.role-tenant .tenant-payment-detail .pw-stats .pw-card{padding:16px}.role-tenant .tenant-payment-detail .pw-table-wrap{max-width:100%;overflow-x:auto}}
+@media print{.role-tenant .tenant-payment-detail .pw-heading>button{display:none!important}.role-tenant .tenant-payment-detail .pw-tenant-layout{display:block}}
+/* Even vertical spacing in tenant invoice details. */
+.role-tenant .tenant-payment-detail .pw-heading h1{line-height:1.4;margin-bottom:6px}
+.role-tenant .tenant-payment-detail .pw-card h2{line-height:1.5;margin:0 0 16px}
+.role-tenant .tenant-payment-detail .pw-stats strong{margin-top:6px;line-height:1.4}
+.role-tenant .tenant-payment-detail .pw-table th,.role-tenant .tenant-payment-detail .pw-table td{line-height:1.6;padding-top:12px;padding-bottom:12px}
+.role-tenant .tenant-payment-detail .pw-table small{display:block;margin-top:4px;line-height:1.6}
+.role-tenant .tenant-payment-detail .pw-totals>div{padding-top:12px;padding-bottom:12px;align-items:start}
+.role-tenant .tenant-payment-detail .pw-totals dt,.role-tenant .tenant-payment-detail .pw-totals dd{line-height:1.6;margin:0}
+.role-tenant .tenant-payment-detail form>label{margin-top:16px;margin-bottom:6px;line-height:1.5}
+.role-tenant .tenant-payment-detail form>.pw-muted{display:block;margin:6px 0 0;line-height:1.6}
+.role-tenant .tenant-payment-detail .pw-methods{margin-top:16px;margin-bottom:16px}
+.role-tenant .tenant-payment-detail .pw-methods legend{line-height:1.5;margin-bottom:6px}
+.role-tenant .tenant-payment-detail .pw-upload small{display:block;margin-top:6px;line-height:1.6}
+.role-tenant .tenant-payment-detail .pw-note{margin-top:14px;margin-bottom:0;line-height:1.6}
+.role-tenant .tenant-payment-detail .pw-report-facts dt{line-height:1.5;margin-bottom:4px}
+.role-tenant .tenant-payment-detail .pw-report-facts dd{line-height:1.6;margin:0}
+.role-tenant .tenant-payment-detail .pw-steps{margin-bottom:0;line-height:1.6}
+
+/* Hide the removed back button in previously compiled tenant views. */
+.role-tenant .tenant-payment-detail .pw-heading>a{display:none}
