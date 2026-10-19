@@ -1,3 +1,7 @@
+### 19/10/2026 – Thông tin chủ nhà trên tin công khai
+- Thẻ tìm phòng và chi tiết tin hiển thị tên, số điện thoại chủ sở hữu tòa nhà, có liên kết gọi điện; không lấy nhầm liên hệ quản lý đăng tin. Thông tin lấy từ tài khoản hiện tại, không sửa DB/schema. Có thông báo khi chưa có số liên hệ.
+- Build và 4 kiểm thử HTTP công khai đạt, gồm trường hợp quản lý đăng thay chủ nhà; kiểm chứng trên DB tạm, server để tắt. Kết quả local: data/listing-contact-tests/listing-contact.trx.
+
 ### 19/10/2026 – Biểu đồ Tổng quan/Tòa nhà dùng số liệu thật
 - Thay placeholder bằng tổng hóa đơn/thu xác nhận/cấn cọc/công nợ; biểu đồ theo kỳ và bộ chọn 3/6/12 tháng, lọc tòa và chọn tháng tải lại số liệu. Không lẫn khoản chờ/hủy; không cho quản lý xem tài chính.
 - 2 test nghiệp vụ, 6 lượt HTTP đối chiếu SQL, Edge desktop/360px đạt; build đạt. Chỉ thử DB tạm/bản sao, không đổi DB thật, server tắt. Chi tiết: [docs/dashboard-finance-20261019.md](docs/dashboard-finance-20261019.md).
