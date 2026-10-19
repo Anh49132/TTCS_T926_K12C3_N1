@@ -15,7 +15,7 @@
 @await RenderSectionAsync("Styles", required: false)
 <link rel="stylesheet" href="~/css/public-header.css" asp-append-version="true" />
 </head>
-<body class="public-site @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "public-home" : "")">
+<body class="public-site @(User.IsInRole("KHACH_THUE") ? "role-tenant" : "") @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "public-home" : "")">
     @{
         var path = Context.Request.Path.Value?.ToLowerInvariant() ?? "";
         var isHome = path == "" || path == "/" || path == "/home" || path == "/home/index";

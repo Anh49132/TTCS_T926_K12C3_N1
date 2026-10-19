@@ -17,7 +17,7 @@
     var error = TempData.Peek("Error") as string;
     var vn = CultureInfo.GetCultureInfo("vi-VN");
 }
-<div class="service-management service-bootstrap">
+<div class="service-management service-bootstrap @(User.IsInRole("ADMIN") ? "admin-services container-fluid px-0" : "")">
 <header class="sm-heading"><div><h1>Dịch vụ &amp; đơn giá</h1><p>Quản lý dịch vụ, thiết lập đơn giá và phạm vi áp dụng cho các tòa nhà.</p></div><div class="sm-actions"><button class="sm-button btn btn-outline-secondary" type="button" disabled title="Chưa hỗ trợ xuất danh sách dịch vụ"><svg class="sm-export-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 15v5h14v-5" /></svg><span>Xuất danh sách</span></button>@if (Model.SanSang && write) { <a class="sm-button sm-primary sm-add-service btn btn-dark" asp-action="Create" asp-route-toaNhaId="@Model.ToaNhaId"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg><span>Thêm dịch vụ</span></a> }</div></header>
 <section class="sm-stats">
 <article><span>Tổng số dịch vụ <i aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg></i></span><strong>@rows.Count.ToString("D2") <small>dịch vụ</small></strong><p>@active đang áp dụng · @upcoming có lịch thay đổi · @paused ngừng áp dụng</p></article>
@@ -29,7 +29,7 @@
 else if (Model.ToaNhas.Count == 0) { <p>Bạn chưa có tòa nhà đang hoạt động.</p><a asp-controller="PhongTro" asp-action="TaoToaNha" class="sm-button btn btn-outline-secondary">Khai báo tòa nhà</a> }
 else {
 @if (scheduled is not null) { <div class="sm-scheduled"><span>▣ <strong>Sắp áp dụng</strong> <span>@scheduled.DichVu.TenDichVu tại @building · @(scheduled.DaChotGia ? scheduled.DonGia.ToString("N0", vn) + " đ / " + scheduled.DonViTinh : "Chưa thiết lập giá") · từ @scheduled.TuNgay.ToString("dd/MM/yyyy")</span></span><a asp-action="Manage" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-dichVuId="@scheduled.DichVuId">Xem đơn giá <svg class="sm-price-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6" /></svg></a></div> }
-<section class="sm-panel">
+<section class="sm-panel card shadow-sm">
 <div class="sm-panel-heading"><h2>Danh sách dịch vụ <small>@rows.Count dịch vụ</small></h2><span>☑ Chỉnh sửa đơn giá theo tòa nhà</span></div>
 <nav class="sm-tabs nav" aria-label="Trạng thái dịch vụ"><span class="active">Tất cả dịch vụ <small>@rows.Count</small></span><button disabled>Đang áp dụng <small>@active</small></button><button disabled>Sắp áp dụng <small>@upcoming</small></button><button disabled>Tạm ngừng <small>@paused</small></button></nav>
 <form method="get" class="sm-filters"><div class="sm-search-field"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><input disabled placeholder="Tìm theo tên hoặc mã dịch vụ..." aria-label="Tìm dịch vụ — chưa hỗ trợ" /></div><select class="form-select" name="toaNhaId" asp-for="ToaNhaId" asp-items="Model.ToaNhas" aria-label="Tòa nhà" onchange="this.form.requestSubmit()"><option value="">Chọn tòa nhà</option></select><select class="form-select" data-service-method aria-label="Lọc cách tính phí"><option value="all">Tất cả cách tính phí</option><option value="TheoChiSo">Theo tiêu thụ</option><option value="TheoNguoi">Theo người</option><option value="CoDinh">Cố định</option></select><button type="button" class="sm-sort" data-service-sort aria-label="Đổi thứ tự mã dịch vụ">⇵ Mã dịch vụ tăng dần</button></form>
@@ -37,7 +37,7 @@ else {
 <form id="initialize-services" asp-action="Initialize" method="post" class="sm-initialize"><input name="toaNhaId" value="@Model.ToaNhaId" type="hidden" /><span>Chuẩn bị điện, nước, rác, gửi xe và internet cho tòa nhà.</span><button class="sm-button sm-primary">Khởi tạo năm dịch vụ</button></form>
 @if (error is null) { <script>document.getElementById('initialize-services').requestSubmit();</script> }
 }
-<div class="sm-table-scroll"><table class="sm-table table align-middle mb-0"><thead><tr><th>Dịch vụ</th><th>Cách tính phí</th><th>Đơn giá</th><th>Đơn vị tính</th><th>Phạm vi áp dụng</th><th>Trạng thái</th><th>Hiệu lực từ</th><th>Thao tác</th></tr></thead><tbody>
+<div class="sm-table-scroll table-responsive"><table class="sm-table table table-hover align-middle mb-0"><thead><tr><th>Dịch vụ</th><th>Cách tính phí</th><th>Đơn giá</th><th>Đơn vị tính</th><th>Phạm vi áp dụng</th><th>Trạng thái</th><th>Hiệu lực từ</th><th>Thao tác</th></tr></thead><tbody>
 @foreach (var item in rows) {
 var status = item.TuNgay > today ? "Sắp áp dụng" : !item.DaChotGia ? "Chờ đơn giá" : item.DangApDung && item.DichVu.DangHoatDong ? "Đang áp dụng" : "Tạm ngừng";
 var iconName = (item.DichVu.TenDichVu + " " + item.DichVu.MaDichVu).ToLowerInvariant();
@@ -66,6 +66,6 @@ var iconPath = iconName.Contains("điện") || iconName.Contains("dien") ? "M13 
 <div class="sm-explanations"><article><span class="sm-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M5 19a9 9 0 1 1 14 0M12 12l4-4"/><circle cx="12" cy="12" r="1"/></svg></span><div><h3>Theo tiêu thụ</h3><p>Thành tiền = (chỉ số cuối − chỉ số đầu) × đơn giá. Ghi chỉ số điện, nước cho từng phòng mỗi kỳ.</p></div></article><article><span class="sm-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 3h12v18H6zM14.5 8h-4a1.5 1.5 0 0 0 0 3h3a1.5 1.5 0 0 1 0 3h-4M12 6v10"/></svg></span><div><h3>Phí cố định</h3><p>Thành tiền = số phòng / người / xe × đơn giá tháng. Áp dụng theo số lượng đã đăng ký trong hợp đồng.</p></div></article></div>
 <p class="sm-footnote">ⓘ Mặc định chỉ áp dụng khi tạo phòng mới. Các phòng đã tồn tại giữ nguyên lựa chọn; thay đổi giá không làm thay đổi hóa đơn đã phát hành.</p>
 </div>
-@section Styles { <link rel="stylesheet" href="~/css/service-management.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/service-bootstrap.css" asp-append-version="true" /> }
+@section Styles { <link rel="stylesheet" href="~/css/service-management.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/service-bootstrap.css" asp-append-version="true" />@if(User.IsInRole("ADMIN")){<link rel="stylesheet" href="~/css/admin-services-bootstrap.css" asp-append-version="true" />} }
 
 @section Scripts { <script src="~/js/service-management.js" asp-append-version="true"></script> }

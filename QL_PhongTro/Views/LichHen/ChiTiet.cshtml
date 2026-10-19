@@ -22,25 +22,25 @@ else{
 @if(yeuCau.TrangThai is "MOI" or "DA_HEN_LICH") { <p class="or-notice">@(yeuCau.LoaiYeuCau == "THUE_NGAY" ? "Phòng chỉ được giữ cho khách sau khi yêu cầu được duyệt." : "Yêu cầu mới nên được phản hồi trong vòng 24 giờ.")</p> }
 </div>
 }
-<div class="@(Model.LaChuNha ? "owner-requests or-detail-body" : "")">
+<div class="@(Model.LaChuNha ? "owner-requests or-detail-body" : "request-detail-page container-fluid px-0")">
 @if(!Model.LaChuNha) {
-<p class="eyebrow">LỊCH HẸN XEM PHÒNG</p>
-<h1>@yeuCau.MaYeuCau</h1>
+<header class="rd-heading mb-4"><div><p class="eyebrow mb-2">LỊCH HẸN XEM PHÒNG</p>
+<h1 class="h4 fw-bold mb-2">@yeuCau.MaYeuCau</h1>
 <p>
     Phòng <strong>@yeuCau.MaPhong</strong> · @yeuCau.TenToaNha
     @if (!string.IsNullOrWhiteSpace(yeuCau.DiaChiToaNha)) { <text>· @yeuCau.DiaChiToaNha</text> }
-</p>
+</p></div><span class="badge rounded-pill rd-status">@LichHenTrangThai.LabelHienThi(yeuCau.TrangThai, yeuCau.DaDoiLich)</span></header>
 }
 
 @if (ok is not null) { <p class="text-success">@ok</p> }
 @if (warning is not null) { <div class="alert alert-warning" role="alert">@warning</div> }
 @if (err is not null) { <p class="text-danger">@err</p> }
 
-<div class="@(Model.LaChuNha ? "or-layout" : "")"><div class="or-detail-main">
-<section class="@(Model.LaChuNha ? "or-card" : "")">
-@if(Model.LaChuNha){<h2>Thông tin yêu cầu</h2>}
-<div class="table-responsive mb-4">
-<table class="table align-top">
+<div class="@(Model.LaChuNha ? "or-layout" : "row g-4 align-items-start")"><div class="or-detail-main rd-columns">
+<section class="@(Model.LaChuNha ? "or-card" : "col-12 col-lg-8 rd-information")">
+<div class="card border-0 shadow-sm rd-card"><div class="card-body p-4"><h2 class="h6 fw-bold mb-4">Thông tin yêu cầu</h2>
+<div class="table-responsive">
+<table class="table align-middle mb-0 rd-info-table">
     <tbody>
     <tr><th>Loại yêu cầu</th><td>@LichHenTrangThai.LoaiLabel(yeuCau.LoaiYeuCau)</td></tr>
     <tr><th>Trạng thái</th><td><span class="badge @LichHenTrangThai.BadgeClass(yeuCau.TrangThai)">@LichHenTrangThai.LabelHienThi(yeuCau.TrangThai, yeuCau.DaDoiLich)</span></td></tr>
@@ -66,8 +66,8 @@ else{
     </tbody>
 </table>
 </div>
-</section>
-<section class="@(Model.LaChuNha ? "or-card or-processing" : "")">
+</div></div></section>
+<section class="@(Model.LaChuNha ? "or-card or-processing" : "col-12 col-lg-4 rd-processing")"><div class="card border-0 shadow-sm rd-card"><div class="card-body p-4"><h2 class="h6 fw-bold mb-3">Thao tác yêu cầu</h2><p class="text-muted small">Các thao tác khả dụng được hiển thị theo vai trò và trạng thái yêu cầu.</p>
 
 @if (Model.HienThiFormXacNhan && (!Model.LaChuNha || yeuCau.LoaiYeuCau == "XEM_PHONG")) {
 <h2>Xác nhận lịch hẹn</h2>
@@ -163,7 +163,7 @@ else{
 }
 
 @if (Model.HienThiNutHuy) {
-<section class="border-top pt-4 mb-4" aria-labelledby="huy-yeu-cau-heading">
+<section class="rd-cancel pt-3 mt-3" aria-labelledby="huy-yeu-cau-heading">
     <h2 id="huy-yeu-cau-heading">Hủy yêu cầu</h2>
     <p class="text-muted">Yêu cầu đã hủy không thể tiếp tục xác nhận, đổi lịch hoặc duyệt thuê.</p>
     <form method="post" asp-action="Huy" asp-route-id="@yeuCau.Id"
@@ -173,14 +173,14 @@ else{
 </section>
 }
 
-</section><section class="@(Model.LaChuNha ? "or-card or-history" : "")">
+</div></div></section><section class="@(Model.LaChuNha ? "or-card or-history" : "col-12 rd-history")"><div class="card border-0 shadow-sm rd-card"><div class="card-body p-4">
 <h2>Lịch sử yêu cầu</h2>
 @if (Model.LichSu.Count == 0) {
     <p class="text-muted mb-4">Chưa có thay đổi nào được ghi nhận.</p>
 } else {
     <ul class="list-unstyled mb-4">
     @foreach (var muc in Model.LichSu) {
-        <li class="border-bottom pb-2 mb-2">
+        <li class="rd-history-event pb-3 mb-3">
             <div>
                 <strong>@HanhDongYeuCau.Label(muc.HanhDong)</strong>
                 @if (muc.TrangThaiCu is { } cu && cu != muc.TrangThaiMoi) {
@@ -214,7 +214,7 @@ else{
     </ul>
 }
 
-</section></div>
+</div></div></section></div>
 @if(Model.LaChuNha){
 <aside><section class="or-card"><h2>Khách thuê</h2><div class="or-customer"><span class="or-icon">@(string.IsNullOrEmpty(yeuCau.TenKhach) ? "—" : yeuCau.TenKhach[..1])</span><div><strong>@yeuCau.TenKhach</strong><p>@yeuCau.SoDienThoaiKhach</p></div></div></section>
 <section class="or-card"><h2>Phòng được yêu cầu</h2>
@@ -228,7 +228,7 @@ else{
 </div></div>
 
 }
-@section Styles { @if(Model.LaChuNha){<link rel="stylesheet" href="~/css/request-detail.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/request-detail-bootstrap.css" asp-append-version="true" />} }
+@section Styles { <link rel="stylesheet" href="~/css/request-detail-fallback-bootstrap.css" asp-append-version="true" /> @if(Model.LaChuNha){<link rel="stylesheet" href="~/css/request-detail.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/request-detail-bootstrap.css" asp-append-version="true" />} }
 @section Scripts {
 <script src="~/js/lich-hen.js" asp-append-version="true"></script>
 }

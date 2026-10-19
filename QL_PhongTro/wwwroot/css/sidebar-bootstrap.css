@@ -67,3 +67,30 @@
 .role-admin .dashboard-sidebar .bootstrap-sidebar .sidebar-link{min-height:40px;margin:0 0 .125rem;padding:.5rem .75rem;line-height:1.5}
 .role-admin .dashboard-sidebar .bootstrap-sidebar .sidebar-link>span:not(.badge){line-height:1.5}
 @media(max-width:767px){.role-admin .dashboard-sidebar .bootstrap-sidebar .sidebar-link{min-height:44px;padding:.625rem .75rem}}
+/* Owner Bootstrap navigation with aligned icons and balanced group spacing. */
+.role-owner .dashboard-sidebar .bootstrap-sidebar{padding:1.25rem .875rem 1rem;scrollbar-width:thin;scrollbar-color:#60666e transparent}
+.role-owner .dashboard-sidebar .bootstrap-sidebar .sidebar-brand{padding:.125rem .5rem 1rem;margin-bottom:.75rem;gap:.75rem;border-bottom:1px solid #ffffff12}
+.role-owner .dashboard-sidebar .bootstrap-sidebar .sidebar-brand>svg{width:38px;height:38px;padding:9px;border-radius:11px;background:#bfa77a}
+.role-owner .dashboard-sidebar .bootstrap-sidebar .sidebar-brand strong{font-size:1.375rem;line-height:1.2;letter-spacing:-.025rem}
+.role-owner .dashboard-sidebar .bootstrap-sidebar .sidebar-brand small{font-size:.625rem;line-height:1.5;margin-top:.25rem;color:#aeb5bd}
+.role-owner .dashboard-sidebar .bootstrap-sidebar nav{gap:0}
+.role-owner .dashboard-sidebar .bootstrap-sidebar section{margin-top:.75rem}
+.role-owner .dashboard-sidebar .bootstrap-sidebar h2{font-size:.625rem;font-weight:600;line-height:1.5;letter-spacing:.065em;color:#bfa77a;margin:.125rem .75rem .375rem}
+.role-owner .dashboard-sidebar .bootstrap-sidebar .sidebar-link{display:flex;align-items:center;gap:.75rem;min-height:40px;padding:.5625rem .75rem;margin:0 0 .125rem;border:1px solid transparent;border-radius:8px;font-size:.75rem;line-height:1.5;font-weight:500;color:#bec5cc;box-shadow:none}
+.role-owner .dashboard-sidebar .bootstrap-sidebar .sidebar-link>svg{width:18px;height:18px;flex:0 0 18px;color:#929da7;stroke-width:1.6}
+.role-owner .dashboard-sidebar .bootstrap-sidebar .sidebar-link>span:not(.badge){line-height:1.5;min-width:0}
+.role-owner .dashboard-sidebar .bootstrap-sidebar .sidebar-link:hover{background:#ffffff08;border-color:#ffffff0b;color:#fff}
+.role-owner .dashboard-sidebar .bootstrap-sidebar .sidebar-link:hover>svg{color:#d4bd93}
+.role-owner .dashboard-sidebar .bootstrap-sidebar .sidebar-link.is-active{background:#bfa77a19;border-color:#bfa77a30;box-shadow:inset 3px 0 #bfa77a;color:#efdfc2;font-weight:600}
+.role-owner .dashboard-sidebar .bootstrap-sidebar .sidebar-link.is-active>svg{color:#d4bd93}
+.role-owner .dashboard-sidebar .bootstrap-sidebar .sidebar-link .badge{display:inline-flex;align-items:center;justify-content:center;min-width:21px;height:21px;margin-left:auto;padding:0 .375rem;font-size:.625rem;line-height:1;font-weight:600;border:1px solid #d6c39f;background:#f4efe5;color:#80663a}
+.role-owner .dashboard-sidebar .bootstrap-sidebar .sidebar-link:focus-visible{outline:2px solid #bfa77a;outline-offset:2px}
+@media(max-width:767px){.role-owner .dashboard-sidebar .bootstrap-sidebar .sidebar-link{min-height:44px;padding:.625rem .75rem}}
+/* Even vertical rhythm in the owner sidebar. */
+.role-owner .dashboard-sidebar .bootstrap-sidebar .sidebar-brand{padding-bottom:.875rem;margin-bottom:.625rem}
+.role-owner .dashboard-sidebar .bootstrap-sidebar nav{gap:0}
+.role-owner .dashboard-sidebar .bootstrap-sidebar section{margin-top:.625rem}
+.role-owner .dashboard-sidebar .bootstrap-sidebar h2{margin:.125rem .75rem .375rem;line-height:1.5}
+.role-owner .dashboard-sidebar .bootstrap-sidebar .sidebar-link{min-height:38px;padding:.5rem .75rem;margin:0 0 .125rem;line-height:1.5}
+.role-owner .dashboard-sidebar .bootstrap-sidebar .sidebar-link>span:not(.badge){line-height:1.5}
+@media(max-width:767px){.role-owner .dashboard-sidebar .bootstrap-sidebar .sidebar-link{min-height:44px;padding:.625rem .75rem}}

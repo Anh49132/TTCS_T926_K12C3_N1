@@ -1284,3 +1284,72 @@ Gộp origin/feature/S4-07/ui-improvements (0784cf5) vào dev928b2e2. Chỉ xung
 ### 18/10/2026 – Đẩy bổ sung giao diện Admin theo yêu cầu
 - Fetch xác nhận nhánh local/remote cùng nền. Đưa vào commit 6 file giao diện/tiến độ: CSS Admin, nhật ký và dropdown, layout breadcrumb, tài liệu; không gồm DB/data/credential/test project.
 - Build gần nhất đạt 0 lỗi; các trang/breadcrumb đã kiểm tra HTTP theo từng mục. node --check audit-dropdowns.js và diff --check đạt. Chưa full test nghiệp vụ hoặc kiểm tra trực quan/mobile/Safari.
+
+### 19/10/2026 — Đồng bộ thanh đầu trang Quản lý
+- Đồng bộ chiều cao 66px, khoảng cách, ô tìm kiếm, menu tài khoản và tiêu đề Tổng quan theo Chủ nhà; CSS chỉ nạp cho QUAN_LY.
+- Giữ nguyên quyền và chức năng thông báo. Kiểm chứng build và HTTP; chưa nghiệm thu trực quan trên thiết bị 360px.
+
+### 19/10/2026 — Bootstrap chi tiết yêu cầu
+- Trang chi tiết dành cho người xem ngoài Chủ nhà: lưới Bootstrap 8/4, thẻ thông tin/thao tác/lịch sử, nhãn trạng thái và bố cục một cột trên điện thoại.
+- Giữ nguyên điều kiện hiển thị thao tác, form POST/CSRF và dữ liệu server. Kiểm tra build, HTTP quản lý/khách/chủ nhà; chưa nghiệm thu trực quan 360px.
+
+- 19/10/2026: Căn nhịp dòng chi tiết yêu cầu: bảng line-height 1.5, đệm dòng 11px; tiêu đề cách 16px, lịch sử line-height 1.6 và các mốc cách đều 16px. Kiểm tra CSS phục vụ qua HTTP.
+- 19/10/2026: Bỏ liên kết Quay lại danh sách ở đầu trang chi tiết yêu cầu dành cho người xem ngoài Chủ nhà theo yêu cầu.
+- 19/10/2026: Breadcrumb chi tiết yêu cầu của Quản lý: biểu tượng trang chủ / Yêu cầu thuê & lịch xem / Chi tiết yêu cầu; đồng bộ cỡ chữ và khoảng cách trang chi tiết phòng Chủ nhà, co lại trên mobile.
+- 19/10/2026: Trang hợp đồng Quản lý dùng thẻ Bootstrap, lưới bộ lọc responsive, tab trạng thái dạng nhóm, bảng cuộn ngang trong thẻ; bỏ thanh trả phòng trống đối với vai trò không có thao tác. Giữ logic tìm/lọc/xuất và quyền hiện hành.
+- 19/10/2026: Căn giãn dòng trang hợp đồng Quản lý: line-height 1.5, đệm hàng bảng 13px, thống nhất khoảng cách nhãn/bộ lọc/thống kê và tiêu đề. Xác minh CSS qua HTTP.
+- 19/10/2026: Bootstrap trang chỉ số điện nước Quản lý: bộ chọn kỳ dạng lưới, thẻ thống kê, thanh tìm/lọc, bảng nhập và nhãn trạng thái đồng bộ tông graphite/champagne. Giữ form lưu từng phòng, CSRF, khóa kỳ và cảnh báo. Có responsive; chưa nghiệm thu trực quan mobile.
+- 19/10/2026: Căn giãn dòng trang chỉ số điện nước Quản lý: thống nhất line-height 1.5, khoảng cách nhãn/ô nhập 6px, hướng dẫn 4px và đệm hàng 13px; giảm khoảng trống thống kê/bộ chọn kỳ. Kiểm tra CSS qua HTTP.
+- 19/10/2026: Bootstrap báo cáo Quản lý: bố cục bộ lọc dạng lưới, thẻ KPI, khung biểu đồ/bảng bo góc, tông graphite/champagne và giãn dòng đồng bộ; responsive. Giữ nguyên dữ liệu/tính toán và quyền. Kiểm tra build/HTTP, chưa nghiệm thu trực quan mobile.
+- 19/10/2026: Căn giãn dòng báo cáo Quản lý: line-height 1.5, khoảng cách tiêu đề/nhãn 4–6px, đệm hàng bảng 11px; thống nhất khoảng cách thẻ số liệu, biểu đồ và phần lấp đầy. Kiểm tra CSS qua HTTP.
+- 19/10/2026: Bootstrap danh sách báo hỏng Quản lý: thẻ thống kê, tab trạng thái, lưới bộ lọc 3/2/1 cột, nút áp dụng/reset, trạng thái trống có biểu tượng và phân trang. Giữ nguyên tìm/lọc/quyền/luồng xử lý. Kiểm chứng build/HTTP; chưa nghiệm thu trực quan mobile.
+- 19/10/2026: Căn giãn dòng danh sách báo hỏng Quản lý: line-height 1.5, nhãn cách ô nhập 6px, đệm hàng 13px; thống nhất khoảng cách thống kê/tab/bộ lọc/trạng thái trống/phân trang. Kiểm tra CSS qua HTTP.
+- 19/10/2026: Theo mẫu người dùng, giữ bộ lọc báo hỏng trên một hàng desktop (tìm kiếm rộng gấp đôi), áp dụng/xóa ở hàng dưới; tab gạch chân và trạng thái trống tối giản. Chỉ tinh chỉnh màu/viền/giãn cách, responsive thu cột khi thiếu chỗ.
+- 19/10/2026: Tinh chỉnh bộ lọc báo hỏng: căn nhãn trái, chiều cao ô 42px, khoảng cách đều 14px; nút áp dụng gọn 174px và xóa cạnh bên, giữ một hàng desktop; responsive 3/1 cột. Kiểm tra CSS qua HTTP.
+- 19/10/2026: Bỏ mục Tạo tài khoản nội bộ khỏi sidebar ADMIN theo yêu cầu; giữ nút tạo trong trang Quản lý tài khoản.
+- 19/10/2026: Bỏ mục Đổi mật khẩu khỏi sidebar ADMIN theo yêu cầu.
+- 19/10/2026: Đồng bộ header ADMIN theo Chủ nhà: cao 66px, tìm kiếm tối đa 340px, căn chuông/tài khoản, menu/avatar/chevron cùng kiểu; CSS chỉ nạp ADMIN, giữ breadcrumb và quyền hiện tại. Kiểm tra build/HTTP.
+- 19/10/2026: Bootstrap tra cứu gửi thông báo: nav-pills phân nhóm có trạng thái hiện tại, thẻ bộ lọc 3 cột, bảng nhật ký và trạng thái trống; giãn dòng 1.5, responsive. Reset giữ nhóm đang xem. Giữ nguyên truy vấn và quyền. Kiểm tra build/HTTP.
+- 19/10/2026: Căn giãn dòng tra cứu email: line-height 1.5, khoảng cách nhãn/tiêu đề 6px, đệm hàng bảng 11px; thống nhất khoảng cách tab, ghi chú, bộ lọc và bảng. Kiểm tra CSS qua HTTP.
+- 19/10/2026: Bỏ mũi tên CSS giả bị trùng với SVG trên menu tài khoản ADMIN; dùng một chevron SVG giống Chủ nhà, giữ hiệu ứng mở/đóng.
+- 19/10/2026: Dropdown trạng thái tra cứu email dùng Bootstrap, nút/chevron và menu nổi có bóng nhẹ, mục chọn đánh dấu; giữ select gốc làm fallback và gửi form đúng giá trị. Không thêm thư viện.
+- 19/10/2026: Bootstrap Dịch vụ & đơn giá ADMIN: thẻ thống kê đồng bộ, panel/bộ lọc responsive, bảng hover, trạng thái trống/phân trang và thẻ giải thích; giãn dòng 1.5. Giữ chức năng và quyền chỉ xem. Kiểm tra build/HTTP.
+- 19/10/2026: Căn giãn dòng Dịch vụ & đơn giá ADMIN: line-height 1.5, khoảng cách nhãn/số liệu 6–10px, đệm bảng 12px; thống nhất khoảng cách tab, bộ lọc, phân trang và giải thích. Kiểm tra CSS qua HTTP.
+- 19/10/2026: Bootstrap chi tiết tin đăng ADMIN: thẻ tóm tắt/giá thuê, đặc tính phòng, ảnh responsive khi có, mô tả và bảng dịch vụ 5/7 cột; giãn dòng thống nhất, không đổi quyền/dữ liệu. Kiểm tra build/HTTP.
+- 19/10/2026: Căn giãn dòng chi tiết tin ADMIN: thông tin/bảng line-height 1.5, mô tả 1.6; khoảng cách khối 16px, tiêu đề 6–14px, đệm hàng 12px. Kiểm tra CSS qua HTTP.
+- 19/10/2026: Bỏ nút Danh sách tin đăng khỏi chi tiết tin ADMIN theo yêu cầu.
+- 19/10/2026: Breadcrumb chi tiết tin ADMIN: trang chủ / Tin đăng cho thuê / Chi tiết tin đăng, đồng bộ thông số trang chi tiết phòng Chủ nhà; liên kết về quản lý tin, responsive.
+- 19/10/2026: Hoàn thiện Bootstrap danh sách hợp đồng ADMIN: thống kê 3 thẻ, bộ lọc 4/2/1 cột, tab nhóm, bảng hover/phân trang và giãn dòng 1.5; giữ nguyên lọc/xuất/quyền. Kiểm tra CSS và HTTP.
+- 19/10/2026: Căn giãn dòng danh sách hợp đồng ADMIN: line-height 1.5, đệm hàng 12px, nhãn cách ô nhập 6px; thống nhất khoảng cách thẻ/tab/bộ lọc/phân trang. Kiểm tra CSS qua HTTP.
+- 19/10/2026: Bootstrap tra cứu chỉ số ADMIN: thẻ bộ lọc/kết quả, nhãn trạng thái, căn phải số công tơ/tiêu thụ, trạng thái trống và phân trang; giãn dòng 1.5, responsive. Giữ nguyên truy vấn và quyền chỉ xem. Kiểm tra build/HTTP.
+- 19/10/2026: Căn giãn dòng tra cứu chỉ số ADMIN: line-height 1.5, nhãn cách ô 6px, đệm hàng 12px; khoảng cách bộ lọc/kết quả 16px. Kiểm tra CSS qua HTTP.
+- 19/10/2026: Đổi tiêu đề trang và header chỉ số ADMIN thành Chỉ số điện nước theo yêu cầu.
+- 19/10/2026: Bootstrap quản lý hóa đơn ADMIN: thẻ thống kê, tab nhóm, bộ lọc responsive, bảng có vùng cuộn riêng và căn phải tiền, mã hóa đơn xuống dòng rõ, trạng thái/phân trang đồng bộ; giãn dòng 1.5. Giữ quyền và nghiệp vụ hiện hành. Kiểm tra CSS qua HTTP.
+- 19/10/2026: Căn giãn dòng quản lý hóa đơn ADMIN: line-height 1.5, đệm hàng 12px, khoảng cách tab/bộ lọc/phân trang 14px; giảm khoảng trống thẻ thống kê. Kiểm tra CSS qua HTTP.
+- 19/10/2026: Bootstrap chi tiết hóa đơn ADMIN: giữ hai cột, căn thẻ số liệu, bảng chi tiết/tổng tiền, lịch sử trống, tiến độ/thông tin; màu graphite/champagne, giãn dòng 1.5 và responsive. Không đổi quyền/tính tiền/thu tiền. Kiểm tra CSS qua HTTP.
+- 19/10/2026: Căn giãn dòng chi tiết hóa đơn ADMIN: line-height 1.5, đệm khoản mục 12px, thông tin 10px; thống nhất nhịp thẻ, tiến độ và lịch sử thu. Kiểm tra CSS qua HTTP.
+- 19/10/2026: Breadcrumb chi tiết hóa đơn ADMIN: trang chủ / Quản lý hóa đơn / Phòng; dùng cùng cỡ chữ/khoảng cách breadcrumb chi tiết phòng Chủ nhà.
+- 19/10/2026: Bỏ cột Chi tiết khỏi bảng lịch sử cư trú khi ADMIN xem theo yêu cầu; giữ cột cho các vai trò còn lại.
+- 19/10/2026: Khôi phục cột Chi tiết ở lịch sử cư trú ADMIN theo yêu cầu mới nhất.
+- 19/10/2026: Bỏ đúng cột Chi tiết ở bảng Yêu cầu thuê & lịch xem khi ADMIN xem; giữ cột cho Chủ nhà/Quản lý và giữ nguyên lịch sử cư trú.
+- 19/10/2026: Dropdown Tòa nhà ở Chỉ số điện nước ADMIN dùng Bootstrap, menu nổi có bóng nhẹ và đánh dấu mục chọn; giữ select gốc/fallback và giá trị form tra cứu.
+- 19/10/2026: Breadcrumb chỉnh sửa tài khoản ADMIN: trang chủ / Hồ sơ của tôi / Chỉnh sửa tài khoản, đồng bộ cỡ chữ/khoảng cách chi tiết phòng Chủ nhà.
+- 19/10/2026: Thêm breadcrumb chỉnh sửa tài khoản Chủ nhà: trang chủ / Hồ sơ của tôi / Chỉnh sửa tài khoản; đồng bộ chi tiết phòng, responsive, giữ nguyên luồng tài khoản.
+- 19/10/2026: Đồng bộ breadcrumb chỉnh sửa tài khoản Quản lý tòa nhà: trang chủ / Hồ sơ của tôi / Chỉnh sửa tài khoản, cùng bố cục Chủ nhà/ADMIN; responsive.
+- 19/10/2026: Bỏ mục Chỉnh sửa tài khoản khỏi menu tài khoản Quản lý tòa nhà theo yêu cầu; không đổi menu các vai trò khác.
+- 19/10/2026: Bỏ mục Chỉnh sửa tài khoản khỏi menu tài khoản Chủ nhà theo yêu cầu, tương tự Quản lý.
+- 19/10/2026: Bỏ mục Chỉnh sửa tài khoản khỏi menu tài khoản ADMIN theo yêu cầu, giữ mục này cho Khách thuê.
+- 19/10/2026: Sidebar ADMIN Bootstrap: căn đều icon 18px, hàng menu 40px, nhóm/chữ/badge và trạng thái chọn graphite/champagne; thu khoảng cách giữa các nhóm nghiệp vụ liên tiếp. Giữ nguyên menu, URL và kiểm tra quyền. Kiểm tra CSS HTTP và diff.
+- 19/10/2026: Căn giãn dòng sidebar ADMIN: hàng desktop 38px, khoảng cách mục 2px, nhóm 10px; nhóm nghiệp vụ liên tiếp không thêm khoảng trống. Mobile giữ vùng bấm 44px. Kiểm tra CSS HTTP.
+- 19/10/2026: Sidebar Chủ nhà: tinh chỉnh nav Bootstrap, icon 18px, hàng 40px, nhóm champagne, badge và trạng thái chọn; giữ menu/URL/quyền, mobile vùng bấm 44px. Kiểm tra CSS HTTP và diff.
+- 19/10/2026: Căn giãn dòng sidebar Chủ nhà: hàng desktop 38px, cách mục 2px, cách nhóm 10px; mobile giữ vùng bấm 44px. Kiểm tra CSS HTTP.
+- 19/10/2026: Menu Khách thuê dùng nav Bootstrap, SVG thống nhất, nhãn/badge/active và nút đóng đồng bộ graphite/champagne; giữ dialog và điều khiển bàn phím/đóng menu hiện tại. Kiểm tra build/HTTP.
+- 19/10/2026: Căn giãn dòng menu Khách thuê: hàng tối thiểu 44px, cách mục 2px, đệm menu 14px; tiêu đề và nhãn line-height 1.5. Kiểm tra CSS qua HTTP.
+- 19/10/2026: Đồng bộ menu Khách thuê theo sidebar Chủ nhà: nền graphite, chữ sáng, active/badge champagne, icon 18px và nhịp hàng tương ứng; giữ drawer, quyền/menu và vùng bấm mobile 44px. Kiểm tra CSS HTTP.
+- 19/10/2026: Thêm logo NhàTốt / Sống đúng nơi ở đầu drawer Khách thuê theo mẫu Chủ nhà; giữ nút đóng và liên kết về tổng quan.
+- 19/10/2026: Bỏ mục Hóa đơn trên thanh điều hướng đầu trang Khách thuê theo yêu cầu; giữ Hóa đơn của tôi trong menu.
+- 19/10/2026: Đồng bộ header Khách thuê với Chủ nhà: cao 66px, menu 36px, căn brand/nav/chuông/tài khoản, avatar/menu tài khoản và responsive. Giữ nguyên điều hướng, quyền và drawer. Kiểm tra CSS HTTP.
+- 19/10/2026: Đồng bộ ba liên kết điều hướng đầu trang Khách thuê với menu công khai: cỡ chữ .9rem, độ đậm 600, đệm/cách mục, active champagne và hover.
+- 19/10/2026: Ẩn ảnh đại diện trong nút tài khoản đầu trang Khách thuê theo ảnh yêu cầu; giữ tên và menu tài khoản.
+- 19/10/2026: Hoàn tác ẩn avatar Khách thuê theo yêu cầu; khôi phục hiển thị T1 như trước.
+- 19/10/2026: Đồng bộ header Khách thuê trên layout công khai và workspace: thêm role-tenant cho trang công khai đã đăng nhập, bảo đảm avatar giữ đúng kích thước; dùng chung _TenantHeader và tenant-header.css.
