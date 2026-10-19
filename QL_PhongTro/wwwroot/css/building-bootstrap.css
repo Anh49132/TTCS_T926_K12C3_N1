@@ -64,3 +64,10 @@
 .building-bootstrap .building-filter-dropdown>summary:hover{border-color:#c9bca4;background:#fafaf9}
 .building-bootstrap .building-filter-dropdown>summary svg{width:14px;height:14px;flex:0 0 14px}
 @media(max-width:640px){.building-bootstrap .building-filter-dropdown{flex:1 1 130px;min-width:0}.building-bootstrap .building-search{flex-basis:100%}}
+/* Owner collection-period picker. */
+.role-owner .building-panel-heading>form{margin:0;min-width:0}
+.role-owner .building-panel-heading>form>label{display:flex;align-items:center;flex-wrap:wrap;gap:10px;margin:0;font-size:12px;line-height:1.5;font-weight:500;color:#858c96}
+.role-owner .building-panel-heading select[name=ky]{appearance:none;-webkit-appearance:none;min-width:136px;min-height:42px;padding:10px 38px 10px 14px;border:1px solid #dfe3e8;border-radius:9px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23697380' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") right 12px center/16px no-repeat;color:#30343b;font:inherit;font-size:13px;line-height:1.5;box-shadow:0 1px 2px #25282d05;cursor:pointer}
+.role-owner .building-panel-heading select[name=ky]:hover{border-color:#bfa77a;background-color:#fcfaf6}
+.role-owner .building-panel-heading select[name=ky]:focus-visible{outline:0;border-color:#bfa77a;box-shadow:0 0 0 3px #bfa77a26}
+@media(max-width:540px){.role-owner .building-panel-heading>form{width:100%}.role-owner .building-panel-heading>form>label{justify-content:space-between}.role-owner .building-panel-heading select[name=ky]{flex:1;max-width:200px}}

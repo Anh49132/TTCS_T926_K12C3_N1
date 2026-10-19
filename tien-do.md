@@ -1410,3 +1410,4 @@ Gộp origin/feature/S4-07/ui-improvements (0784cf5) vào dev928b2e2. Chỉ xung
 - 20/10/2026: Hai bộ lọc Trạng thái hóa đơn/Báo thanh toán dùng dropdown Bootstrap, menu bo góc và dấu chọn champagne; giữ select có name và FormData GET hiện có. Kiểm tra cú pháp JS, CSS HTTP; chưa kiểm chứng trực quan.
 - 20/10/2026: Bootstrap Thông báo hóa đơn Khách thuê: tiêu đề, thẻ thông báo, trạng thái trống có biểu tượng chuông, nút và phân trang đồng bộ; responsive. Giữ nội dung/quyền/POST đánh dấu đã đọc. Kiểm tra CSS HTTP; chưa kiểm chứng trực quan.
 - 20/10/2026: Căn giãn dòng Thông báo hóa đơn: nội dung line-height 1.6, tiêu đề–mô tả 6px, đoạn 12px, thao tác 10px và phân trang 16px. Kiểm tra CSS HTTP; chưa kiểm chứng trực quan.
+- 20/10/2026: Làm đẹp ô chọn kỳ hóa đơn tại Tiến độ thu tiền của Chủ nhà: cao 42px, nền trắng, viền bo góc, mũi tên SVG và nhãn căn đều; giữ chọn kỳ/tự gửi form. Kiểm tra CSS HTTP; chưa kiểm chứng trực quan.
