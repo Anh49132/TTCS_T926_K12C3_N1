@@ -1,0 +1,30 @@
+/* Bootstrap cards for the reader-facing request detail. */
+.request-detail-page{max-width:1240px;margin:auto;color:#25282d;min-width:0}
+.request-detail-page .rd-columns{display:contents}
+.request-detail-page .rd-heading{display:flex;align-items:center;justify-content:space-between;gap:1rem}
+.request-detail-page .rd-heading p:last-child{margin:0;color:#737982;font-size:.875rem}
+.request-detail-page .eyebrow{font-size:.6875rem;letter-spacing:.08em;color:#92794e;font-weight:600}
+.request-detail-page .rd-back{font-size:.8125rem;color:#737982}
+.request-detail-page .rd-status{background:#f4eddf;color:#80663a;padding:.625rem .875rem;font-size:.75rem;border:1px solid #e8dcc5;white-space:normal}
+.request-detail-page .rd-card{border-radius:14px!important;overflow:hidden;background:#fff}
+.request-detail-page .rd-info-table th{width:34%;font-size:.8125rem;font-weight:500;color:#737982;background:transparent}
+.request-detail-page .rd-info-table td{font-size:.875rem;color:#25282d;background:transparent;overflow-wrap:anywhere}
+.request-detail-page .rd-info-table>:not(caption)>*>*{padding:.6875rem .25rem;line-height:1.5;border-color:#eeeff0}
+.request-detail-page .rd-info-table tr:last-child>*{border-bottom:0}
+.request-detail-page h2{font-size:.9375rem;font-weight:600;line-height:1.5;margin-bottom:1rem!important}
+.request-detail-page .rd-processing p{font-size:.8125rem;line-height:1.6;margin-bottom:.875rem}
+.request-detail-page .rd-processing .rd-cancel{border-top:1px solid #eeeff0}
+.request-detail-page .rd-processing .btn{min-height:40px;font-size:.8125rem;border-radius:8px}
+.request-detail-page .rd-history ul{margin:1rem 0 0!important}
+.request-detail-page .rd-history-event{position:relative;padding-left:1.5rem;border-left:2px solid #e9eaec;font-size:.8125rem;line-height:1.6;padding-bottom:1rem!important;margin-bottom:0!important}
+.request-detail-page .rd-history-event:before{content:"";position:absolute;left:-6px;top:6px;width:10px;height:10px;border-radius:50%;background:#bfa77a;border:2px solid #fff}
+.request-detail-page .rd-history-event:last-child{margin-bottom:0!important;padding-bottom:0!important}
+@media(max-width:575px){.request-detail-page .rd-heading{align-items:flex-start;flex-direction:column}.request-detail-page .card-body{padding:1rem!important}.request-detail-page .rd-info-table th{width:40%}.request-detail-page .rd-info-table td{font-size:.8125rem}.request-detail-page h1{overflow-wrap:anywhere}.request-detail-page .rd-processing .btn{width:100%}}
+
+/* Consistent vertical rhythm inside detail cards. */
+.request-detail-page .rd-heading{line-height:1.5}
+.request-detail-page .rd-heading h1{line-height:1.35}
+.request-detail-page .rd-cancel{margin-top:1rem!important;padding-top:1rem!important;margin-bottom:0!important}
+.request-detail-page .rd-history-event>div+div{margin-top:.25rem}
+.request-detail-page .rd-processing .form-label{line-height:1.5;margin-bottom:.375rem}
+.request-detail-page .rd-processing form:last-child{margin-bottom:0}

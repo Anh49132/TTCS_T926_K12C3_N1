@@ -6,11 +6,11 @@
     var warningRooms = Model.Input?.CanhBaos.Count > 0 ? 1 : 0;
     var percent = Model.TongPhongCanChot == 0 ? 0 : (int)Math.Round(100m * Model.SoPhongDaChot / Model.TongPhongCanChot);
 }
-<section aria-labelledby="meter-title" class="meter-page meter-reference meter-bootstrap">
+<section aria-labelledby="meter-title" class="meter-page meter-reference meter-bootstrap @(User.IsInRole("QUAN_LY") ? "manager-meter container-fluid px-0" : "")">
     <header class="meter-heading d-flex flex-wrap">
         <div><h1 id="meter-title">Chỉ số điện nước</h1><p>Theo dõi tiêu thụ và ghi chỉ số hằng tháng cho từng phòng.</p></div>
         <div class="meter-top-actions d-flex flex-wrap gap-2"><button type="button" class="btn meter-export" data-meter-export><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/></svg>Xuất bảng kê</button>@if(User.IsInRole("CHU_NHA")){<a class="btn btn-primary meter-progress-link" asp-controller="TienDoChiSo" asp-action="Index" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-nam="@Model.DauKy.Year" asp-route-thang="@Model.DauKy.Month"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16M7 16v-5m5 5V7m5 9V4"/></svg>Tiến độ chốt chỉ số</a>}</div>
-</header><div class="meter-heading-controls meter-reference-filters">
+</header><div class="meter-heading-controls meter-reference-filters shadow-sm">
         @if (Model.ToaNhas.Count > 0)
         {
             <form method="get" asp-controller="ChiSoDienNuoc" asp-action="Index" class="meter-building">
@@ -35,17 +35,17 @@
     else
     {
         <div class="meter-stats">
-            <div class="meter-stat meter-stat-progress"><div><span>Tiến độ ghi chỉ số <b>@percent%</b></span><strong>@Model.SoPhongDaChot / @Model.TongPhongCanChot <em>phòng đã ghi</em></strong><progress value="@Model.SoPhongDaChot" max="@Math.Max(1,Model.TongPhongCanChot)"></progress><small>@Model.SoPhongConLai phòng chưa ghi · @warningRooms phòng cần kiểm tra</small></div></div>
+            <div class="meter-stat meter-stat-progress card shadow-sm"><div><span>Tiến độ ghi chỉ số <b>@percent%</b></span><strong>@Model.SoPhongDaChot / @Model.TongPhongCanChot <em>phòng đã ghi</em></strong><progress value="@Model.SoPhongDaChot" max="@Math.Max(1,Model.TongPhongCanChot)"></progress><small>@Model.SoPhongConLai phòng chưa ghi · @warningRooms phòng cần kiểm tra</small></div></div>
             @foreach(var code in new[]{"DIEN","NUOC"}){
                 var usage=Model.Phongs.SelectMany(x=>x.DichVu).Where(x=>x.Ma==code && x.Moi.HasValue && x.Truoc.GiaTri.HasValue).Sum(x=>x.Moi!.Value-x.Truoc.GiaTri!.Value);
-                <div class="meter-stat"><span class="meter-stat-icon">@if(code=="DIEN"){<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m13 3-8 11h6l-1 7 9-12h-6Z"/></svg>}else{<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3s-7 8-7 12a7 7 0 0 0 14 0c0-4-7-12-7-12Z"/></svg>}</span><div><span>@(code=="DIEN"?"Điện":"Nước") tiêu thụ trong kỳ</span><strong>@usage.ToString("N0",vi) <em>@(code=="DIEN"?"kWh":"m³")</em></strong><small>Tổng từ @Model.Phongs.Count(x=>x.DichVu.Any(s=>s.Ma==code && s.Moi.HasValue && s.Truoc.GiaTri.HasValue)) phòng đã ghi chỉ số</small></div></div>
+                <div class="meter-stat card shadow-sm"><span class="meter-stat-icon">@if(code=="DIEN"){<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m13 3-8 11h6l-1 7 9-12h-6Z"/></svg>}else{<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M12 3s-7 8-7 12a7 7 0 0 0 14 0c0-4-7-12-7-12Z"/></svg>}</span><div><span>@(code=="DIEN"?"Điện":"Nước") tiêu thụ trong kỳ</span><strong>@usage.ToString("N0",vi) <em>@(code=="DIEN"?"kWh":"m³")</em></strong><small>Tổng từ @Model.Phongs.Count(x=>x.DichVu.Any(s=>s.Ma==code && s.Moi.HasValue && s.Truoc.GiaTri.HasValue)) phòng đã ghi chỉ số</small></div></div>
             }
         </div>        <div class="meter-mobile-progress" role="status">
             <div>@if(Model.TongPhongCanChot>0){<strong>Đã chốt @Model.SoPhongDaChot / @Model.TongPhongCanChot phòng</strong>}else{<strong>Không có phòng cần ghi chỉ số trong kỳ này.</strong>}<div class="meter-progress-track"><progress value="@Model.SoPhongDaChot" max="@Math.Max(1,Model.TongPhongCanChot)" aria-label="Tiến độ chốt chỉ số"></progress><span>@percent%</span></div></div>
             <p><strong>Còn @Model.SoPhongConLai phòng</strong><span>chưa chốt</span></p>
         </div>
         <div class="meter-workspace">
-        <div class="meter-list-panel">
+        <div class="meter-list-panel shadow-sm">
             <div class="meter-list-heading"><h2>Chỉ số theo phòng</h2><span>@Model.Phongs.Count phòng</span><small class="meter-period-comparison">Kỳ trước: @Model.DauKy.AddMonths(-1).ToString("MM/yyyy") → Kỳ này: @Model.DauKy.ToString("MM/yyyy")</small></div>
             <div class="meter-list-tools" data-meter-filters hidden>
                 <label class="meter-search"><span aria-hidden="true">⌕</span><input class="form-control" type="search" data-room-search aria-label="Tìm mã phòng" placeholder="Tìm phòng…" /></label>
@@ -195,5 +195,5 @@
         <div class="meter-mobile-actions" data-meter-filters hidden><strong>Còn @Model.SoPhongConLai phòng</strong><button type="button" data-next-room>Phòng tiếp theo →</button></div>
     }
 </section>
-@section Styles {<link rel="stylesheet" href="~/css/meter-readings.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/meter-reference.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/meter-bootstrap.css" asp-append-version="true" />}
+@section Styles {<link rel="stylesheet" href="~/css/meter-readings.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/meter-reference.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/meter-bootstrap.css" asp-append-version="true" />@if(User.IsInRole("QUAN_LY")){<link rel="stylesheet" href="~/css/manager-meter-bootstrap.css" asp-append-version="true" />}}
 @section Scripts {<script src="~/js/meter-readings.js" asp-append-version="true"></script>}

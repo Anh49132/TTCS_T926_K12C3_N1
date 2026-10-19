@@ -1,0 +1,52 @@
+/* Bootstrap contract workspace for assigned building managers. */
+.contract-list.lease-overview.manager-contracts{max-width:1440px;margin:0 auto;line-height:1.55}
+.manager-contracts .contract-heading{margin-bottom:1.5rem!important}
+.manager-contracts .contract-heading h1{font-size:1.5rem!important;letter-spacing:-.025rem!important}
+.manager-contracts .lease-header-actions{margin-left:auto}
+.contract-list.manager-contracts .lease-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin-bottom:1.25rem}
+.contract-list.manager-contracts .lease-stats .contract-card{width:auto;display:flex;align-items:center;padding:1.25rem;gap:1rem;border-radius:14px;background:#fff;border:1px solid #e9eaec}
+.contract-list.manager-contracts .lease-stats strong{display:block;font-size:1.875rem;line-height:1.2;margin:0 0 .25rem}
+.contract-list.manager-contracts .contract-icon{width:44px;height:44px;flex-basis:44px;border-radius:10px}
+.contract-list.manager-contracts .lease-filter-card,.contract-list.manager-contracts .lease-list-card{padding:1.25rem;border-radius:14px;margin-bottom:1.25rem;box-shadow:0 2px 8px #25282d04!important}
+.contract-list.manager-contracts .lease-filter-row{display:flex;gap:0;margin:.25rem -.5rem 0;--bs-gutter-x:1rem;--bs-gutter-y:1rem}
+.contract-list.manager-contracts .lease-filter-row label{display:flex;flex-direction:column;gap:.5rem;margin-bottom:0}
+.contract-list.manager-contracts #lease-apply{margin-left:.5rem;margin-right:.5rem;width:calc(100% - 1rem)}
+.contract-list.manager-contracts .lease-search-box{width:min(100%,640px)}
+.contract-list.manager-contracts .lease-search-box #lease-search{width:100%;background:#f7f8f9;border-radius:9px}
+.contract-list.manager-contracts .form-select{background-color:#fff;border-radius:8px;min-height:42px}
+.contract-list.manager-contracts .contract-card-title{margin-bottom:1rem;align-items:flex-start}
+.contract-list.manager-contracts .lease-tabs{gap:.375rem;padding:.25rem;background:#f5f5f4;border-radius:9px;flex-wrap:wrap;margin-bottom:.75rem}
+.contract-list.manager-contracts .lease-tabs button{border:0;border-radius:7px;padding:.5rem .75rem;color:#747b85}
+.contract-list.manager-contracts .lease-tabs button.is-active{background:#fff;color:#80663a;box-shadow:0 1px 4px #25282d12}
+.contract-list.manager-contracts .lease-tabs span{background:#e9eaec;color:#626974;border-radius:4px;padding:.125rem .375rem}
+.contract-list.manager-contracts .lease-list-tools{border-bottom:0}
+.contract-list.manager-contracts .lease-table{min-width:960px}
+.contract-list.manager-contracts .lease-table th{padding:.875rem .75rem;background:#f5f5f4;white-space:nowrap;font-weight:600}
+.contract-list.manager-contracts .lease-table td{padding:1rem .75rem;line-height:1.5;border-color:#eef0f2}
+.contract-list.manager-contracts .lease-table tbody tr:hover td{background:#faf8f4}
+.contract-list.manager-contracts .lease-table-footer{padding-top:1rem;margin-top:.5rem;flex-wrap:wrap;gap:.5rem}
+.contract-list.manager-contracts .lease-table-footer button{border:1px solid #e9eaec;border-radius:6px;min-width:32px;min-height:32px}
+.contract-list.manager-contracts .lease-footnote{font-size:.75rem;color:#858b94;margin-bottom:1rem}
+@media(min-width:1200px){.contract-list.manager-contracts #lease-apply{width:auto}}
+@media(max-width:767px){.contract-list.manager-contracts .lease-stats{grid-template-columns:1fr;gap:.75rem}.contract-list.manager-contracts .lease-stats .contract-card{padding:1rem}.contract-list.manager-contracts .lease-filter-card,.contract-list.manager-contracts .lease-list-card{padding:1rem}.manager-contracts .lease-header-actions{margin-left:0}.contract-list.manager-contracts .lease-table-footer>small{width:100%}.contract-list.manager-contracts .lease-tabs{gap:.25rem}.contract-list.manager-contracts .lease-tabs button{font-size:.75rem;padding:.5rem}.contract-list.manager-contracts .contract-card-title{flex-wrap:wrap}.contract-list.manager-contracts .lease-search-line>small{font-size:.6875rem}}
+/* Even vertical spacing across statistics, filters and contract rows. */
+.contract-list.manager-contracts{line-height:1.5}
+.contract-list.manager-contracts .contract-heading{margin-bottom:1.25rem!important}
+.contract-list.manager-contracts .contract-heading h1{line-height:1.3;margin-bottom:.375rem}
+.contract-list.manager-contracts .contract-heading p{line-height:1.5}
+.contract-list.manager-contracts .lease-stats .contract-card{padding:1rem 1.125rem}
+.contract-list.manager-contracts .lease-stats strong{line-height:1.15;margin-bottom:.25rem}
+.contract-list.manager-contracts .lease-stats small{line-height:1.5;margin-top:.375rem}
+.contract-list.manager-contracts .lease-search-line{gap:.75rem}
+.contract-list.manager-contracts .lease-filter-row{margin-top:.125rem;--bs-gutter-y:.875rem}
+.contract-list.manager-contracts .lease-filter-row label{line-height:1.5;gap:.375rem}
+.contract-list.manager-contracts .contract-card-title{margin-bottom:.875rem}
+.contract-list.manager-contracts .contract-card-title h2{line-height:1.4;margin-bottom:.375rem}
+.contract-list.manager-contracts .contract-card-title small{line-height:1.5}
+.contract-list.manager-contracts .lease-tabs{margin-bottom:.5rem}
+.contract-list.manager-contracts .lease-table th{padding:.75rem;line-height:1.4}
+.contract-list.manager-contracts .lease-table td{padding:.8125rem .75rem;line-height:1.5;vertical-align:middle}
+.contract-list.manager-contracts .lease-table strong{line-height:1.5}
+.contract-list.manager-contracts .lease-table small{display:block;line-height:1.5;margin-top:.25rem}
+.contract-list.manager-contracts .lease-table-footer{padding-top:.875rem;margin-top:.375rem;line-height:1.5}
+@media(max-width:767px){.contract-list.manager-contracts .lease-stats .contract-card{padding:1rem}.contract-list.manager-contracts .lease-table td{padding:.75rem;line-height:1.5}}

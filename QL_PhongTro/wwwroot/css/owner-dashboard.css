@@ -354,3 +354,12 @@ a.owner-stat:hover { color: #25282D; border-color: #BFA77A; }
     .owner-panel { padding: 1rem; }.owner-building-grid { grid-template-columns: minmax(0, 1fr); }
     .owner-heading-actions { flex-wrap: wrap; }.owner-footer { flex-direction: column; gap: 0.375rem; }
 }
+/* Personal account breadcrumb follows the owner room-detail header. */
+.role-owner .dashboard-header .owner-account-breadcrumb{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;font-size:1rem;font-weight:600;line-height:1.5;color:#25282d;min-width:0}
+.owner-account-breadcrumb a{display:inline-flex;align-items:center;gap:.75rem;color:#25282d80;text-decoration:none}
+.owner-account-breadcrumb a:hover{color:#30343b}
+.owner-account-breadcrumb svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.owner-account-breadcrumb>span{color:#25282d66;font-weight:400}
+.owner-account-breadcrumb strong{font-size:1rem;color:#25282d;font-weight:600;overflow-wrap:anywhere}
+@media(max-width:1100px){.role-owner .dashboard-header:has(.owner-account-breadcrumb) .latte-header-search{display:none}.role-owner .dashboard-header:has(.owner-account-breadcrumb){height:auto;min-height:66px;padding-block:.5rem}}
+@media(max-width:600px){.role-owner .dashboard-header .owner-account-breadcrumb{font-size:.72rem;gap:.35rem;flex:1}.owner-account-breadcrumb strong{font-size:.72rem}.owner-account-breadcrumb svg{width:17px;height:17px}.role-owner .dashboard-header:has(.owner-account-breadcrumb) .account-label{display:none}}

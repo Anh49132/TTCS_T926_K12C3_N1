@@ -18,3 +18,64 @@
 @media(max-width:600px){.tenant-account .ta-heading{align-items:flex-start;flex-direction:column;gap:12px}.ta-heading h1{font-size:25px}.tenant-account .ta-identity{grid-template-columns:minmax(0,1fr);padding:18px}.ta-account-id{border:0;border-top:1px solid #e4e6e9;padding:14px 0 0}.ta-verification{flex-direction:column;gap:8px}.tenant-account .ta-card{padding:16px;border-radius:8px}.ta-avatar{width:56px;height:56px;font-size:24px}.ta-identity-person h2{font-size:18px}.ta-tabs a{padding:10px 8px;font-size:12px}.ta-facts>div,.ta-side .ta-facts>div{grid-template-columns:minmax(90px,33%) minmax(0,1fr)}.ta-identity-note{gap:8px}.ta-identity-note .ta-button{width:100%}.ta-card-heading h2{font-size:16px}}
 
 .tenant-account .ta-icon svg{width:20px;height:20px}
+/* Bootstrap-style tenant profile workspace. */
+.role-tenant .tenant-account:not(details){max-width:1440px;margin:auto;padding:0;color:#25282d;font-size:.8125rem;line-height:1.5}
+.role-tenant .ta-breadcrumb{font-size:.75rem;margin-bottom:1rem;color:#858c96}
+.role-tenant .ta-heading{gap:1rem;margin-bottom:1rem;align-items:center}
+.role-tenant .ta-heading h1{font-size:1.5rem;line-height:1.3;margin:0 0 .375rem;font-weight:700;letter-spacing:-.025rem}
+.role-tenant .ta-heading p{font-size:.8125rem;color:#81858d;line-height:1.5;margin:0}
+.role-tenant .ta-button,.role-tenant .ta-copy{display:inline-flex;align-items:center;justify-content:center;gap:.375rem;min-height:40px;padding:.5rem .875rem;border:1px solid #dfe3e8;border-radius:8px;background:#fff;color:#626974;font-size:.75rem;line-height:1.5;text-decoration:none}
+.role-tenant .ta-heading>.ta-button{background:#30343b;border-color:#30343b;color:#fff}
+.role-tenant .ta-button:hover,.role-tenant .ta-copy:hover{border-color:#bfa77a;background:#faf8f4;color:#80663a}
+.role-tenant .ta-card{border:1px solid #e9eaec;border-radius:14px;padding:1.25rem;margin-bottom:1rem;background:#fff;box-shadow:0 2px 8px #25282d04;min-width:0}
+.role-tenant .ta-identity{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,.85fr);align-items:center;gap:1.5rem}
+.role-tenant .ta-identity-person{gap:1rem;min-width:0}
+.role-tenant .ta-avatar{width:68px;height:68px;flex:0 0 68px;background:#f4efe5;color:#80663a}
+.role-tenant .ta-avatar img{display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit}
+.role-tenant .ta-identity h2{font-size:1.125rem;line-height:1.5;margin:0 0 .5rem;overflow-wrap:anywhere}
+.role-tenant .ta-badge{display:inline-flex;align-items:center;font-size:.6875rem;line-height:1.5;padding:.25rem .5rem;border-radius:20px;font-weight:400}
+.role-tenant .ta-badge.neutral{background:#f4efe5;color:#80663a}
+.role-tenant .ta-badge.success{background:#eaf3ee;color:#57806c}
+.role-tenant .ta-account-id{padding-left:1.25rem;border-left:1px solid #e9eaec;min-width:0}
+.role-tenant .ta-account-id small{font-size:.6875rem;line-height:1.5;color:#858c96}
+.role-tenant .ta-account-id strong{font-size:1.75rem;line-height:1.25;font-variant-numeric:tabular-nums}
+.role-tenant .ta-account-id>div{margin:.375rem 0;gap:.75rem}
+.role-tenant .ta-verification{padding-left:1.25rem;border-left:1px solid #e9eaec;font-size:.75rem;line-height:1.5}
+.role-tenant .ta-verification p{margin:0 0 .5rem}
+.role-tenant .ta-verification p:last-child{margin:0}
+.role-tenant .ta-tabs{display:flex;gap:.375rem;flex-wrap:wrap;padding:.25rem;border:1px solid #e9eaec;background:#fff;border-radius:10px;margin:1rem 0;width:fit-content;max-width:100%}
+.role-tenant .ta-tabs a{border:0;border-radius:7px;padding:.625rem .875rem;font-size:.8125rem;line-height:1.5;color:#747c87;text-decoration:none}
+.role-tenant .ta-tabs a.is-active{background:#f4efe5;color:#80663a;border:0;font-weight:600}
+.role-tenant .ta-workspace{grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:1rem;align-items:start}
+.role-tenant .ta-card-heading{gap:.625rem;padding-bottom:.875rem;margin-bottom:.25rem;border-color:#eeeff0}
+.role-tenant .ta-card-heading h2{font-size:1rem;line-height:1.5;margin:0;font-weight:600}
+.role-tenant .ta-card-heading>a{font-size:.75rem;color:#967c4d}
+.role-tenant .ta-icon{width:30px;height:30px;border-radius:8px;background:#e9eaec;color:#626974;display:grid;place-items:center}
+.role-tenant .ta-icon svg{width:17px;height:17px}
+.role-tenant .ta-facts{margin:0}
+.role-tenant .ta-facts>div{padding:.75rem 0;gap:1rem;border-color:#eeeff0;line-height:1.5}
+.role-tenant .ta-facts>div:last-child{border-bottom:0;padding-bottom:0}
+.role-tenant .ta-facts dt{font-size:.75rem;font-weight:400;color:#858c96;line-height:1.5}
+.role-tenant .ta-facts dd{font-size:.8125rem;line-height:1.5;overflow-wrap:anywhere;margin:0}
+.role-tenant .ta-copy-small{min-height:28px;padding:.25rem .4375rem;border-radius:6px}
+.role-tenant .ta-notice,.role-tenant .ta-security-note,.role-tenant .ta-identity-note{font-size:.75rem;line-height:1.6;margin-top:1rem;color:#858c96}
+@media(max-width:1000px){.role-tenant .ta-identity{grid-template-columns:repeat(2,minmax(0,1fr))}.role-tenant .ta-verification{grid-column:1/-1;padding:1rem 0 0;border-left:0;border-top:1px solid #e9eaec}}
+@media(max-width:700px){.role-tenant .ta-workspace{grid-template-columns:minmax(0,1fr)}.role-tenant .ta-card{padding:1rem}.role-tenant .ta-identity{grid-template-columns:minmax(0,1fr);gap:1rem}.role-tenant .ta-account-id{padding:1rem 0 0;border-left:0;border-top:1px solid #e9eaec}.role-tenant .ta-verification{grid-column:auto}.role-tenant .ta-heading{flex-wrap:wrap}.role-tenant .ta-tabs a{padding:.5rem .625rem;font-size:.75rem}.role-tenant .ta-facts>div{gap:.75rem}.role-tenant .ta-identity h2{font-size:1rem}}
+/* Consistent spacing throughout the tenant profile. */
+.role-tenant .ta-heading{margin-bottom:1rem}
+.role-tenant .ta-heading h1{line-height:1.3;margin-bottom:.375rem}
+.role-tenant .ta-heading p{line-height:1.5}
+.role-tenant .ta-card{padding:1.125rem;margin-bottom:1rem}
+.role-tenant .ta-identity{gap:1.25rem}
+.role-tenant .ta-identity h2{line-height:1.5;margin-bottom:.375rem}
+.role-tenant .ta-account-id>div{margin:.25rem 0}
+.role-tenant .ta-account-id small,.role-tenant .ta-verification{line-height:1.5}
+.role-tenant .ta-verification p{margin-bottom:.375rem}
+.role-tenant .ta-tabs{margin:.875rem 0 1rem}
+.role-tenant .ta-tabs a{padding:.5625rem .875rem;line-height:1.5}
+.role-tenant .ta-card-heading{padding-bottom:.75rem;margin-bottom:.125rem}
+.role-tenant .ta-card-heading h2{line-height:1.5}
+.role-tenant .ta-facts>div{padding:.625rem 0;line-height:1.5}
+.role-tenant .ta-facts dt,.role-tenant .ta-facts dd{line-height:1.5}
+.role-tenant .ta-notice,.role-tenant .ta-security-note,.role-tenant .ta-identity-note{line-height:1.5;margin-top:.875rem}
+@media(max-width:700px){.role-tenant .ta-card{padding:1rem}.role-tenant .ta-identity{gap:1rem}.role-tenant .ta-tabs a{padding:.5rem .625rem}}

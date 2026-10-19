@@ -5,14 +5,14 @@
     var vn = CultureInfo.GetCultureInfo("vi-VN");
 }
 
-<article class="bc-page report-bootstrap" data-revenue-report>
+<article class="bc-page report-bootstrap @(User.IsInRole("QUAN_LY") ? "manager-report container-fluid px-0" : "")" data-revenue-report>
     <header class="bc-heading">
         <div>
             <p class="bc-eyebrow">TÀI CHÍNH · BÁO CÁO</p>
             <h1>Báo cáo doanh thu và tỷ lệ lấp đầy</h1>
             <p class="bc-subtitle">So sánh tiền phát hành, tiền đã thu, công nợ và tình hình phòng theo tháng.</p>
         </div>
-        <form asp-controller="BaoCao" asp-action="Index" method="get" class="bc-filter-form">
+        <form asp-controller="BaoCao" asp-action="Index" method="get" class="bc-filter-form shadow-sm">
             <div class="bc-filter-group">
                 <label for="toaNhaId" class="bc-label">Tòa nhà</label>
                 <select name="toaNhaId" id="toaNhaId" class="bc-select form-select" asp-for="ToaNhaId" asp-items="Model.DanhSachToaNha"></select>
@@ -53,32 +53,32 @@
     {
         <p class="bc-subtitle">Từ @Model.TuThang.ToString("D2")/@Model.TuNam đến @Model.DenThang.ToString("D2")/@Model.DenNam · @Model.TenToaNhaDangChon</p>
         <section class="bc-kpi-grid" aria-label="Tổng hợp tài chính khoảng tháng">
-            <article class="bc-kpi-card">
+            <article class="card shadow-sm bc-kpi-card">
                 <span class="bc-kpi-label">Tổng tiền đã phát hành</span>
                 <strong class="bc-kpi-value">@Model.TongPhatHanh.ToString("N0", vn) <small>đ</small></strong>
                 <p class="bc-kpi-hint">Trong khoảng tháng đã chọn</p>
             </article>
-            <article class="bc-kpi-card bc-kpi-success">
+            <article class="card shadow-sm bc-kpi-card bc-kpi-success">
                 <span class="bc-kpi-label">Tổng tiền đã thu</span>
                 <strong class="bc-kpi-value">@Model.TongDaThu.ToString("N0", vn) <small>đ</small></strong>
                 <p class="bc-kpi-hint">Khoản thanh toán đã xác nhận</p>
             </article>
-            <article class="bc-kpi-card bc-kpi-warning">
+            <article class="card shadow-sm bc-kpi-card bc-kpi-warning">
                 <span class="bc-kpi-label">Số còn phải thu</span>
                 <strong class="bc-kpi-value">@Model.TongConPhaiThu.ToString("N0", vn) <small>đ</small></strong>
                 <p class="bc-kpi-hint">Sau thanh toán và cấn trừ cọc đã xác nhận</p>
             </article>
-            <article class="bc-kpi-card bc-kpi-info">
+            <article class="card shadow-sm bc-kpi-card bc-kpi-info">
                 <span class="bc-kpi-label">Tỷ lệ thu</span>
                 <strong class="bc-kpi-value">@Model.TiLeThuTongThe.ToString("0.#", vn)%</strong>
                 <p class="bc-kpi-hint">Đã thu / đã phát hành</p>
             </article>
-            <article class="bc-kpi-card bc-kpi-occupancy"><span class="bc-kpi-label">Tỷ lệ lấp đầy cuối kỳ</span><strong class="bc-kpi-value">@(Model.TiLeLapDayHienTai.HasValue ? Model.TiLeLapDayHienTai.Value.ToString("0.#",vn)+"%" : "—")</strong><p class="bc-kpi-hint">@(Model.ChiTietTheoThang.LastOrDefault()?.SoPhongDangThue??0) / @(Model.ChiTietTheoThang.LastOrDefault()?.TongPhongChoThue??0) phòng cho thuê</p></article>
+            <article class="card shadow-sm bc-kpi-card bc-kpi-occupancy"><span class="bc-kpi-label">Tỷ lệ lấp đầy cuối kỳ</span><strong class="bc-kpi-value">@(Model.TiLeLapDayHienTai.HasValue ? Model.TiLeLapDayHienTai.Value.ToString("0.#",vn)+"%" : "—")</strong><p class="bc-kpi-hint">@(Model.ChiTietTheoThang.LastOrDefault()?.SoPhongDangThue??0) / @(Model.ChiTietTheoThang.LastOrDefault()?.TongPhongChoThue??0) phòng cho thuê</p></article>
         </section>
 
         <partial name="_RevenueChart" model="Model" />
         <div class="bc-bottom-grid">
-        <section class="bc-card" aria-labelledby="monthly-report-heading">
+        <section class="bc-card card shadow-sm" aria-labelledby="monthly-report-heading">
             <header class="bc-card-header">
                 <div>
                     <h2 id="monthly-report-heading">Doanh thu và lấp đầy theo tháng</h2>
@@ -86,7 +86,7 @@
                 </div>
                 <div class="bc-table-meta">Số tháng: <strong>@Model.ChiTietTheoThang.Count</strong> / tối đa 12</div>
             </header>
-            <div class="bc-table-container">
+            <div class="bc-table-container table-responsive">
                 <table class="bc-table table table-hover align-middle mb-0">
                     <thead>
                         <tr>
@@ -126,14 +126,14 @@
             </div>
         </section>
 
-        <section class="bc-card" aria-labelledby="occupancy-heading">
+        <section class="bc-card card shadow-sm" aria-labelledby="occupancy-heading">
             <header class="bc-card-header">
                 <div>
                     <h2 id="occupancy-heading">Tỷ lệ lấp đầy theo tòa nhà</h2>
                     <p>Số phòng tại ngày cuối tháng @Model.DenThang.ToString("D2")/@Model.DenNam; phòng ngừng cho thuê không tính vào tổng phòng cho thuê.</p>
                 </div>
             </header>
-            <div class="bc-table-container">
+            <div class="bc-table-container table-responsive">
                 <table class="bc-table table table-hover align-middle mb-0">
                     <thead>
                         <tr>
@@ -171,7 +171,7 @@
 </article>
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/bao-cao.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/revenue-dashboard.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/report-bootstrap.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/bao-cao.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/revenue-dashboard.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/report-bootstrap.css" asp-append-version="true" />@if(User.IsInRole("QUAN_LY")){<link rel="stylesheet" href="~/css/manager-report-bootstrap.css" asp-append-version="true" />}
 }
 
 @section Scripts { <script src="~/js/report-dropdowns.js" asp-append-version="true"></script> }

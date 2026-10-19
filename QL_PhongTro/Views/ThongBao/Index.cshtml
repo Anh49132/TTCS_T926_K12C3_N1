@@ -1,6 +1,6 @@
 @model List<QL_PhongTro.Models.ThongBaoHoaDon>
 @{ ViewData["Title"] = "Thông báo hóa đơn"; }
-<div class="container py-4" style="max-width:900px">
+<div class="container py-4 tenant-invoice-notifications">
 <h1 class="h3">Thông báo hóa đơn</h1>
 <p>Hóa đơn xuất hiện tại đây sau khi Chủ nhà phát hành.</p>
 @if (Model.Count == 0) { <div class="alert alert-light">Chưa có thông báo hóa đơn.</div> }

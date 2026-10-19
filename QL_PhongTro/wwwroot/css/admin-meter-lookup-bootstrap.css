@@ -1,0 +1,58 @@
+.admin-meter-page{max-width:1440px;margin:auto;min-width:0;color:#25282d;font-size:.8125rem;line-height:1.5}
+.admin-meter-page h1{font-size:1.5rem;line-height:1.3;letter-spacing:-.025rem}
+.admin-meter-page>header p{font-size:.8125rem;line-height:1.5;margin:0;color:#7a818b!important}
+.admin-meter-page h2{font-size:1rem;line-height:1.5}
+.admin-meter-page .card{border:1px solid #e9eaec;border-radius:14px;background:#fff;box-shadow:0 2px 8px #25282d04!important}
+.admin-meter-page .form-label{font-size:.75rem;line-height:1.5;font-weight:500;color:#697380;margin-bottom:.375rem}
+.admin-meter-page .form-control,.admin-meter-page .form-select{min-height:44px;border:1px solid #dfe3e8;border-radius:8px;font-size:.8125rem;background-color:#fff;line-height:1.5}
+.admin-meter-page .form-control:focus,.admin-meter-page .form-select:focus{border-color:#bfa77a;outline:2px solid #bfa77a55;outline-offset:1px;box-shadow:none}
+.admin-meter-page .btn{min-height:44px;padding:.625rem 1.125rem;border-radius:8px;font-size:.8125rem;line-height:1.5;font-weight:500}
+.admin-meter-page .btn-dark{background:#30343b;border-color:#30343b}
+.admin-meter-page .btn-dark:hover{background:#454a52;border-color:#454a52}
+.admin-meter-results{overflow:hidden}
+.admin-meter-page .card-header{border-color:#eeeff0}
+.admin-meter-page .am-count{background:#f1ede4;color:#80663a;padding:.375rem .625rem;border-radius:6px;font-size:.6875rem;font-weight:400}
+.admin-meter-page .table th{background:#f5f5f4;padding:.75rem;font-size:.6875rem;line-height:1.5;white-space:nowrap;font-weight:600;color:#697380;border-color:#eeeff0}
+.admin-meter-page .table td{padding:.8125rem .75rem;font-size:.8125rem;line-height:1.5;border-color:#eeeff0;font-variant-numeric:tabular-nums}
+.admin-meter-page .table td:nth-child(n+6):nth-child(-n+8),.admin-meter-page .table th:nth-child(n+6):nth-child(-n+8){text-align:right}
+.admin-meter-page .am-state{padding:.375rem .625rem;border-radius:20px;font-size:.6875rem;font-weight:500;white-space:nowrap}
+.admin-meter-page .am-locked{background:#e9eaec;color:#626974}
+.admin-meter-page .am-open{background:#f4eddf;color:#80663a}
+.admin-meter-page .table .am-empty{text-align:center;padding:2.75rem 1rem;background:#fff;color:#626974}
+.admin-meter-page .am-empty span{font-size:.75rem}
+.admin-meter-page .card-footer{padding:.875rem 1.25rem;border-color:#eeeff0;line-height:1.5}
+.admin-meter-page .card-footer .btn{min-height:36px;padding:.375rem .75rem;font-size:.75rem;border-color:#dfe3e8;color:#626974}
+@media(max-width:600px){.admin-meter-page .card-body,.admin-meter-page .card-header{padding:1rem!important}.admin-meter-page form .btn{width:100%}.admin-meter-page .table{min-width:850px}.admin-meter-page .card-footer{padding:1rem}}
+/* Even vertical spacing in the Admin meter lookup. */
+.admin-meter-page{line-height:1.5}
+.admin-meter-page>header{margin-bottom:1.25rem!important}
+.admin-meter-page h1{line-height:1.3;margin-bottom:.375rem!important}
+.admin-meter-page>header p{line-height:1.5}
+.admin-meter-page>section.card.mb-4{margin-bottom:1rem!important}
+.admin-meter-page .card-body{padding:1.125rem!important}
+.admin-meter-page .card-body h2{line-height:1.5;margin-bottom:.875rem!important}
+.admin-meter-page form.row{--bs-gutter-y:.875rem}
+.admin-meter-page .form-label{line-height:1.5;margin-bottom:.375rem}
+.admin-meter-page .card-header{padding:1rem 1.125rem!important;line-height:1.5}
+.admin-meter-page .card-header h2{line-height:1.5}
+.admin-meter-page .table th{padding:.6875rem .75rem;line-height:1.5}
+.admin-meter-page .table td{padding:.75rem;line-height:1.5}
+.admin-meter-page .table .am-empty{padding:2.25rem 1rem;line-height:1.5}
+.admin-meter-page .am-empty strong{margin-bottom:.375rem!important}
+.admin-meter-page .card-footer{padding:.75rem 1.125rem;line-height:1.5}
+@media(max-width:600px){.admin-meter-page .card-body,.admin-meter-page .card-header{padding:1rem!important}.admin-meter-page .card-footer{padding:1rem}}
+
+/* Bootstrap floating building selector, with native select fallback. */
+.admin-meter-page select[hidden]{display:none!important}
+.admin-meter-page .admin-meter-select-dropdown{width:100%;min-width:0}
+.admin-meter-page .admin-meter-select-toggle{display:flex;align-items:center;justify-content:space-between;gap:.75rem;width:100%;min-height:44px;padding:.625rem .875rem;border:1px solid #dfe3e8;border-radius:9px;background:#fff;color:#30343b;font-size:.8125rem;font-weight:400;text-align:left;box-shadow:0 1px 2px #25282d05}
+.admin-meter-page .admin-meter-select-toggle:after{width:7px;height:7px;border:0;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg);margin-left:auto;transition:transform .15s}
+.admin-meter-page .admin-meter-select-toggle.show:after{transform:translateY(2px) rotate(225deg)}
+.admin-meter-page .admin-meter-select-toggle:hover{background:#faf8f4;border-color:#bfa77a;color:#30343b}
+.admin-meter-page .admin-meter-select-toggle.show{border-color:#bfa77a;background:#fff;box-shadow:0 0 0 3px #bfa77a20}
+.admin-meter-page .admin-meter-select-toggle:focus-visible{outline:2px solid #bfa77a;outline-offset:2px;box-shadow:none}
+.admin-meter-page .admin-meter-select-menu{width:100%;min-width:0;max-height:280px;overflow-y:auto;padding:.375rem;border:1px solid #e9eaec;border-radius:10px;box-shadow:0 10px 28px #25282d18;margin-top:.375rem!important}
+.admin-meter-page .admin-meter-select-menu .dropdown-item{position:relative;min-height:38px;padding:.5rem 2rem .5rem .75rem;border:0;border-radius:6px;font-size:.8125rem;line-height:1.5;color:#626974;background:#fff;white-space:normal}
+.admin-meter-page .admin-meter-select-menu .dropdown-item:hover,.admin-meter-page .admin-meter-select-menu .dropdown-item:focus{background:#f5f5f4;color:#25282d}
+.admin-meter-page .admin-meter-select-menu .dropdown-item.active{background:#f3eddf;color:#80663a;font-weight:600}
+.admin-meter-page .admin-meter-select-menu .dropdown-item.active:after{content:'✓';position:absolute;right:.75rem;top:.5rem;color:#967c4d}
