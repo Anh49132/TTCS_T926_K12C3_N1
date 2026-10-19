@@ -1,3 +1,12 @@
+### 19/10/2026 – Sửa tự chuyển về đăng nhập nhầm
+- Bộ kiểm tra phiên không còn coi lỗi server tạm thời là hết phiên. JWT refresh thất bại kiểm tra cookie MVC trước khi chuyển Login, lỗi mạng/5xx không xóa token; không thay đổi thời hạn hoặc cơ chế thu hồi phiên backend.
+- 13 ca JavaScript giả lập và 6 ca backend đạt; sửa dọn fixture AuthTests để dừng worker trước khi xóa DB tạm. Chi tiết và giới hạn kiểm chứng: [docs/session-redirect-fix-20261019.md](docs/session-redirect-fix-20261019.md). Không đổi DB.
+
+### 19/10/2026 – Thay DB bằng bộ nghiệm thu mở rộng
+- Theo yêu cầu trực tiếp, tạo DB mới v41: 10 tòa/480 phòng/280 hợp đồng/840 hóa đơn ba kỳ, chia 5 chủ nhà/4 quản lý/300 khách/1 Admin. Có ảnh, dịch vụ, chỉ số, cọc, người ở ghép, tin đăng, yêu cầu và báo hỏng; đủ trả đủ/thiếu/quá hạn/chờ xác nhận.
+- DB cũ giữ nguyên, thêm backup đã kiểm integrity/FK và cấu hình phục hồi; chuyển `.env.local` sang bộ mới, email pickup, server tắt. File tài khoản xuất riêng trong thư mục data bị ignore.
+- Kiểm số liệu, 310 mật khẩu, ảnh và HTTP 4 vai trò đạt. Bàn giao: [docs/acceptance-dataset-20261019.md](docs/acceptance-dataset-20261019.md).
+
 ### 18/10/2026 – Bỏ mục tài khoản trùng lặp trên sidebar Chủ nhà
 - Bỏ mục Thông tin tài khoản và nhóm Tài khoản khỏi sidebar Chủ nhà; hồ sơ cá nhân tiếp tục truy cập từ menu tài khoản góc trên. Không đổi quyền backend hoặc DB.
 

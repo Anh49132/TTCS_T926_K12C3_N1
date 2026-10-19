@@ -25,7 +25,7 @@ public partial class AccountController(AppDbContext db, RegistrationSettings set
     public IActionResult Login(string? returnUrl = null, bool timeout = false)
     {
         // Thong diep het phien (tu dev) giu nguyen tren trang dang nhap.
-        if (timeout) ViewData["TimeoutMessage"] = "Phiên đăng nhập đã hết hạn sau 30 phút. Vui lòng đăng nhập lại.";
+        if (timeout) ViewData["TimeoutMessage"] = "Phiên đăng nhập đã hết hạn hoặc không còn hợp lệ. Vui lòng đăng nhập lại.";
         return View(new LoginRequest { ReturnUrl = returnUrl });
     }
 

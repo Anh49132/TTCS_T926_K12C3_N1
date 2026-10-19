@@ -27,6 +27,7 @@ public class AuthTests : IDisposable
 {
     private readonly WebApplicationFactory<Program> _factory;
     private readonly AppDbContext _dbContext;
+    private readonly IServiceScope _scope;
     private readonly HttpClient _client;
     private readonly MockTimeProvider _mockTimeProvider;
     private readonly string _testDatabasePath;
@@ -67,14 +68,18 @@ public class AuthTests : IDisposable
         
         _client = _factory.CreateClient();
 
-        var scope = _factory.Services.CreateScope();
-        _dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        _scope = _factory.Services.CreateScope();
+        _dbContext = _scope.ServiceProvider.GetRequiredService<AppDbContext>();
     }
 
     public void Dispose()
     {
-        _dbContext.Database.EnsureDeleted();
-        _dbContext.Dispose();
+        // Stop hosted workers and close their SQLite connections before removing
+        // the isolated fixture. The app must not keep using a deleted database.
+        _client.Dispose();
+        _factory.Dispose();
+        _scope.Dispose();
+        SqliteConnection.ClearAllPools();
         if (File.Exists(_testDatabasePath))
         {
             File.Delete(_testDatabasePath);
