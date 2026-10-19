@@ -1,4 +1,9 @@
 .contract-page.renewal-page{max-width:none;padding:0;color:#25282d;font-size:.875rem;line-height:1.5}
+.renewal-breadcrumb{display:flex;align-items:center;flex:1;gap:.5rem .75rem;min-width:0;overflow-x:auto;white-space:nowrap;scrollbar-width:none;font-size:.875rem;line-height:1.5;color:#969da7}
+.renewal-breadcrumb>*{flex-shrink:0}
+.renewal-breadcrumb a{color:#969da7;text-decoration:none}
+.renewal-breadcrumb a:hover{color:#30343b}
+.renewal-breadcrumb strong{color:#25282d;font-weight:600}
 .renewal-page .contract-back{margin:0 0 1rem;font-size:.8125rem;color:#747d89;text-decoration:none}
 .renewal-page .contract-back:hover{color:#30343b}
 .renewal-page .contract-heading{margin:0 0 1rem}

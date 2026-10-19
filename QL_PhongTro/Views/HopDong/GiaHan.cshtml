@@ -4,7 +4,6 @@
     var vi = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
 }
 <div class="contract-page renewal-page">
-    <a asp-action="Details" asp-route-id="@Model.HopDongId" class="contract-back">← Quay lại hợp đồng</a>
     <div class="contract-heading">
         <div>
             <h1>Gia hạn hợp đồng</h1>
@@ -35,6 +34,7 @@
                 <div>
                     <input class="form-control" asp-for="GiaThueMoi" type="number" min="1" step="1" />
                     <small>Mặc định giữ nguyên giá hiện tại: @Model.GiaThueHienTai.ToString("N0", vi) đ/tháng.</small>
+                    <p>Giá mới áp dụng từ ngày bắt đầu kỳ gia hạn. Nếu gia hạn giữa tháng, tiền phòng được chia theo số ngày: giá cũ đến hết kỳ cũ, giá mới từ ngày gia hạn; mỗi phần tính theo số ngày thực tế của tháng và làm tròn đến đồng. Hóa đơn đã phát hành giữ nguyên.</p>
                     <span asp-validation-for="GiaThueMoi" class="text-danger"></span>
                 </div>
             </div>

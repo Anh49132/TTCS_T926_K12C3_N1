@@ -222,6 +222,12 @@ else if (ViewContext.RouteData.Values["controller"]?.ToString() == "HopDong" && 
 <button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
 <nav class="create-header-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="Home" asp-action="Index" aria-label="Về trang chủ"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v10H3V10ZM9 20v-7h6v7" /></svg></a><span aria-hidden="true">/</span><a asp-controller="HopDong" asp-action="Index">Hợp đồng &amp; người ở ghép</a><span aria-hidden="true">/</span><strong aria-current="page">Lập hợp đồng thuê</strong></nav>
 }
+else if (ViewContext.RouteData.Values["controller"]?.ToString() == "HopDong" && ViewContext.RouteData.Values["action"]?.ToString() == "GiaHan")
+{
+var renewal = Model as QL_PhongTro.ViewModels.HopDongGiaHanViewModel;
+<button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>
+<nav class="renewal-breadcrumb" aria-label="Đường dẫn điều hướng"><a asp-controller="HopDong" asp-action="Index">Hợp đồng &amp; người ở ghép</a><span aria-hidden="true">/</span><a asp-controller="HopDong" asp-action="Details" asp-route-id="@renewal?.HopDongId">@renewal?.MaHopDong</a><span aria-hidden="true">/</span><strong aria-current="page">Gia hạn hợp đồng</strong></nav>
+}
 else if (ViewContext.RouteData.Values["controller"]?.ToString() == "HopDong" && ViewContext.RouteData.Values["action"]?.ToString() == "Details")
 {
 <button type="button" id="sidebar-toggle" class="owner-mobile-menu" aria-label="Mở thanh điều hướng" aria-controls="app-sidebar" aria-expanded="true">Menu</button>

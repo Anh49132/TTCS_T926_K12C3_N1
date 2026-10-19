@@ -101,7 +101,16 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
                           orderby h.Id descending
                           select new HopDongDanhSach(h, p.MaPhong, b.TenToaNha, k == null ? null : k.HoTen)).ToListAsync(ct);
         var ids = rows.Select(x => x.HopDong.Id).ToList();
-        var periods = await db.KyHopDongs.AsNoTracking().Where(x => ids.Contains(x.HopDongId)).OrderByDescending(x => x.NgayBatDau).ToListAsync(ct);
+        var hideRent = User.IsInRole("QUAN_LY");
+        var periods = await db.KyHopDongs.AsNoTracking().Where(x => ids.Contains(x.HopDongId))
+            .OrderByDescending(x => x.NgayBatDau).Select(x => new KyHopDongThamChieu
+            {
+                Id = x.Id, HopDongId = x.HopDongId, SoThuTu = x.SoThuTu,
+                NgayBatDau = x.NgayBatDau, NgayKetThuc = x.NgayKetThuc,
+                SoThang = x.SoThang, GiaThue = hideRent ? 0 : x.GiaThue
+            }).ToListAsync(ct);
+        if (hideRent)
+            foreach (var row in rows) row.HopDong.TienCoc = 0;
         var occupants = await db.NguoiOGheps.AsNoTracking()
             .Where(x => ids.Contains(x.HopDongId) && x.NgayVao <= HomNay && (x.NgayRa == null || x.NgayRa >= HomNay))
             .GroupBy(x => x.HopDongId).Select(x => new { Id = x.Key, Count = x.Count() }).ToDictionaryAsync(x => x.Id, x => x.Count, ct);

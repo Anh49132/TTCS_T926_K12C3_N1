@@ -7,7 +7,7 @@ namespace QL_PhongTro.Data;
 // Append new versions; never rewrite an update already shared with the team.
 public static class DatabaseUpdates
 {
-    internal const int CurrentVersion = 41;
+    internal const int CurrentVersion = 42;
     private static SqliteConnection Open(string path, bool readOnly)
     {
         var c = new SqliteConnection(new SqliteConnectionStringBuilder
@@ -51,6 +51,7 @@ public static class DatabaseUpdates
         }
         if (requireCurrentVersion && schemaVersion != CurrentVersion)
             problems.Add($"app_schema_version: expected {CurrentVersion}, actual {schemaVersion}");
+        if (schemaVersion >= 42) LoginAttemptSchema.Validate(c);
         if(schemaVersion>=41 && !HasTable(c,"email_bao_hong"))problems.Add("Missing email_bao_hong (v41)");
         if(schemaVersion>=41 && HasTable(c,"email_bao_hong"))
         {
@@ -511,6 +512,7 @@ public static class DatabaseUpdates
         if (version < 39) PaymentWorkflowSchema.Upgrade(c);
         if (version < 40) CheckoutRequestSchema.Upgrade(c);
         if (version < 41) RepairEmailSchema.Upgrade(c);
+        if (version < 42) LoginAttemptSchema.Upgrade(c);
         Check(path);
         Console.WriteLine($"Database updated to version {CurrentVersion}. Existing business rows preserved.");
     }

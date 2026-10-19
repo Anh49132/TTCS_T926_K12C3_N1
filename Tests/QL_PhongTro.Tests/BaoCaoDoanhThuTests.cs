@@ -597,7 +597,7 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
 
         using var command = connection.CreateCommand();
         command.CommandText = "SELECT MAX(version) FROM app_schema_version";
-        Assert.Equal(41L, command.ExecuteScalar());
+        Assert.Equal(42L, command.ExecuteScalar());
         ReportPerformanceSchema.Validate(connection);
     }
 
@@ -614,7 +614,7 @@ public sealed class BaoCaoDoanhThuTests : IDisposable
 
         using var command = connection.CreateCommand();
         command.CommandText = "SELECT MAX(version) FROM app_schema_version";
-        Assert.Equal(41L, command.ExecuteScalar());
+        Assert.Equal(42L, command.ExecuteScalar());
         EmailGuiLogSchema.Validate(connection);
     }
 

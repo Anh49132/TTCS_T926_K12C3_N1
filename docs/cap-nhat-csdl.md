@@ -1,3 +1,7 @@
+## 20/10/2026 — schema v42: cửa sổ đăng nhập sai
+
+Thêm `login_failed_attempt` (`account_id` FK RESTRICT tới `tai_khoan`, thời điểm UTC theo milliseconds) và index tài khoản/thời điểm để đếm 5 lần sai trong cửa sổ trượt 15 phút. Không đổi cột hay giá trị cũ; khóa cũ còn hạn vẫn có hiệu lực. Updater thêm bước v42, backup và kiểm tra integrity/FK, không sửa các bước v1–v41. Đã có kiểm chứng giữ mọi giá trị cũ và tính lặp trên DB giả/bản sao; không nâng DB nguồn trong lượt sửa. Dừng app và dùng đúng `DatabasePath` khi nâng trước triển khai mã mới. Xem [bàn giao và hướng dẫn nâng/phục hồi](sua-tieu-chi-backlog-20261020.md).
+
 ## S3-08:4 — lịch sử Nháp, giữ schema v22
 
 Dùng bảng nhat_ky_hoat_dong có sẵn và action SUA_NHAP; snapshot trước/sau được ghi cùng transaction, giữ trigger chỉ thêm. Không đổi cấu trúc, không nâng schema và không chạy updater trên CSDL gốc. Chỉ ghi lịch sử cho lần sửa mới, không backfill audit cũ. Xem [hướng dẫn phần 4](s3084-lich-su-sua-nhap.md).

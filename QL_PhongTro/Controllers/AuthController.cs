@@ -22,9 +22,9 @@ public class AuthController(AuthService authService, JwtSettings jwtSettings) : 
             return BadRequest(new AuthErrorResponse { Error = "VALIDATION_ERROR", Message = "Phải nhập email hoặc số điện thoại", Code = 400 });
         }
 
-        if (string.IsNullOrWhiteSpace(request?.MatKhau) || request.MatKhau.Length < 8)
+        if (string.IsNullOrEmpty(request?.MatKhau))
         {
-            return BadRequest(new AuthErrorResponse { Error = "VALIDATION_ERROR", Message = "Mật khẩu tối thiểu 8 ký tự", Code = 400 });
+            return BadRequest(new AuthErrorResponse { Error = "VALIDATION_ERROR", Message = "Nhập mật khẩu.", Code = 400 });
         }
 
         var (success, response, error) = await _authService.LoginAsync(request);

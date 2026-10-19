@@ -23,7 +23,7 @@ public class MockTimeProvider : ITimeProvider
     public DateTime UtcNow { get; set; } = DateTime.UtcNow;
 }
 
-public class AuthTests : IDisposable
+public partial class AuthTests : IDisposable
 {
     private readonly WebApplicationFactory<Program> _factory;
     private readonly AppDbContext _dbContext;

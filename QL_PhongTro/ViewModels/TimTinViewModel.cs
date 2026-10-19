@@ -4,7 +4,7 @@ namespace QL_PhongTro.ViewModels;
 
 public class TimTinViewModel
 {
-    public const int KichThuocTrang = 6;
+    public const int KichThuocTrang = 12;
     public string SapXep { get; set; } = "moi-nhat";
     public int Trang { get; set; } = 1;
     public int TongKetQua { get; set; }

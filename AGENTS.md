@@ -65,6 +65,7 @@ Không còn hiệu lực: Spring Boot, React, MinIO bắt buộc, Docker Compose
 
 ### Quyết định PO khác với Excel
 
+- Chốt ngày 20/10/2026: gia hạn giữa tháng chia tiền theo ngày; giá cũ đến hết kỳ cũ, giá mới từ ngày bắt đầu gia hạn. Mỗi đoạn dùng số ngày thực tế trong tháng, làm tròn từng dòng rồi cộng; không đổi hóa đơn đã phát hành.
 - **QUAN_LY không truy cập module TAI_CHINH** (hóa đơn/thanh toán/công nợ). Ma trận còn lại theo mục 5.
 - Khóa tài khoản và đổi/reset mật khẩu thu hồi cookie/JWT/refresh cũ.
 - Quên mật khẩu hiện chỉ áp dụng cho KHACH_THUE đang hoạt động.
@@ -262,7 +263,7 @@ Quy ước: tên bảng/cột `snake_case` tiếng Việt không dấu. Tiền `
 - Ngày kết thúc tự tính = ngày bắt đầu + số tháng − 1 ngày; không cho sửa tay.
 - Cọc thỏa thuận mặc định 1 tháng giá thuê, nằm trong 0..3 tháng giá kỳ đầu. Đây **không** phải tiền thực nhận.
 - Cấm khoảng sử dụng phòng chồng lấn giữa các hợp đồng đã chốt; hợp đồng `DA_HUY` không chiếm phòng.
-- Gia hạn nối tiếp ngày sau kỳ trước; không đứt quãng, không chồng lấn. Giá mới áp dụng từ kỳ hóa đơn đầu tiên nằm trong khoảng gia hạn.
+- Gia hạn nối tiếp ngày sau kỳ trước; không đứt quãng, không chồng lấn. Giá mới áp dụng từ ngày đầu kỳ gia hạn; tháng giao cắt chia tiền theo số ngày từng mức giá, làm tròn từng dòng rồi cộng (PO chốt 20/10/2026).
 - Tổng người ở (đứng tên + ở ghép) không vượt `so_nguoi_toi_da` tại mọi mốc ngày.
 - `CHO_HIEU_LUC` giữ chỗ; kích hoạt đổi phòng/tin trong cùng transaction.
 - Sau `DA_KET_THUC` không tạo hóa đơn mới nhưng vẫn nhận tiền trả công nợ cũ. Phải lập đủ hóa đơn cuối trước khi đóng.
@@ -501,7 +502,7 @@ python verification/s201_database.py    # nâng cấp bản sao, giữ dữ li�
 - Phòng có trước khi thêm dịch vụ mặc định: có tự gán không? (hiện **không**; tập trung ở `DichVuPhongService.GanMacDinhChoPhongMoiAsync`, có TODO).
 - Giá thương mại và đơn vị/cách tính mặc định (đề xuất: điện kWh, nước m³ theo chỉ số; rác theo người; gửi xe/internet theo phòng). Không dùng giá demo cho DB thật.
 - Giới hạn mã phòng tầng 1..99.
-- Ngày kết thúc kỳ hợp đồng khi cộng tháng (ngày cuối tháng); giá kỳ giao cắt ngày gia hạn: chia đoạn hay chính sách khác.
+- Ngày kết thúc kỳ hợp đồng khi cộng tháng (ngày cuối tháng). Giá kỳ giao cắt ngày gia hạn đã chốt 20/10/2026: chia đoạn theo ngày, xem mục 2.
 - Người ở ghép mới có tăng phí từ kỳ sau không (đề xuất: có).
 - Công thức cảnh báo 200% và xử lý khi thiếu lịch sử 3 kỳ.
 - Chính sách thử lại email (đề xuất: 1 lần đầu + 3 lần thử lại).
