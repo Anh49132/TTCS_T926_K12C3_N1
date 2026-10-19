@@ -10,6 +10,8 @@ public sealed class HomeViewModel
 
 public sealed class HomeDashboardViewModel
 {
+    public DashboardFinance Finance { get; set; } = new();
+    public int FinanceMonths { get; set; } = 6;
     public bool TenantInvoicesReady { get; set; }
     public string? TenantInvoiceMessage { get; set; }
     public int TenantUnpaidInvoices { get; set; }

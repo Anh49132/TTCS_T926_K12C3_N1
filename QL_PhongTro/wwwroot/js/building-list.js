@@ -1,18 +1,4 @@
 (() => {
-    const monthPicker = document.querySelector('.building-month-dropdown');
-    monthPicker?.querySelectorAll('[data-month]').forEach(button => button.addEventListener('click', () => {
-        monthPicker.querySelector('.building-month-label').textContent = button.querySelector('span').textContent;
-        monthPicker.querySelectorAll('[data-month]').forEach(item => item.setAttribute('aria-pressed', String(item === button)));
-        monthPicker.dataset.month = button.dataset.month;
-        monthPicker.open = false;
-        monthPicker.querySelector('summary').focus();
-    }));
-    document.addEventListener('click', event => {
-        if (monthPicker && !monthPicker.contains(event.target)) monthPicker.open = false;
-    });
-    monthPicker?.addEventListener('keydown', event => {
-        if (event.key === 'Escape') { monthPicker.open = false; monthPicker.querySelector('summary').focus(); }
-    });
     const panel = document.querySelector('.building-list-panel');
     if (!panel) return;
     const rows = [...panel.querySelectorAll('tr[data-building-id]')];

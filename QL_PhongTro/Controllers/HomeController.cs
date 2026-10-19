@@ -19,9 +19,10 @@ public partial class HomeController(
 {
     [HttpGet]
     [ResponseCache(Location = ResponseCacheLocation.None, NoStore = true)]
-    public async Task<IActionResult> Index(int? toaNhaId = null, string? ky = null)
+    public async Task<IActionResult> Index(int? toaNhaId = null, string? ky = null, int months = 6)
     {
         var localToday = DateOnly.FromDateTime((clock?.UtcNow ?? DateTime.UtcNow).AddHours(7));
+        if(months is not (3 or 6 or 12)) return BadRequest("Khoảng biểu đồ không hợp lệ.");
         var selectedPeriod = new DateOnly(localToday.Year, localToday.Month, 1);
         if (User.IsInRole("CHU_NHA") && ky != null &&
             (!DateOnly.TryParseExact(ky + "-01", "yyyy-MM-dd", System.Globalization.CultureInfo.InvariantCulture,
@@ -40,6 +41,7 @@ public partial class HomeController(
         };
         model.Dashboard.SelectedBuildingId = User.IsInRole("CHU_NHA") ? toaNhaId : null;
         model.Dashboard.SelectedPeriod = selectedPeriod;
+        model.Dashboard.FinanceMonths = months;
 
         if (db != null && requests != null)
         {
@@ -268,6 +270,11 @@ public partial class HomeController(
                 model.Dashboard.MeterRooms = await meterProgress.PhongChuaChotDashboardAsync(ownerId, selectedPeriod.Year, selectedPeriod.Month, toaNhaId, HttpContext.RequestAborted);
         }
 
+        if(db != null && User.IsInRole("CHU_NHA") && int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier),out var financeOwner))
+        {
+            var ids=await db.ToaNhas.Where(x=>x.ChuNhaId==financeOwner && x.DangHoatDong && (!toaNhaId.HasValue || x.Id==toaNhaId)).Select(x=>x.Id).ToArrayAsync();
+            model.Dashboard.Finance=await new DashboardFinanceService(db).LoadAsync(financeOwner,"CHU_NHA",ids,selectedPeriod,localToday,HttpContext.RequestAborted);
+        }
         return View(model);
     }
 

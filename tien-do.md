@@ -1,3 +1,7 @@
+### 19/10/2026 – Biểu đồ Tổng quan/Tòa nhà dùng số liệu thật
+- Thay placeholder bằng tổng hóa đơn/thu xác nhận/cấn cọc/công nợ; biểu đồ theo kỳ và bộ chọn 3/6/12 tháng, lọc tòa và chọn tháng tải lại số liệu. Không lẫn khoản chờ/hủy; không cho quản lý xem tài chính.
+- 2 test nghiệp vụ, 6 lượt HTTP đối chiếu SQL, Edge desktop/360px đạt; build đạt. Chỉ thử DB tạm/bản sao, không đổi DB thật, server tắt. Chi tiết: [docs/dashboard-finance-20261019.md](docs/dashboard-finance-20261019.md).
+
 ### 19/10/2026 – Sửa tự chuyển về đăng nhập nhầm
 - Bộ kiểm tra phiên không còn coi lỗi server tạm thời là hết phiên. JWT refresh thất bại kiểm tra cookie MVC trước khi chuyển Login, lỗi mạng/5xx không xóa token; không thay đổi thời hạn hoặc cơ chế thu hồi phiên backend.
 - 13 ca JavaScript giả lập và 6 ca backend đạt; sửa dọn fixture AuthTests để dừng worker trước khi xóa DB tạm. Chi tiết và giới hạn kiểm chứng: [docs/session-redirect-fix-20261019.md](docs/session-redirect-fix-20261019.md). Không đổi DB.
