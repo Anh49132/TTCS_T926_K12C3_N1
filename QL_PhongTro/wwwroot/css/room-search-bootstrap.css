@@ -119,3 +119,5 @@
 .public-main.public-main-timtin{padding-bottom:0;min-height:0}
 .timtin-page{padding-bottom:1.25rem}
 .timtin-page .timtin-pagination{margin-top:1.25rem;margin-bottom:0}
+/* Use the same search canvas as the anonymous public layout. */
+.role-tenant .app-content:has(>.timtin-page){padding:0;max-width:none;width:100%;margin:0}

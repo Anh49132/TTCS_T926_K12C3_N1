@@ -9,7 +9,6 @@
 }
 <section class="tcd-page" aria-labelledby="contract-detail-title">
     <nav class="tcd-breadcrumb" aria-label="Đường dẫn"><a asp-controller="Home" asp-action="Index">Trang chủ</a><span>/</span><a asp-action="Index">Hợp đồng của tôi</a><span>/</span><span aria-current="page">@Model.MaHopDong</span></nav>
-    <a class="tcd-back" asp-action="Index">← Quay lại danh sách</a>
     <header class="tcd-heading">
         <div><div class="tcd-title-row"><h1 id="contract-detail-title">Hợp đồng @Model.MaHopDong</h1><span class="tcd-badge @(Model.TrangThai == "DANG_HIEU_LUC" ? "is-green" : "is-neutral")"><i></i>@status</span></div><p>Phòng @Model.MaPhong · @Model.TenToaNha</p></div>
         <a class="tcd-download" asp-action="DownloadPdf" asp-route-maHopDong="@Model.MaHopDong"><partial name="_DetailIcon" model='@("download")' />Tải hợp đồng PDF</a>

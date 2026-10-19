@@ -3,3 +3,75 @@
 @media(max-width:850px){.til-overview{grid-template-columns:repeat(2,minmax(0,1fr))}.tenant-invoice-list{padding:24px 16px}.til-footer{flex-wrap:wrap}.til-tabs{width:100%}.til-tabs a{flex:1;text-align:center}.tenant-invoice-list-table thead{display:none}.tenant-invoice-list-table,.tenant-invoice-list-table tbody{display:block}.tenant-invoice-list-table tr{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px;padding:16px 0;border-bottom:1px solid #e4e6ea}.tenant-invoice-list-table th,.tenant-invoice-list-table td{display:block;border:0;padding:0!important;text-align:left!important;overflow-wrap:anywhere;white-space:normal!important}.tenant-invoice-list-table td:before{content:attr(data-label);display:block;color:#7c8594;font-size:11px;margin-bottom:4px}.tenant-invoice-list-table th{grid-column:1/-1}.tenant-invoice-list-table .til-view{width:100%;text-align:center}.tenant-invoice-list-table .til-action:before{display:none}}
 @media(max-width:540px){.tenant-invoice-list{padding:20px 12px}.tenant-invoice-list-heading{align-items:flex-start;flex-direction:column}.tenant-invoice-list-heading h1{font-size:26px}.til-overview{gap:10px}.til-overview article{padding:14px 12px;display:block}.til-icon{width:36px;height:36px;font-size:22px;margin-bottom:12px}.til-overview strong{font-size:22px}.til-overview h2{font-size:12px}.til-overview p{font-size:11px}.til-panel{padding:16px}.tenant-invoice-filters{grid-template-columns:1fr 1fr;gap:12px}.til-search{grid-column:1/-1}.tenant-invoice-filters .btn,.tenant-invoice-filters .til-reset{grid-column:auto}.til-footer>div{width:100%;justify-content:space-between;flex-wrap:wrap;gap:10px}.til-tabs a{padding:10px 6px;font-size:11px}.til-tabs span{margin:3px 0 0;display:inline-block}}
 .tenant-invoice-list .til-icon svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.tenant-invoice-list .til-bell{width:18px;height:18px;vertical-align:middle;margin-right:6px}.tenant-invoice-list #tenant-invoice-list-results{scroll-margin-top:90px}
+/* Bootstrap-style tenant invoice workspace. */
+.role-tenant .tenant-invoice-list{max-width:1440px;margin:auto;padding:0;font-size:13px;line-height:1.5;min-width:0}
+.role-tenant .tenant-invoice-list .til-breadcrumb{font-size:12px;line-height:1.5;margin-bottom:16px;flex-wrap:wrap}
+.role-tenant .tenant-invoice-list .til-breadcrumb a{text-decoration:none}
+.role-tenant .tenant-invoice-list-heading{margin-bottom:20px;gap:16px}
+.role-tenant .tenant-invoice-list-heading h1{font-size:24px;font-weight:700;line-height:1.3;margin:0 0 6px;letter-spacing:-.3px}
+.role-tenant .tenant-invoice-list-heading p{font-size:13px;line-height:1.6;color:#858c96}
+.role-tenant .tenant-invoice-list .btn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:10px 14px;font-size:12px;line-height:1.5;border-radius:8px}
+.role-tenant .tenant-invoice-list .btn-outline-secondary{background:#fff;color:#30343b;border-color:#dfe3e8}
+.role-tenant .tenant-invoice-list .til-overview{gap:16px;margin-bottom:20px}
+.role-tenant .tenant-invoice-list .til-overview article{padding:20px;gap:14px;align-items:flex-start;border:1px solid #e9eaec;border-radius:14px;box-shadow:0 2px 8px #25282d04}
+.role-tenant .tenant-invoice-list .til-overview article>div{min-width:0}
+.role-tenant .tenant-invoice-list .til-overview article.gold{background:#fcfaf5;border-color:#ece2d0}
+.role-tenant .tenant-invoice-list .til-overview h2{font-size:12px;font-weight:500;line-height:1.5;margin:0 0 6px;color:#7b838e}
+.role-tenant .tenant-invoice-list .til-overview strong{display:block;font-size:clamp(20px,1.7vw,26px);font-weight:700;line-height:1.3}
+.role-tenant .tenant-invoice-list .til-overview p{font-size:11px;line-height:1.6;margin:6px 0 0;color:#858c96}
+.role-tenant .tenant-invoice-list .til-icon{width:44px;height:44px;border-radius:11px;flex:0 0 44px}
+.role-tenant .tenant-invoice-list .til-icon svg{width:24px;height:24px}
+.role-tenant .tenant-invoice-list .til-panel{padding:20px;border:1px solid #e9eaec;border-radius:14px;box-shadow:0 2px 8px #25282d04;margin-bottom:16px}
+.role-tenant .tenant-invoice-list .til-panel h2{font-size:16px;font-weight:600;line-height:1.5}
+.role-tenant .tenant-invoice-list .til-filter-panel h2{margin-bottom:16px}
+.role-tenant .tenant-invoice-list .tenant-invoice-filters{grid-template-columns:minmax(180px,1.4fr) repeat(3,minmax(140px,1fr)) auto auto;gap:12px;align-items:end}
+.role-tenant .tenant-invoice-list .tenant-invoice-filters label{gap:6px;margin:0}
+.role-tenant .tenant-invoice-list .tenant-invoice-filters label>span{font-size:12px;line-height:1.5;font-weight:500;color:#697380}
+.role-tenant .tenant-invoice-list .tenant-invoice-filters input:not([type=hidden]),.role-tenant .tenant-invoice-list .tenant-invoice-filters select{height:44px;min-height:44px;padding:10px 12px;border:1px solid #dfe3e8;border-radius:8px;background-color:#fff;color:#30343b;font-size:13px;line-height:1.5}
+.role-tenant .tenant-invoice-list .tenant-invoice-filters .btn{min-height:44px;white-space:nowrap}
+.role-tenant .tenant-invoice-list .til-reset{font-size:12px;padding:12px 6px;color:#858c96;text-decoration:none}
+.role-tenant .tenant-invoice-list .til-results-heading{gap:12px;margin-bottom:16px}
+.role-tenant .tenant-invoice-list .til-count{font-size:11px;border-radius:20px;padding:4px 9px;margin-left:6px;line-height:1.5}
+.role-tenant .tenant-invoice-list .til-tabs{border-color:#e9eaec;border-radius:9px;background:#fafafa;padding:3px;gap:3px}
+.role-tenant .tenant-invoice-list .til-tabs a{padding:8px 10px;border-radius:6px;font-size:11px;line-height:1.5}
+.role-tenant .tenant-invoice-list .til-tabs a.active{background:#f3eddf;color:#80663a}
+.role-tenant .tenant-invoice-list-table{font-size:12px;line-height:1.5}
+.role-tenant .tenant-invoice-list-table th{font-size:11px;font-weight:600;color:#697380;background:#f7f8f9}
+.role-tenant .tenant-invoice-list-table th,.role-tenant .tenant-invoice-list-table td{padding:14px 10px}
+.role-tenant .tenant-invoice-list-table tbody tr:hover{background:#fdfcf9}
+.role-tenant .tenant-invoice-list-table a{text-decoration:none;overflow-wrap:anywhere}
+.role-tenant .tenant-invoice-list-table small{font-size:11px;line-height:1.5;margin-top:4px}
+.role-tenant .tenant-invoice-list .til-status{padding:5px 9px;border-radius:20px;font-size:11px;line-height:1.5;white-space:nowrap}
+.role-tenant .tenant-invoice-list .til-view{border-color:#dfe3e8;border-radius:8px;padding:8px 10px;font-size:11px}
+.role-tenant .tenant-invoice-list .til-footer{border-top:1px solid #eeeff0;padding-top:16px;margin-top:16px;gap:12px}
+.role-tenant .tenant-invoice-list .til-footer p,.role-tenant .tenant-invoice-list .til-footer select{font-size:12px;line-height:1.5}
+.role-tenant .tenant-invoice-list .til-footer select{border-color:#dfe3e8;border-radius:8px}
+.role-tenant .tenant-invoice-list .tenant-invoice-pagination .current{background:#30343b;color:#fff;border-radius:7px}
+@media(max-width:1200px){.role-tenant .tenant-invoice-list .tenant-invoice-filters{grid-template-columns:repeat(3,minmax(0,1fr))}.role-tenant .tenant-invoice-list .til-overview article{padding:16px;gap:10px}}
+@media(max-width:850px){.role-tenant .tenant-invoice-list .til-overview{grid-template-columns:repeat(2,minmax(0,1fr))}.role-tenant .tenant-invoice-list .til-tabs{width:100%}.role-tenant .tenant-invoice-list-table tr{padding:16px 0;gap:14px}.role-tenant .tenant-invoice-list-table td:before{margin-bottom:5px;line-height:1.5}}
+@media(max-width:540px){.role-tenant .tenant-invoice-list .til-panel{padding:16px}.role-tenant .tenant-invoice-list .til-overview{gap:12px}.role-tenant .tenant-invoice-list .til-overview article{display:flex;flex-direction:column;padding:14px;gap:10px}.role-tenant .tenant-invoice-list .til-icon{margin:0;width:36px;height:36px;flex-basis:36px}.role-tenant .tenant-invoice-list .tenant-invoice-filters{grid-template-columns:minmax(0,1fr)}.role-tenant .tenant-invoice-list .til-search{grid-column:auto}.role-tenant .tenant-invoice-list-heading{align-items:stretch}.role-tenant .tenant-invoice-list .til-overview strong{font-size:20px}}
+/* Consistent line spacing for My invoices. */
+.role-tenant .tenant-invoice-list .til-overview h2{margin-bottom:6px;line-height:1.5}
+.role-tenant .tenant-invoice-list .til-overview strong{line-height:1.4}
+.role-tenant .tenant-invoice-list .til-overview p{margin-top:6px;line-height:1.6}
+.role-tenant .tenant-invoice-list .tenant-invoice-filters label{gap:6px}
+.role-tenant .tenant-invoice-list .til-filter-panel h2{margin-bottom:16px}
+.role-tenant .tenant-invoice-list-table th,.role-tenant .tenant-invoice-list-table td{line-height:1.6;padding-top:12px;padding-bottom:12px}
+.role-tenant .tenant-invoice-list-table small{margin-top:4px;line-height:1.6}
+.role-tenant .tenant-invoice-list .til-report{margin-top:6px;line-height:1.5}
+.role-tenant .tenant-invoice-list .til-results-heading h2{line-height:1.5;margin:0}
+.role-tenant .tenant-invoice-list .til-footer{margin-top:16px;padding-top:16px;line-height:1.5}
+.role-tenant .tenant-invoice-list-heading p{margin:0;line-height:1.6}
+/* Bootstrap dropdowns for invoice status and payment reports. */
+.role-tenant .tenant-invoice-list .invoice-filter-dropdown{width:100%;min-width:0}
+.role-tenant .tenant-invoice-list .tenant-invoice-filters select[hidden]{display:none!important}
+.role-tenant .tenant-invoice-list .tenant-invoice-filters .invoice-filter-toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:44px;padding:10px 12px;border:1px solid #dfe3e8;border-radius:8px;background:#fff!important;color:#30343b!important;font-size:13px;font-weight:400;line-height:1.5;text-align:left;box-shadow:0 1px 2px #25282d05}
+.role-tenant .tenant-invoice-list .invoice-filter-toggle>span{display:block;position:static;width:auto;height:auto;overflow:visible;clip:auto;clip-path:none;font:inherit;color:inherit;white-space:normal}
+.role-tenant .tenant-invoice-list .invoice-filter-toggle:after{width:7px;height:7px;border:0;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg);margin-left:auto;flex-shrink:0}
+.role-tenant .tenant-invoice-list .tenant-invoice-filters .invoice-filter-toggle:hover,.role-tenant .tenant-invoice-list .tenant-invoice-filters .invoice-filter-toggle.show{background:#faf7ef!important;border-color:#bfa77a}
+.role-tenant .tenant-invoice-list .invoice-filter-toggle:focus-visible{outline:0;border-color:#bfa77a;box-shadow:0 0 0 3px #bfa77a26}
+.role-tenant .tenant-invoice-list .invoice-filter-menu{width:100%;min-width:0;max-height:280px;overflow:auto;padding:6px;margin-top:6px!important;border:1px solid #e9eaec;border-radius:10px;box-shadow:0 10px 28px #25282d18}
+.role-tenant .tenant-invoice-list .invoice-filter-menu .dropdown-item{position:relative;min-height:38px;padding:9px 32px 9px 12px;border:0;border-radius:6px;font-size:13px;line-height:1.5;background:#fff!important;color:#626974!important;text-align:left;white-space:normal}
+.role-tenant .tenant-invoice-list .invoice-filter-menu .dropdown-item:hover,.role-tenant .tenant-invoice-list .invoice-filter-menu .dropdown-item:focus{background:#f5f5f4!important;color:#25282d!important}
+.role-tenant .tenant-invoice-list .invoice-filter-menu .dropdown-item.active{background:#f3eddf!important;color:#80663a!important;font-weight:600}
+.role-tenant .tenant-invoice-list .invoice-filter-menu .dropdown-item.active:after{content:'✓';position:absolute;right:12px;top:9px;color:#967c4d}

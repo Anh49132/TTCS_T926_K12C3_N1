@@ -7,3 +7,151 @@
 .repair-tenant-list{max-width:1440px;font-size:14px}.repair-tenant-list .trl-table{table-layout:auto}.repair-tenant-list .trl-table th{width:auto!important;font-size:10px;white-space:nowrap}.repair-tenant-list .trl-table td{overflow-wrap:normal}.repair-tenant-list .trl-table td:nth-child(6){white-space:nowrap}.repair-tenant-list .trl-table th:first-child{min-width:160px}.repair-tenant-list .trl-table th:nth-child(2){min-width:120px}.repair-tenant-list .trl-table th:nth-child(3){min-width:140px}.repair-tenant-list .trl-table-wrap{overflow-x:auto}.repair-tenant-list .trl-table td:last-child{white-space:nowrap}.manager-repairs .mr-filters>.mr-inline-filter{display:block;padding:0;border:0;min-width:0}.manager-repairs .mr-inline-filter label{display:block;margin-bottom:6px}.manager-repairs .mr-inline-filter select{width:100%;border:1px solid #d7dce3;border-radius:5px;padding:9px;background:#fff;height:auto;font-weight:400}.repair-create .ru-severity input[type=radio]{position:static!important;margin:0 8px 0 0!important}.repair-create .ru-severity label>span{min-width:0}
 @media(min-width:761px) and (max-width:1200px){.repair-tenant-list .trl-table{min-width:1050px}}
 @media(max-width:760px){.repair-tenant-list .trl-table th{min-width:0}.repair-tenant-list .trl-table td:nth-child(6){white-space:normal}.repair-tenant-list .trl-table-wrap{overflow:visible}}
+/* Tenant Bootstrap repair list refinement. */
+.role-tenant .repair-tenant-list{max-width:1440px;margin:auto;padding:0;font-size:.8125rem;line-height:1.5;color:#25282d}
+.role-tenant .repair-tenant-list .trl-breadcrumb{font-size:.75rem;margin-bottom:1rem;color:#858c96}
+.role-tenant .repair-tenant-list .trl-heading{gap:1rem;align-items:center;margin-bottom:1.25rem}
+.role-tenant .repair-tenant-list .trl-heading h1{font-size:1.5rem;line-height:1.3;margin:0 0 .375rem;letter-spacing:-.025rem}
+.role-tenant .repair-tenant-list .trl-heading p{font-size:.8125rem;line-height:1.5;color:#81858d;margin:0}
+.role-tenant .repair-tenant-list .trl-create{min-height:42px;padding:.625rem .875rem;border-radius:8px;background:#30343b;border:1px solid #30343b;color:#fff;font-size:.75rem;line-height:1.5}
+.role-tenant .repair-tenant-list .ru-stats{gap:1rem;margin:0 0 1.25rem}
+.role-tenant .repair-tenant-list .ru-stat{padding:1.125rem;gap:.875rem;border:1px solid #e9eaec;border-radius:14px;box-shadow:0 2px 8px #25282d04}
+.role-tenant .repair-tenant-list .ru-stat-icon{width:40px;height:40px;flex:0 0 40px;border-radius:10px;font-size:1.25rem;background:#e9eaec;color:#626974}
+.role-tenant .repair-tenant-list .ru-stat.progress .ru-stat-icon{background:#f4efe5;color:#9c8150}
+.role-tenant .repair-tenant-list .ru-stat.done .ru-stat-icon{background:#eaf3ee;color:#64927f}
+.role-tenant .repair-tenant-list .ru-stat span:not(.ru-stat-icon),.role-tenant .repair-tenant-list .ru-stat small{font-size:.6875rem;line-height:1.5;color:#858c96}
+.role-tenant .repair-tenant-list .ru-stat strong{font-size:1.75rem;line-height:1.25;margin:.25rem 0;font-variant-numeric:tabular-nums}
+.role-tenant .repair-tenant-list .trl-panel{border:1px solid #e9eaec;border-radius:14px;background:#fff;overflow:hidden;box-shadow:0 2px 8px #25282d04}
+.role-tenant .repair-tenant-list .ru-tabs{padding:.875rem 1.125rem;gap:.375rem;flex-wrap:wrap;border-bottom:1px solid #eeeff0}
+.role-tenant .repair-tenant-list .ru-tabs a{padding:.5rem .75rem;border:0;border-radius:8px;background:#f5f5f4;font-size:.75rem;line-height:1.5;color:#747c87}
+.role-tenant .repair-tenant-list .ru-tabs a.active{background:#f4efe5;color:#80663a;font-weight:600;border:0}
+.role-tenant .repair-tenant-list .ru-tabs a span{font-size:.625rem;border-radius:5px;background:#e9eaec;color:#626974}
+.role-tenant .repair-tenant-list .ru-list-filters{display:grid;grid-template-columns:minmax(220px,2fr) minmax(150px,1fr) minmax(150px,1fr) auto auto;padding:1rem 1.125rem;gap:.75rem;align-items:center}
+.role-tenant .repair-tenant-list .ru-list-filters label{min-width:0;margin:0}
+.role-tenant .repair-tenant-list .ru-list-filters input,.role-tenant .repair-tenant-list .ru-list-filters select{width:100%;min-height:42px;border:1px solid #dfe3e8;border-radius:8px;font-size:.8125rem;line-height:1.5;background:#fff;padding:.625rem .75rem}
+.role-tenant .repair-tenant-list .ru-list-filters .btn{min-height:42px;border-radius:8px;font-size:.75rem;padding:.625rem 1rem;background:#30343b;border-color:#30343b}
+.role-tenant .repair-tenant-list .ru-list-filters>a{font-size:.75rem;color:#858c96;text-decoration:none}
+.role-tenant .repair-tenant-list .trl-table th{padding:.75rem;font-size:.6875rem;background:#f5f5f4;line-height:1.5;color:#697380;white-space:nowrap}
+.role-tenant .repair-tenant-list .trl-table td{padding:.8125rem .75rem;font-size:.8125rem;line-height:1.5;border-color:#eeeff0}
+.role-tenant .repair-tenant-list .trl-empty{padding:2rem 1rem;background:#fcfcfb;border-top:1px solid #eeeff0;text-align:center}
+.role-tenant .repair-tenant-list .trl-empty h3{font-size:.9375rem;line-height:1.5;margin:0 0 .375rem;color:#626974}
+.role-tenant .repair-tenant-list .trl-empty p{font-size:.75rem;line-height:1.5;color:#858c96;margin:0 0 .75rem}
+.role-tenant .repair-tenant-list .trl-empty a{display:inline-flex;padding:.5rem .875rem;border:1px solid #dfe3e8;border-radius:8px;font-size:.75rem;color:#626974;text-decoration:none;background:#fff}
+.role-tenant .repair-tenant-list .ru-pagination{padding:.875rem 1.125rem;font-size:.75rem;line-height:1.5;border-color:#eeeff0}
+.role-tenant .repair-tenant-list .ru-note{font-size:.6875rem;line-height:1.5;margin-top:1rem;color:#858c96}
+@media(max-width:1000px){.role-tenant .repair-tenant-list .ru-list-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.role-tenant .repair-tenant-list .ru-search{grid-column:1/-1}.role-tenant .repair-tenant-list .ru-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.role-tenant .repair-tenant-list .ru-stat{padding:.875rem;gap:.625rem}.role-tenant .repair-tenant-list .ru-stat-icon{width:32px;height:32px;flex-basis:32px}.role-tenant .repair-tenant-list .ru-list-filters{grid-template-columns:minmax(0,1fr);padding:1rem}.role-tenant .repair-tenant-list .ru-tabs{padding:.875rem 1rem}.role-tenant .repair-tenant-list .ru-tabs a{padding:.4375rem .625rem}.role-tenant .repair-tenant-list .trl-heading{flex-wrap:wrap}.role-tenant .repair-tenant-list .ru-pagination{padding:1rem}}
+/* Even vertical rhythm in the tenant repair list. */
+.role-tenant .repair-tenant-list .trl-heading{margin-bottom:1rem}
+.role-tenant .repair-tenant-list .trl-heading h1{line-height:1.3;margin-bottom:.375rem}
+.role-tenant .repair-tenant-list .trl-heading p{line-height:1.5}
+.role-tenant .repair-tenant-list .ru-stats{margin-bottom:1rem}
+.role-tenant .repair-tenant-list .ru-stat{padding:1rem}
+.role-tenant .repair-tenant-list .ru-stat strong{line-height:1.25;margin:.25rem 0}
+.role-tenant .repair-tenant-list .ru-stat span:not(.ru-stat-icon),.role-tenant .repair-tenant-list .ru-stat small{line-height:1.5}
+.role-tenant .repair-tenant-list .ru-tabs{padding:.75rem 1.125rem}
+.role-tenant .repair-tenant-list .ru-tabs a{line-height:1.5}
+.role-tenant .repair-tenant-list .ru-list-filters{padding:.875rem 1.125rem;row-gap:.75rem}
+.role-tenant .repair-tenant-list .trl-table th{padding:.6875rem .75rem;line-height:1.5}
+.role-tenant .repair-tenant-list .trl-table td{padding:.75rem;line-height:1.5}
+.role-tenant .repair-tenant-list .trl-empty{padding:1.75rem 1rem}
+.role-tenant .repair-tenant-list .trl-empty h3{line-height:1.5;margin-bottom:.375rem}
+.role-tenant .repair-tenant-list .trl-empty p{line-height:1.5;margin-bottom:.625rem}
+.role-tenant .repair-tenant-list .ru-pagination{padding:.75rem 1.125rem;line-height:1.5}
+@media(max-width:600px){.role-tenant .repair-tenant-list .ru-stat{padding:.875rem}.role-tenant .repair-tenant-list .ru-tabs,.role-tenant .repair-tenant-list .ru-list-filters,.role-tenant .repair-tenant-list .ru-pagination{padding:.875rem 1rem}}
+
+/* Bootstrap floating status selector, with native select fallback. */
+.role-tenant .repair-tenant-list select[hidden]{display:none!important}
+.role-tenant .repair-tenant-list .repair-select-dropdown{width:100%;min-width:0}
+.role-tenant .repair-tenant-list .repair-select-toggle{display:flex;align-items:center;justify-content:space-between;gap:.75rem;width:100%;min-height:44px;padding:.625rem .875rem;border:1px solid #dfe3e8;border-radius:9px;background:#fff;color:#30343b;font-size:.8125rem;font-weight:400;text-align:left;box-shadow:0 1px 2px #25282d05}
+.role-tenant .repair-tenant-list .repair-select-toggle:after{width:7px;height:7px;border:0;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg);margin-left:auto;transition:transform .15s}
+.role-tenant .repair-tenant-list .repair-select-toggle.show:after{transform:translateY(2px) rotate(225deg)}
+.role-tenant .repair-tenant-list .repair-select-toggle:hover{background:#faf8f4;border-color:#bfa77a;color:#30343b}
+.role-tenant .repair-tenant-list .repair-select-toggle.show{border-color:#bfa77a;background:#fff;box-shadow:0 0 0 3px #bfa77a20}
+.role-tenant .repair-tenant-list .repair-select-toggle:focus-visible{outline:2px solid #bfa77a;outline-offset:2px;box-shadow:none}
+.role-tenant .repair-tenant-list .repair-select-menu{width:100%;min-width:0;max-height:280px;overflow-y:auto;padding:.375rem;border:1px solid #e9eaec;border-radius:10px;box-shadow:0 10px 28px #25282d18;margin-top:.375rem!important}
+.role-tenant .repair-tenant-list .repair-select-menu .dropdown-item{position:relative;min-height:38px;padding:.5rem 2rem .5rem .75rem;border:0;border-radius:6px;font-size:.8125rem;line-height:1.5;color:#626974;background:#fff;white-space:normal}
+.role-tenant .repair-tenant-list .repair-select-menu .dropdown-item:hover,.role-tenant .repair-tenant-list .repair-select-menu .dropdown-item:focus{background:#f5f5f4;color:#25282d}
+.role-tenant .repair-tenant-list .repair-select-menu .dropdown-item.active{background:#f3eddf;color:#80663a;font-weight:600}
+.role-tenant .repair-tenant-list .repair-select-menu .dropdown-item.active:after{content:'✓';position:absolute;right:.75rem;top:.5rem;color:#967c4d}
+
+.role-tenant .repair-tenant-list .ru-list-filters .repair-select-toggle{min-height:42px;font-size:.75rem}.role-tenant .repair-tenant-list .trl-panel{overflow:visible}.role-tenant .repair-tenant-list .trl-table-wrap{overflow-x:auto}
+/* Bootstrap-style tenant repair submission form. */
+.role-tenant .repair-create{max-width:1440px;margin:auto;padding:0;color:#25282d;font-size:.8125rem;line-height:1.5}
+.role-tenant .repair-create .ru-breadcrumb{font-size:.75rem;margin-bottom:.75rem;color:#858c96}
+.role-tenant .repair-create .ru-back{font-size:.75rem;color:#858c96;text-decoration:none;margin-bottom:1rem}
+.role-tenant .repair-create>header{margin-bottom:1.25rem}
+.role-tenant .repair-create>header h1{font-size:1.5rem;line-height:1.3;letter-spacing:-.025rem;margin:0 0 .375rem;font-weight:700}
+.role-tenant .repair-create>header p{font-size:.8125rem;line-height:1.5;color:#81858d;margin:0}
+.role-tenant .repair-create .ru-create-grid{grid-template-columns:minmax(0,1.8fr) minmax(300px,1fr);gap:1rem;align-items:start}
+.role-tenant .repair-create .repairs-card{padding:1.25rem;border:1px solid #e9eaec;border-radius:14px;background:#fff;box-shadow:0 2px 8px #25282d04;margin-bottom:1rem;min-width:0}
+.role-tenant .repair-create .repairs-card h2{font-size:1rem;line-height:1.5;font-weight:600;margin:0 0 1rem}
+.role-tenant .repair-create .ru-create-form>label,.role-tenant .repair-create .ru-create-fields label,.role-tenant .repair-create legend{font-size:.75rem;line-height:1.5;font-weight:500;color:#697380;margin-bottom:.375rem}
+.role-tenant .repair-create .ru-create-form>select,.role-tenant .repair-create .ru-create-form>textarea,.role-tenant .repair-create .ru-create-fields input:not([type=radio]){width:100%;min-height:44px;border:1px solid #dfe3e8;border-radius:8px;padding:.625rem .75rem;background:#fff;font-size:.8125rem;line-height:1.5;color:#30343b}
+.role-tenant .repair-create .ru-create-form>textarea{min-height:130px;resize:vertical}
+.role-tenant .repair-create .ru-create-form input:focus-visible,.role-tenant .repair-create .ru-create-form select:focus-visible,.role-tenant .repair-create .ru-create-form textarea:focus-visible{outline:2px solid #bfa77a55;outline-offset:1px;border-color:#bfa77a}
+.role-tenant .repair-create .ru-create-fields{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:1rem;margin:1rem 0;align-items:start}
+.role-tenant .repair-create .ru-severity>div{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.625rem}
+.role-tenant .repair-create .ru-severity label{padding:.75rem;border:1px solid #e4e7eb;border-radius:9px;min-height:84px;display:flex;align-items:flex-start;gap:.5rem;margin:0;background:#fff}
+.role-tenant .repair-create .ru-severity label:has(input:checked){background:#faf7ef;border-color:#d8c39f}
+.role-tenant .repair-create .ru-severity input{accent-color:#bfa77a;flex-shrink:0;margin:.125rem 0 0!important}
+.role-tenant .repair-create .ru-severity b{font-size:.8125rem;line-height:1.5}
+.role-tenant .repair-create .ru-severity small{font-size:.6875rem;line-height:1.5;color:#858c96;margin-top:.25rem}
+.role-tenant .repair-create .ru-field-help{font-size:.6875rem;line-height:1.5;color:#858c96;margin:.375rem 0 .875rem;gap:.625rem}
+.role-tenant .repair-create .ru-upload-zone{padding:1.5rem 1rem;border:1px dashed #d8c6a6;border-radius:10px;background:#fcfaf6;font-size:.8125rem;line-height:1.5;text-align:center}
+.role-tenant .repair-create .ru-submit{border-top:1px solid #eeeff0;padding-top:1rem;margin-top:1rem;gap:.75rem;align-items:center;flex-wrap:wrap}
+.role-tenant .repair-create .ru-submit small{font-size:.6875rem;line-height:1.5;color:#858c96}
+.role-tenant .repair-create .ru-submit button{min-height:42px;padding:.625rem 1rem;border:1px solid #30343b;border-radius:8px;background:#30343b;color:#fff;font-size:.75rem;line-height:1.5}
+.role-tenant .repair-create .ru-submit a{font-size:.75rem;color:#858c96}
+.role-tenant .repair-create .ru-summary dl{margin:0}
+.role-tenant .repair-create .ru-summary dl>div{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:.75rem;padding:.625rem 0;border-bottom:1px solid #eeeff0;line-height:1.5}
+.role-tenant .repair-create .ru-summary dt{font-size:.75rem;font-weight:400;color:#858c96}
+.role-tenant .repair-create .ru-summary dd{font-size:.8125rem;line-height:1.5;overflow-wrap:anywhere;margin:0}
+.role-tenant .repair-create .ru-note{padding:.75rem;border:1px solid #e8dcc5;border-radius:9px;background:#faf7ef;font-size:.6875rem;line-height:1.6;margin-top:1rem}
+.role-tenant .repair-create .ru-help-list,.role-tenant .repair-create .ru-muted{font-size:.75rem;line-height:1.6;color:#858c96;margin:0}
+@media(max-width:1000px){.role-tenant .repair-create .ru-create-grid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.role-tenant .repair-create .repairs-card{padding:1rem}.role-tenant .repair-create .ru-create-fields{grid-template-columns:minmax(0,1fr)}.role-tenant .repair-create .ru-severity>div{grid-template-columns:minmax(0,1fr)}.role-tenant .repair-create .ru-severity label{min-height:0}.role-tenant .repair-create .ru-submit small{width:100%}.role-tenant .repair-create .ru-submit button{flex:1}}
+/* Consistent vertical rhythm for the tenant repair form. */
+.role-tenant .repair-create .ru-create-form>label:not(.ru-upload-zone){display:block;margin:1rem 0 .375rem;line-height:1.5}
+.role-tenant .repair-create .ru-create-form>h2{margin-bottom:1rem}
+.role-tenant .repair-create .ru-create-form>h2+div+input+label{margin-top:0}
+.role-tenant .repair-create .ru-create-fields{margin:1rem 0;gap:1rem}
+.role-tenant .repair-create .ru-create-fields>div>label{display:block;margin:0 0 .375rem;line-height:1.5}
+.role-tenant .repair-create .ru-severity{margin:0;padding:0}
+.role-tenant .repair-create .ru-severity legend{margin:0 0 .375rem;line-height:1.5}
+.role-tenant .repair-create .ru-create-fields+.text-danger:empty{display:none}
+.role-tenant .repair-create .ru-create-fields+label{margin-top:0}
+.role-tenant .repair-create .ru-field-help{margin:.375rem 0 .75rem;line-height:1.6}
+.role-tenant .repair-create .ru-upload-zone{margin:0;gap:.5rem;line-height:1.6}
+.role-tenant .repair-create .ru-create-form>.text-danger:not(:empty){display:block;margin-top:.375rem;font-size:.75rem;line-height:1.5}
+.role-tenant .repair-create #repair-image-error:empty{display:none}
+.role-tenant .repair-create .repair-photos:empty{display:none}
+.role-tenant .repair-create .ru-submit{margin-top:1.25rem;padding-top:1rem}
+.role-tenant .repair-create .ru-summary dl>div{align-items:center;padding:.75rem 0}
+.role-tenant .repair-create .ru-summary dt,.role-tenant .repair-create .ru-summary dd{line-height:1.5;margin:0}
+.role-tenant .repair-create .ru-help-list li+li{margin-top:.5rem}
+.role-tenant .repair-create .ru-summary .ru-note{margin:1rem 0 0}
+/* Keep filter dropdowns readable against shared button theme rules. */
+.role-tenant .repair-tenant-list .ru-list-filters .repair-select-toggle{background:#fff!important;color:#30343b!important;border:1px solid #dfe3e8!important;min-height:44px;padding:10px 14px;border-radius:9px;line-height:1.5;box-shadow:0 1px 2px #25282d08}
+.role-tenant .repair-tenant-list .ru-list-filters .repair-select-toggle>span{display:block!important;position:static!important;width:auto!important;height:auto!important;overflow:visible!important;clip:auto!important;clip-path:none!important;color:inherit!important;font-size:13px;line-height:1.5;text-align:left;white-space:normal}
+.role-tenant .repair-tenant-list .ru-list-filters .repair-select-toggle:after{display:block!important;visibility:visible;color:#697380;flex-shrink:0}
+.role-tenant .repair-tenant-list .ru-list-filters .repair-select-toggle:hover,.role-tenant .repair-tenant-list .ru-list-filters .repair-select-toggle.show{background:#faf7ef!important;border-color:#bfa77a!important;color:#80663a!important}
+.role-tenant .repair-tenant-list .ru-list-filters .repair-select-menu .dropdown-item{background:#fff!important;color:#626974!important;text-align:left}
+.role-tenant .repair-tenant-list .ru-list-filters .repair-select-menu .dropdown-item:hover,.role-tenant .repair-tenant-list .ru-list-filters .repair-select-menu .dropdown-item:focus{background:#f5f5f4!important;color:#25282d!important}
+.role-tenant .repair-tenant-list .ru-list-filters .repair-select-menu .dropdown-item.active{background:#f3eddf!important;color:#80663a!important}
+/* Bootstrap room picker on the repair submission form. */
+.role-tenant .repair-create .repair-room-native{position:absolute;width:1px!important;height:1px;min-height:0!important;padding:0!important;opacity:0;pointer-events:none}
+.role-tenant .repair-create .repair-room-picker{width:100%;min-width:0}
+.role-tenant .repair-create .repair-room-toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-height:44px;padding:10px 14px;background:#fff!important;color:#30343b!important;border:1px solid #dfe3e8;border-radius:9px;font-size:13px;line-height:1.5;text-align:left;white-space:normal;box-shadow:0 1px 2px #25282d06}
+.role-tenant .repair-create .repair-room-toggle>span{color:inherit;min-width:0;overflow-wrap:anywhere}
+.role-tenant .repair-create .repair-room-toggle:after{width:7px;height:7px;border:0;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg);flex-shrink:0;margin-left:auto}
+.role-tenant .repair-create .repair-room-toggle:hover,.role-tenant .repair-create .repair-room-toggle.show{border-color:#bfa77a;background:#fcfaf6!important}
+.role-tenant .repair-create .repair-room-toggle:focus-visible{outline:0;border-color:#bfa77a;box-shadow:0 0 0 3px #bfa77a26}
+.role-tenant .repair-create .repair-room-toggle[aria-invalid=true]{border-color:#b02020}
+.role-tenant .repair-create .repair-room-menu{width:100%;min-width:0;max-height:280px;overflow:auto;padding:6px;margin-top:6px!important;border:1px solid #e9eaec;border-radius:10px;box-shadow:0 10px 28px #25282d18}
+.role-tenant .repair-create .repair-room-menu .dropdown-item{position:relative;min-height:40px;padding:10px 32px 10px 12px;border:0;border-radius:6px;background:#fff!important;color:#626974!important;text-align:left;font-size:13px;line-height:1.5;white-space:normal;overflow-wrap:anywhere}
+.role-tenant .repair-create .repair-room-menu .dropdown-item:hover,.role-tenant .repair-create .repair-room-menu .dropdown-item:focus{background:#f5f5f4!important;color:#25282d!important}
+.role-tenant .repair-create .repair-room-menu .dropdown-item.active{background:#f3eddf!important;color:#80663a!important;font-weight:600}
+.role-tenant .repair-create .repair-room-menu .dropdown-item.active:after{content:'✓';position:absolute;right:12px;top:10px;color:#967c4d}
+/* Hide the removed back link in previously compiled repair-create views too. */
+.role-tenant .repair-create>.ru-back{display:none}
