@@ -1632,6 +1632,11 @@
     font-size: 0.75rem;
 }
 
+.timtin-card-footer .timtin-owner-contact {display:flex;flex-direction:column;align-items:flex-start;gap:6px;min-width:0;overflow-wrap:anywhere}
+.timtin-owner-contact a {color:#30343B;font-weight:600;text-decoration:none}
+.timtin-owner-contact a:hover {text-decoration:underline}
+.timtin-card-footer {gap:10px;align-items:flex-start}
+.timtin-card-footer > small {flex-shrink:0}
 .timtin-card-footer span {
     display: inline-flex;
     align-items: center;

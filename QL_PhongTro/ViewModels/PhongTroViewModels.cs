@@ -206,6 +206,8 @@ public class TaoToaNhaViewModel
 
 public class DanhSachToaNhaViewModel
 {
+    public DashboardFinance Finance { get; set; } = new();
+    public DateOnly FinancePeriod { get; set; }
     public int HopDongSapHetHan { get; set; }
     public string? TuKhoa { get; set; }
     public IReadOnlyList<ToaNhaTongHopViewModel> ToaNhas { get; set; } = [];

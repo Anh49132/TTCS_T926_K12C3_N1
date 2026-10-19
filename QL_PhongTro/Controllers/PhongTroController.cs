@@ -108,7 +108,7 @@ public partial class PhongTroController(AppDbContext db, DichVuPhongService room
     }
 
     [HttpGet]
-    public async Task<IActionResult> ToaNha(string? tuKhoa)
+    public async Task<IActionResult> ToaNha(string? tuKhoa, string? ky = null)
     {
         var ownerId = CurrentAccountId();
         if (ownerId is null)
@@ -137,11 +137,14 @@ public partial class PhongTroController(AppDbContext db, DichVuPhongService room
 
         var buildingIds = buildings.Select(x => x.Id).ToList();
         var today = DateOnly.FromDateTime((clock ?? new SystemTimeProvider()).UtcNow.AddHours(7));
+        var financePeriod=new DateOnly(today.Year,today.Month,1);
+        if(ky != null && (!DateOnly.TryParseExact(ky+"-01","yyyy-MM-dd",CultureInfo.InvariantCulture,DateTimeStyles.None,out financePeriod) || financePeriod.Year<1901 || financePeriod.Year>9998))return BadRequest("Kỳ không hợp lệ.");
+        var finance=await new DashboardFinanceService(db).LoadAsync(ownerId.Value,User.FindFirstValue(ClaimTypes.Role)??"",buildingIds.ToArray(),financePeriod,today,HttpContext.RequestAborted);
         var contractEnds = await (from h in db.HopDongs.AsNoTracking()
             join p in db.PhongTros on h.PhongId equals p.Id
             where buildingIds.Contains(p.ToaNhaId) && h.TrangThai == "DANG_HIEU_LUC"
             select db.KyHopDongs.Where(k => k.HopDongId == h.Id).Max(k => (DateOnly?)k.NgayKetThuc)).ToListAsync();
-        return View(new DanhSachToaNhaViewModel { TuKhoa = tuKhoa, ToaNhas = buildings,
+        return View(new DanhSachToaNhaViewModel { TuKhoa = tuKhoa, ToaNhas = buildings, Finance=finance, FinancePeriod=financePeriod,
             HopDongSapHetHan = contractEnds.Count(end => end >= today && end <= today.AddDays(30)) });
     }
 

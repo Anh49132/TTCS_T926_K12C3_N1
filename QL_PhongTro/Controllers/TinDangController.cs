@@ -489,6 +489,7 @@ public partial class TinDangController(AppDbContext db, YeuCauThueService reques
                 BuildingId = building.Id,
                 OwnerId = building.ChuNhaId,
                 OwnerName = db.TaiKhoans.Where(a => a.Id == building.ChuNhaId).Select(a => a.HoTen).FirstOrDefault(),
+                OwnerPhone = db.TaiKhoans.Where(a => a.Id == building.ChuNhaId).Select(a => a.SoDienThoai).FirstOrDefault(),
                 building.ThangMay, building.BaiDoXe, building.CameraAnNinh, building.BaoVe24h, building.KhuGiatSay, building.SanThuong,
                 Listing = new TinDangChiTietViewModel
                 {
@@ -523,6 +524,7 @@ public partial class TinDangController(AppDbContext db, YeuCauThueService reques
         return new TinDangChiTietViewModel
         {
             TenChuNha = result.OwnerName,
+            DienThoaiChuNha = result.OwnerPhone,
             TienNghi = amenities,
             Id = listing.Id,
             MaPhong = listing.MaPhong,

@@ -25,6 +25,7 @@
     <form class="owner-overview-filters" action="/" method="get" aria-label="Lọc tổng quan">
         <label><span class="visually-hidden">Cơ sở</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon("building")" /></svg><select name="toaNhaId" aria-label="Cơ sở"><option value="">Tất cả cơ sở</option>@foreach (var building in Model.BuildingOptions) { <option value="@building.Id" selected="@(Model.SelectedBuildingId == building.Id)">@building.Name</option> }</select></label>
         <input type="hidden" name="ky" value="@Model.SelectedPeriod.ToString("yyyy-MM")" />
+        <input type="hidden" name="months" value="@Model.FinanceMonths" />
         <details class="owner-filter-dropdown owner-month-dropdown">
             <summary aria-label="Chọn tháng theo dõi"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v16H4ZM8 3v4M16 3v4M4 10h16M8 14h2M14 14h2M8 17h2" /></svg><span>Tháng @Model.SelectedPeriod.ToString("MM/yyyy")</span><svg class="owner-filter-chevron" viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" /></svg></summary>
             <nav class="owner-filter-menu" aria-label="Tháng theo dõi">
@@ -48,15 +49,17 @@
         {
             <a class="owner-stat owner-summary-card shadow-sm" href="@stat.Url"><div class="owner-stat-heading"><span>@stat.Label</span><span class="owner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon(stat.Icon)" /></svg></span></div><div class="owner-stat-value">@stat.Value <small>@stat.Unit</small></div><p>@stat.Note</p><div class="owner-stat-link">@stat.Link <span class="owner-stat-arrow" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M4 4h8v8" /></svg></span></div></a>
         }
-        <a class="owner-stat owner-summary-card owner-summary-finance shadow-sm" href="/HoaDonDichVu"><div class="owner-stat-heading"><span>Tiền còn phải thu</span><span class="owner-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h15V4H6a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2h14V7H6a2 2 0 0 1-2-1ZM15 12h6v5h-6Z M17 14.5h.01" /></svg></span></div><div class="owner-stat-value">— <small>đ</small></div><p>Chưa có tổng hợp công nợ</p><div class="owner-stat-link">Xem công nợ tháng này <span class="owner-stat-arrow" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M4 4h8v8" /></svg></span></div></a>
+        @if(Model.Finance.Available) {
+        <a class="owner-stat owner-summary-card shadow-sm" href="/CongNo"><div class="owner-stat-heading">Tiền còn phải thu · mọi kỳ</div><div class="owner-stat-value">@Model.Finance.TotalDebt.ToString("N0", CultureInfo.GetCultureInfo("vi-VN")) <small>đ</small></div><p>@Model.Finance.UnpaidCount hóa đơn chưa trả hết · @Model.Finance.OverdueCount quá hạn</p><div class="owner-stat-link">Xem công nợ →</div></a>
+        }
     </section>
     <section class="owner-main-grid" aria-label="Tổng quan vận hành">
         <article class="owner-panel owner-revenue shadow-sm">
-            <div class="owner-panel-heading"><h2>Tình hình thu tiền</h2><details class="owner-period-picker"><summary aria-label="Chọn khoảng thời gian thu tiền"><span class="owner-period-label">6 tháng gần nhất</span><svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 6 4 4 4-4" /></svg></summary><div class="owner-period-menu"><button type="button" data-period="6" aria-pressed="true">6 tháng gần nhất<span aria-hidden="true">✓</span></button><button type="button" data-period="3" aria-pressed="false">3 tháng gần nhất<span aria-hidden="true">✓</span></button><button type="button" data-period="12" aria-pressed="false">12 tháng gần nhất<span aria-hidden="true">✓</span></button></div><select hidden aria-hidden="true" tabindex="-1"><option value="6">6 tháng gần nhất</option><option value="3">3 tháng gần nhất</option><option value="12">12 tháng gần nhất</option></select></details></div>
-            <div class="owner-revenue-legend" aria-label="Chú giải biểu đồ"><span><i class="collected"></i>Đã thu</span><span><i class="receivable"></i>Phải thu</span></div>
-            <div class="owner-revenue-summary"><strong>— <small>đ</small></strong><span>Chưa có dữ liệu thu tiền</span></div>
-            <div class="owner-chart" aria-label="Chưa có dữ liệu để vẽ biểu đồ thu tiền"><div class="owner-chart-grid"></div><p>Biểu đồ sẽ hiển thị khi có dữ liệu thanh toán.</p></div>
-            <div class="owner-chart-months" data-current-month="@today.ToString("yyyy-MM")">@for (var i = 5; i >= 0; i--) { <span>@today.AddMonths(-i).ToString("MM/yyyy")</span> }</div>
+            <div class="owner-panel-heading"><h2>Tình hình thu tiền</h2><nav class="finance-period-links" aria-label="Khoảng biểu đồ">@foreach(var count in new[]{3,6,12}){<a href="/?toaNhaId=@Model.SelectedBuildingId&amp;ky=@Model.SelectedPeriod.ToString("yyyy-MM")&amp;months=@count" aria-current="@(count==Model.FinanceMonths ? "page" : null)">@count tháng</a>}</nav></div>
+            @if(Model.Finance.Available){
+            <div class="owner-revenue-summary"><strong>@Model.Finance.Months.TakeLast(Model.FinanceMonths).Sum(x=>x.Paid).ToString("N0",CultureInfo.GetCultureInfo("vi-VN")) <small>đ</small></strong><span>Đã thu theo kỳ hóa đơn đến @Model.SelectedPeriod.ToString("MM/yyyy")</span></div>
+            <partial name="_FinanceBars" model="Model.Finance.Months.TakeLast(Model.FinanceMonths).ToList()" />
+            } else { <p>Không có quyền xem dữ liệu tài chính hoặc module chưa sẵn sàng.</p> }
         </article>
         <article class="owner-panel owner-occupancy shadow-sm">
             <div class="owner-panel-heading"><h2>Tình trạng phòng</h2><a class="owner-occupancy-link" href="/PhongTro">Chi tiết <span class="owner-stat-arrow" aria-hidden="true"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M4 4h8v8" /></svg></span></a></div>
@@ -193,36 +196,6 @@
     });
     filterForm?.querySelector('.owner-month-dropdown')?.addEventListener('keydown', event => {
         if (event.key === 'Escape') { const dropdown = event.currentTarget; dropdown.open = false; dropdown.querySelector('summary').focus(); }
-    });
-    const panel = document.querySelector('.owner-revenue');
-    const period = panel?.querySelector('.owner-period-picker select');
-    const months = panel?.querySelector('.owner-chart-months');
-    if (!period || !months) return;
-    const picker = panel.querySelector('.owner-period-picker');
-    const label = picker.querySelector('.owner-period-label');
-    picker.querySelectorAll('[data-period]').forEach(button => {
-        button.addEventListener('click', () => {
-            period.value = button.dataset.period;
-            label.textContent = period.selectedOptions[0].textContent;
-            picker.querySelectorAll('[data-period]').forEach(option => option.setAttribute('aria-pressed', String(option === button)));
-            period.dispatchEvent(new Event('change'));
-            picker.open = false;
-            picker.querySelector('summary').focus();
-        });
-    });
-    document.addEventListener('click', event => { if (!picker.contains(event.target)) picker.open = false; });
-    picker.addEventListener('keydown', event => {
-        if (event.key === 'Escape') { picker.open = false; picker.querySelector('summary').focus(); }
-    });
-    period.addEventListener('change', () => {
-        const [year, month] = months.dataset.currentMonth.split('-').map(Number);
-        months.replaceChildren();
-        for (let i = Number(period.value) - 1; i >= 0; i--) {
-            const date = new Date(Date.UTC(year, month - 1 - i, 1));
-            const label = document.createElement('span');
-            label.textContent = String(date.getUTCMonth() + 1).padStart(2, '0') + '/' + date.getUTCFullYear();
-            months.append(label);
-        }
     });
 })();
 </script>

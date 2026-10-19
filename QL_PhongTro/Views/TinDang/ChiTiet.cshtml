@@ -90,7 +90,7 @@ else if (Model.TinConCongKhai && Model.RequestModuleInstalled && User.Identity?.
 else if (Model.TinConCongKhai && Model.RequestModuleInstalled) { <p>Chức năng gửi yêu cầu dành cho tài khoản Khách thuê.</p> }
 
 
-            <section class="ld-card ld-owner"><span class="ld-owner-avatar" aria-hidden="true">@(string.IsNullOrWhiteSpace(detail.TenChuNha) ? "C" : System.Globalization.StringInfo.GetNextTextElement(detail.TenChuNha))</span><div><h2>@(detail.TenChuNha ?? "Chủ nhà")</h2><p>Chủ nhà cho thuê phòng</p><small>Trao đổi thông tin qua yêu cầu thuê.</small></div></section>
+            <section class="ld-card ld-owner"><span class="ld-owner-avatar" aria-hidden="true">@(string.IsNullOrWhiteSpace(detail.TenChuNha) ? "C" : System.Globalization.StringInfo.GetNextTextElement(detail.TenChuNha))</span><div><h2>@(detail.TenChuNha ?? "Chủ nhà")</h2><p>Chủ nhà cho thuê phòng</p>@if(!string.IsNullOrWhiteSpace(detail.DienThoaiChuNha)){<a class="ld-owner-phone d-inline-block mt-2 fw-semibold text-dark" href="tel:@detail.DienThoaiChuNha" aria-label="Gọi chủ nhà @detail.TenChuNha">☎ @detail.DienThoaiChuNha</a>}else{<small>Chưa cập nhật số điện thoại liên hệ.</small>}</div></section>
         </aside>
     </div>
 </article>

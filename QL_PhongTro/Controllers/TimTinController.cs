@@ -77,6 +77,8 @@ public class TimTinController(AppDbContext db, TinDangExpirationService expirati
                     select new TinTimKiem
                     {
                         Id = tin.Id, NgayDang = tin.NgayDang,
+                        TenChuNha = db.TaiKhoans.Where(a=>a.Id==toa.ChuNhaId).Select(a=>a.HoTen).FirstOrDefault(),
+                        DienThoaiChuNha = db.TaiKhoans.Where(a=>a.Id==toa.ChuNhaId).Select(a=>a.SoDienThoai).FirstOrDefault(),
                         TieuDe = tin.TieuDe, NoiDung = tin.NoiDung ?? phong.MoTa, MaPhong = phong.MaPhong, DiaChi = toa.DiaChi,
                         PhuongXa = toa.PhuongXa == null ? null : toa.PhuongXa.Trim(),
                         QuanHuyen = toa.QuanHuyen == null ? null : toa.QuanHuyen.Trim(),

@@ -11,6 +11,21 @@ namespace QL_PhongTro.Tests;
 public sealed partial class PermissionTests
 {
     [Fact]
+    public async Task PublicListingContactUsesBuildingOwnerRatherThanPostingManager()
+    {
+        var listing=CreatePublicListing("TRONG","DANG_HIEN_THI",includePhoto:false);
+        Execute("UPDATE tai_khoan SET ho_ten=$name,so_dien_thoai=$phone WHERE id=$id",("$name","Chủ nhà Liên Hệ"),("$phone","0987654321"),("$id",accounts["CHU_NHA"]));
+        Execute("UPDATE tin_dang SET nguoi_dang_id=$manager WHERE id=$id",("$manager",accounts["QUAN_LY"]),("$id",listing));
+        using var guest=Client();
+        foreach(var url in new[]{"/TimTin",$"/TinDang/ChiTiet/{listing}"}){
+            var html=WebUtility.HtmlDecode(await guest.GetStringAsync(url));
+            Assert.Contains("Chủ nhà Liên Hệ",html);Assert.Contains("href=\"tel:0987654321\"",html);
+        }
+        using var data=JsonDocument.Parse(await guest.GetStringAsync($"/api/tin-dang/{listing}"));
+        Assert.Equal("0987654321",data.RootElement.GetProperty("dienThoaiChuNha").GetString());
+    }
+
+    [Fact]
     public async Task SearchLinksToDetailsUsesThumbnailAndExcludesOccupiedRooms()
     {
         var listingId = CreatePublicListing("TRONG", "DANG_HIEN_THI", includePhoto: true);

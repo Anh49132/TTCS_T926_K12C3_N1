@@ -1,3 +1,20 @@
+### 19/10/2026 – Thông tin chủ nhà trên tin công khai
+- Thẻ tìm phòng và chi tiết tin hiển thị tên, số điện thoại chủ sở hữu tòa nhà, có liên kết gọi điện; không lấy nhầm liên hệ quản lý đăng tin. Thông tin lấy từ tài khoản hiện tại, không sửa DB/schema. Có thông báo khi chưa có số liên hệ.
+- Build và 4 kiểm thử HTTP công khai đạt, gồm trường hợp quản lý đăng thay chủ nhà; kiểm chứng trên DB tạm, server để tắt. Kết quả local: data/listing-contact-tests/listing-contact.trx.
+
+### 19/10/2026 – Biểu đồ Tổng quan/Tòa nhà dùng số liệu thật
+- Thay placeholder bằng tổng hóa đơn/thu xác nhận/cấn cọc/công nợ; biểu đồ theo kỳ và bộ chọn 3/6/12 tháng, lọc tòa và chọn tháng tải lại số liệu. Không lẫn khoản chờ/hủy; không cho quản lý xem tài chính.
+- 2 test nghiệp vụ, 6 lượt HTTP đối chiếu SQL, Edge desktop/360px đạt; build đạt. Chỉ thử DB tạm/bản sao, không đổi DB thật, server tắt. Chi tiết: [docs/dashboard-finance-20261019.md](docs/dashboard-finance-20261019.md).
+
+### 19/10/2026 – Sửa tự chuyển về đăng nhập nhầm
+- Bộ kiểm tra phiên không còn coi lỗi server tạm thời là hết phiên. JWT refresh thất bại kiểm tra cookie MVC trước khi chuyển Login, lỗi mạng/5xx không xóa token; không thay đổi thời hạn hoặc cơ chế thu hồi phiên backend.
+- 13 ca JavaScript giả lập và 6 ca backend đạt; sửa dọn fixture AuthTests để dừng worker trước khi xóa DB tạm. Chi tiết và giới hạn kiểm chứng: [docs/session-redirect-fix-20261019.md](docs/session-redirect-fix-20261019.md). Không đổi DB.
+
+### 19/10/2026 – Thay DB bằng bộ nghiệm thu mở rộng
+- Theo yêu cầu trực tiếp, tạo DB mới v41: 10 tòa/480 phòng/280 hợp đồng/840 hóa đơn ba kỳ, chia 5 chủ nhà/4 quản lý/300 khách/1 Admin. Có ảnh, dịch vụ, chỉ số, cọc, người ở ghép, tin đăng, yêu cầu và báo hỏng; đủ trả đủ/thiếu/quá hạn/chờ xác nhận.
+- DB cũ giữ nguyên, thêm backup đã kiểm integrity/FK và cấu hình phục hồi; chuyển `.env.local` sang bộ mới, email pickup, server tắt. File tài khoản xuất riêng trong thư mục data bị ignore.
+- Kiểm số liệu, 310 mật khẩu, ảnh và HTTP 4 vai trò đạt. Bàn giao: [docs/acceptance-dataset-20261019.md](docs/acceptance-dataset-20261019.md).
+
 ### 18/10/2026 – Bỏ mục tài khoản trùng lặp trên sidebar Chủ nhà
 - Bỏ mục Thông tin tài khoản và nhóm Tài khoản khỏi sidebar Chủ nhà; hồ sơ cá nhân tiếp tục truy cập từ menu tài khoản góc trên. Không đổi quyền backend hoặc DB.
 

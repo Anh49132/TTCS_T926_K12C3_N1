@@ -232,7 +232,7 @@
                                     <span>@tin.DienTich m²</span>
                                     <span>Tối đa @tin.SoNguoiToiDa người</span>
                                 </div>
-                                <div class="timtin-card-footer"><span><i aria-hidden="true"></i> Chủ nhà</span><small>@(tin.NgayDang?.ToString("dd/MM/yyyy") ?? "Tin mới")</small></div>
+                                <div class="timtin-card-footer"><div class="timtin-owner-contact"><span><i aria-hidden="true"></i> Chủ nhà: @(tin.TenChuNha ?? "Chưa cập nhật")</span>@if(!string.IsNullOrWhiteSpace(tin.DienThoaiChuNha)){<a href="tel:@tin.DienThoaiChuNha" aria-label="Gọi chủ nhà @tin.TenChuNha">☎ @tin.DienThoaiChuNha</a>}else{<small>Chưa cập nhật số điện thoại</small>}</div><small>@(tin.NgayDang?.ToString("dd/MM/yyyy") ?? "Tin mới")</small></div>
                             </div>
                         </article>
                     }

@@ -32,7 +32,11 @@
             body: JSON.stringify({ RefreshToken: refreshToken })
         });
 
-        if (!response.ok) throw new Error('Refresh failed');
+        if (!response.ok) {
+            const error = new Error('Refresh failed');
+            error.status = response.status;
+            throw error;
+        }
 
         const data = await response.json();
         localStorage.setItem('accessToken', data.accessToken);
@@ -59,7 +63,19 @@
         window.dispatchEvent(new Event('authChanged'));
     };
 
-    const goToLogin = () => {
+    const goToLogin = async () => {
+        // MVC cookie and API tokens have separate lifetimes. A rejected refresh
+        // token (e.g. another tab logged in) must not end a valid MVC session.
+        try {
+            const response = await originalFetch('/Account/SessionStatus', {
+                cache: 'no-store', credentials: 'same-origin'
+            });
+            if (response.status !== 401) {
+                if (!response.ok) return;
+                const state = await response.json();
+                if (state.authenticated !== false) return;
+            }
+        } catch { return; }
         if (!/^\/account\/login/i.test(window.location.pathname)) {
             window.location.replace('/Account/Login');
         }
@@ -80,10 +96,11 @@
                 await refreshAccessToken();
                 console.log('Session restored via refresh token');
             } catch (err) {
-                console.warn('Session restore failed, tokens cleared');
+                console.warn('Session restore failed');
+                if (err.status !== 401) return;
                 clearTokens();
                 // S1-02: ca access token va refresh token deu het han -> ve man hinh dang nhap.
-                goToLogin();
+                await goToLogin();
             }
         }
     };
@@ -116,8 +133,10 @@
                 } catch (err) {
                     isRefreshing = false;
                     processQueue(err);
-                    clearTokens();
-                    goToLogin();
+                    if (err.status === 401) {
+                        clearTokens();
+                        await goToLogin();
+                    }
                     throw err;
                 }
             } else {
