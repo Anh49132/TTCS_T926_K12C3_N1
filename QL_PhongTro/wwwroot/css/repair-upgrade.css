@@ -122,7 +122,7 @@
 .role-tenant .repair-create .ru-create-fields+.text-danger:empty{display:none}
 .role-tenant .repair-create .ru-create-fields+label{margin-top:0}
 .role-tenant .repair-create .ru-field-help{margin:.375rem 0 .75rem;line-height:1.6}
-.role-tenant .repair-create .ru-upload-zone{margin:0;gap:.5rem;line-height:1.6}
+.role-tenant .repair-create .ru-create-form>label.ru-upload-zone{display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0;gap:.5rem;line-height:1.6}
 .role-tenant .repair-create .ru-create-form>.text-danger:not(:empty){display:block;margin-top:.375rem;font-size:.75rem;line-height:1.5}
 .role-tenant .repair-create #repair-image-error:empty{display:none}
 .role-tenant .repair-create .repair-photos:empty{display:none}
