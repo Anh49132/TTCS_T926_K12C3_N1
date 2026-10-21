@@ -1,0 +1,91 @@
+@model IReadOnlyList<QL_PhongTro.ViewModels.TinDangDanhSachViewModel>
+@{
+    ViewData["Title"] = "Tin đăng cho thuê";
+    Layout = User.Identity?.IsAuthenticated == true ? "~/Views/Shared/_Layout.cshtml" : "~/Views/Shared/_PublicLayout.cshtml";
+    var sapXep = ViewData["SapXep"] as string ?? "moi-nhat";
+    var trang = (int)(ViewData["Trang"] ?? 1);
+    var tongTrang = (int)(ViewData["TongTrang"] ?? 1);
+}
+<section class="listing-index" aria-labelledby="listing-index-title">
+    <p class="listing-eyebrow">PHÒNG TRỐNG ĐANG CHO THUÊ</p>
+    <h1 id="listing-index-title">Tin đăng cho thuê</h1>
+    <form asp-controller="TimTin" asp-action="Index" method="get" class="listing-search-form" aria-label="Tìm và lọc tin đăng">
+        <input type="hidden" name="SapXep" value="@sapXep" />
+        <div class="listing-search-grid">
+            <div class="listing-search-field listing-search-field-wide">
+                <label for="listing-keyword">Từ khóa</label>
+                <input id="listing-keyword" name="TuKhoa" maxlength="200" placeholder="Tiêu đề, mô tả, mã phòng hoặc địa chỉ" autocomplete="off" />
+            </div>
+            <div class="listing-search-field">
+                <label for="listing-district">Quận/huyện</label>
+                <input id="listing-district" name="QuanHuyen" placeholder="Ví dụ: Quận 1" autocomplete="address-level2" />
+            </div>
+            <div class="listing-search-field">
+                <label for="listing-ward">Phường/xã</label>
+                <input id="listing-ward" name="PhuongXa" placeholder="Ví dụ: Phường Bến Nghé" autocomplete="address-level3" />
+            </div>
+            <div class="listing-search-field">
+                <label for="listing-min-price">Giá từ <span>(đ/tháng)</span></label>
+                <input id="listing-min-price" name="GiaToiThieu" type="number" min="0" step="1" placeholder="1500000" inputmode="numeric" />
+            </div>
+            <div class="listing-search-field">
+                <label for="listing-max-price">Giá đến <span>(đ/tháng)</span></label>
+                <input id="listing-max-price" name="GiaToiDa" type="number" min="0" step="1" placeholder="5000000" inputmode="numeric" />
+            </div>
+            <div class="listing-search-field">
+                <label for="listing-min-area">Diện tích từ <span>(m²)</span></label>
+                <input id="listing-min-area" name="DienTichToiThieu" type="number" min="0" step="0.01" placeholder="15" inputmode="decimal" />
+            </div>
+            <div class="listing-search-field">
+                <label for="listing-max-area">Diện tích đến <span>(m²)</span></label>
+                <input id="listing-max-area" name="DienTichToiDa" type="number" min="0" step="0.01" placeholder="40" inputmode="decimal" />
+            </div>
+            <div class="listing-search-field">
+                <label for="listing-capacity">Số người ở</label>
+                <input id="listing-capacity" name="SoNguoiToiDa" type="number" min="1" step="1" placeholder="2" inputmode="numeric" />
+            </div>
+        </div>
+        <div class="listing-search-actions">
+            <button type="submit" class="listing-search-submit">Tìm và lọc</button>
+            <span>Có thể kết hợp nhiều điều kiện để thu hẹp kết quả.</span>
+        </div>
+    </form>
+    <form asp-action="Index" method="get" class="listing-search-form" aria-label="Sắp xếp tin đăng">
+        <div class="listing-search-field">
+            <label for="listing-sort">Sắp xếp</label>
+            <select id="listing-sort" name="sapXep" class="form-select">
+                <option value="moi-nhat" selected="@(sapXep == "moi-nhat")">Mới đăng nhất</option>
+                <option value="gia-tang" selected="@(sapXep == "gia-tang")">Giá tăng dần</option>
+                <option value="gia-giam" selected="@(sapXep == "gia-giam")">Giá giảm dần</option>
+            </select>
+        </div>
+        <button type="submit" class="listing-search-submit">Áp dụng</button>
+    </form>
+    <p class="listing-muted">@ViewData["TongTin"] tin · Trang @trang/@tongTrang · 12 tin mỗi trang</p>
+    @if (Model.Count == 0)
+    {
+        <p class="listing-muted">Hiện chưa có tin đăng đang hiển thị.</p>
+    }
+    else
+    {
+        <div class="listing-index-grid">
+            @foreach (var tin in Model)
+            {
+                <article class="listing-index-item">
+                    <a asp-action="ChiTiet" asp-route-id="@tin.Id" class="listing-index-image">
+                        <img src="@(tin.AnhDaiDien ?? Url.Content("~/room-placeholder.svg"))" alt="Ảnh đại diện: @tin.TieuDe" loading="lazy" />
+                    </a>
+                    <h2><a asp-action="ChiTiet" asp-route-id="@tin.Id">@tin.TieuDe</a></h2>
+                    <p>@tin.GiaThue.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")) đ/tháng</p>
+                </article>
+            }
+        </div>
+        @if (tongTrang > 1)
+        {
+            <nav aria-label="Phân trang tin đăng" class="d-flex flex-wrap gap-2 mt-3">
+                @if (trang > 1) { <a class="btn btn-outline-secondary" asp-action="Index" asp-route-sapXep="@sapXep" asp-route-trang="@(trang - 1)">Trang trước</a> }
+                @if (trang < tongTrang) { <a class="btn btn-outline-secondary" asp-action="Index" asp-route-sapXep="@sapXep" asp-route-trang="@(trang + 1)">Trang sau</a> }
+            </nav>
+        }
+    }
+</section>

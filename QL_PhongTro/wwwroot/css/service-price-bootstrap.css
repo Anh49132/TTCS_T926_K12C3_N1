@@ -1,0 +1,57 @@
+.service-price-bootstrap{max-width:1440px;margin:0 auto;line-height:1.5}
+.service-price-bootstrap .sp-heading{gap:1rem;margin-bottom:.875rem}
+.service-price-bootstrap .sp-heading h1{font-size:clamp(1.5rem,2.3vw,2rem);line-height:1.25;letter-spacing:-.025em;margin-bottom:.3rem}
+.service-price-bootstrap .sp-heading p{font-size:.82rem;line-height:1.5}
+.service-price-bootstrap .sp-back{min-height:40px;border-radius:9px;padding:.6rem .85rem;font-size:.75rem}
+.service-price-bootstrap .sp-edit-layout{grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;align-items:start}
+.service-price-bootstrap .sp-card{border:1px solid #e6e9eb;border-radius:13px;box-shadow:0 3px 12px #25282d03;background:#fff;min-width:0;padding:1rem}
+.service-price-bootstrap .sp-building{gap:.75rem;margin-bottom:.875rem;padding:1rem}
+.service-price-bootstrap .sp-building-icon,.service-price-bootstrap .sp-price-icon{width:36px;height:36px;flex:0 0 36px;border-radius:9px;background:#bfa77a19;color:#92774c}
+.service-price-bootstrap .sp-building strong{font-size:.85rem;line-height:1.5}
+.service-price-bootstrap .sp-building small,.service-price-bootstrap .sp-building p{font-size:.69rem;line-height:1.5}
+.service-price-bootstrap .sp-building-link{border-radius:8px;width:32px;height:32px}
+.service-price-bootstrap .sp-building-menu{border-radius:9px;padding:.3rem}
+.service-price-bootstrap .sp-building-menu a{font-size:.75rem;padding:.55rem;border-radius:6px}
+.service-price-bootstrap .sp-list-heading{gap:.75rem;margin:.75rem 0 .65rem}
+.service-price-bootstrap .sp-list-heading h2{font-size:.95rem;line-height:1.5;margin-bottom:.25rem}
+.service-price-bootstrap .sp-list-heading p{font-size:.72rem;line-height:1.5}
+.service-price-bootstrap .sp-badge{font-size:.65rem;border-radius:20px;padding:.35rem .6rem}
+.service-price-bootstrap .sp-price-table{padding:0;overflow-x:auto}
+.service-price-bootstrap .sp-price-table table{width:100%;font-size:.78rem;min-width:490px}
+.service-price-bootstrap .sp-price-table th{font-size:.64rem;font-weight:600;padding:.8rem;background:#f8f9f7;color:#7d858f}
+.service-price-bootstrap .sp-price-table td{padding:.8rem .8rem;line-height:1.5;border-color:#eef0ed}
+.service-price-bootstrap .sp-price-table .selected{background:#f7f2e8}
+.service-price-bootstrap .sp-price-name{gap:.65rem}
+.service-price-bootstrap .sp-price-name a{font-size:.8rem}
+.service-price-bootstrap .sp-price-table small{font-size:.68rem;line-height:1.5;margin-top:.25rem}
+.service-price-bootstrap .sp-service-fields{gap:1rem;padding-bottom:.7rem;margin-bottom:.7rem}
+.service-price-bootstrap label{font-size:.76rem;line-height:1.5;margin-bottom:.3rem}
+.service-price-bootstrap .form-control,.service-price-bootstrap .sp-old-price{height:44px;border:1px solid #e3e7e9;border-radius:9px;padding:.65rem .8rem;font-size:.8rem;line-height:1.4;min-width:0;background-color:#fafaf9;box-sizing:border-box}
+.service-price-bootstrap .sp-old-price{display:flex;align-items:center;background:#f3f4f1;border-style:dashed;color:#8a929b}
+.service-price-bootstrap .form-control:focus{border-color:#bfa77a;box-shadow:0 0 0 .18rem #bfa77a26;outline:0;background:#fff}
+.service-price-bootstrap .sp-scope-options{gap:.65rem}
+.service-price-bootstrap .sp-scope-option{border-radius:9px;padding:.8rem;gap:.6rem;min-height:65px}
+.service-price-bootstrap .sp-scope-option.selected{border-color:#bfa77a;background:#bfa77a10}
+.service-price-bootstrap .sp-scope-option strong{font-size:.76rem;line-height:1.5}
+.service-price-bootstrap .sp-scope-option small{font-size:.68rem;line-height:1.5}
+.service-price-bootstrap .sp-scope-count{font-size:.74rem;line-height:1.5;gap:.65rem;margin-top:.6rem}
+.service-price-bootstrap .sp-scope>p,.service-price-bootstrap .sp-first-period small{font-size:.69rem;line-height:1.5}
+.service-price-bootstrap .sp-first-period strong{font-size:.78rem;line-height:1.5}
+.service-price-bootstrap .sp-summary{padding:.85rem;border-radius:10px;background:#f8f8f5}
+.service-price-bootstrap .sp-summary h3{font-size:.78rem;line-height:1.5}
+.service-price-bootstrap .sp-summary p{font-size:1.1rem;line-height:1.5;margin:.3rem 0}
+.service-price-bootstrap .sp-summary strong{color:#92774c}
+.service-price-bootstrap .sp-summary small,.service-price-bootstrap .sp-notice{font-size:.7rem;line-height:1.6}
+.service-price-bootstrap .sp-save-actions .btn{min-height:42px;border-radius:9px;padding:.65rem 1rem;font-size:.78rem;font-weight:600}
+.service-price-bootstrap .sp-extra{margin:.875rem 0;font-size:.77rem}
+.service-price-bootstrap .sp-extra>summary{padding:.75rem;border:1px solid #e6e9eb;border-radius:9px;background:#fff}
+.service-price-bootstrap .sp-extra aside{gap:1rem;margin-top:1rem}
+.service-price-bootstrap .sp-info{font-size:.75rem;line-height:1.5}
+.service-price-bootstrap .sp-history{margin-top:.875rem;overflow-x:auto}
+.service-price-bootstrap .sp-history h2{font-size:1rem;line-height:1.5}
+.service-price-bootstrap .sp-history table{font-size:.77rem;min-width:500px}
+.service-price-bootstrap .text-danger{font-size:.72rem;line-height:1.5}.service-price-bootstrap .validation-summary-valid{display:none}
+@media(max-width:1000px){.service-price-bootstrap .sp-edit-layout{grid-template-columns:1fr}}
+@media(max-width:600px){.service-price-bootstrap .sp-heading{flex-direction:column;align-items:stretch}.service-price-bootstrap .sp-card{padding:1rem}.service-price-bootstrap .sp-price-table{padding:0}.service-price-bootstrap .sp-service-fields{grid-template-columns:1fr}.service-price-bootstrap .sp-scope-options{grid-template-columns:1fr}.service-price-bootstrap .sp-extra aside{grid-template-columns:1fr}.service-price-bootstrap .sp-save-actions .btn{flex:1}.dashboard-header:has(.sp-breadcrumb) .account-label{display:none}.dashboard-header .sp-breadcrumb{font-size:.72rem;gap:.35rem;flex:1;min-width:0}.sp-breadcrumb svg{width:17px;height:17px}}
+
+.service-price-bootstrap .sp-price-list{gap:.875rem}.service-price-bootstrap .sp-scope{padding-top:.75rem;padding-bottom:.75rem}.service-price-bootstrap .sp-summary{padding:.75rem}.service-price-bootstrap .sp-notice{margin-top:.75rem;margin-bottom:.75rem}

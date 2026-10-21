@@ -1,0 +1,17 @@
+@model QL_PhongTro.ViewModels.ChiTietHoaDonViewModel
+@using System.Globalization
+@{ var rows = Model.ThanhToanRows.Where(x => x.Payment.HinhThucBaoCao is not null && x.Payment.TrangThai != "CHO_XAC_NHAN").ToList(); var vn = CultureInfo.GetCultureInfo("vi-VN"); }
+@if (rows.Count > 0)
+{
+    <section class="pw-card"><h2>@(Model.KhachXem ? "Lịch sử báo thanh toán của tôi" : "Lịch sử báo thanh toán của khách")</h2>
+    @foreach (var row in rows)
+    {
+        var p = row.Payment;
+        <article class="pw-report-archive" id="payment-report-@p.Id"><strong>BC-@p.Id.ToString("D6") · @p.SoTien.ToString("N0", vn) đ</strong><span class="pw-badge @(p.TrangThai == "DA_XAC_NHAN" ? "paid" : "rejected")">@(p.TrangThai == "DA_XAC_NHAN" ? "Đã xác nhận" : p.TrangThai == "TU_CHOI" ? "Bị từ chối" : "Đã hủy")</span><p class="pw-muted">Ngày trả @p.NgayThanhToan.ToString("dd/MM/yyyy") · Gửi lúc @(row.Report?.GuiLuc?.AddHours(7).ToString("dd/MM/yyyy HH:mm") ?? "Chưa có thông tin")</p>
+        @if(row.Report?.LyDoTuChoi is not null){<p><strong>Lý do từ chối:</strong> @row.Report.LyDoTuChoi</p>}
+        @if(row.Report?.GhiChu is not null){<p>Ghi chú: @row.Report.GhiChu</p>}
+        @if(p.AnhChungTuKey is not null){<div class="pw-evidence compact" data-evidence-url="@(Model.KhachXem ? $"/api/chung-tu-thanh-toan/{p.Id}/link" : Url.Action("PaymentProofLink", "HoaDonDichVu", new { paymentId = p.Id }))"><img data-evidence-image alt="Chứng từ báo thanh toán trong lịch sử" hidden /><div><button type="button" class="btn btn-outline-secondary" data-evidence-open>Xem chứng từ</button><p data-evidence-error class="text-danger" role="alert" hidden></p></div></div>}
+        </article>
+    }
+    </section>
+}

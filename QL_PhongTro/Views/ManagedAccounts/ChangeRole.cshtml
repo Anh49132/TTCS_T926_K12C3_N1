@@ -1,0 +1,32 @@
+@model QL_PhongTro.ViewModels.ChangeAccountRoleViewModel
+@using QL_PhongTro.ViewModels
+@{ ViewData["Title"] = "Đổi vai trò tài khoản"; }
+<section class="accounts-bootstrap account-role-page">
+<div class="card account-role-card">
+<div class="card-header"><span class="account-role-icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="8" r="3"/><path d="M3 21v-3a6 6 0 0 1 12 0v3m2-14h5m-2-2 2 2-2 2m2 4h-5m2-2-2 2 2 2"/></svg></span><div><h1>Đổi vai trò tài khoản</h1><p>Cập nhật quyền truy cập cho tài khoản.</p></div></div>
+<div class="card-body">
+<div class="account-role-person"><span>Tài khoản đang chỉnh sửa</span><strong>@Model.HoTen</strong></div>
+<div class="alert account-role-notice" role="note">Sau khi đổi vai trò, mọi phiên đăng nhập cũ sẽ mất hiệu lực. Người dùng cần đăng nhập lại.</div>
+<form asp-action="ChangeRole" method="post">
+<div asp-validation-summary="All" class="text-danger" role="alert"></div>
+<input asp-for="Id" type="hidden" />
+<input asp-for="OriginalRole" type="hidden" />
+<div class="mb-3">
+<label asp-for="VaiTro" class="form-label">Vai trò</label>
+<select asp-for="VaiTro" class="form-select">
+@foreach (var role in new[] { "KHACH_THUE", "CHU_NHA", "QUAN_LY", "ADMIN" }) {
+<option value="@role">@ManagedAccountsViewModel.RoleName(role)</option>
+}
+</select>
+<span asp-validation-for="VaiTro" class="text-danger small"></span>
+</div>
+<div class="account-role-actions d-flex flex-wrap gap-2">
+<button class="btn btn-primary" type="submit">Lưu vai trò</button>
+<a asp-action="Index" class="btn btn-outline-secondary">Quay lại danh sách</a>
+</div>
+</form>
+</div>
+</div>
+</section>
+@section Styles { <link rel="stylesheet" href="~/css/managed-accounts-bootstrap.css" asp-append-version="true" /> }
+@section Scripts { <script src="~/js/account-filter-dropdowns.js" asp-append-version="true"></script> }

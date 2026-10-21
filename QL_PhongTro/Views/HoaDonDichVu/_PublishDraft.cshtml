@@ -1,0 +1,21 @@
+@model QL_PhongTro.ViewModels.ChiTietHoaDonViewModel
+@inject QL_PhongTro.Services.ITimeProvider Clock
+@{ var invoice = Model.HoaDon; var today = DateOnly.FromDateTime(Clock.UtcNow.AddHours(7));
+   var deadline = invoice.HanThanhToan >= today ? invoice.HanThanhToan : today.AddDays(7); }
+<section class="mi-card">
+<h2>Phát hành hóa đơn</h2>
+<p>Kiểm tra và lưu nháp trước khi phát hành. Sau khi phát hành, nội dung bị khóa và khách đứng tên nhận thông báo.</p>
+<p id="publish-dirty" class="alert alert-warning" role="status" hidden>Bạn đang có thay đổi chưa lưu. Hãy bấm “Lưu nháp và tính lại tổng” trước khi phát hành.</p>
+<button type="button" id="publish-open" class="btn btn-dark">Phát hành hóa đơn</button>
+<form asp-action="PublishDraft" method="post" id="publish-draft-form">
+<input type="hidden" name="Id" value="@invoice.Id" /><input type="hidden" name="PhienBan" value="@invoice.PhienBan" />
+<dialog id="publish-confirmation" class="mr-confirm-dialog" aria-labelledby="publish-confirmation-title">
+<h2 id="publish-confirmation-title">Xác nhận phát hành</h2>
+<p>Phòng <strong>@Model.MaPhong</strong> · @Model.TenKhach · Kỳ @invoice.Thang/@invoice.Nam</p>
+<p>Tổng tiền đã lưu: <strong>@invoice.TongTien.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")) đ</strong></p>
+<label for="publish-date">Ngày phát hành</label><input class="form-control mb-3" id="publish-date" name="NgayPhatHanh" type="date" value="@today.ToString("yyyy-MM-dd")" required />
+<label for="publish-due">Hạn thanh toán</label><input class="form-control mb-3" id="publish-due" name="HanThanhToan" type="date" value="@deadline.ToString("yyyy-MM-dd")" required />
+<p>Hóa đơn sẽ chuyển sang Đã phát hành, không thể sửa chỉ số hoặc các khoản tiền. Thông báo chỉ được tạo khi phát hành thành công.</p>
+<label class="mr-confirm-check"><input type="checkbox" name="XacNhan" value="true" required /> Tôi đã kiểm tra nội dung, tổng tiền và hạn thanh toán.</label>
+<div class="mr-dialog-actions"><button type="button" id="publish-close" class="btn btn-outline-secondary">Quay lại</button><button type="submit" class="btn btn-dark">Xác nhận phát hành</button></div>
+</dialog></form></section>

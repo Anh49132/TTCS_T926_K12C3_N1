@@ -1,0 +1,20 @@
+@model QL_PhongTro.ViewModels.ChuyenDiRowViewModel
+@inject QL_PhongTro.Authorization.PermissionService Permissions
+@{ var person = Model.Person; var contract = Model.Contract; }
+<div class="roommate-person ref-roommate">
+<div class="ref-person compact"><span class="ref-avatar">@person.HoTen.FirstOrDefault()</span><strong>@person.HoTen</strong><span class="ref-person-badge">Ở ghép</span><span>☎ @person.SoDienThoai</span><span>▣ @person.SoGiayTo</span></div>
+<p>Bắt đầu ở cùng: @person.NgayVao.ToString("dd/MM/yyyy")</p>
+@if (person.NgayRa is { } departure) { <p>Ngày chuyển đi: <strong>@departure.ToString("dd/MM/yyyy")</strong></p> }
+else if (contract.ChoThem && await Permissions.AllowsAsync("HOP_DONG", true)) {
+    var value = contract.ChuyenDiNguoiId == person.Id ? contract.ChuyenDi.NgayRa
+        : person.NgayVao > contract.HomNay ? person.NgayVao : contract.HomNay;
+    <details class="ref-departure" open="@(contract.ChuyenDiNguoiId == person.Id)"><summary>Ghi nhận chuyển đi</summary><form asp-action="ChuyenDi" asp-route-id="@contract.HopDong.Id" asp-route-nguoiId="@person.Id" method="post">
+        <input type="hidden" name="ChuyenDi.PhienBanPhong" value="@contract.ChuyenDi.PhienBanPhong" />
+        <div class="contract-field"><label for="departure-@person.Id">Ngày chuyển đi</label><div>
+        <input type="date" id="departure-@person.Id" name="ChuyenDi.NgayRa" value="@value?.ToString("yyyy-MM-dd")" min="@person.NgayVao.ToString("yyyy-MM-dd")" required />
+        @if (contract.ChuyenDiNguoiId == person.Id) { <span class="text-danger" data-valmsg-for="ChuyenDi.NgayRa">@string.Join(" ", ViewData.ModelState["ChuyenDi.NgayRa"]?.Errors.Select(x => x.ErrorMessage) ?? Enumerable.Empty<string>())</span> }
+        </div></div>
+        <button class="btn btn-outline-primary" type="submit">Ghi nhận chuyển đi</button>
+    </form></details>
+}
+</div>

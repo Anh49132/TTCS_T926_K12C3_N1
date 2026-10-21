@@ -1,0 +1,65 @@
+@model QL_PhongTro.ViewModels.HopDongChiTietViewModel
+@{
+    ViewData["Title"] = "Chi tiết hợp đồng " + Model.MaHopDong;
+    var vn = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+    var staying = Model.NguoiO.Count(x => x.DangO);
+    var status = Model.TrangThai == "DANG_HIEU_LUC" ? "Đang hiệu lực" : Model.TrangThai == "DA_KET_THUC" ? "Đã kết thúc" : Model.TrangThai == "CHO_HIEU_LUC" ? "Chờ hiệu lực" : Model.TrangThai == "NHAP" ? "Nháp" : "Đã hủy";
+    var totalDays = Model.NgayBatDau.HasValue && Model.NgayKetThuc.HasValue ? Math.Max(1, Model.NgayKetThuc.Value.DayNumber - Model.NgayBatDau.Value.DayNumber + 1) : 1;
+    var progress = Math.Clamp(100m * (totalDays - Math.Max(0, Model.SoNgayConLai ?? totalDays)) / totalDays, 0, 100).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture);
+}
+<section class="tcd-page" aria-labelledby="contract-detail-title">
+    <nav class="tcd-breadcrumb" aria-label="Đường dẫn"><a asp-controller="Home" asp-action="Index">Trang chủ</a><span>/</span><a asp-action="Index">Hợp đồng của tôi</a><span>/</span><span aria-current="page">@Model.MaHopDong</span></nav>
+    <header class="tcd-heading">
+        <div><div class="tcd-title-row"><h1 id="contract-detail-title">Hợp đồng @Model.MaHopDong</h1><span class="tcd-badge @(Model.TrangThai == "DANG_HIEU_LUC" ? "is-green" : "is-neutral")"><i></i>@status</span></div><p>Phòng @Model.MaPhong · @Model.TenToaNha</p></div>
+        <a class="tcd-download" asp-action="DownloadPdf" asp-route-maHopDong="@Model.MaHopDong"><partial name="_DetailIcon" model='@("download")' />Tải hợp đồng PDF</a>
+    </header>
+    @if(Model.SapHetHan){<div class="tcd-expiry-warning" role="status">@(Model.SoNgayConLai == 0 ? "Hợp đồng hết hạn hôm nay" : $"Hợp đồng sẽ hết hạn sau {Model.SoNgayConLai} ngày"). Vui lòng liên hệ chủ nhà nếu bạn muốn gia hạn.</div>}
+    <p><a class="btn btn-outline-secondary" asp-controller="TatToan" asp-action="Index">Xem bảng tất toán của tôi</a></p>
+    <p><a class="btn btn-outline-secondary" asp-controller="YeuCauTraPhong" asp-action="Index" asp-route-maHopDong="@Model.MaHopDong">Yêu cầu trả phòng trước hạn</a></p>
+    <div class="tcd-columns">
+        <div class="tcd-main">
+            <section class="tcd-card">
+                <h2><partial name="_DetailIcon" model='@("money")' />Thông tin hợp đồng</h2>
+                <div class="tcd-facts">
+                    <div class="tcd-fact"><span class="tcd-icon"><partial name="_DetailIcon" model='@("money")' /></span><div><small>Giá thuê</small><strong>@Model.GiaThueHienTai.ToString("N0", vn) đ/tháng</strong></div></div>
+                    <div class="tcd-fact"><span class="tcd-icon"><partial name="_DetailIcon" model='@("shield")' /></span><div><small>Tiền cọc</small><strong>@Model.TienCoc.ToString("N0", vn) đ</strong></div></div>
+                    <div class="tcd-fact"><span class="tcd-icon"><partial name="_DetailIcon" model='@("calendar")' /></span><div><small>Ngày bắt đầu</small><strong>@(Model.NgayBatDau?.ToString("dd/MM/yyyy") ?? "Chưa cập nhật")</strong></div></div>
+                    <div class="tcd-fact"><span class="tcd-icon"><partial name="_DetailIcon" model='@("calendar")' /></span><div><small>Ngày kết thúc</small><strong>@(Model.NgayKetThuc?.ToString("dd/MM/yyyy") ?? "Chưa cập nhật")</strong></div></div>
+                    <div class="tcd-fact"><span class="tcd-icon"><partial name="_DetailIcon" model='@("clock")' /></span><div><small>Thời hạn</small><strong>@(Model.ThoiHanThang > 0 ? $"{Model.ThoiHanThang} tháng" : "Chưa cập nhật")</strong></div></div>
+                    <div class="tcd-fact"><span class="tcd-icon"><partial name="_DetailIcon" model='@("file")' /></span><div><small>Ngày chốt tiền</small><strong>@(Model.NgayChot is >= 1 and <= 31 ? $"Ngày {Model.NgayChot:00}" : "Chưa cập nhật")</strong></div></div>
+                </div>
+                <div class="tcd-term"><span><partial name="_DetailIcon" model='@("clock")' /><strong>@(Model.SoNgayConLai is >= 0 ? $"Còn {Model.SoNgayConLai} ngày" : Model.SoNgayConLai.HasValue ? "Đã hết thời hạn" : "Chưa có thời hạn")</strong></span><div class="tcd-progress" role="progressbar" aria-label="Thời hạn hợp đồng đã trôi qua" aria-valuemin="0" aria-valuemax="100" aria-valuenow="@progress"><span style="width:@(progress)%"></span></div><small>Hợp đồng kết thúc vào @(Model.NgayKetThuc?.ToString("dd/MM/yyyy") ?? "chưa xác định")</small></div>
+                @if(Model.NgayTraPhong.HasValue){<p class="tcd-return">Ngày trả phòng: @Model.NgayTraPhong.Value.ToString("dd/MM/yyyy")</p>}
+            </section>
+            <section class="tcd-card">
+                <h2><partial name="_DetailIcon" model='@("person")' />Người ở trong hợp đồng (@staying/@Model.SoNguoiToiDa)</h2>
+                @if(Model.NguoiO.Count == 0){<p class="tcd-muted">Chưa có thông tin người ở trong hợp đồng này.</p>}
+                <ul class="tcd-people">
+                @foreach(var person in Model.NguoiO){
+                    <li class="tcd-person"><span class="tcd-avatar" aria-hidden="true">@person.HoTen.Trim().FirstOrDefault()</span><strong class="tcd-person-name">@person.HoTen</strong><span class="tcd-role"><partial name="_DetailIcon" model='@("person")' />@person.VaiTro</span><div class="tcd-person-date"><partial name="_DetailIcon" model='@("calendar")' /><span><small>Vào ở từ</small><strong>@(person.NgayVao == DateOnly.MinValue ? "Chưa cập nhật" : person.NgayVao.ToString("dd/MM/yyyy"))</strong>@if(person.NgayChuyenDi.HasValue){<small>Chuyển đi @person.NgayChuyenDi.Value.ToString("dd/MM/yyyy")</small>}</span></div><span class="tcd-badge @(person.DangO ? "is-green" : "is-neutral")"><i></i>@(person.DangO ? "Đang ở" : person.NgayChuyenDi.HasValue ? "Đã chuyển đi" : "Chưa ở")</span></li>
+                }
+                </ul>
+            </section>
+            <section class="tcd-card">
+                <h2><partial name="_DetailIcon" model='@("file")' />Dịch vụ và đơn giá áp dụng</h2>
+                @if(Model.DichVus.Count == 0){<div class="tcd-empty"><span class="tcd-empty-icon"><partial name="_DetailIcon" model='@("file")' /></span><strong>Chưa có dịch vụ được ghi nhận cho hợp đồng này.</strong><p>Đơn giá phát sinh sẽ hiển thị tại đây khi được cập nhật.</p></div>}
+                else{<div class="tcd-table-wrap"><table class="tcd-table"><thead><tr><th>Dịch vụ</th><th>Cách tính</th><th>Đơn vị</th><th>Đơn giá</th></tr></thead><tbody>@foreach(var service in Model.DichVus){<tr><th scope="row">@service.TenDichVu</th><td>@QL_PhongTro.Models.CachTinhDichVu.Ten(service.CachTinh)</td><td>@service.DonViTinh</td><td>@service.DonGia.ToString("N0",vn) đ</td></tr>}</tbody></table></div>}
+            </section>
+            @if(Model.CacKy.Count>1){<section class="tcd-card"><h2><partial name="_DetailIcon" model='@("calendar")' />Các kỳ hợp đồng</h2>@foreach(var period in Model.CacKy){<div class="tcd-period"><span>@period.NgayBatDau.ToString("dd/MM/yyyy") — @period.NgayKetThuc.ToString("dd/MM/yyyy")</span><strong>@period.GiaThue.ToString("N0",vn) đ/tháng</strong></div>}</section>}
+        </div>
+        <aside class="tcd-side" aria-label="Phòng thuê và tài liệu hợp đồng">
+            <section class="tcd-card">
+                <h2><partial name="_DetailIcon" model='@("home")' />Phòng thuê</h2>
+                <div class="tcd-room">@if(!string.IsNullOrWhiteSpace(Model.AnhPhong)){<img src="@Model.AnhPhong" alt="Phòng @Model.MaPhong" loading="lazy" />}else{<div class="tcd-room-placeholder"><partial name="_DetailIcon" model='@("home")' /><span>Chưa có ảnh phòng</span></div>}<div><h3>Phòng @Model.MaPhong</h3><p>@Model.TenToaNha</p><p class="tcd-address"><partial name="_DetailIcon" model='@("pin")' />@Model.DiaChiToaNha</p><span class="tcd-badge @(Model.TrangThaiPhong == "DANG_THUE" ? "is-green" : "is-neutral")"><i></i>@(Model.TrangThaiPhong == "DANG_THUE" ? "Đang thuê" : Model.TrangThaiPhong == "TRONG" ? "Trống" : Model.TrangThaiPhong == "DA_DAT_COC" ? "Đã đặt cọc" : "Ngừng cho thuê")</span>@if(Model.TinDangId.HasValue){<a class="tcd-room-link tcd-link" asp-controller="TinDang" asp-action="ChiTiet" asp-route-id="@Model.TinDangId">Xem thông tin phòng <span aria-hidden="true">→</span></a>}</div></div>
+            </section>
+            <section class="tcd-card"><h2><partial name="_DetailIcon" model='@("file")' />Tài liệu hợp đồng</h2><div class="tcd-file"><span class="tcd-pdf">PDF</span><div><strong>Hợp đồng @(Model.MaHopDong).pdf</strong><small>Bản hợp đồng và đơn giá dịch vụ</small></div><a class="tcd-preview" asp-action="PreviewPdf" asp-route-maHopDong="@Model.MaHopDong"><partial name="_DetailIcon" model='@("eye")' />Xem trước</a></div></section>
+            <section class="tcd-card"><h2><partial name="_DetailIcon" model='@("card")' />Tóm tắt thanh toán</h2><dl class="tcd-payment"><dt><partial name="_DetailIcon" model='@("person")' />Giá thuê hàng tháng</dt><dd>@Model.GiaThueHienTai.ToString("N0",vn) đ</dd><dt><partial name="_DetailIcon" model='@("shield")' />Tiền cọc thỏa thuận</dt><dd>@Model.TienCoc.ToString("N0",vn) đ</dd><dt><partial name="_DetailIcon" model='@("calendar")' />Kỳ thanh toán</dt><dd>Hàng tháng</dd><dt><partial name="_DetailIcon" model='@("calendar")' />Ngày chốt tiếp theo</dt><dd>@(Model.NgayChotTiepTheo?.ToString("dd/MM/yyyy") ?? "Chưa xác định")</dd></dl><a class="tcd-link" asp-controller="ThongBao" asp-action="DanhSach">Xem hóa đơn <span aria-hidden="true">→</span></a></section>
+            <div class="tcd-terms">
+                <details><summary><partial name="_DetailIcon" model='@("file")' />Điều khoản thanh toán</summary><p>Chưa có nội dung điều khoản thanh toán riêng được ghi nhận. Vui lòng liên hệ chủ nhà để xác nhận. Số tiền và hạn thanh toán cụ thể được thể hiện trên từng hóa đơn.</p></details>
+                <details><summary><partial name="_DetailIcon" model='@("people")' />Quy định ở ghép</summary><p>Tổng số người ở không vượt quá @Model.SoNguoiToiDa người. Liên hệ chủ nhà để cập nhật người vào ở hoặc chuyển đi; phí dịch vụ theo người được điều chỉnh từ kỳ tiếp theo.</p></details>
+                <details><summary><partial name="_DetailIcon" model='@("shield")' />Điều khoản chấm dứt</summary><p>Chưa có nội dung điều khoản chấm dứt riêng được ghi nhận. Vui lòng liên hệ chủ nhà để xác nhận điều kiện trả phòng và tất toán.</p></details>
+            </div>
+        </aside>
+    </div>
+</section>
+@section Styles { <link rel="stylesheet" href="~/css/tenant-contract-detail.css" asp-append-version="true" /> }

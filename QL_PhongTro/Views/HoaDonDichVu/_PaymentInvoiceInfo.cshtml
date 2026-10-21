@@ -1,0 +1,3 @@
+@model QL_PhongTro.ViewModels.ChiTietHoaDonViewModel
+@{ var bill = Model.HoaDon; var issue = bill.NgayPhatHanhNghiepVu ?? DateOnly.FromDateTime((bill.NgayPhatHanh ?? bill.NgayLap).AddHours(7)); }
+<h2>Thông tin hóa đơn</h2><dl class="pw-invoice-facts"><div><dt>Mã hóa đơn</dt><dd>@bill.MaHoaDon</dd></div><div><dt>Phòng</dt><dd>@Model.MaPhong</dd></div><div><dt>Kỳ áp dụng</dt><dd>Tháng @bill.Thang.ToString("00")/@bill.Nam</dd></div><div><dt>Ngày chốt</dt><dd>@bill.NgayChot.ToString("dd/MM/yyyy")</dd></div><div><dt>Ngày phát hành</dt><dd>@issue.ToString("dd/MM/yyyy")</dd></div><div><dt>Hạn thanh toán</dt><dd>@bill.HanThanhToan.ToString("dd/MM/yyyy")</dd></div></dl>

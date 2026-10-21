@@ -1,0 +1,43 @@
+@model QL_PhongTro.ViewModels.HopDongDetailsViewModel
+@{
+    var people = Context.Request.Query["tab"] == "people" || !ViewData.ModelState.IsValid || ViewData["ResidentPeopleTab"] is true;
+    ViewData["Title"] = people ? "Thông tin người ở ghép" : "Chi tiết hợp đồng thuê";
+    var count = Model.Nguois.Count + (Model.DungTen is null ? 0 : 1);
+    var state = Model.HopDong.TrangThai switch { "DANG_HIEU_LUC" => "Đang hiệu lực", "CHO_HIEU_LUC" => "Chờ hiệu lực", "NHAP" => "Nháp", "DA_KET_THUC" => "Đã kết thúc", _ => "Đã hủy" };
+    var simulateError = Context.Request.Query["simulateError"].ToString();
+}
+<div class="contract-page contract-details-reference contract-reference">
+    <div class="contract-heading ref-heading d-flex flex-wrap">
+        <div><div class="ref-title"><h1>Hợp đồng @Model.HopDong.MaHopDong</h1><span class="ref-state state-@Model.HopDong.TrangThai">● &nbsp; @state</span></div><p>Phòng @Model.Phong · @Model.ToaNha</p></div>
+        <div class="ref-heading-actions d-flex flex-wrap gap-2">
+            @if(User.IsInRole("CHU_NHA") && Model.XemTaiChinh){
+                @if(Model.HopDong.TrangThai=="DANG_HIEU_LUC"){<a class="btn btn-primary" asp-controller="TraPhong" asp-action="Nhap" asp-route-id="@Model.HopDong.Id">Xử lý trả phòng</a>}
+                <a class="btn btn-outline-secondary" asp-controller="TatToan" asp-action="ChiTiet" asp-route-id="@Model.HopDong.Id">Bảng tất toán</a>
+                <a class="btn btn-outline-secondary" asp-controller="YeuCauTraPhong" asp-action="Index" asp-route-hopDongId="@Model.HopDong.Id">Yêu cầu trả phòng</a>
+            }
+            @if (people) { <a class="btn btn-outline-secondary" asp-action="Details" asp-route-id="@Model.HopDong.Id">▤ &nbsp; Xem hợp đồng</a> }
+            else { <button type="button" class="btn btn-outline-secondary" onclick="window.print()">▤ &nbsp; In hợp đồng</button> }
+            <a class="btn btn-outline-secondary" asp-action="LichSuNguoiO" asp-route-phongId="@Model.HopDong.PhongId">◷ &nbsp; Lịch sử người ở</a>
+            @if (Model.ChoKichHoat) {
+                <form method="post" asp-action="KichHoat" asp-route-id="@Model.HopDong.Id">@Html.AntiForgeryToken()@if (!string.IsNullOrEmpty(simulateError)) { <input type="hidden" name="simulateError" value="@simulateError" /> }<button type="submit" class="btn btn-primary">Kích hoạt hợp đồng</button></form>
+            }
+        </div>
+    </div>
+    @if (TempData["ContractSuccess"] is {} message) { <div class="alert alert-success">@message</div> }
+    @if (TempData["ContractWarning"] is {} warning) { <div class="alert alert-warning">@warning</div> }
+    <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+    <nav class="lease-detail-tabs ref-tabs nav nav-tabs" aria-label="Các mục hợp đồng">
+        <a class="@(!people ? "is-active" : "")" asp-action="Details" asp-route-id="@Model.HopDong.Id" aria-current="@(!people ? "page" : null)">Tổng quan</a>
+        <a class="@(people ? "is-active" : "")" asp-action="Details" asp-route-id="@Model.HopDong.Id" asp-route-tab="people" aria-current="@(people ? "page" : null)">Người ở cùng (@count)</a>
+        @if (Model.XemTaiChinh) { <a asp-action="Details" asp-route-id="@Model.HopDong.Id" asp-fragment="contract-bills">Hóa đơn liên quan</a> }
+        @if (User.IsInRole("CHU_NHA") || User.IsInRole("ADMIN")) { <a asp-controller="PhongTro" asp-action="NhatKyPhong" asp-route-phongId="@Model.HopDong.PhongId">Lịch sử thay đổi</a> }
+    </nav>
+    @if (people) { <partial name="_Residents" model="Model" /> } else { <partial name="_ContractOverview" model="Model" /> }
+</div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/contracts.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/contract-details.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/contract-reference.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/contract-detail-bootstrap.css" asp-append-version="true" />
+    @if (people) { <link rel="stylesheet" href="~/css/contract-residents-bootstrap.css" asp-append-version="true" /> }
+}

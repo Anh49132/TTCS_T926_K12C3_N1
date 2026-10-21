@@ -1,0 +1,75 @@
+# Ignore local dev SQLite database
+*.sqlite
+*.sqlite-journal
+*.db-wal
+*.db-shm
+*.db-journal
+*.bak
+*.bak-*
+__pycache__/
+/data/S2-06/
+**/Data/local-dev.sqlite
+**/Data/*.sqlite
+**/*.sqlite-shm
+**/*.sqlite-wal
+/data/local-dev.sqlite
+/data/*.sqlite
+/data/backups/
+/QL_PhongTro/App_Data/
+/QL_PhongTro/wwwroot/uploads/rooms/
+/data/S1-06-images/
+*.sqlite-shm
+*.sqlite-wal
+
+# User files
+*.user
+*.suo
+.vs/
+.vscode/
+
+# Build outputs
+bin/
+obj/
+
+# Local SQLite backups created by the explicit permission initializer
+*.sqlite.before-s1-04-*.bak*
+
+# Environment files (keep .env.example but ignore .env)
+.env
+.env.local
+
+# Tests output
+**/TestResults/
+/data/test-results/
+/verification/sprint2-audit/
+
+
+# Password reset schema backups
+*.sqlite.before-s105-*.bak*
+*.sqlite.before-s109-*.bak*
+/data/S1-09-verification/
+*.sqlite.before-update-*.bak*
+*.sqlite.before-admin-*.bak*
+*.sqlite.before-local-admin-*.bak*
+*.sqlite.before-account-reuse-*.bak*
+*.sqlite.before-auth-*.bak*
+*.sqlite.update.lock
+
+/data/S1-10-verification/
+/data/service-demo/
+
+# Local databases, sidecars, backups and verification artifacts
+*.sqlite
+*.sqlite3
+*.db
+*-wal
+*-shm
+*-journal
+*.bak
+*.update.lock
+/data/
+*.bank-qr/
+
+# Private contract clauses and attachments (stored beside the selected database)
+*.contract-documents/
+*.avatars/

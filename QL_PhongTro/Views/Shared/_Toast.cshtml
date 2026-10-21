@@ -1,0 +1,22 @@
+@{
+    var success = TempData["Success"] as string;
+    success ??= ViewData["ToastSuccess"] as string;
+    var error = TempData["Error"] as string;
+    error ??= ViewData["ToastError"] as string;
+    if (error is null && !ViewData.ModelState.IsValid)
+    {
+        error = "Chưa lưu được thông tin. Vui lòng kiểm tra các trường được đánh dấu bên dưới.";
+    }
+}
+<div class="toast-stack" aria-label="Thông báo">
+    @if (!string.IsNullOrEmpty(success)) {
+        <div class="app-toast app-toast-success" role="status" aria-live="polite" aria-atomic="true" data-app-toast data-toast-persistent="@(ViewData["ToastPersistent"] is true ? "true" : null)">
+            <span>@success</span><button type="button" data-toast-close aria-label="Đóng thông báo">×</button>
+        </div>
+    }
+    @if (!string.IsNullOrEmpty(error)) {
+        <div class="app-toast app-toast-error" role="alert" data-app-toast>
+            <span>@error</span><button type="button" data-toast-close aria-label="Đóng thông báo">×</button>
+        </div>
+    }
+</div>

@@ -1,0 +1,24 @@
+@model QL_PhongTro.ViewModels.LichHenLapHopDongViewModel
+@{
+    ViewData["Title"] = "Lập hợp đồng";
+}
+<p class="eyebrow">HỢP ĐỒNG THUÊ</p>
+<h1>Lập hợp đồng</h1>
+
+@* S2-08 chỉ mở nút. Màn hình soạn hợp đồng thuộc S3-01 và chưa có trên dev, nên trang này
+   chỉ báo trạng thái và đưa mã yêu cầu để chủ nhà biết đang xử lý yêu cầu nào. *@
+<div class="alert alert-info" role="status">
+    <p class="mb-0">Chức năng lập hợp đồng thuộc S3-01 và chưa có màn hình. Yêu cầu <strong>@Model.MaYeuCau</strong> đã được duyệt và sẵn sàng, bạn quay lại sau khi S3-01 hoàn tất.</p>
+</div>
+
+<div class="table-responsive mb-4">
+<table class="table align-top">
+    <tbody>
+    <tr><th>Mã yêu cầu</th><td>@Model.MaYeuCau</td></tr>
+    <tr><th>Phòng</th><td>@Model.TenPhong @if (!string.IsNullOrWhiteSpace(Model.TenToaNha)) { <text>· @Model.TenToaNha</text> }</td></tr>
+    <tr><th>Người thuê</th><td>@Model.TenKhach</td></tr>
+    </tbody>
+</table>
+</div>
+
+<a class="btn btn-outline-secondary" asp-action="ChiTiet" asp-route-id="@Model.YeuCauId">Quay lại yêu cầu</a>

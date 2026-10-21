@@ -1,0 +1,57 @@
+@model QL_PhongTro.ViewModels.EmailGuiLogViewModel
+@using QL_PhongTro.ViewModels
+@{
+    ViewData["Title"] = "Tra cứu gửi thông báo lỗi";
+}
+<section class="email-log-page container-fluid px-0"><header class="email-log-heading mb-4"><p class="eyebrow">HỆ THỐNG</p>
+<h1 class="h4 fw-bold mb-2">Tra cứu gửi thông báo lỗi</h1><p class="text-muted mb-0">Theo dõi lịch sử gửi, số lần thử lại và trạng thái thông báo.</p></header>
+<nav class="nav nav-pills email-log-tabs gap-2 mb-3" aria-label="Loại email"><a class="nav-link @(Model.Nhom == "HOA_DON" ? "active" : "")" aria-current="@(Model.Nhom == "HOA_DON" ? "page" : null)" asp-action="Index" asp-route-nhom="HOA_DON">Hóa đơn</a><a class="nav-link @(Model.Nhom == "THANH_TOAN" ? "active" : "")" aria-current="@(Model.Nhom == "THANH_TOAN" ? "page" : null)" asp-action="Index" asp-route-nhom="THANH_TOAN">Báo và xác nhận thanh toán</a><a class="nav-link" asp-action="BaoHong">Báo hỏng và cập nhật</a></nav>
+<div class="email-log-note mb-4">ⓘ Chế độ pickup chỉ lưu email thành tệp trên máy chủ.</div><div class="card email-log-filter shadow-sm mb-4"><div class="card-body p-4"><h2 class="h6 fw-bold mb-3">Bộ lọc nhật ký</h2>
+<form method="get" class="row g-3 align-items-end">
+    <input type="hidden" name="Nhom" value="@Model.Nhom" />
+    <div class="col-12 col-md-4"><label asp-for="TrangThai" class="form-label">Trạng thái</label><select asp-for="TrangThai" class="form-select"><option value="">Tất cả</option>
+    @foreach (var t in EmailGuiLogViewModel.TrangThais) { <option value="@t.Key">@t.Value</option> }
+    </select></div>
+    <div class="col-12 col-md-4"><label asp-for="TuNgay" class="form-label">Từ ngày</label><input asp-for="TuNgay" type="date" class="form-control" /></div>
+    <div class="col-12 col-md-4"><label asp-for="DenNgay" class="form-label">Đến ngày</label><input asp-for="DenNgay" type="date" class="form-control" /></div>
+    <div class="col-12 d-flex flex-wrap gap-2"><button class="btn btn-primary" type="submit">Lọc nhật ký</button> <a asp-action="Index" asp-route-nhom="@Model.Nhom" class="btn btn-outline-secondary">Xóa bộ lọc</a></div>
+</form></div></div>
+<section class="card email-log-results shadow-sm"><header class="card-header bg-white d-flex flex-wrap align-items-center justify-content-between gap-2"><h2 class="h6 fw-bold mb-0">Nhật ký gửi thông báo <span class="badge email-log-count ms-2">@Model.Total bản ghi</span></h2><small class="text-muted">Trang @Model.Page / @Model.Pages</small></header>
+<div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead><tr><th>STT</th><th>Ngày gửi</th><th>Hóa đơn</th><th>Người nhận</th><th>Email</th><th>Loại thông báo</th><th>Trạng thái</th><th>Số lần thử</th><th>Lần gửi tiếp</th><th>Lỗi gần nhất</th></tr></thead><tbody>
+@{ var stt = (Model.Page - 1) * 50; }
+@foreach (var row in Model.Rows) {
+stt++;
+<tr>
+<td>@stt</td>
+<td>@row.NgayGui.AddHours(7).ToString("dd/MM/yyyy HH:mm")</td>
+<td>#@row.HoaDonId</td>
+<td>#@row.NguoiNhanId</td>
+<td>@row.EmailNguoiNhan</td>
+<td>@EmailGuiLogViewModel.KindName(row.LoaiThongBao)</td>
+<td>
+@switch (row.TrangThai)
+{
+    case "DA_GUI": <span class="badge bg-success">@EmailGuiLogViewModel.TrangThais[row.TrangThai]</span>; break;
+    case "THAT_BAI": <span class="badge bg-danger">@EmailGuiLogViewModel.TrangThais[row.TrangThai]</span>; break;
+    case "CHO_GUI": <span class="badge bg-warning text-dark">@EmailGuiLogViewModel.TrangThais[row.TrangThai]</span>; break;
+    case "DANG_GUI": <span class="badge bg-info text-dark">@EmailGuiLogViewModel.TrangThais[row.TrangThai]</span>; break;
+    default: @row.TrangThai; break;
+}
+</td>
+<td>@row.SoLanThu</td>
+<td>@(row.NgayThuTiep is { } t ? t.AddHours(7).ToString("dd/MM/yyyy HH:mm") : "-")</td>
+<td style="overflow-wrap:anywhere">@(row.LoiGanNhat ?? "-")</td>
+</tr>
+}
+@if (Model.Rows.Count == 0) { <tr><td colspan="10" class="email-log-empty"><span class="d-block fw-semibold mb-2">Không có bản ghi phù hợp</span><span class="text-muted">Thử thay đổi trạng thái hoặc khoảng ngày để tra cứu.</span></td></tr> }
+</tbody></table></div>
+<nav class="card-footer bg-white d-flex flex-wrap gap-2" aria-label="Phân trang nhật ký gửi email">
+@foreach (var pageNumber in new[] { Model.Page - 1, Model.Page + 1 }.Where(p => p >= 1 && p <= Model.Pages)) {
+<a class="btn btn-outline-primary" asp-action="Index" asp-route-page="@pageNumber" asp-route-nhom="@Model.Nhom" asp-route-trangThai="@Model.TrangThai" asp-route-tuNgay="@Model.TuNgay?.ToString("yyyy-MM-dd")" asp-route-denNgay="@Model.DenNgay?.ToString("yyyy-MM-dd")">@(pageNumber < Model.Page ? "Trang trước" : "Trang sau")</a>
+}
+</nav>
+
+</section></section>
+@section Styles { <link rel="stylesheet" href="~/css/admin-email-log-bootstrap.css" asp-append-version="true" /> }
+
+@section Scripts { <script src="~/js/email-log-dropdown.js" asp-append-version="true"></script> }

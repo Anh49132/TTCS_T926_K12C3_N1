@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 420" role="img" aria-labelledby="title">
+  <title id="title">Phòng chưa có ảnh</title>
+  <rect width="640" height="420" fill="#e8eee5"/>
+  <path d="M80 332h480V96H80z" fill="#f8f7f1" stroke="#879788" stroke-width="8"/>
+  <path d="M112 128h172v132H112z" fill="#d9e8e5" stroke="#879788" stroke-width="7"/>
+  <path d="M198 128v132m-86-66h172" stroke="#879788" stroke-width="6"/>
+  <path d="M112 332v-42h188v42m36 0V218h116v114" fill="#cfaa7e" stroke="#879788" stroke-width="7"/>
+  <path d="M356 250h80m-80 24h80" stroke="#f8f7f1" stroke-width="8"/>
+  <path d="M80 332h480" stroke="#526a58" stroke-width="10"/>
+  <circle cx="504" cy="132" r="20" fill="#d6a04a"/>
+</svg>

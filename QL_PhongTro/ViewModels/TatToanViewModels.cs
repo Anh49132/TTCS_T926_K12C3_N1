@@ -1,0 +1,44 @@
+using System.ComponentModel.DataAnnotations;
+using QL_PhongTro.Models;
+namespace QL_PhongTro.ViewModels;
+
+public sealed class KhauTruInput
+{
+    public string? TenKhoan { get; set; }
+    public decimal? SoTien { get; set; }
+    public string? GhiChu { get; set; }
+}
+public sealed class TatToanInput : QL_PhongTro.Services.ChamDutInput
+{
+    public int HopDongId { get; set; }
+    public int PhienBan { get; set; }
+    public string? DauVanTayNguon { get; set; }
+    public string? GhiChu { get; set; }
+    public List<KhauTruInput> KhauTru { get; set; } = [];
+}
+public sealed record CongNoTatToan(int HoaDonId, string MaHoaDon, int Nam, int Thang, long TongTien, long DaThanhToan, long DaCanTru, long ConNo, bool KyCuoi);
+public sealed class TatToanViewModel
+{
+    public TatToanInput Input { get; set; } = new();
+    public string MaHopDong { get; set; } = "";
+    public string Phong { get; set; } = "";
+    public int PhongId { get; set; }
+    public string TrangThaiPhong { get; set; } = "";
+    public string TenTrangThaiPhong => TrangThaiPhong switch { "TRONG"=>"Trống", "DANG_THUE"=>"Đang thuê", "DA_DAT_COC"=>"Đã đặt cọc", "NGUNG_CHO_THUE"=>"Ngừng cho thuê", _=>"Chưa xác định" };
+    public string ToaNha { get; set; } = "";
+    public string Khach { get; set; } = "";
+    public XacNhanTatToan? XacNhan { get; set; }
+    public XacNhanTatToanInput Confirm { get; set; }=new();
+    public string TrangThaiHopDong { get; set; }="";
+    public long DaHoanCoc { get; set; }
+    public long CocDangGiu { get; set; }
+    public long ConPhaiThu { get; set; }
+    public bool DuocHoan { get; set; }
+    public List<CongNoTatToan> NoHienTai { get; set; }=[];
+    public bool DuocSua { get; set; }
+    public ChamDutHopDong? ChamDut { get; set; }
+    public BangTatToan Bang { get; set; } = new();
+    public List<CongNoTatToan> CongNo { get; set; } = [];
+    public long KetQua => checked(Bang.TienPhaiHoan - Bang.TienKhachTraThem);
+}
+public sealed record TatToanChon(int Id, string MaHopDong, string Phong, string ToaNha, bool DaLuu);

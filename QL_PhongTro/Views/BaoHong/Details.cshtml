@@ -1,0 +1,20 @@
+@model QL_PhongTro.ViewModels.BaoHongChiTiet
+@{
+    ViewData["Title"] = Model.BaoHong.MaBaoHong;
+    if (TempData["BaoHongSuccess"] is string message)
+    {
+        ViewData["ToastSuccess"] = message;
+        ViewData["ToastPersistent"] = true;
+    }
+}
+@section Styles {
+    <link rel="stylesheet" href="~/css/tenant-repairs.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/manager-repair-detail.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/repair-upgrade.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/repair-cost.js" asp-append-version="true" defer></script>
+    <script src="~/js/manager-repair-detail.js" asp-append-version="true" defer></script>
+}
+@if(Model.LaQuanLy || Model.LaChuNha){<partial name="~/Views/QuanLyBaoHong/_ManagerDetail.cshtml" model="Model" />}
+else {<partial name="~/Views/BaoHong/_TenantDetail.cshtml" model="Model" />}

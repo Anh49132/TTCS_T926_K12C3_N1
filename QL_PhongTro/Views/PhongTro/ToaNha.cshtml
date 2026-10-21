@@ -1,0 +1,105 @@
+@model QL_PhongTro.ViewModels.DanhSachToaNhaViewModel
+@inject QL_PhongTro.Authorization.PermissionService Permissions
+@inject QL_PhongTro.Services.ITimeProvider BuildingClock
+
+@{
+    ViewData["Title"] = "Quản lý tòa nhà";
+    var totalRooms = Model.ToaNhas.Sum(x => x.SoPhong);
+    var occupied = Model.ToaNhas.Sum(x => x.SoPhongDangThue);
+    var vacant = Model.ToaNhas.Sum(x => x.SoPhongTrong);
+    var occupancy = totalRooms == 0 ? 0m : occupied * 100m / totalRooms;
+    string Money(long value) => value.ToString("N0", System.Globalization.CultureInfo.GetCultureInfo("vi-VN"))+" đ";
+    var canWrite = await Permissions.AllowsAsync("PHONG_TRO", write: true);
+}
+
+<div class="building-management building-bootstrap">
+<div class="d-flex flex-wrap justify-content-between align-items-end gap-3 mb-4">
+    <div>
+
+        <h1 class="h2 fw-bold mb-2">Quản lý tòa nhà</h1>
+        <p class="text-secondary mb-0">Nắm bắt vận hành, quản lý hiệu quả từng tòa nhà của bạn.</p>
+    </div>
+    @if (canWrite) { <a asp-action="TaoToaNha" class="btn btn-dark">＋ Thêm tòa nhà</a> }
+</div>
+
+<section class="building-stats" aria-label="Tổng quan tòa nhà">
+<article class="shadow-sm"><div class="building-stat-heading"><span>Tổng số tòa nhà</span><i class="building-stat-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 21V5h10v16M15 9h4v12M3 21h18M8 8h1m2 0h1M8 11h1m2 0h1M8 14h1m2 0h1M9 21v-4h3v4"/></svg></i></div><strong>@Model.ToaNhas.Count.ToString("D2") <small>tòa nhà</small></strong><p>@totalRooms phòng đang quản lý</p></article>
+<article class="shadow-sm"><div class="building-stat-heading"><span>Công suất thuê</span><i class="building-stat-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v9h9M9 3.5A9 9 0 1 0 20.5 15M15 3.5A9 9 0 0 1 20.5 9H15Z"/></svg></i></div><strong>@occupancy.ToString("0.#", System.Globalization.CultureInfo.GetCultureInfo("vi-VN")) <small>%</small></strong><p>@occupied / @totalRooms phòng đang thuê</p><progress value="@occupied" max="@(totalRooms == 0 ? 1 : totalRooms)" aria-label="Công suất thuê"></progress></article>
+<article class="shadow-sm"><div class="building-stat-heading"><span>Phòng trống</span><i class="building-stat-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21h16M7 21V5l9-2v18M16 5h3v16M12 12h.01"/></svg></i></div><strong>@vacant.ToString("D2") <small>phòng</small></strong><p>Sẵn sàng cho thuê tại @Model.ToaNhas.Count(x => x.SoPhongTrong > 0) tòa nhà</p></article>
+@if(Model.Finance.Available){<article class="shadow-sm"><div class="building-stat-heading"><span>Đã thu kỳ @Model.FinancePeriod.ToString("MM/yyyy")</span></div><strong>@Money(Model.Finance.Paid)</strong><p>@Model.Finance.InvoiceCount hóa đơn · chỉ thu đã xác nhận</p></article>}
+</section>
+<section class="building-overview-grid">
+<article class="building-panel shadow-sm"><div class="building-panel-heading"><h2>Tiến độ thu tiền</h2><form method="get"><input type="hidden" name="tuKhoa" value="@Model.TuKhoa"/><label> Kỳ hóa đơn <select name="ky" onchange="this.form.submit()">@for(var i=0;i<12;i++){var month=new DateOnly(BuildingClock.UtcNow.AddHours(7).Year,BuildingClock.UtcNow.AddHours(7).Month,1).AddMonths(-i);<option value="@month.ToString("yyyy-MM")" selected="@(month==Model.FinancePeriod)">@month.ToString("MM/yyyy")</option>}</select></label><noscript><button>Áp dụng</button></noscript></form></div>
+@if(Model.Finance.Available){
+<partial name="_FinanceBars" model="Model.ToaNhas.Select(x=>new QL_PhongTro.ViewModels.FinanceBar(x.TenToaNha,Model.Finance.Buildings.GetValueOrDefault(x.Id)?.Issued??0,Model.Finance.Buildings.GetValueOrDefault(x.Id)?.Paid??0)).ToList()"/>
+<p><strong>@Money(Model.Finance.Paid)</strong> đã thu / @Money(Model.Finance.Issued) tổng hóa đơn · còn @Money(Model.Finance.Remaining) · cấn cọc @Money(Model.Finance.Deposit)</p>
+}else{<p>Không có quyền xem dữ liệu tài chính hoặc module chưa sẵn sàng.</p>}
+</article>
+<article class="building-panel building-attention-panel shadow-sm"><div class="building-panel-heading"><h2>Cần chú ý</h2><span class="building-attention-count">@((Model.HopDongSapHetHan > 0 ? 1 : 0) + (Model.Finance.UnpaidCount > 0 ? 1 : 0)) việc</span></div>
+<div class="building-alert-row is-unavailable"><span class="building-alert-icon is-finance"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18H6ZM9 7h6M9 11h6M9 15h3"/></svg></span><div><strong>Hóa đơn chưa thanh toán</strong><small>@(Model.Finance.Available ? $"{Model.Finance.UnpaidCount} hóa đơn · còn {Money(Model.Finance.TotalDebt)}" : "Không có quyền xem tài chính")</small></div></div>
+<a class="building-alert-row" href="/HopDong"><span class="building-alert-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10l3 3v7M7 3v5H4v8h6M12 7h5"/><circle cx="15" cy="17" r="5"/><path d="M15 14v3l2 1"/></svg></span><div><strong>@Model.HopDongSapHetHan hợp đồng sắp hết hạn</strong><small>Trong 30 ngày tới · Cần gia hạn</small></div><span class="building-alert-chevron" aria-hidden="true">›</span></a>
+<div class="building-alert-row is-unavailable"><span class="building-alert-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 4a5 5 0 0 0-6 6L3 16v5h5l7-7a5 5 0 0 0 6-6l-4 4-4-4Z"/></svg></span><div><strong>Yêu cầu bảo trì đang chờ</strong><small>Chưa có dữ liệu bảo trì</small></div></div>
+<a class="building-attention-footer" href="/">Xem tất cả công việc <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a></article>
+</section>
+<section class="building-panel building-list-panel shadow-sm">
+<div class="building-panel-heading"><h2>Danh sách tòa nhà <span class="building-tag">@Model.ToaNhas.Count tòa nhà</span></h2><div class="building-view-switch" aria-label="Kiểu hiển thị"><button type="button" data-view="list" aria-label="Danh sách" aria-pressed="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></svg></button><button type="button" data-view="grid" aria-label="Lưới" aria-pressed="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="6" height="6" rx="1"/><rect x="14" y="4" width="6" height="6" rx="1"/><rect x="4" y="14" width="6" height="6" rx="1"/><rect x="14" y="14" width="6" height="6" rx="1"/></svg></button></div></div>
+<div class="building-toolbar">
+<label class="building-search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m15.5 15.5 4.2 4.2"/></svg><input class="form-control" id="building-search" value="@Model.TuKhoa" aria-label="Tìm theo tên tòa nhà hoặc địa chỉ" placeholder="Tìm theo tên tòa nhà, địa chỉ..." /></label>
+<select class="form-select" id="building-area" aria-label="Lọc khu vực"><option value="">Tất cả khu vực</option>@foreach (var area in Model.ToaNhas.Select(x => x.KhuVuc).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().OrderBy(x => x)) { <option value="@area">@area</option> }</select>
+<select class="form-select" id="building-status" aria-label="Lọc tình trạng"><option value="">Tất cả tình trạng</option><option value="active">Đang hoạt động</option><option value="inactive">Ngừng hoạt động</option></select>
+<button class="building-sort" type="button" aria-label="Sắp xếp tòa nhà" data-sort="newest"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 4v15m-3-3 3 3 3-3M12 5h9M12 9h7M12 13h5M12 17h3"/></svg><span>Mới nhất</span></button>
+</div>
+<p class="building-filter-empty" hidden>Không tìm thấy tòa nhà phù hợp.</p>
+@if (Model.ToaNhas.Count == 0)
+{
+    <div class="border-top border-bottom py-4 text-secondary">Không tìm thấy tòa nhà phù hợp.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light"><tr><th>STT</th><th>Tòa nhà</th><th>Người quản lý</th><th>Đã thuê / Tổng</th><th>Công suất</th><th>Thu tiền tháng</th><th>Cần xử lý</th><th>Thao tác</th></tr></thead>
+            <tbody>
+            @{ var buildingStt = 0; }
+            @foreach (var building in Model.ToaNhas)
+            {
+                buildingStt++;
+                <tr data-building-id="@building.Id" data-area="@building.KhuVuc" data-status="@(building.DangHoatDong ? "active" : "inactive")" data-search="@building.TenToaNha @building.DiaChi">
+                    <td>@buildingStt</td>
+                    <th scope="row"><a asp-action="ChiTietToaNha" asp-route-id="@building.Id">@building.TenToaNha</a><div class="small text-secondary">@building.DiaChi</div></th>
+                    <td>@(building.QuanLy ?? "Chưa phân công")</td>
+                    <td><strong>@building.SoPhongDangThue / @building.SoPhong</strong><div class="building-row-note building-vacant">@building.SoPhongTrong phòng trống</div></td>
+                    <td><strong>@(building.SoPhong == 0 ? "0" : (100m * building.SoPhongDangThue / building.SoPhong).ToString("0.#"))%</strong><progress value="@building.SoPhongDangThue" max="@(building.SoPhong == 0 ? 1 : building.SoPhong)" aria-label="Công suất @building.TenToaNha"></progress></td>
+                    <td class="building-payment-cell">@if(Model.Finance.Available){<strong>@Money(Model.Finance.Buildings.GetValueOrDefault(building.Id)?.Paid??0)</strong><div class="building-row-note">Theo kỳ @Model.FinancePeriod.ToString("MM/yyyy")</div>}else{<span>Không có quyền xem</span>}</td>
+                    <td class="building-task-cell"><span class="building-task-badge">Chưa có dữ liệu quá hạn</span><div class="building-row-note">Chưa có dữ liệu báo hỏng</div></td>
+                    <td class="building-actions-cell">
+                        <a asp-action="ChiTietToaNha" asp-route-id="@building.Id" class="building-detail-link">Chi tiết</a>
+                        @if (canWrite) {
+                        <a asp-action="SuaToaNha" asp-route-id="@building.Id" class="building-edit-icon" aria-label="Sửa tòa nhà @building.TenToaNha" title="Sửa tòa nhà"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 5 4 4M4 20l4-1L20 7a2.8 2.8 0 0 0-4-4L4 15v5Z"/></svg></a>
+                        <details class="building-row-actions"><summary aria-label="Thao tác khác với @building.TenToaNha">⋯</summary>
+                        <div class="d-flex flex-wrap gap-2">
+                            @if (building.DangHoatDong)
+                            {
+                                @if (User.IsInRole("CHU_NHA") || User.IsInRole("ADMIN"))
+                                {
+                                    <a asp-controller="DichVu" asp-action="DienNuoc" asp-route-toaNhaId="@building.Id" class="btn btn-sm btn-outline-primary">Cấu hình điện nước</a>
+                                }
+                                <form asp-action="NgungHoatDong" method="post" data-confirm="Ngừng hoạt động tòa nhà @building.TenToaNha? Tòa nhà sẽ không còn xuất hiện trong danh sách chọn khi quản lý phòng."><input type="hidden" name="id" value="@building.Id" /><button class="btn btn-sm btn-outline-warning" type="submit">Ngừng hoạt động</button></form>
+                            }
+                            <form asp-action="XoaToaNha" method="post" data-confirm="Bạn có chắc muốn xóa tòa nhà @building.TenToaNha? Thao tác này không thể hoàn tác. Tòa nhà có phòng hoặc dữ liệu liên quan sẽ không được xóa."><input type="hidden" name="id" value="@building.Id" /><button class="btn btn-sm btn-outline-danger" type="submit">Xóa</button></form>
+                        </div>
+                        </details>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+
+</section>
+</div>
+@section Styles { <link rel="stylesheet" href="~/css/building-management.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/building-bootstrap.css" asp-append-version="true" /> }
+
+@section Scripts { <script src="~/js/building-list.js" asp-append-version="true"></script> }

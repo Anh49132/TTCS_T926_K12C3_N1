@@ -1,0 +1,10 @@
+@inject QL_PhongTro.Services.ITimeProvider MeterClock
+@model QL_PhongTro.ViewModels.PhongConThieuViewModel
+<div class="missing-bootstrap">
+<header class="mp-missing-heading"><h2 id="missing-rooms-title">Phòng còn thiếu chỉ số</h2><p>@Model.TenToaNha · Kỳ @Model.Thang.ToString("00")/@Model.Nam</p></header>
+<div class="mp-missing-alert alert"><span class="mp-symbol">!</span><strong>@Model.Phongs.Count phòng chưa hoàn tất</strong></div>
+<h3 class="mp-list-label">Danh sách phòng (@Model.Phongs.Count)</h3>
+<div class="mp-missing-list">@foreach(var room in Model.Phongs){<section class="mp-room card"><span class="mp-room-icon" aria-hidden="true">▥</span><div><h3>@room.MaPhong · Tầng @room.Tang</h3><p>Người quản lý phụ trách: <strong>@(room.TenQuanLy??"Chưa phân công")</strong></p><span class="mp-badge amber">Chưa đủ dữ liệu điện/nước</span><div class="mp-room-actions d-flex flex-wrap gap-2">@if(Model.Nam == MeterClock.UtcNow.AddHours(7).Year && Model.Thang == MeterClock.UtcNow.AddHours(7).Month){<a class="mp-button small btn btn-outline-secondary" asp-controller="ChiSoDienNuoc" asp-action="Index" asp-route-toaNhaId="@Model.ToaNhaId" asp-fragment="meter-room-@room.PhongId">Nhập chỉ số →</a>}<a class="mp-button small btn btn-outline-secondary" asp-controller="PhongTro" asp-action="Details" asp-route-id="@room.PhongId">Xem phòng →</a></div></div></section>}@if(Model.Phongs.Count==0){<p class="mp-empty">Tòa nhà không còn phòng nào thiếu chỉ số trong kỳ này.</p>}</div>
+<p class="mp-note">Chủ nhà hoặc người quản lý phụ trách có thể nhập chỉ số kỳ hiện tại. Phòng chưa đủ dữ liệu có thể thiếu chỉ số hoặc cấu hình giá điện/nước. Dịch vụ theo người không cần nhập chỉ số.</p>
+
+</div>

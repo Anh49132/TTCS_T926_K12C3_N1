@@ -1,0 +1,30 @@
+@{
+    var name = User.Identity?.Name ?? "Tài khoản";
+    var role = User.FindFirst(System.Security.Claims.ClaimTypes.Role)?.Value;
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+    var owner = User.IsInRole("CHU_NHA") || User.IsInRole("QUAN_LY") || User.IsInRole("ADMIN");
+    var personalAction = User.IsInRole("KHACH_THUE") ? "Xem" : "CuaToi";
+    var roleLabel = role switch { "CHU_NHA" => "Chủ nhà", "QUAN_LY" => "Quản lý tòa nhà", "ADMIN" => "Quản trị hệ thống", "KHACH_THUE" => "Khách thuê", _ => "Tài khoản" };
+    var initials = string.Concat(name.Split(' ', StringSplitOptions.RemoveEmptyEntries).TakeLast(2)
+        .Select(part => System.Globalization.StringInfo.GetNextTextElement(part))).ToUpperInvariant();
+}
+<div class="sidebar-account" id="account-menu">
+@if (User.Identity?.IsAuthenticated == true) {
+<div class="account-popover" id="account-popover" hidden>
+<nav aria-label="Tài khoản cá nhân">
+<a href="@Url.Action(personalAction, "HoSo")" aria-current="@(controller == "HoSo" && action == personalAction ? "page" : null)">Hồ sơ của tôi</a>
+@if (!User.IsInRole("QUAN_LY") && !User.IsInRole("CHU_NHA") && !User.IsInRole("ADMIN")) { <a href="/PersonalAccount/Edit">Chỉnh sửa tài khoản</a> }
+<a href="@Url.Action("ChangePassword", "Account")" aria-current="@(controller == "Account" && action == "ChangePassword" ? "page" : null)">Đổi mật khẩu</a>
+</nav><hr />
+<form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm"><button type="submit" id="logoutBtn">Đăng xuất</button></form>
+</div>
+<button type="button" class="account-trigger" id="account-toggle" aria-controls="account-popover" aria-expanded="false">
+<span class="account-avatar" aria-hidden="true"><img src="/PersonalAccount/Avatar" alt="" /></span>
+<span class="account-label"><strong>@name</strong><small>@roleLabel</small></span><span class="account-chevron" aria-hidden="true">@if (owner) { <svg viewBox="0 0 16 16"><path d="m4 6 4 4 4-4" /></svg> } else { <text>⌃</text> }</span>
+</button>
+} else {
+<a href="@Url.Action("Login", "Account")" id="loginBtn" class="sidebar-link">Đăng nhập</a>
+<a href="@Url.Action("Register", "Account")" id="registerBtn" class="sidebar-link">Tạo tài khoản</a>
+}
+</div>

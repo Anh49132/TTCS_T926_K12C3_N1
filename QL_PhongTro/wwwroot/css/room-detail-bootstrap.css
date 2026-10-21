@@ -1,0 +1,63 @@
+/* Scoped room detail presentation; existing data and permissions stay intact. */
+.room-detail-bootstrap{max-width:1440px;margin:0 auto;line-height:1.5}
+.room-detail-bootstrap .rd-heading{gap:1rem;margin-bottom:.875rem;align-items:center}
+.room-detail-bootstrap .rd-room-title{gap:.85rem;min-width:0}
+.room-detail-bootstrap .rd-room-title h1{font-size:clamp(1.5rem,2.3vw,2rem);line-height:1.3;letter-spacing:-.025em;overflow-wrap:anywhere;margin-bottom:.3rem}
+.room-detail-bootstrap .rd-room-title p{font-size:.78rem;line-height:1.5}
+.room-detail-bootstrap .rd-room-icon{width:44px;height:44px;flex:0 0 44px;border-radius:11px;background:#bfa77a19;color:#92774c}
+.room-detail-bootstrap .rd-state{display:inline-block;font-size:.68rem;padding:.35rem .6rem;border-radius:20px;letter-spacing:0;vertical-align:middle}
+.room-detail-bootstrap .rd-actions{gap:.65rem;flex-wrap:wrap}
+.room-detail-bootstrap .rd-actions>a,.room-detail-bootstrap .rd-actions>button{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:.65rem 1rem;border-radius:9px;font-size:.78rem;font-weight:600}
+.room-detail-bootstrap .rd-tabs{gap:1.5rem;flex-wrap:nowrap;overflow-x:auto;margin-bottom:.875rem}
+.room-detail-bootstrap .rd-tabs>*{font-size:.77rem;line-height:1.5;padding:.6rem 0;white-space:nowrap}
+.room-detail-bootstrap .rd-layout{grid-template-columns:minmax(0,1.8fr) minmax(300px,1fr);gap:1rem;align-items:start}
+.room-detail-bootstrap .rd-main,.room-detail-bootstrap .rd-aside{gap:1rem;min-width:0}
+.room-detail-bootstrap .rd-card{padding:1rem;border:1px solid #e6e9eb;border-radius:13px;box-shadow:0 3px 12px #25282d03;min-width:0}
+.room-detail-bootstrap .rd-card h2{font-size:.95rem;line-height:1.4;gap:.65rem;margin-bottom:.85rem}
+.room-detail-bootstrap .rd-icon{display:inline-grid;place-items:center;width:32px;height:32px;flex:0 0 32px;border-radius:8px;background:#bfa77a19;color:#92774c}
+.room-detail-bootstrap .rd-icon svg{width:19px;height:19px;stroke:currentColor}
+.room-detail-bootstrap .rd-info{gap:.75rem 1rem;margin:0}
+.room-detail-bootstrap .rd-info>div{min-width:0}
+.room-detail-bootstrap .rd-info dt{font-size:.7rem;line-height:1.5;margin-bottom:.2rem;color:#8a929b;font-weight:400}
+.room-detail-bootstrap .rd-info dd{font-size:.8rem;line-height:1.5;margin:0;overflow-wrap:anywhere}
+.room-detail-bootstrap .rd-divider{margin-top:.85rem;padding-top:.75rem;border-color:#eef0ed}
+.room-detail-bootstrap h3{font-size:.83rem;line-height:1.5}
+.room-detail-bootstrap .rd-amenities{gap:.5rem;flex-wrap:wrap}
+.room-detail-bootstrap .rd-amenities>span{padding:.45rem .65rem;border-radius:8px;background:#f8f8f5;border:1px solid #eef0ed;font-size:.72rem;line-height:1.5}
+.room-detail-bootstrap .rd-unavailable,.room-detail-bootstrap .rd-muted{font-size:.7rem;line-height:1.6}
+.room-detail-bootstrap .rd-unavailable{margin-top:.7rem}
+.room-detail-bootstrap .rd-card-title{gap:.65rem;margin-bottom:.75rem;align-items:center}
+.room-detail-bootstrap .rd-card-title h2{margin-bottom:0}
+.room-detail-bootstrap .rd-card-title>a{font-size:.72rem;white-space:nowrap}
+.room-detail-bootstrap .rd-photo-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:.7rem}
+.room-detail-bootstrap .rd-photo{border:1px solid #e6e9eb;border-radius:10px;overflow:hidden;background:#fafaf7;min-width:0}
+.room-detail-bootstrap .rd-photo img{width:100%;height:auto;aspect-ratio:1.25;object-fit:cover;display:block}
+.room-detail-bootstrap .rd-photo-caption{display:block;padding:.55rem;font-size:.67rem;line-height:1.5}
+.room-detail-bootstrap .rd-photo-primary{font-size:.63rem;padding:.3rem .45rem;border-radius:5px;left:.5rem;top:.5rem}
+.room-detail-bootstrap .rd-tenant{gap:.7rem;margin:.75rem 0}
+.room-detail-bootstrap .rd-avatar{width:40px;height:40px;flex:0 0 40px;background:#f3f1eb;color:#92774c}
+.room-detail-bootstrap .rd-tenant h3{font-size:.8rem;line-height:1.5;margin-bottom:.2rem}
+.room-detail-bootstrap .rd-tenant p{font-size:.7rem;line-height:1.5}
+.room-detail-bootstrap .rd-contract-heading{gap:.5rem;margin-bottom:.75rem;flex-wrap:wrap;font-size:.77rem}
+.room-detail-bootstrap .rd-full{min-height:40px;border-radius:8px;font-size:.76rem;margin-top:.9rem}
+.room-detail-bootstrap .rd-history{font-size:.72rem;margin-top:.7rem}
+.room-detail-bootstrap .rd-price{font-size:1.8rem;line-height:1.3;font-weight:700;color:#78623d;margin:.5rem 0 .9rem}
+.room-detail-bootstrap .rd-price small{font-size:.74rem;color:#92969d;font-weight:400}
+.room-detail-bootstrap .rd-deposit{padding:.75rem;border-radius:9px;background:#f8f8f5;font-size:.76rem;gap:.65rem}
+.room-detail-bootstrap .rd-deposit small{font-size:.68rem;line-height:1.5;margin-top:.25rem}
+.room-detail-bootstrap .rd-fee{padding:.6rem 0;font-size:.77rem;border-color:#eef0ed;gap:.5rem}
+.room-detail-bootstrap .rd-fee small{font-size:.68rem;line-height:1.5}
+.room-detail-bootstrap .rd-payment{padding:1rem;border-radius:10px;background:#f7f2e8;gap:1rem}
+.room-detail-bootstrap .rd-payment small{font-size:.72rem;line-height:1.5}
+.room-detail-bootstrap .rd-payment strong{font-size:1.6rem;line-height:1.4}
+.room-detail-bootstrap .rd-invoice-head{font-size:.67rem;padding:.75rem;border-radius:8px;background:#f8f8f5}
+.room-detail-bootstrap .rd-invoice-empty{padding:1.25rem .75rem;font-size:.77rem;line-height:1.5}
+.room-detail-bootstrap .rd-invoice-empty small{font-size:.7rem;margin-top:.3rem}
+.room-detail-bootstrap .rd-note-content{font-size:.8rem;line-height:1.6;padding:.8rem;border-radius:9px;background:#fafaf7;overflow-wrap:anywhere}
+.room-detail-bootstrap .rd-maintenance{padding:.85rem;gap:.75rem;border-radius:9px;background:#f8f8f5}
+.room-detail-bootstrap .rd-maintenance p{font-size:.72rem;line-height:1.5}
+.room-detail-bootstrap button:disabled{cursor:not-allowed;opacity:.6}
+.room-detail-bootstrap .rd-footer{margin-top:.875rem;padding-top:.875rem;font-size:.7rem;line-height:1.5;gap:.75rem;flex-wrap:wrap}
+@media(max-width:1100px){.room-detail-bootstrap .rd-layout{grid-template-columns:minmax(0,1fr) 300px}.room-detail-bootstrap .rd-info{grid-template-columns:repeat(2,minmax(0,1fr))}.room-detail-bootstrap .rd-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:850px){.room-detail-bootstrap .rd-layout{grid-template-columns:1fr}.room-detail-bootstrap .rd-aside{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.room-detail-bootstrap .rd-heading{align-items:stretch;flex-direction:column}.room-detail-bootstrap .rd-room-icon{width:36px;height:36px;flex-basis:36px}.room-detail-bootstrap .rd-actions{display:flex}.room-detail-bootstrap .rd-actions>*{flex:1;padding:.6rem!important}.room-detail-bootstrap .rd-card{padding:1rem}.room-detail-bootstrap .rd-aside{grid-template-columns:1fr}.room-detail-bootstrap .rd-tabs{gap:1rem}.room-detail-bootstrap .rd-info{gap:.75rem}.room-detail-bootstrap .rd-card-title{flex-wrap:wrap}.room-detail-bootstrap .rd-photo-grid{gap:.5rem}.room-detail-bootstrap .rd-payment{flex-direction:column;align-items:stretch}.room-detail-bootstrap .rd-maintenance{flex-wrap:wrap}.room-detail-bootstrap .rd-invoice-head{gap:.4rem;font-size:.6rem}.dashboard-header:has(.rd-breadcrumb) .account-label{display:none}.dashboard-header .rd-breadcrumb{font-size:.72rem;gap:.35rem;flex:1;min-width:0}.rd-breadcrumb svg{width:17px;height:17px}}

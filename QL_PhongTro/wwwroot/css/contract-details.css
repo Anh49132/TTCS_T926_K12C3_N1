@@ -1,0 +1,272 @@
+.contract-page.contract-details-reference{width:100%;max-width:none;margin:0;padding:0;color:#25282d;font-size:13px}
+.resident-create-layout{display:grid;grid-template-columns:minmax(0,2.4fr) minmax(260px,1fr);gap:16px;align-items:start;margin-bottom:24px}
+.resident-create-form,.resident-create-summary{min-width:0}
+.resident-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.resident-fields>div{min-width:0}
+.resident-fields label{display:block;font-size:11px;margin-bottom:6px;color:#555b64}
+.resident-fields em{font-style:normal;color:#bfa77a}
+.resident-person-card .cd-card-heading{gap:10px;margin-bottom:18px}
+.resident-person-card .cd-card-heading>span{width:28px;height:28px}
+.resident-person-card .cd-card-heading svg{width:16px;height:16px}
+.resident-person-card .cd-card-heading small{font-size:10px}
+.resident-fields-three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.resident-extra-fields{margin-top:16px}
+.resident-person-card select{font-size:12px;min-height:36px;padding:8px 10px;border-color:#e9eaec}
+.resident-person-card :is(input,select):disabled{background:#f5f5f4;color:#858991;opacity:1;cursor:default}
+.resident-person-card .resident-subheading{margin-top:16px;padding-top:16px;margin-bottom:14px}
+.resident-extra-note{font-size:10px!important}
+.resident-documents-card .cd-card-heading{gap:10px;margin-bottom:16px}
+.resident-documents-card .cd-card-heading>span{width:28px;height:28px}
+.resident-documents-card .cd-card-heading svg{width:16px;height:16px}
+.resident-documents-card .cd-card-heading small{font-size:10px}
+.resident-document-label{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.resident-document-label label,.resident-document-notes label{font-size:11px;color:#555b64}
+.resident-document-label small{font-size:9px;color:#858991}
+.resident-document-empty{display:flex;align-items:center;gap:8px;background:#f5f5f4;border-radius:5px;padding:12px;font-size:10px;color:#858991;margin-bottom:12px}
+.resident-document-empty svg{width:16px;height:16px;flex-shrink:0}
+.resident-documents-card .cd-document-upload{min-height:40px}
+.resident-document-notes{border-top:1px solid #e9eaec;padding-top:16px;margin-top:16px}
+.resident-document-notes label{display:block;margin-bottom:7px}
+.resident-document-notes textarea{width:100%;min-height:60px;padding:10px;border:1px solid #e9eaec;border-radius:5px;font-size:11px;color:#858991;background:#f5f5f4;resize:vertical;opacity:1}
+.contract-details-reference .resident-documents-card .contract-note{font-size:10px;margin-top:10px}
+.resident-living-card .cd-card-heading{gap:10px;margin-bottom:16px}
+.resident-living-card .cd-card-heading>span{width:28px;height:28px}
+.resident-living-card .cd-card-heading svg{width:16px;height:16px}
+.resident-living-card .cd-card-heading small{font-size:10px}
+.resident-field-full{grid-column:1/-1}
+.resident-living-card select{font-size:12px;min-height:36px;padding:8px 10px}
+.resident-living-card :is(input,select):disabled{background:#f5f5f4;color:#858991;opacity:1}
+.contract-details-reference .resident-living-card .contract-note{font-size:10px;margin-top:12px}
+.resident-create-form input{font-size:12px;min-height:36px;padding:8px 10px}
+.resident-create-form .cd-card-heading h2{font-size:14px}
+.resident-signer{display:flex;gap:10px;align-items:center;border-top:1px solid #e9eaec;margin-top:16px;padding-top:14px}
+.resident-signer small,.resident-signer strong{display:block;font-size:10px;line-height:1.6}
+.resident-signer strong{font-size:12px}
+.resident-room-card .cd-card-heading{gap:10px;margin-bottom:16px}
+.resident-room-card .cd-card-heading>span{width:28px;height:28px}
+.resident-room-card .cd-card-heading svg{width:16px;height:16px}
+.resident-room-card .cd-card-heading small{font-size:10px}
+.resident-locked-field{position:relative}
+.resident-locked-field input[readonly]{background:#f5f5f4;padding-right:34px;min-height:34px;border-color:#e9eaec}
+.resident-locked-field>svg{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:#858991;pointer-events:none}
+.resident-room-info{background:#f5f5f4;border-radius:5px;padding:10px;margin-top:14px;color:#858991;font-size:10px;line-height:1.6}
+.resident-room-info>span{display:flex;align-items:flex-start;gap:6px}
+.resident-room-info svg{width:13px;height:13px;flex-shrink:0;margin-top:2px}
+.resident-room-info>div{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-top:6px}
+.resident-room-info small{font-size:10px}
+.resident-room-info strong{font-size:9px;color:#656a73;background:#f7f3eb;padding:3px 6px;border-radius:3px;font-weight:500}
+.resident-room-card .resident-signer>div{min-width:0;overflow-wrap:anywhere}
+.resident-room-card .resident-signer small{font-size:9px;color:#858991}
+.resident-count{margin-left:auto;flex-shrink:0;background:#f7f3eb;border-radius:3px;font-size:9px;padding:4px 7px;color:#656a73}
+@media(max-width:600px){.resident-room-card .resident-signer{flex-wrap:wrap}.resident-count{margin-left:40px}}
+.resident-subheading{border-top:1px solid #e9eaec;padding-top:16px;margin:18px 0 12px;font-size:11px;font-weight:600}
+.resident-create-footer{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.resident-create-footer>small{margin-right:auto;font-size:10px;color:#858991}
+.contract-details-reference .resident-create-footer .resident-save-button{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:7px 11px;min-height:32px;font-size:11px;font-weight:600;border-radius:4px}
+.resident-save-button svg{width:14px;height:14px;flex-shrink:0}
+.resident-summary-room{padding:12px;background:#f5f5f4;border-radius:5px;margin:12px 0}
+.resident-summary-room strong,.resident-summary-room small{display:block;line-height:1.6}
+.resident-summary-room small{font-size:10px;color:#858991}
+.resident-summary-card>header{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:16px}
+.contract-details-reference .resident-summary-card>header h2{font-size:13px;margin:0}
+.resident-summary-card>header>span{font-size:9px;color:#656a73;background:#f7f3eb;border-radius:3px;padding:4px 6px}
+.resident-summary-card .resident-summary-room{display:flex;align-items:center;gap:9px;padding:11px;margin:0 0 12px}
+.resident-summary-room-icon{display:grid;place-items:center;flex-shrink:0;width:30px;height:30px;background:#e9eaec;border-radius:5px;color:#656a73}
+.resident-summary-room-icon svg{width:17px;height:17px}
+.resident-summary-person{border-top:1px solid #e9eaec;margin-top:8px;padding-top:14px;margin-bottom:8px}
+.resident-summary-person>small{font-size:8px;color:#858991;letter-spacing:.3px}
+.resident-summary-person>div{display:flex;align-items:center;gap:8px;margin-top:9px;min-width:0}
+.resident-summary-person strong{display:block;font-size:11px;overflow-wrap:anywhere}
+.resident-summary-person div small{display:block;font-size:9px;color:#858991;margin-top:3px;overflow-wrap:anywhere}
+.resident-count-total>div{display:flex;align-items:center;gap:10px}
+.resident-count-total>div>span{color:#858991;font-size:17px}
+.resident-count-total b{color:#bfa77a;font-weight:400;margin-left:5px}
+.resident-summary-card .resident-count-total strong{font-size:23px;margin:5px 0}
+/* Tóm tắt bổ sung gọn, giữ cùng nhịp căn lề giữa các nhóm thông tin. */
+body.homepage-dashboard-theme .contract-details-reference .resident-create-summary .resident-summary-card{padding:16px;border-top:2px solid #bfa77a}
+.resident-summary-card>header{margin-bottom:12px}
+.resident-summary-card>header>span{padding:3px 6px;font-size:8px}
+.resident-summary-card .resident-summary-room{padding:10px;gap:9px;margin-bottom:10px}
+.resident-summary-card .resident-summary-room strong{font-size:13px;line-height:1.4}
+.resident-summary-card .resident-summary-room small{font-size:9px;margin-top:3px;line-height:1.4}
+.resident-summary-card .cd-summary>div{padding:6px 0;font-size:10px;line-height:1.5;align-items:flex-start;gap:12px}
+.resident-summary-card .cd-summary dt{flex:0 0 44%}
+.resident-summary-card .cd-summary dd{min-width:0;overflow-wrap:anywhere}
+.resident-summary-card .resident-summary-person{margin-top:8px;padding-top:12px;margin-bottom:9px}
+.resident-summary-card .resident-summary-person>div{margin-top:7px}
+.resident-summary-card .resident-summary-person .cd-party-avatar{width:28px;height:28px}
+.resident-summary-card .resident-count-total{padding:11px 12px;margin:10px 0}
+.resident-summary-card .resident-count-total strong{font-size:22px;line-height:1.25;margin:5px 0}
+.resident-summary-card .resident-count-total small{font-size:9px;line-height:1.5}
+.contract-details-reference .resident-summary-card .contract-note{font-size:10px;line-height:1.6;margin:10px 0 0}
+.resident-history{border-top:1px solid #e9eaec;padding-top:24px}
+@media(min-width:1001px){.resident-create-summary{position:sticky;top:82px}}
+@media(max-width:1000px){.resident-create-layout{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:600px){.resident-fields{grid-template-columns:minmax(0,1fr)}.resident-create-footer>.btn{flex:1}.resident-create-footer>small{width:100%}}
+/* Đồng bộ thông số .rd-breadcrumb của trang chi tiết phòng. */
+.dashboard-header .contract-detail-breadcrumb{display:flex;align-items:center;gap:.75rem;min-width:0;font-size:1rem;font-weight:600;line-height:1.5;flex-wrap:wrap;color:#25282d}
+.contract-detail-breadcrumb a{display:inline-flex;align-items:center;gap:.75rem;color:#25282d80;text-decoration:none;white-space:nowrap}
+.contract-detail-breadcrumb a:hover{color:#30343b}
+.contract-detail-breadcrumb svg{width:21px;height:21px;fill:none;color:#25282d80;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.contract-detail-breadcrumb>span{color:#25282d66;font-weight:400}
+.contract-detail-breadcrumb strong{font-size:1rem;font-weight:600;color:#25282d;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.contract-details-reference .contract-back{font-size:11px;display:block;text-align:right;margin:0 0 12px}
+.contract-details-reference .contract-heading{gap:10px;flex-wrap:wrap;margin:0;padding-block:0}
+.contract-details-reference .contract-heading>div{margin-right:auto}
+.contract-details-reference .contract-heading>.contract-heading-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-right:0;margin-left:auto;min-width:250px}
+.contract-download-renew{display:grid;grid-template-columns:subgrid;grid-column:1/-1;gap:8px}
+.contract-heading-actions .btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;white-space:nowrap;min-height:36px;margin:0}
+@media(max-width:600px){.contract-details-reference .contract-heading>.contract-heading-actions{width:100%;min-width:0;margin-left:0}}
+.contract-details-reference .contract-heading h1{font-size:clamp(22px,2vw,29px);margin:0 0 6px;font-weight:700}
+.contract-details-reference .contract-heading p{font-size:12px;color:#858991}
+.contract-details-reference .btn{padding:8px 12px;font-size:11px;line-height:1.5;border-radius:5px}
+.contract-details-reference .contract-card{padding:20px;border:1px solid #e9eaec;border-radius:7px;margin-bottom:20px;box-shadow:none}
+.contract-details-reference .contract-card h2{font-size:15px;line-height:1.4;margin:0 0 14px;font-weight:650}
+.contract-details-reference .contract-note{font-size:11px;color:#858991;line-height:1.6;margin:10px 0 0}
+.contract-details-reference .lease-detail-tabs{font-size:12px;margin:0 0 20px;gap:16px}
+.cd-overview{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:#fff;border:1px solid #e9eaec;border-radius:7px;overflow:hidden;margin-bottom:20px}
+.cd-overview>div{padding:18px 20px;min-width:0}
+.cd-overview small,.cd-overview span{display:block;font-size:11px;color:#858991;line-height:1.6}
+.cd-overview strong{display:block;font-size:21px;margin:4px 0;font-weight:700}
+.cd-overview footer{grid-column:1/-1;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:9px 20px;background:#f7f3eb}
+.cd-overview footer span{font-size:10px;color:#80663a}
+.cd-workspace{display:grid;grid-template-columns:minmax(0,2.4fr) minmax(270px,1fr);gap:20px;align-items:start}
+.cd-main,.cd-side{min-width:0}
+.cd-card-heading{display:flex;align-items:flex-start;gap:12px;margin-bottom:18px}
+.cd-card-heading>span{width:32px;height:32px;display:grid;place-items:center;border-radius:6px;background:#e9eaec;color:#656a73;font-size:18px;flex-shrink:0}
+.contract-details-reference .cd-card-heading h2{margin:0 0 4px}
+.cd-card-heading small{font-size:11px;color:#858991}
+.cd-facts{display:grid;gap:16px;margin:0;font-size:12px}
+.cd-facts div{min-width:0}
+.cd-facts dt{font-weight:400;color:#858991;font-size:10px;margin-bottom:5px}
+.cd-facts dd{margin:0;color:#555b64;font-weight:500;overflow-wrap:anywhere}
+.cd-three{grid-template-columns:repeat(3,minmax(0,1fr))}
+.cd-payment-card .cd-card-heading{align-items:center;gap:10px;margin-bottom:18px}
+.contract-details-reference .cd-payment-card .cd-card-heading h2{margin:0;font-size:14px}
+.cd-payment-card .cd-card-heading>span{width:30px;height:30px}
+.cd-payment-card .cd-card-heading svg{width:17px;height:17px}
+.cd-payment-card .cd-facts{gap:18px}
+.cd-payment-card .cd-facts dd{font-size:12px;color:#30343b;line-height:1.5}
+.cd-payment-dates{padding-bottom:18px;border-bottom:1px solid #e9eaec}
+.cd-payment-terms{padding-top:18px}
+.contract-details-reference .cd-payment-card .contract-note{margin-top:18px;font-size:10px}
+.cd-address,.cd-muted-box{padding:10px 12px;background:#f5f5f4;border-radius:5px;font-size:11px;color:#858991;margin:16px 0 0;line-height:1.6}
+.cd-room-card .cd-card-heading{align-items:center;gap:10px;margin-bottom:18px}
+.contract-details-reference .cd-room-card .cd-card-heading h2{margin:0;font-size:14px}
+.cd-room-card .cd-card-heading>span{width:30px;height:30px;border-radius:6px}
+.cd-room-card .cd-card-heading svg{width:17px;height:17px}
+.cd-room-card .cd-facts{gap:18px}
+.cd-room-card .cd-facts dd{color:#30343b;font-size:12px}
+.cd-room-address{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:16px;padding:9px 11px;background:#f5f5f4;border-radius:5px;font-size:11px;color:#858991;line-height:1.5}
+.cd-room-address>span{display:flex;align-items:center;gap:7px;min-width:0;overflow-wrap:anywhere}
+.cd-room-address svg{width:14px;height:14px;flex-shrink:0}
+.cd-room-address small{white-space:nowrap;color:#555b64;font-size:10px}
+@media(max-width:600px){.cd-room-address{align-items:flex-start;flex-wrap:wrap}.cd-room-address small{margin-left:21px}}
+.cd-parties{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px}
+.cd-parties>section{min-width:0}
+.cd-parties>section>small{color:#858991;font-size:10px}
+.cd-parties h3{font-size:14px;margin:8px 0 16px}
+.cd-parties-card .cd-card-heading svg{width:18px;height:18px}
+.cd-parties-card .cd-parties{gap:32px}
+.cd-parties-card .cd-parties>section>small{font-size:9px;font-weight:600;letter-spacing:.2px}
+.cd-parties-card .cd-parties h3{display:flex;align-items:center;gap:9px;font-size:13px;margin:12px 0 16px}
+.cd-party-avatar{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;flex-shrink:0;border-radius:50%;background:#e9eaec;color:#555b64;font-size:10px;font-weight:650}
+.cd-parties-card .cd-facts{gap:14px}
+.cd-parties-card .cd-facts dd{font-size:12px;color:#30343b;line-height:1.5}
+.cd-services{width:100%;border-collapse:collapse;font-size:11px}
+.cd-services th{text-align:left;background:#f5f5f4;color:#858991;font-size:10px;font-weight:500;padding:9px 10px}
+.cd-services td{padding:11px 10px;border-bottom:1px solid #e9eaec;color:#555b64}
+.cd-services th:last-child,.cd-services td:last-child{text-align:right}
+.cd-services-card .cd-card-heading{gap:10px;margin-bottom:18px}
+.cd-services-card .cd-card-heading>span{width:30px;height:30px}
+.cd-services-card .cd-card-heading svg{width:17px;height:17px}
+.contract-details-reference .cd-services-card .cd-card-heading h2{font-size:14px;margin-bottom:3px}
+.cd-services-frame{border:1px solid #e9eaec;border-radius:5px;overflow:hidden}
+.cd-services-card .cd-services{table-layout:fixed}
+.cd-services-card .cd-services th{font-size:9px;text-transform:uppercase;padding:9px 11px}
+.cd-services-card .cd-services th:first-child{width:26%}
+.cd-services-card .cd-services th:nth-child(2){width:39%}
+.cd-services-card .cd-services td{padding:11px;font-size:11px;overflow-wrap:anywhere}
+.cd-services-card .cd-services td:nth-child(2){color:#858991;font-size:10px}
+.cd-services-card .cd-services td:last-child{color:#30343b;font-weight:500}
+.cd-services-card .cd-services tr:last-child td{border-bottom:0}
+.contract-details-reference .cd-services-card .contract-note{margin-top:16px;font-size:10px}
+.cd-empty{padding:16px;border:1px dashed #e9eaec;border-radius:5px;text-align:center;color:#858991;font-size:11px;margin:0}
+.cd-clauses-card .cd-card-heading{align-items:center;gap:10px;margin-bottom:18px}
+.contract-details-reference .cd-clauses-card .cd-card-heading h2{margin:0;font-size:14px}
+.cd-clauses-card .cd-card-heading>span{width:30px;height:30px}
+.cd-clauses-card .cd-card-heading svg{width:17px;height:17px}
+.cd-contract-template{padding-bottom:16px;border-bottom:1px solid #e9eaec}
+.cd-contract-template dd{font-size:12px;color:#30343b}
+.cd-extra-clauses{padding-top:16px}
+.cd-extra-clauses h3{font-size:11px;font-weight:650;margin:0 0 9px}
+.cd-extra-clauses p{font-size:11px;line-height:1.6;color:#555b64;margin:0}
+.cd-signing-status{display:flex;align-items:center;gap:7px;padding:9px 11px;margin-top:16px;border-radius:5px;background:#f5f5f4;color:#858991;font-size:10px;line-height:1.5}
+.cd-signing-status svg{width:14px;height:14px;flex-shrink:0}
+.cd-documents-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}
+.cd-documents-heading .cd-card-heading{align-items:center;gap:10px;margin:0}
+.contract-details-reference .cd-documents-heading h2{margin:0;font-size:14px}
+.cd-documents-heading .cd-card-heading>span{width:30px;height:30px}
+.cd-documents-heading svg{width:17px;height:17px}
+.cd-documents-heading>small{font-size:10px;color:#858991;white-space:nowrap}
+.cd-documents-empty{display:flex;align-items:center;gap:10px;background:#f5f5f4;border-radius:5px;padding:12px;margin-bottom:12px}
+.cd-document-icon{display:grid;place-items:center;width:30px;height:34px;border:1px solid #e9eaec;border-radius:3px;background:#fff;flex-shrink:0}
+.cd-document-icon svg{width:18px;height:18px;color:#656a73}
+.cd-documents-empty strong{display:block;font-size:11px;font-weight:500;margin-bottom:4px}
+.cd-documents-empty small{display:block;font-size:10px;color:#858991}
+.cd-document-upload{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;min-height:34px;background:#fff;border:1px dashed #e9eaec;border-radius:5px;color:#858991;font-size:10px;padding:8px 12px}
+.cd-document-upload svg{width:14px;height:14px}
+.cd-side .cd-finance{border-top:2px solid #bfa77a}
+.contract-details-reference .cd-side .cd-finance{padding:16px}
+.contract-details-reference .cd-finance h2{font-size:14px;margin-bottom:12px}
+.cd-finance .cd-summary>div{padding:8px 0;font-size:11px}
+.cd-finance .cd-summary dd{font-weight:600;color:#30343b}
+.cd-finance .cd-total{padding:13px;margin:10px 0;border-radius:5px;background:#f7f3eb}
+.cd-finance .cd-total strong{font-size:25px;margin:5px 0 6px;color:#30343b}
+.cd-finance .cd-total small:first-child{color:#656a73}
+.cd-bank-details{border-top:1px solid #e9eaec;margin-top:10px;padding-top:16px;overflow-wrap:anywhere}
+.cd-bank-details small{display:block;color:#858991;font-size:10px;line-height:1.6}
+.cd-bank-details p{font-size:11px;font-weight:500;color:#30343b;margin:6px 0}
+.cd-bank-details>span{display:block;font-size:9px;text-transform:uppercase;color:#858991;margin-bottom:5px}
+.cd-summary{margin:0;font-size:11px}
+.cd-summary>div{display:flex;justify-content:space-between;gap:12px;padding:9px 0}
+.cd-summary dt{color:#858991;font-weight:400}
+.cd-summary dd{margin:0;text-align:right;font-weight:600}
+.cd-total{padding:14px;background:#f7f3eb;border-radius:5px;margin:10px 0}
+.cd-total small{display:block;font-size:10px;color:#858991;line-height:1.6}
+.cd-total strong{display:block;font-size:25px;line-height:1.3;margin:5px 0;overflow-wrap:anywhere}
+.cd-bill,.cd-history{display:grid;gap:6px;padding:12px 0;border-top:1px solid #e9eaec;font-size:11px}
+.cd-bill small,.cd-history small{color:#858991;font-size:10px;line-height:1.5}
+.cd-bill span{font-weight:600;text-align:right}
+.contract-details-reference .cd-activity-card h2{font-size:14px;margin-bottom:16px}
+.cd-activity-list{display:grid;gap:16px}
+.cd-activity-item{display:flex;align-items:flex-start;gap:10px;min-width:0}
+.cd-activity-icon{display:grid;place-items:center;flex-shrink:0;width:25px;height:25px;border-radius:50%;background:#e9eaec;color:#656a73}
+.cd-activity-icon svg{width:14px;height:14px}
+.cd-activity-item>div{min-width:0}
+.cd-activity-item strong{display:block;font-size:11px;font-weight:500;line-height:1.5;color:#30343b}
+.cd-activity-item p{font-size:10px;line-height:1.5;color:#858991;margin:2px 0;overflow-wrap:anywhere}
+.cd-activity-item small{display:block;font-size:9px;line-height:1.5;color:#858991}
+.contract-details-reference .cd-related-payments h2{font-size:14px;margin-bottom:14px}
+.cd-related-item{padding:14px 0;border-bottom:1px solid #e9eaec}
+.cd-related-item:first-of-type{padding-top:0}
+.cd-related-title,.cd-related-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}
+.cd-related-title strong{font-size:11px;font-weight:500}
+.cd-payment-badge{background:#f7f3eb;border-radius:3px;padding:4px 7px;font-size:9px;color:#656a73;white-space:nowrap}
+.cd-related-meta small{font-size:10px;color:#858991;overflow-wrap:anywhere}
+.cd-related-meta strong{font-size:11px;font-weight:600;text-align:right;white-space:nowrap}
+.cd-related-item p{font-size:10px;line-height:1.6;color:#858991;margin:0}
+.cd-side .cd-related-payments .lease-full{display:flex;align-items:center;justify-content:center;gap:6px;margin:14px 0 0;min-height:34px;font-size:10px}
+.cd-side .lease-full{display:block;margin:10px 0}
+.contract-details-reference .cd-management-card h2{font-size:14px;margin-bottom:16px}
+.cd-management-buttons{display:grid;gap:12px}
+.contract-details-reference .cd-management-buttons .btn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;min-height:34px;font-size:11px;font-weight:600;border-color:#e9eaec!important}
+.cd-management-card svg{width:15px;height:15px;flex-shrink:0}
+.cd-management-end{border-top:1px solid #e9eaec;padding-top:14px;margin-top:16px}
+.cd-management-end button{display:flex;align-items:center;gap:7px;border:0;padding:0;background:transparent;font-size:10px;color:#858991;text-align:left}
+.contract-details-reference .cd-management-card .contract-note{font-size:10px;line-height:1.6;margin-top:14px}
+@media print{.dashboard-sidebar,.dashboard-header,.contract-heading-actions,.contract-activate,.lease-detail-tabs,.cd-side{display:none!important}.dashboard-main{margin:0!important}.app-content{padding:0!important;max-width:none!important}.cd-workspace{display:block}.contract-card{break-inside:avoid}}
+@media(min-width:1001px){.cd-side{position:sticky;top:82px;max-height:calc(100dvh - 98px);overflow-y:auto;scrollbar-width:thin;scrollbar-color:#d4c4a8 transparent}}
+@media(max-width:1000px){.cd-workspace{grid-template-columns:minmax(0,1fr)}.cd-side{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}.cd-side .contract-card{margin:0}}
+@media(max-width:600px){.cd-overview{grid-template-columns:repeat(2,minmax(0,1fr))}.cd-overview>div{padding:14px}.cd-overview strong{font-size:18px}.cd-overview footer{padding:10px 14px}.cd-three,.cd-parties,.cd-side{grid-template-columns:minmax(0,1fr)}.contract-details-reference .contract-card{padding:16px}.cd-facts{gap:14px}.cd-side{gap:16px}.contract-details-reference .contract-heading{align-items:flex-start}}
+.cd-document-file{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;background:#f5f5f4;border-radius:5px;margin-top:8px}.cd-document-file span{min-width:0;overflow-wrap:anywhere}.cd-document-file small{display:block;color:#858991}.cd-document-file a{white-space:nowrap}

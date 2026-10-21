@@ -1,0 +1,48 @@
+/* Shared anonymous/public header for homepage, search and introduction. */
+.public-site .nhatot-header .nhatot-header-inner{display:grid;align-items:center;box-sizing:border-box}
+.public-site .nhatot-header .nhatot-brand{justify-self:start;min-width:0}
+.public-site .nhatot-header .nhatot-nav{display:flex;order:initial;width:auto;justify-content:center;overflow:visible;padding:0;border:0}
+.public-site .nhatot-header .nhatot-auth{justify-self:end;white-space:nowrap}
+.public-site .nhatot-header .nhatot-brand img{content:url('/images/nhatot-logo-champagne.svg');width:auto}
+.public-site .nhatot-header .nhatot-nav a.active::after{display:none}
+.public-site .nhatot-header .nhatot-auth .public-auth-login{color:#25282D;text-decoration:none;border:1px solid #e5e7e9;border-radius:999px}
+.public-site .nhatot-header .nhatot-auth .public-auth-register{background:#30343B!important;color:#fff!important;border:1px solid #30343B;border-radius:999px!important;text-decoration:none}
+/* Bootstrap header alignment: balanced columns and consistent touch targets. */
+.public-site .nhatot-header.navbar{padding:0;background:#fff;border-bottom:1px solid #e9eaec;box-shadow:0 2px 12px #25282d04}
+.public-site .nhatot-header .nhatot-header-inner{max-width:1320px;min-height:80px;padding:.875rem 1.5rem;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:1.5rem}
+.public-site .nhatot-header .nhatot-brand img{height:44px;max-width:100%}
+.public-site .nhatot-header .nhatot-nav{gap:.4rem}
+.public-site .nhatot-header .nhatot-nav a{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:44px;padding:.65rem 1.05rem;border-radius:10px;color:#656A73;font-size:.9rem;font-weight:600;opacity:1;text-decoration:none;transition:background-color .15s,color .15s}
+.public-site .nhatot-header .nhatot-nav a.active{background:#BFA77A16;color:#8a7045}
+.public-site .nhatot-header .nhatot-nav a:hover{background:#F5F5F4;color:#25282D}
+.public-site .nhatot-header .header-home-icon{width:17px;height:17px}
+.public-site .nhatot-header .nhatot-auth{gap:.65rem}
+.public-site .nhatot-header .nhatot-auth .public-auth-login,.public-site .nhatot-header .nhatot-auth .public-auth-register{min-height:44px;padding:.65rem 1.2rem!important;font-size:.85rem!important;font-weight:600;line-height:1.2;box-shadow:none}
+.public-site .nhatot-header .nhatot-auth .public-auth-login{border-color:#e5e7e9;background:#fff}
+.public-site .nhatot-header .nhatot-auth .public-auth-login:hover{border-color:#BFA77A;background:#faf8f4}
+@media(max-width:991px){.public-site .nhatot-header .nhatot-header-inner{grid-template-columns:minmax(0,1fr) auto;gap:.75rem;padding:.875rem 1.25rem}.public-site .nhatot-header .nhatot-nav{grid-column:1/-1;grid-row:2;width:100%;padding-top:.6rem;border-top:1px solid #f0f0ee;justify-content:center}}
+@media(max-width:575px){.public-site .nhatot-header .nhatot-header-inner{padding:.75rem 1rem;gap:.65rem}.public-site .nhatot-header .nhatot-brand{max-width:120px}.public-site .nhatot-header .nhatot-brand img{height:auto;max-height:36px}.public-site .nhatot-header .nhatot-auth{gap:.4rem}.public-site .nhatot-header .nhatot-auth .public-auth-login,.public-site .nhatot-header .nhatot-auth .public-auth-register{min-height:38px;padding:.55rem .8rem!important;font-size:.75rem!important}.public-site .nhatot-header .nhatot-nav{gap:.25rem}.public-site .nhatot-header .nhatot-nav a{font-size:.8rem;padding:.55rem .85rem;min-height:40px}}
+@media(prefers-reduced-motion:reduce){.public-site .nhatot-header .nhatot-nav a{transition:none}}
+/* Full-width header with equal screen-edge gutters. */
+.public-site .nhatot-header .nhatot-header-inner{width:100%;max-width:none;margin-inline:0;padding-inline:clamp(1rem,2.5vw,3rem)}
+/* Equal dimensions for the two authentication buttons. */
+.public-site .nhatot-header .nhatot-auth .public-auth-login,.public-site .nhatot-header .nhatot-auth .public-auth-register{width:108px;min-width:108px;height:44px;min-height:44px;box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;padding:.65rem .75rem!important}
+@media(max-width:575px){.public-site .nhatot-header .nhatot-auth .public-auth-login,.public-site .nhatot-header .nhatot-auth .public-auth-register{width:84px;min-width:84px;height:38px;min-height:38px;padding:.5rem .4rem!important}}
+/* Compact vertical spacing for the shared public header. */
+.public-site .nhatot-header .nhatot-header-inner{min-height:68px;padding-top:.625rem;padding-bottom:.625rem}
+.public-site .nhatot-header .nhatot-brand img{height:40px}
+.public-site .nhatot-header .nhatot-nav a{min-height:40px;padding-top:.5rem;padding-bottom:.5rem;line-height:1.3}
+.public-site .nhatot-header .nhatot-auth .public-auth-login,.public-site .nhatot-header .nhatot-auth .public-auth-register{height:40px;min-height:40px;padding-top:.5rem!important;padding-bottom:.5rem!important}
+@media(max-width:991px){.public-site .nhatot-header .nhatot-header-inner{row-gap:.4rem}.public-site .nhatot-header .nhatot-nav{padding-top:.4rem}}
+@media(max-width:575px){.public-site .nhatot-header .nhatot-brand img{height:auto;max-height:34px}.public-site .nhatot-header .nhatot-nav a{min-height:36px}.public-site .nhatot-header .nhatot-auth .public-auth-login,.public-site .nhatot-header .nhatot-auth .public-auth-register{height:36px;min-height:36px}}
+/* Shared compact footer spacing across public pages. */
+.public-site .nhatot-footer{padding-top:2rem}
+.public-site .nhatot-footer .footer-top{padding-bottom:1.25rem;gap:2rem}
+.public-site .nhatot-footer .footer-logo{margin-bottom:.65rem}
+.public-site .nhatot-footer .footer-brand p{line-height:1.6;margin-bottom:.75rem}
+.public-site .nhatot-footer .footer-contact{gap:.4rem;line-height:1.5;margin-bottom:0}
+.public-site .nhatot-footer .footer-col h4{margin-bottom:.75rem;line-height:1.4}
+.public-site .nhatot-footer .footer-col a{margin-bottom:.3rem;line-height:1.5}
+.public-site .nhatot-footer .footer-bottom{min-height:0;margin-top:0;padding-top:1rem;padding-bottom:1rem;line-height:1.4}
+.public-site .nhatot-footer .footer-bottom p{margin-bottom:0}
+@media(max-width:700px){.public-site .nhatot-footer{padding-top:1.5rem}.public-site .nhatot-footer .footer-top{gap:1.25rem}.public-site .nhatot-footer .footer-bottom{row-gap:.75rem}}

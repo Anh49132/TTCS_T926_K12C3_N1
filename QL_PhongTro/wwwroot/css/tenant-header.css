@@ -1,0 +1,141 @@
+/* Shared header for signed-in tenants, loaded after the theme styles. */
+.tenant-header{position:sticky;top:0;z-index:1050;display:grid;grid-template-columns:44px auto minmax(0,1fr) auto;align-items:center;gap:1.5rem;min-height:4.5rem;padding:0.625rem clamp(1.125rem,2.8vw,3rem);background:#fff;border-bottom:1px solid #E9EAEC;color:#25282D;font-size:0.875rem;box-sizing:border-box}
+.tenant-header *{box-sizing:border-box}.tenant-header svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0}
+.tenant-header .tenant-menu,.tenant-header .tenant-account{position:relative;margin:0}
+.tenant-header summary{list-style:none;cursor:pointer}.tenant-header summary::-webkit-details-marker{display:none}
+.tenant-header .tenant-menu-toggle,.tenant-header .tenant-brand-mark{display:grid;place-items:center;width:44px;height:44px;border:1px solid #30343B;border-radius:8px;background:linear-gradient(145deg,#30343B,#25282D);color:#fff;box-shadow:0 2px 5px #25282d12}
+.tenant-header .tenant-menu-toggle svg{width:23px;height:23px}
+.tenant-header .tenant-brand{display:flex;align-items:center;gap:0.875rem;margin-left:2rem;color:#25282D;text-decoration:none;white-space:nowrap}
+.tenant-header .tenant-brand-mark svg{width:21px;height:21px}.tenant-header .tenant-brand strong,.tenant-header .tenant-brand small{display:block;line-height:1.15}
+.tenant-header .tenant-brand strong{font-size:1.3125rem;font-weight:750;letter-spacing:-0.03125rem}.tenant-header .tenant-brand small{font-size:0.625rem;color:#738097;margin-top:0.125rem}
+.tenant-header .tenant-primary-nav{display:flex;align-items:center;justify-content:center;gap:clamp(1.25rem,2.5vw,2.5rem);min-width:0}
+.tenant-header .tenant-primary-nav a{padding:0.75rem 0;border:0;color:#596579;text-decoration:none;font-size:0.8125rem;font-weight:600;white-space:nowrap}
+.tenant-header .tenant-primary-nav a:hover,.tenant-header .tenant-primary-nav a.is-active{color:#25282D}
+.tenant-header-actions{display:flex;align-items:center;gap:1.125rem;min-width:0}
+.tenant-header .tenant-header-bell{display:inline-flex;align-items:center;justify-content:center;gap:0.5rem;padding:0.5rem 0.625rem;min-width:3.625rem;min-height:2.5rem;border:1px solid #818894;border-radius:6px;box-shadow:0 1px 3px #25282d0b;background:#fff;color:#25282D;text-decoration:none;font-size:0.875rem;flex-shrink:0}
+.tenant-header-bell svg{color:#f3a51f;fill:#ffd16a;stroke-width:1.4}.tenant-header-bell:hover{background:#F5F5F4}
+.tenant-header .tenant-account{border-left:1px solid #E9EAEC;padding-left:1.125rem}
+.tenant-header .tenant-account>summary{display:flex;align-items:center;gap:0.625rem;color:#25282D;min-height:2.75rem}
+.tenant-header .tenant-avatar{display:grid;place-items:center;width:40px;height:40px;background:#E9EAEC;color:#25282D;font-size:1.0625rem;font-weight:700;border-radius:50%;flex-shrink:0}
+.tenant-header .tenant-account-name{max-width:11.875rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:0.875rem}
+.tenant-header .tenant-account-chevron{width:16px;height:16px}
+.tenant-header .tenant-menu-panel,.tenant-header .tenant-account-panel{position:absolute;top:calc(100% + 12px);z-index:1060;padding:0.5rem;border:1px solid #E9EAEC;border-radius:9px;background:#fff;box-shadow:0 12px 32px #25282d1f}
+.tenant-header .tenant-menu-panel{left:0;width:240px;max-width:calc(100vw - 1.75rem)}.tenant-header .tenant-account-panel{right:0;width:200px;max-width:calc(100vw - 1.75rem)}
+.tenant-header .tenant-menu-panel a,.tenant-header .tenant-account-panel a,.tenant-header .tenant-account-panel button{display:flex;align-items:center;gap:0.625rem;width:100%;padding:0.6875rem 0.75rem;border:0;border-radius:6px;background:transparent;color:#25282D;text-align:left;text-decoration:none;font-size:0.875rem;white-space:nowrap}
+.tenant-header .tenant-account-panel form{margin:0}
+.tenant-header .tenant-menu-panel a:hover,.tenant-header .tenant-menu-panel a.is-active,.tenant-header .tenant-account-panel a:hover,.tenant-header .tenant-account-panel button:hover{background:#F5F5F4;color:#25282D}
+.tenant-header a:focus-visible,.tenant-header summary:focus-visible,.tenant-header button:focus-visible{outline:3px solid #BFA77A;outline-offset:3px}
+@media(max-width:1150px){.tenant-header{gap:1.125rem}.tenant-header .tenant-brand{margin-left:0.625rem}.tenant-header .tenant-primary-nav{gap:1.125rem}.tenant-header .tenant-account-name{max-width:8.4375rem}}
+@media(max-width:1000px){.tenant-header{grid-template-columns:44px minmax(0,1fr) auto}.tenant-header .tenant-primary-nav{display:none}.tenant-header .tenant-brand{margin-left:0}}
+@media(max-width:560px){.tenant-header{grid-template-columns:40px minmax(0,1fr) auto;gap:0.625rem;padding:0.5625rem 0.75rem;min-height:4rem}.tenant-header .tenant-menu-toggle,.tenant-header .tenant-brand-mark{width:38px;height:38px;border-radius:7px}.tenant-header .tenant-brand{gap:0.5rem}.tenant-header .tenant-brand strong{font-size:1.125rem}.tenant-header .tenant-brand small{display:block;font-size:0.5rem}.tenant-header-actions{gap:0.5625rem}.tenant-header .tenant-header-bell{min-width:3rem;min-height:2.375rem;padding:0.4375rem;gap:0.25rem}.tenant-header .tenant-header-bell svg{width:18px;height:18px}.tenant-header .tenant-account{padding-left:0.5625rem}.tenant-header .tenant-account-name{display:none}.tenant-header .tenant-account>summary{gap:0.25rem}.tenant-header .tenant-avatar{width:34px;height:34px;font-size:0.9375rem}.tenant-header .tenant-account-chevron{width:12px;height:12px}}
+
+/* Tenant navigation opens as a full-height modal sidebar. */
+.tenant-header .tenant-menu-toggle{padding:0;cursor:pointer}
+.tenant-header .tenant-sidebar{position:fixed;inset:0 auto 0 0;margin:0;width:min(300px,calc(100vw - 48px));max-width:none;height:100vh;height:100dvh;max-height:none;padding:0;border:0;border-right:1px solid #E9EAEC;border-radius:0;background:#fff;color:#25282D;box-shadow:8px 0 32px #25282d26;overflow-y:auto;overscroll-behavior:contain}
+.tenant-sidebar::backdrop{background:rgb(37 40 45 / 45%)}
+.tenant-header .tenant-sidebar-heading{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:1rem;border-bottom:1px solid #E9EAEC;min-height:4.5rem}
+.tenant-header .tenant-sidebar-close{display:grid;place-items:center;width:44px;height:44px;padding:0;border:0;border-radius:8px;background:#F5F5F4;color:#25282D;font-size:1.75rem;cursor:pointer}
+.tenant-header .tenant-sidebar .tenant-menu-panel{position:static;width:100%;max-width:none;padding:0.75rem;border:0;border-radius:0;box-shadow:none}
+.tenant-header .tenant-sidebar .tenant-menu-panel a{min-height:48px;white-space:normal}
+body.tenant-sidebar-open{overflow:hidden}/* Bootstrap tenant drawer with consistent SVG navigation. */
+.tenant-header .tenant-sidebar-heading{padding:1rem 1.125rem;min-height:76px;background:#fff}
+.tenant-header .tenant-sidebar-heading strong{font-size:.9375rem;font-weight:650;line-height:1.5}
+.tenant-header .tenant-sidebar-close{width:36px;height:36px;border:1px solid #e9eaec;border-radius:9px;background:#f5f5f4;font-size:1.5rem;line-height:1}
+.tenant-header .tenant-sidebar-close:hover{background:#f3eddf;border-color:#bfa77a}
+.tenant-header .tenant-sidebar .tenant-menu-panel{padding:1rem .75rem;gap:.25rem!important}
+.tenant-header .tenant-sidebar .tenant-menu-panel a{display:flex;align-items:center;gap:.75rem;min-height:46px;padding:.6875rem .875rem;border:1px solid transparent;border-radius:9px;font-size:.8125rem;line-height:1.5;color:#626974;margin:0;text-decoration:none}
+.tenant-header .tenant-sidebar .tenant-menu-panel a>svg{width:19px;height:19px;flex:0 0 19px;color:#858c96;stroke-width:1.6}
+.tenant-header .tenant-sidebar .tenant-menu-panel a:hover{background:#f8f6f1;color:#30343b}
+.tenant-header .tenant-sidebar .tenant-menu-panel a.is-active{background:#f4efe5;border-color:#eadfc9;color:#80663a;font-weight:600;box-shadow:inset 3px 0 #bfa77a}
+.tenant-header .tenant-sidebar .tenant-menu-panel a.is-active>svg{color:#9c8150}
+.tenant-header .tenant-menu-count{margin-left:auto;background:#e9eaec;color:#626974;font-size:.625rem;min-width:21px;padding:.3rem .375rem}
+.tenant-header .tenant-sidebar a:focus-visible,.tenant-header .tenant-sidebar button:focus-visible{outline:2px solid #bfa77a;outline-offset:2px}
+/* Even vertical spacing in the tenant drawer. */
+.tenant-header .tenant-sidebar-heading{min-height:70px;padding:.875rem 1rem}
+.tenant-header .tenant-sidebar-heading strong{line-height:1.5}
+.tenant-header .tenant-sidebar .tenant-menu-panel{padding:.875rem .75rem;gap:.125rem!important}
+.tenant-header .tenant-sidebar .tenant-menu-panel a{min-height:44px;padding:.625rem .875rem;margin:0;line-height:1.5}
+.tenant-header .tenant-sidebar .tenant-menu-panel a>span:not(.badge){line-height:1.5}
+/* Tenant drawer matches the owner navigation palette and row styling. */
+.tenant-header .tenant-sidebar{background:#30343b;color:#fff;border-right:1px solid #ffffff08}
+.tenant-header .tenant-sidebar-heading{background:#30343b;border-bottom:1px solid #ffffff12;color:#fff;min-height:70px;padding:.875rem 1rem}
+.tenant-header .tenant-sidebar-heading strong{font-size:.9375rem;font-weight:600;line-height:1.5}
+.tenant-header .tenant-sidebar-close{background:#ffffff09;border:1px solid #ffffff12;color:#bec5cc;border-radius:8px}
+.tenant-header .tenant-sidebar-close:hover{background:#bfa77a19;border-color:#bfa77a30;color:#efdfc2}
+.tenant-header .tenant-sidebar .tenant-menu-panel{background:#30343b;padding:.875rem .75rem;gap:.125rem!important}
+.tenant-header .tenant-sidebar .tenant-menu-panel a{gap:.75rem;min-height:44px;padding:.625rem .75rem;margin:0;border:1px solid transparent;border-radius:8px;color:#bec5cc;font-size:.75rem;font-weight:500;line-height:1.5;box-shadow:none}
+.tenant-header .tenant-sidebar .tenant-menu-panel a>svg{width:18px;height:18px;flex:0 0 18px;color:#929da7;stroke-width:1.6}
+.tenant-header .tenant-sidebar .tenant-menu-panel a:hover{background:#ffffff08;border-color:#ffffff0b;color:#fff}
+.tenant-header .tenant-sidebar .tenant-menu-panel a:hover>svg{color:#d4bd93}
+.tenant-header .tenant-sidebar .tenant-menu-panel a.is-active{background:#bfa77a19;border-color:#bfa77a30;box-shadow:inset 3px 0 #bfa77a;color:#efdfc2;font-weight:600}
+.tenant-header .tenant-sidebar .tenant-menu-panel a.is-active>svg{color:#d4bd93}
+.tenant-header .tenant-sidebar .tenant-menu-count{background:#f4efe5;color:#80663a;border:1px solid #d6c39f;min-width:21px;height:21px;display:inline-flex;align-items:center;justify-content:center;padding:0 .375rem;font-size:.625rem;font-weight:600;line-height:1}
+.tenant-header .tenant-sidebar a:focus-visible,.tenant-header .tenant-sidebar button:focus-visible{outline:2px solid #bfa77a;outline-offset:2px}
+@media(min-width:768px){.tenant-header .tenant-sidebar .tenant-menu-panel a{min-height:38px;padding:.5rem .75rem}}
+/* Brand lockup matching the owner sidebar. */
+.tenant-header .tenant-sidebar .tenant-drawer-brand{display:flex;align-items:center;gap:.75rem;color:#fff;text-decoration:none;min-width:0}
+.tenant-header .tenant-sidebar .tenant-drawer-mark{display:grid;place-items:center;width:38px;height:38px;flex:0 0 38px;border-radius:11px;background:#bfa77a;color:#fff}
+.tenant-header .tenant-sidebar .tenant-drawer-mark svg{width:20px;height:20px;stroke-width:1.7}
+.tenant-header .tenant-sidebar .tenant-drawer-brand strong{display:block;font-size:1.375rem;line-height:1.2;font-weight:750;letter-spacing:-.025rem;color:#fff}
+.tenant-header .tenant-sidebar .tenant-drawer-brand small{display:block;font-size:.625rem;line-height:1.5;margin-top:.25rem;color:#aeb5bd}
+.tenant-header .tenant-sidebar-heading{min-height:82px;padding:1.125rem 1rem}
+/* Tenant header aligned with the owner workspace header. */
+.role-tenant .tenant-header{min-height:66px;height:66px;padding:0 1.75rem;gap:.75rem;grid-template-columns:36px auto minmax(0,1fr) auto;background:#fff;border-bottom:1px solid #e9eaec}
+.role-tenant .tenant-header .tenant-menu-toggle{width:36px;height:36px;border:1px solid #e4e7eb;border-radius:8px;background:#e9eaec;color:#606b79;box-shadow:none}
+.role-tenant .tenant-header .tenant-menu-toggle svg{width:20px;height:20px}
+.role-tenant .tenant-header .tenant-brand{margin-left:.375rem;gap:.625rem}
+.role-tenant .tenant-header .tenant-brand-mark{width:36px;height:36px;border:0;border-radius:10px;background:#bfa77a;color:#fff;box-shadow:none}
+.role-tenant .tenant-header .tenant-brand-mark svg{width:20px;height:20px}
+.role-tenant .tenant-header .tenant-brand strong{font-size:1.25rem;line-height:1.2}
+.role-tenant .tenant-header .tenant-brand small{font-size:.625rem;line-height:1.4;margin-top:.125rem;color:#81858d}
+.role-tenant .tenant-header .tenant-primary-nav{gap:1.75rem;justify-content:center}
+.role-tenant .tenant-header .tenant-primary-nav a{font-size:.8125rem;font-weight:500;line-height:1.5;padding:.625rem 0;color:#747b85}
+.role-tenant .tenant-header .tenant-primary-nav a.is-active,.role-tenant .tenant-header .tenant-primary-nav a:hover{color:#30343b}
+.role-tenant .tenant-header-actions{gap:.75rem}
+.role-tenant .tenant-header .tenant-account{padding-left:1.125rem;margin-left:.25rem;border-left:1px solid #e9eaec}
+.role-tenant .tenant-header .tenant-account>summary{min-height:0;gap:.625rem;padding:.4375rem .625rem;border:1px solid #e9eaec;border-radius:10px;background:#fff;transition:background .15s,border-color .15s}
+.role-tenant .tenant-header .tenant-account>summary:hover,.role-tenant .tenant-header .tenant-account[open]>summary{background:#faf8f4;border-color:#bfa77a}
+.role-tenant .tenant-header .tenant-avatar{width:34px;height:34px;flex:0 0 34px;font-size:.6875rem;font-weight:600;background:#f5f0e6;color:#80663a}
+.role-tenant .tenant-header .tenant-account-name{font-size:.75rem;font-weight:600;line-height:1.4;max-width:10rem}
+.role-tenant .tenant-header .tenant-account-chevron{width:14px;height:14px;margin-left:.375rem;color:#81858d;stroke-width:1.6;transition:transform .18s}
+.role-tenant .tenant-header .tenant-account[open] .tenant-account-chevron{transform:rotate(180deg)}
+.role-tenant .tenant-header .tenant-account-panel{width:180px;top:calc(100% + 7px);padding:.3125rem;border-radius:9px;box-shadow:0 6px 20px #25282d14,0 1px 4px #25282d08}
+.role-tenant .tenant-header .tenant-account-panel a,.role-tenant .tenant-header .tenant-account-panel button{min-height:34px;padding:.5rem .625rem;font-size:.75rem;line-height:1.5;border-radius:5px}
+.role-tenant .tenant-header .tenant-account-panel a:hover,.role-tenant .tenant-header .tenant-account-panel button:hover{background:#f5f0e6;color:#80663a}
+@media(max-width:1000px){.role-tenant .tenant-header{grid-template-columns:36px minmax(0,1fr) auto}.role-tenant .tenant-header .tenant-brand{margin-left:.375rem}}
+@media(max-width:600px){.role-tenant .tenant-header{padding:0 1rem;gap:.625rem}.role-tenant .tenant-header .tenant-brand{margin-left:0;gap:.5rem}.role-tenant .tenant-header .tenant-brand strong{font-size:1.125rem}.role-tenant .tenant-header .tenant-brand small{font-size:.5rem}.role-tenant .tenant-header .tenant-account{padding-left:.625rem;margin-left:0}.role-tenant .tenant-header .tenant-account>summary{padding:.375rem;gap:.25rem}.role-tenant .tenant-header-actions{gap:.5rem}.role-tenant .tenant-header .tenant-account-name{display:none}}
+/* Tenant primary links follow the anonymous public navigation. */
+.role-tenant .tenant-header .tenant-primary-nav{gap:.4rem;padding:0;border:0}
+.role-tenant .tenant-header .tenant-primary-nav a{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:.5rem 1.05rem;border-radius:10px;font-size:.9rem;font-weight:600;line-height:1.3;color:#656a73;text-decoration:none;transition:background-color .15s,color .15s}
+.role-tenant .tenant-header .tenant-primary-nav a.is-active{background:#bfa77a16;color:#8a7045}
+.role-tenant .tenant-header .tenant-primary-nav a:hover{background:#f5f5f4;color:#25282d}
+/* Keep signed-in tenant header identical in public and workspace layouts. */
+.role-tenant .tenant-header .tenant-avatar{overflow:hidden}
+.role-tenant .tenant-header .tenant-avatar img{display:block;width:100%;height:100%;object-fit:cover;border-radius:inherit}
+/* Invoice notifications: scoped to the notification pagination landmark. */
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]){max-width:1100px!important;width:100%;margin:0 auto;padding:0!important;color:#25282d;font-size:13px;line-height:1.6}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"])>h1{font-size:24px;font-weight:700;line-height:1.3;letter-spacing:-.3px;margin:0 0 8px}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"])>p{color:#858c96;font-size:13px;line-height:1.6;margin:0 0 24px}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"])>.alert-light{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:240px;padding:32px 20px;border:1px solid #e9eaec!important;border-radius:14px;background:#fff;color:#697380;text-align:center;box-shadow:0 2px 8px #25282d04;margin-bottom:16px}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"])>.alert-light:before{content:'';width:56px;height:56px;display:block;border-radius:16px;background:#f4efe4 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 24 24' fill='none' stroke='%23967b4d' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4'/%3E%3C/svg%3E") center/28px no-repeat}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"])>.card{border:1px solid #e9eaec;border-radius:14px;background:#fff;box-shadow:0 2px 8px #25282d04;margin-bottom:16px!important}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .card-body{padding:20px}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) h2{font-size:16px;line-height:1.5;font-weight:600;margin:0 0 10px;overflow-wrap:anywhere}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .badge{font-size:10px;font-weight:500;padding:5px 9px;border-radius:20px;background:#f3eddf!important;color:#80663a;vertical-align:middle;margin-left:6px}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .card p{font-size:13px;line-height:1.6;margin-bottom:12px;overflow-wrap:anywhere}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .card .text-muted{font-size:12px;color:#858c96!important}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .btn{font-size:12px;line-height:1.5;min-height:40px;padding:9px 14px;border-radius:8px}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .btn-dark{background:#30343b;border-color:#30343b;color:#fff}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .btn-outline-secondary{background:#fff;border-color:#dfe3e8;color:#626974}
+.role-tenant .container>nav[aria-label="Phân trang thông báo"]{justify-content:flex-end;padding:16px 0;border-top:1px solid #e9eaec;color:#858c96;font-size:12px;line-height:1.5;flex-wrap:wrap}
+@media(max-width:600px){.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .card-body{padding:16px}.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"])>.alert-light{min-height:210px;padding:24px 16px}.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .card .btn{width:100%}.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .card form{width:100%}}
+/* Even spacing in invoice notifications. */
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"])>h1{line-height:1.4;margin-bottom:6px}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"])>p{line-height:1.6;margin-bottom:20px}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"])>.alert-light{gap:14px;line-height:1.6;margin-bottom:16px}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .card h2{line-height:1.5;margin-bottom:10px}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .card p{line-height:1.6;margin:0 0 12px}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .card .text-muted{line-height:1.5;margin-bottom:16px}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .card .d-flex{align-items:center;gap:10px!important}
+.role-tenant .container:has(>nav[aria-label="Phân trang thông báo"]) .card form{margin:0}
+.role-tenant .container>nav[aria-label="Phân trang thông báo"]{gap:12px!important;line-height:1.5;padding-top:16px;padding-bottom:16px}

@@ -1,0 +1,12 @@
+@model QL_PhongTro.ViewModels.DanhSachYeuCauViewModel
+@using QL_PhongTro.Models
+@using QL_PhongTro.Services
+@{ ViewData["Title"] = Model.LaKhachThue ? "Yêu cầu của tôi" : "Yêu cầu thuê & lịch xem"; }
+@if(Model.LaKhachThue) { <partial name="_TenantRequests" model="Model" /> }
+else { <partial name="_OwnerRequests" model="Model" /> }
+@section Styles { @if(Model.LaKhachThue){<link rel="stylesheet" href="~/css/tenant-requests.css" asp-append-version="true" />}else{<link rel="stylesheet" href="~/css/owner-requests.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/requests-bootstrap.css" asp-append-version="true" />} }
+@section Scripts {
+    @if(Model.LaKhachThue){<script src="~/js/tenant-requests.js" asp-append-version="true"></script>}
+    @if(!Model.LaKhachThue){<script src="~/js/owner-requests.js" asp-append-version="true"></script>}
+    <script src="~/js/tenant-request-cancel-confirmation.js" asp-append-version="true"></script>
+}

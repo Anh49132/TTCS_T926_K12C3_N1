@@ -1,0 +1,19 @@
+@model QL_PhongTro.ViewModels.DichVuPhongViewModel
+@* Separate forms keep service saves independent of the room edit form. *@
+@foreach (var item in Model.DichVus)
+{
+    @if (item.DaChon)
+    {
+        <form id="room-service-price-@item.Id-form" asp-controller="DichVuPhong" asp-action="SetPrice" method="post">
+            <input type="hidden" name="phongId" value="@Model.PhongId" />
+            <input type="hidden" name="dichVuToaNhaId" value="@item.Id" />
+            <input type="hidden" name="returnToRoom" value="true" />
+        </form>
+    }
+    <form id="room-service-state-@item.Id" asp-controller="DichVuPhong" asp-action="Set" method="post">
+        <input type="hidden" name="phongId" value="@Model.PhongId" />
+        <input type="hidden" name="dichVuToaNhaId" value="@item.Id" />
+        <input type="hidden" name="enabled" value="@(!item.DaChon || item.NgungTuKy.HasValue ? "true" : "false")" />
+        <input type="hidden" name="returnToRoom" value="true" />
+    </form>
+}

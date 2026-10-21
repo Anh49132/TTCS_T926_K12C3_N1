@@ -1,0 +1,23 @@
+@{ ViewData["Title"] = "Ghi nhận trả phòng"; }
+@section Styles {
+    <link rel="stylesheet" href="~/css/checkout-notice-bootstrap.css" asp-append-version="true" />
+}
+<div class="checkout-notice">
+    <header class="mb-4">
+        <h1>Ghi nhận trả phòng</h1>
+        <p>Kiểm tra thông tin bàn giao trước khi lập hóa đơn kỳ cuối.</p>
+    </header>
+    <section class="card checkout-notice-card" aria-labelledby="checkout-notice-title">
+        <div class="card-body">
+            <span class="checkout-notice-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 10 18H2L12 3Z"/><path d="M12 9v5M12 17h.01"/></svg>
+            </span>
+            <h2 id="checkout-notice-title">Chưa thể tiếp tục trả phòng</h2>
+            <div class="alert checkout-notice-message" role="status">@ViewData["Message"]</div>
+            <p class="checkout-notice-help">Vui lòng kiểm tra dữ liệu của hợp đồng và bổ sung thông tin còn thiếu trước khi thực hiện lại.</p>
+            <div class="d-flex flex-wrap justify-content-center gap-2">
+                <a class="btn btn-dark" asp-action="Index"><span aria-hidden="true">←</span> Về danh sách hợp đồng</a>
+            </div>
+        </div>
+    </section>
+</div>

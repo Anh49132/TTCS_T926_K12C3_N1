@@ -1,0 +1,4 @@
+@model QL_PhongTro.ViewModels.PhongConThieuViewModel
+@{ViewData["Title"]="Phòng còn thiếu chỉ số";}
+<article class="mp-page mp-standalone"><a class="mp-back" asp-action="Index" asp-route-nam="@Model.Nam" asp-route-thang="@Model.Thang">← Quay lại tiến độ</a><section class="mp-card"><partial name="_MissingRooms" model="Model" /></section></article>
+@section Styles {<link rel="stylesheet" href="~/css/meter-progress.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/meter-missing-bootstrap.css" asp-append-version="true" />}

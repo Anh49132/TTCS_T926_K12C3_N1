@@ -1,0 +1,10 @@
+@foreach (var item in new[] { ("RoomMessage", "success"), ("RoomError", "danger"), ("RoomWarning", "warning") })
+{
+    @if (TempData[item.Item1] is string message)
+    {
+        <div class="alert alert-@item.Item2 alert-dismissible fade show" role="@(item.Item2 == "success" ? "status" : "alert")">
+            @message
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Đóng thông báo"></button>
+        </div>
+    }
+}

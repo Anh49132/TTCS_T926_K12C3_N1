@@ -1,0 +1,23 @@
+@model IReadOnlyList<QL_PhongTro.ViewModels.FinanceBar>
+@using System.Globalization
+@{
+    var maximum = Math.Max(1L, Model.Select(x => Math.Max(x.Issued,x.Paid)).DefaultIfEmpty(0).Max());
+    string Money(long value) => value.ToString("N0",CultureInfo.GetCultureInfo("vi-VN"))+" đ";
+    string ShortMoney(long value) => value >= 1000000 ? (value/1000000m).ToString("0.#",CultureInfo.GetCultureInfo("vi-VN"))+" tr" : Money(value);
+    string Height(long value) => (180m*value/maximum).ToString("0.##",CultureInfo.InvariantCulture)+"px";
+}
+<link rel="stylesheet" href="~/css/dashboard-finance.css" asp-append-version="true" />
+<div class="finance-legend"><span>■ Đã thu xác nhận</span><span>■ Tổng hóa đơn</span></div>
+<div class="finance-chart-scroll" tabindex="0" aria-label="Biểu đồ thu tiền theo kỳ hóa đơn">
+<div class="finance-bars" style="--finance-columns:@Math.Max(1,Model.Count)">
+@foreach(var row in Model) {
+    <div class="finance-column" data-finance-label="@row.Label" data-issued="@row.Issued" data-paid="@row.Paid">
+        <div class="finance-bar-pair" title="@row.Label: Đã thu @Money(row.Paid), tổng hóa đơn @Money(row.Issued)">
+            <span class="finance-bar paid" style="height:@Height(row.Paid)" aria-label="Đã thu @Money(row.Paid)"></span>
+            <span class="finance-bar issued" style="height:@Height(row.Issued)" aria-label="Tổng hóa đơn @Money(row.Issued)"></span>
+        </div><small>@row.Label</small><span class="finance-chart-value" title="@Money(row.Paid)">@ShortMoney(row.Paid)</span>
+    </div>
+}
+</div></div>
+@if(Model.All(x=>x.Issued==0 && x.Paid==0)){<p class="finance-empty">Không có hóa đơn đã phát hành trong khoảng đang chọn.</p>}
+<p class="finance-note">Theo kỳ hóa đơn; chỉ tính khoản thu đã xác nhận. Công nợ đã trừ cọc cấn trừ được xác nhận.</p>

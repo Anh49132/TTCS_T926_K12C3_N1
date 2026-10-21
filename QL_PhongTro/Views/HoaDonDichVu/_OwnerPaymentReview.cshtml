@@ -1,0 +1,50 @@
+@model QL_PhongTro.ViewModels.ChiTietHoaDonViewModel
+@using System.Globalization
+@using QL_PhongTro.Services
+@inject QL_PhongTro.Authorization.PermissionService Permissions
+@{
+    var report = Model.BaoCaoChoXacNhan!;
+    var metadata = Model.ThanhToanRows.FirstOrDefault(x => x.Payment.Id == report.Id)?.Report;
+    var vn = CultureInfo.GetCultureInfo("vi-VN");
+    var balance = Model.ThanhToan!.ConPhaiTra;
+    var canWrite = User.IsInRole("CHU_NHA") && await Permissions.AllowsAsync("TAI_CHINH", true);
+    var sent = metadata?.GuiLuc?.AddHours(7).ToString("dd/MM/yyyy HH:mm") ?? "Chưa có thông tin";
+}
+<section class="pw-banner pending"><strong>Có báo thanh toán đang chờ xác nhận</strong><p>Khách báo đã trả @report.SoTien.ToString("N0", vn) đ · Gửi lúc @sent. Hãy đối chiếu tiền thực nhận trước khi xác nhận.</p></section>
+<div class="pw-review-grid" id="payment-report-@report.Id">
+    <section class="pw-card"><h2>Báo thanh toán của khách <span class="pw-badge pending">Chờ xác nhận</span></h2>
+        <dl class="pw-report-facts"><div><dt>Mã báo cáo</dt><dd>BC-@report.Id.ToString("D6")</dd></div><div><dt>Số tiền khách báo</dt><dd><strong>@report.SoTien.ToString("N0", vn) đ</strong></dd></div><div><dt>Ngày trả</dt><dd>@report.NgayThanhToan.ToString("dd/MM/yyyy")</dd></div><div><dt>Hình thức</dt><dd>@GhiThuHoaDonService.TenHinhThuc(report.HinhThucBaoCao)</dd></div><div><dt>Thời điểm gửi</dt><dd>@sent</dd></div><div><dt>Nội dung / ghi chú</dt><dd>@(metadata?.GhiChu ?? "—")</dd></div></dl>
+        <h3>Ảnh chứng từ</h3>
+        @if (report.AnhChungTuKey is not null)
+        {
+            <div class="pw-evidence" data-evidence-url="@Url.Action("PaymentProofLink", "HoaDonDichVu", new { paymentId = report.Id })" data-evidence-auto>
+                <img data-evidence-image alt="Chứng từ báo thanh toán của khách" hidden />
+                <div><p>@(metadata?.TenTep ?? "Ảnh chứng từ") · @((report.AnhChungTuSoByte.GetValueOrDefault() / 1024m / 1024m).ToString("0.##", vn)) MiB</p><button type="button" class="btn btn-outline-secondary" data-evidence-open>Mở ảnh lớn</button><p class="pw-muted">Ảnh được mở qua liên kết bảo mật có hiệu lực 15 phút.</p><p data-evidence-error class="text-danger" role="alert" hidden></p></div>
+            </div>
+        }
+        else { <p class="pw-muted">Báo cáo không đính kèm ảnh chứng từ.</p> }
+        <p class="pw-note">Ảnh chứng từ chỉ dùng để đối chiếu. Hãy kiểm tra giao dịch thực nhận trong tài khoản ngân hàng.</p>
+    </section>
+    <aside class="pw-card"><h2>Đối chiếu báo thanh toán</h2><div class="pw-amount"><span>Số tiền cần xác nhận</span><strong>@report.SoTien.ToString("N0", vn) đ</strong></div>
+        @if (canWrite)
+        {
+            <form asp-action="ConfirmPaymentReport" method="post" data-confirm-payment>
+                @Html.AntiForgeryToken()<input type="hidden" name="id" value="@Model.HoaDon.Id" /><input type="hidden" name="paymentId" value="@report.Id" /><input type="hidden" name="khoaChongTrung" value="@Guid.NewGuid().ToString("N")" />
+                <label class="pw-check"><input type="checkbox" name="daKiemTraTien" value="true" required /> Đã kiểm tra tiền vào tài khoản hoặc tiền mặt thực nhận</label>
+                <label class="pw-check"><input type="checkbox" name="dungSoTien" value="true" required /> Đúng số tiền và nội dung thanh toán</label>
+                <label class="pw-check"><input type="checkbox" name="dungKhach" value="true" required /> Đúng khách thuê / phòng</label>
+                <p class="pw-muted">Hệ thống không tự xác thực giao dịch ngân hàng.</p>
+                <button type="submit" class="btn btn-dark pw-full" disabled="@(report.SoTien > balance)">Xác nhận đã nhận @report.SoTien.ToString("N0", vn) đ</button>
+            </form>
+            <details class="pw-reject"><summary>Từ chối báo thanh toán</summary>
+                <form asp-action="RejectPaymentReport" method="post" data-reject-payment>
+                    @Html.AntiForgeryToken()<input type="hidden" name="id" value="@Model.HoaDon.Id" /><input type="hidden" name="paymentId" value="@report.Id" />
+                    <label for="payment-reject-reason">Lý do từ chối <span class="text-danger">*</span></label><textarea id="payment-reject-reason" name="lyDo" rows="3" minlength="1" maxlength="500" required placeholder="Ví dụ: Chưa nhận được tiền trong tài khoản ngân hàng."></textarea><p class="pw-muted">Khách sẽ nhận được thông báo và xem lý do này trong hóa đơn.</p><button type="submit" class="btn btn-outline-danger pw-full">Xác nhận từ chối</button>
+                </form>
+            </details>
+        }
+        else { <p class="pw-muted">Bạn chỉ có quyền xem báo thanh toán.</p> }
+        @if (report.SoTien <= balance) { <p class="pw-muted mt-3">Nếu xác nhận: còn phải trả @((balance - report.SoTien).ToString("N0", vn)) đ. Khoản đang chờ chưa được trừ vào công nợ.</p> }
+        else { <p class="text-danger">Báo trả vượt dư nợ hiện tại. Không thể xác nhận; hãy kiểm tra lại hoặc từ chối kèm lý do.</p> }
+    </aside>
+</div>

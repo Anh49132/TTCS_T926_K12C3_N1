@@ -1,0 +1,85 @@
+@inject QL_PhongTro.Authorization.PermissionService Permissions
+@{
+    var allowed = (await Permissions.MenuAsync()).Select(x => x.Code).ToHashSet();
+    var accountWrite = await Permissions.AllowsAsync("TAI_KHOAN",true);
+    var unprocessed = await Permissions.UnprocessedRequestCountAsync();
+    var admin = User.IsInRole("ADMIN");
+    var owner = User.IsInRole("CHU_NHA");
+    var name = string.IsNullOrWhiteSpace(User.Identity?.Name) ? "Tài khoản" : User.Identity.Name;
+    var path = Context.Request.Path.Value ?? "/";
+    if(ViewContext.RouteData.Values["controller"]?.ToString() is "TatToan" or "TraPhong")path="/Modules/HOP_DONG";
+    if(ViewContext.RouteData.Values["controller"]?.ToString() is "BaoCao")path="/Modules/BAO_CAO";
+    var section = Context.Request.Query["section"].ToString();
+    var roleFilter = Context.Request.Query["role"].ToString();
+    var items = new List<(string Group, string Title, string Url, string Module, string Icon)>();
+    if (admin) {
+        items.AddRange(new[] {
+            ("Quản trị", "Quản lý tài khoản", "/ManagedAccounts", "TAI_KHOAN", "users"),
+            ("Quản trị", "Phân quyền", "/Permissions", "TAI_KHOAN", "settings"),
+            ("Quản trị", "Nhật ký hoạt động", "/NhatKy", "TAI_KHOAN", "clock"),
+            ("Quản trị", "Tra cứu gửi thông báo lỗi", "/EmailGuiLog?TrangThai=THAT_BAI", "TAI_KHOAN", "bell"),
+            ("Tra cứu nghiệp vụ", "Tòa nhà", "/PhongTro/ToaNha", "PHONG_TRO", "building"),
+            ("Tra cứu nghiệp vụ", "Phòng", "/PhongTro", "PHONG_TRO", "home"),
+            ("Tra cứu nghiệp vụ", "Dịch vụ & bảng giá", "/DichVu", "PHONG_TRO", "tag"),
+            ("", "Tin đăng cho thuê", "/TinDang/QuanLy", "TIN_DANG", "file"),
+            ("", "Yêu cầu thuê", "/YeuCau", "YEU_CAU_THUE", "file"),
+            ("", "Hợp đồng", "/Modules/HOP_DONG", "HOP_DONG", "file"),
+            ("", "Chỉ số điện nước", "/Modules/DIEN_NUOC", "DIEN_NUOC", "meter"),
+            ("", "Hóa đơn & thanh toán", "/Modules/TAI_CHINH", "TAI_CHINH", "wallet"),
+            ("", "Công nợ", "/Modules/TAI_CHINH?section=cong-no", "TAI_CHINH", "money"),
+            ("", "Báo hỏng & bảo trì", "/Modules/BAO_HONG", "BAO_HONG", "tool"),
+            ("", "Báo cáo doanh thu & lấp đầy", "/Modules/BAO_CAO", "BAO_CAO", "chart")
+        });
+    } else {
+        if (!owner) items.Add(("Tài khoản", "Thông tin tài khoản", "/Modules/TAI_KHOAN", "TAI_KHOAN", "users"));
+        items.Add(("Vận hành", "Quản lý tòa nhà", "/PhongTro/ToaNha", "PHONG_TRO", "building"));
+        items.Add(("Vận hành", "Quản lý phòng", "/PhongTro", "PHONG_TRO", "home"));
+        if (owner) items.Add(("Vận hành", "Hồ sơ khách thuê", "/HoSo/DanhSach", "HOP_DONG", "users"));
+        if (owner) items.Add(("Vận hành", "Dịch vụ & đơn giá", "/DichVu", "PHONG_TRO", "tag"));
+        items.AddRange(new[] {
+            ("Vận hành", "Tin đăng cho thuê", "/TinDang/QuanLy", "TIN_DANG", "speaker"),
+            ("Vận hành", "Yêu cầu thuê & lịch xem", "/YeuCau", "YEU_CAU_THUE", "calendar"),
+            ("Vận hành", "Hợp đồng & người ở ghép", "/Modules/HOP_DONG", "HOP_DONG", "file"),
+            ("Tài chính", "Chỉ số điện nước", (User.IsInRole("QUAN_LY") || owner) ? "/ChiSoDienNuoc" : "/Modules/DIEN_NUOC", "DIEN_NUOC", "meter"),
+            ("Tài chính", "Hóa đơn, thanh toán", "/Modules/TAI_CHINH", "TAI_CHINH", "wallet"),
+            ("Tài chính", "Công nợ", "/Modules/TAI_CHINH?section=cong-no", "TAI_CHINH", "money"),
+            ("Tài chính", "Báo cáo doanh thu", "/Modules/BAO_CAO", "BAO_CAO", "chart"),
+            ("Chăm sóc", "Báo hỏng & bảo trì", "/Modules/BAO_HONG", "BAO_HONG", "tool")
+        });
+    }
+    string Icon(string key) => key switch {
+        "home" => "m3 10 9-7 9 7v11H3Z M9 21v-8h6v8",
+        "building" => "M5 21V3h14v18M9 7h1m4 0h1M9 11h1m4 0h1M9 15h1m4 0h1M10 21v-3h4v3",
+        "users" => "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M20 21v-2a4 4 0 0 0-3-4M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8",
+        "calendar" => "M4 5h16v16H4ZM8 3v4m8-4v4M4 10h16",
+        "chart" => "M3 3v18h18M7 17v-5m5 5V7m5 10V4",
+        "bell" => "M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4",
+        "clock" => "M12 8v5l3 2M12 22a10 10 0 1 0 0-20 10 10 0 0 0 0 20",
+        "wallet" => "M3 5h18v15H3ZM3 9h18M16 13h3",
+        "tag" => "M3 3h8l10 10-8 8L3 11ZM7 7h.01",
+        "speaker" => "M3 8h5l12-5v18L8 16H3ZM8 16l2 5",
+        "tool" => "m14 5 5-3a7 7 0 0 1-8 9L4 20l-3-3 9-8a7 7 0 0 1 3-7l1 3Z",
+        "meter" => "M4 19a10 10 0 1 1 16 0ZM12 14l5-5M7 17h10",
+        "money" => "M15 7h-5a3 3 0 0 0 0 6h4a3 3 0 0 1 0 6H9M12 3v18",
+        "settings" => "M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8M9 3h6l1 3 3 1 2 5-2 5-3 1-1 3H9l-1-3-3-1-2-5 2-5 3-1Z",
+        _ => "M5 3h10l4 4v14H5ZM14 3v5h5M8 12h8m-8 4h8"
+    };
+}
+<div class="sidebar-scroll compact-sidebar bootstrap-sidebar">
+<a class="sidebar-brand" href="/"><svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="@Icon("home")" /></svg><span><strong>NhàTốt</strong><small>Sống đúng nơi</small></span></a>
+<nav class="nav flex-column" aria-label="Menu chức năng">
+<a class="sidebar-link nav-link @(path is "/" or "/Home" or "/Home/Index" ? "is-active" : "")" href="/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon("home")" /></svg><span>Tổng quan</span></a>
+@foreach (var group in items.Where(x => allowed.Contains(x.Module) && (x.Url != "/ManagedAccounts/Create" || accountWrite)).GroupBy(x => x.Group)) {
+<section data-menu-group="@group.Key">
+@if (!string.IsNullOrEmpty(group.Key)) { <h2>@group.Key</h2> }
+@foreach (var item in group) {
+    var target = item.Url.Split('?')[0];
+    var selected = (path.Equals(target, StringComparison.OrdinalIgnoreCase) || (target == "/HoSo/DanhSach" && path.Equals("/HoSo/Xem", StringComparison.OrdinalIgnoreCase))) &&
+        (item.Url.Contains("section=") ? item.Url.EndsWith("section=" + section) : string.IsNullOrEmpty(section)) &&
+        (target != "/ManagedAccounts" || string.IsNullOrEmpty(section));
+<a class="sidebar-link nav-link @(selected ? "is-active" : "")" href="@item.Url" data-menu-module="@item.Module" aria-current="@(selected ? "page" : null)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@Icon(item.Icon)" /></svg><span>@item.Title</span>@if(item.Module == "YEU_CAU_THUE" && unprocessed > 0){<span class="badge rounded-pill" aria-label="@unprocessed yêu cầu chưa xử lý">@unprocessed</span>}</a>
+}
+</section>
+}
+</nav>
+</div>

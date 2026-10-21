@@ -1,0 +1,30 @@
+@model QL_PhongTro.ViewModels.DanhSachYeuCauViewModel
+@using QL_PhongTro.Models
+@using QL_PhongTro.Services
+@{
+    var items = Model.YeuCausCuaKhach;
+    var now = ViewData["NowUtc"] is DateTime utc ? utc : DateTime.UtcNow;
+    var next = items.Where(x => x.TrangThai == "DA_HEN_LICH" && x.LichHen >= now).OrderBy(x => x.LichHen).FirstOrDefault();
+}
+<article class="tr-page" data-tenant-requests>
+<nav class="tr-breadcrumb"><a asp-controller="Home" asp-action="Index">Trang chủ</a><span>/</span><span>Yêu cầu của tôi</span></nav>
+<header class="tr-title"><h1>Yêu cầu của tôi</h1><p>Theo dõi phản hồi từ chủ nhà và lịch hẹn xem phòng.</p></header>
+<div class="tr-stats">
+@foreach(var stat in new[] { ("list","neutral",items.Count,"Tổng yêu cầu"), ("clock","amber",items.Count(x=>x.TrangThai=="MOI"),"Chờ phản hồi"), ("calendar","blue",items.Count(x=>x.TrangThai=="DA_HEN_LICH"),"Đã hẹn lịch"), ("check","green",items.Count(x=>x.TrangThai=="DA_DUYET"),"Đã duyệt") }) {
+<section class="tr-stat @stat.Item2"><span class="tr-icon"><partial name="~/Views/YeuCau/_RequestIcon.cshtml" model="stat.Item1" /></span><div><strong>@stat.Item3</strong><p>@stat.Item4</p></div></section>}
+</div>
+@if(next is not null){<section class="tr-next"><span class="tr-icon"><partial name="_RequestIcon" model='@("calendar")' /></span><div><strong>Lịch hẹn sắp tới</strong><p>@LichHenService.HienThoiGio(next.LichHen!.Value) · Phòng @next.MaPhong</p></div><a asp-controller="TinDang" asp-action="YeuCau" asp-route-id="@next.Id" asp-fragment="lich-hen">Xem lịch →</a></section>}
+<div class="tr-toolbar"><div class="tr-tabs" role="group" aria-label="Loại yêu cầu">
+@foreach(var tab in new[] { ("","list","Tất cả",items.Count),("XEM_PHONG","calendar","Xem phòng",items.Count(x=>x.LoaiYeuCau=="XEM_PHONG")),("THUE_NGAY","home","Thuê ngay",items.Count(x=>x.LoaiYeuCau=="THUE_NGAY")) }) {<button type="button" data-request-type="@tab.Item1" aria-pressed="@(tab.Item1=="" ? "true" : "false")"><partial name="_RequestIcon" model="tab.Item2" />@tab.Item3 <small>@tab.Item4</small></button>}
+</div><div class="tr-filters"><label class="tr-search"><span class="visually-hidden">Tìm theo mã yêu cầu, phòng hoặc tòa nhà</span><partial name="_RequestIcon" model='@("search")' /><input type="search" data-request-search placeholder="Tìm theo mã yêu cầu, phòng..." /></label><label><span class="visually-hidden">Trạng thái</span><select data-request-status-filter id="trangThai"><option value="">Tất cả trạng thái</option>@foreach(var status in TrangThaiYeuCau.Labels){<option value="@status.Key" selected="@(Model.TrangThai==status.Key)">@status.Value</option>}</select></label></div></div>
+<div class="tr-table-card"><table class="tr-table"><thead><tr><th>Yêu cầu</th><th>Phòng</th><th>Ngày gửi</th><th>Lịch hẹn</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>
+@foreach(var item in items){var listingUrl=Url.Action("MoTinDang","YeuCau",new{id=item.Id});
+<tr data-request-status="@item.TrangThai" data-open-listing-url="@listingUrl" data-request-type="@item.LoaiYeuCau" data-search="@($"{item.MaYeuCau} {item.MaPhong} {item.TenToaNha}")">
+<td data-label="Yêu cầu"><div class="tr-request-code"><span class="tr-icon @(item.LoaiYeuCau=="THUE_NGAY" ? "amber" : "blue")"><partial name="_RequestIcon" model='@(item.LoaiYeuCau=="THUE_NGAY" ? "home" : "calendar")' /></span><div><strong>@item.MaYeuCau</strong><span class="tr-type @(item.LoaiYeuCau=="THUE_NGAY" ? "amber" : "blue")">@TrangThaiYeuCau.LoaiLabel(item.LoaiYeuCau)</span></div></div></td>
+<td data-label="Phòng">@item.MaPhong<small class="tr-muted">@item.TenToaNha</small></td><td data-label="Ngày gửi">@LichHenService.HienThoiGio(item.NgayTao)</td><td data-label="Lịch hẹn">@(item.LichHen is {} appointment ? LichHenService.HienThoiGio(appointment) : item.LoaiYeuCau=="THUE_NGAY" ? "—" : "Chưa có lịch hẹn")</td>
+<td data-label="Trạng thái"><span class="tr-status @item.TrangThai">@item.TrangThaiHienThi</span>@if(item.LyDoTuChoi is not null){<small class="tr-muted">@item.LyDoTuChoi</small>}</td>
+<td data-label="Thao tác"><div class="tr-actions"><a class="tr-button @(item.TrangThai=="DA_DUYET" ? "primary" : "")" asp-controller="TinDang" asp-action="YeuCau" asp-route-id="@item.Id"><partial name="_RequestIcon" model='@("eye")' />Xem chi tiết</a><details class="tr-more"><summary aria-label="Thao tác với @item.MaYeuCau">⋮</summary><div><a asp-action="MoTinDang" asp-route-id="@item.Id">Mở tin đăng</a>@if(item.ChoPhepHuy){<form method="post" asp-action="Huy" asp-route-id="@item.Id" data-cancel-request><button type="button" data-open-cancel-confirmation aria-haspopup="dialog">Huỷ yêu cầu</button></form>}</div></details></div></td></tr>}
+</tbody></table><div class="tr-empty" data-request-empty hidden="@(items.Count>0)"><h2>@(items.Count==0 ? "Bạn chưa có yêu cầu nào" : "Không có yêu cầu phù hợp")</h2><p>Khi gửi yêu cầu thuê hoặc xem phòng, trạng thái sẽ xuất hiện tại đây.</p><a asp-controller="TimTin" asp-action="Index">Tìm phòng cho thuê →</a></div></div>
+<p class="tr-privacy">ⓘ Bạn chỉ xem được các yêu cầu do chính mình gửi. <span data-filter-count role="status"></span></p>
+<partial name="_CancelRequestDialog" />
+</article>

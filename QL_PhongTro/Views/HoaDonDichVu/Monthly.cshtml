@@ -1,0 +1,111 @@
+@model QL_PhongTro.ViewModels.PhatHanhThangViewModel
+@using System.Globalization
+@inject QL_PhongTro.Authorization.PermissionService Permissions
+@{
+    ViewData["Title"] = $"Kết quả kiểm tra kỳ {Model.Thang:00}/{Model.Nam}";
+    var vn = CultureInfo.GetCultureInfo("vi-VN");
+    var write = await Permissions.AllowsAsync("TAI_CHINH", true);
+    var rent = Model.DuKien.Sum(x => (decimal)x.HoaDon.ChiTiet.Where(d => d.LoaiKhoan == "TIEN_PHONG").Sum(d => d.ThanhTien));
+    var meters = Model.DuKien.Sum(x => x.HoaDon.ChiTiet.Where(d => d.ChiSoDau.HasValue).Sum(d => (decimal)d.ThanhTien));
+    var extras = Model.DuKien.Sum(x => x.HoaDon.ChiTiet.Where(d => d.LoaiKhoan != "TIEN_PHONG" && !d.ChiSoDau.HasValue).Sum(d => (decimal)d.ThanhTien));
+    var total = Model.DuKien.Sum(x => (decimal)x.HoaDon.TongTien);
+    var existing = Model.BoQua.Where(x=>x.TrangThai=="DA_CO_HOA_DON").ToList();
+}
+@section Styles { <link rel="stylesheet" href="~/css/invoice-flow.css" asp-append-version="true" /> <link rel="stylesheet" href="~/css/monthly-invoices.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/invoice-review.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/invoice-review-bootstrap.css" asp-append-version="true" /> }
+@section Scripts { <script src="~/js/invoice-review.js" asp-append-version="true"></script> }
+<div class="monthly-invoices invoice-review review-bootstrap">
+<header class="mi-heading"><div><h1>Kết quả kiểm tra kỳ @Model.Thang.ToString("00")/@Model.Nam</h1><p>Kiểm tra số tiền, ngày thanh toán và các phòng bị bỏ qua trước khi xác nhận.</p></div><a href="#invoice-history" class="btn btn-outline-secondary">◷ Lịch sử tạo nháp</a></header>
+<div asp-validation-summary="All" class="text-danger" role="alert"></div>
+@if (TempData["MonthlyMessage"] is string message) { <div class="alert alert-success" role="status">@message</div> }
+@if (TempData["MonthlyError"] is string error) { <div class="alert alert-danger" role="alert">@error</div> }
+<section class="mi-card mr-period"><h2>Kỳ áp dụng và ngày thanh toán</h2>
+<form asp-action="Monthly" method="get" id="review-settings" class="mr-fields">
+<div><label for="building">Tòa nhà <span>*</span></label><select id="building" name="toaNhaId" asp-items="Model.ToaNhas" class="form-select" required><option value="">Chọn tòa nhà</option></select></div>
+<div><label for="month">Tháng <span>*</span></label><select id="month" name="thang" class="form-select">@for(var m=1;m<=12;m++){ <option value="@m" selected="@(m == Model.Thang)">Tháng @m</option> }</select></div>
+<div><label for="year">Năm <span>*</span></label><input id="year" name="nam" type="number" min="1900" max="9998" value="@Model.Nam" required class="form-control" /></div>
+<div><label for="issue-date">Ngày phát hành dự kiến <span>*</span></label><input id="issue-date" name="ngayPhatHanh" type="date" value="@Model.NgayPhatHanh.ToString("yyyy-MM-dd")" required class="form-control" /></div>
+<div><label for="due-date">Hạn thanh toán <span>*</span></label><input id="due-date" name="hanThanhToan" type="date" value="@Model.HanThanhToan.ToString("yyyy-MM-dd")" min="@Model.NgayPhatHanh.ToString("yyyy-MM-dd")" required class="form-control" /></div>
+<button class="btn btn-dark">Kiểm tra lại</button>
+</form>
+<p class="mi-muted">Hạn mặc định 7 ngày sau ngày tạo nháp. Có thể chọn ngày quá khứ hoặc tương lai; hóa đơn được lưu Nháp khi xác nhận; chưa gửi thông báo cho khách. Tiền phòng lấy giá theo từng kỳ hạn hợp đồng; điện, nước và dịch vụ lấy đơn giá tại ngày chốt.</p>
+<p id="review-dirty" class="mr-warning" hidden>Thông tin đã thay đổi. Bấm “Kiểm tra lại” trước khi xác nhận tạo nháp.</p>
+</section>
+<div class="mr-summary">
+<div class="mr-metric"><span>▤ Hóa đơn sẵn sàng</span><strong>@Model.DuKien.Count</strong><small>Phòng đủ điều kiện tạo nháp</small></div>
+<div class="mr-metric"><span>▦ Tổng tiền phòng</span><strong>@rent.ToString("N0", vn) đ</strong><small>Tiền phòng theo hợp đồng</small></div>
+<div class="mr-metric"><span>ϟ Điện nước</span><strong>@meters.ToString("N0", vn) đ</strong><small>Tổng tiền điện và nước</small></div>
+<div class="mr-metric"><span>⚙ Dịch vụ</span><strong>@extras.ToString("N0", vn) đ</strong><small>Cố định và khoán theo người</small></div>
+<div class="mr-metric mr-highlight"><span>◎ Tổng dự kiến</span><strong>@total.ToString("N0", vn) đ</strong><small>Tổng tiền của phòng sẵn sàng</small></div>
+</div>
+@if (!Model.SanSang) { <div class="alert alert-info">Chưa có tòa nhà hoặc chức năng hóa đơn chưa sẵn sàng. Vui lòng liên hệ quản trị để hoàn tất thiết lập.</div> }
+<div class="mr-columns"><div>
+<section class="mi-card"><div class="mr-card-title"><h2>Danh sách kiểm tra hóa đơn</h2><button id="export-review" type="button" class="btn btn-outline-secondary">↑ Xuất bảng kiểm tra</button></div>
+<nav class="mr-tabs" aria-label="Danh sách phòng"><button type="button" data-review-tab="ready" aria-selected="true">Sẵn sàng (@Model.DuKien.Count)</button><button type="button" data-review-tab="skipped" aria-selected="false">Bị bỏ qua (@Model.BoQua.Count)</button></nav>
+<div id="ready-panel">
+<div class="mr-filters"><input id="room-search" class="form-control" placeholder="Tìm phòng, khách thuê..." aria-label="Tìm phòng, khách thuê" /><select id="floor-filter" class="form-select" aria-label="Lọc tầng"><option value="">Tất cả tầng</option>@foreach(var floor in Model.DuKien.Select(x=>x.Tang).Distinct().OrderBy(x=>x)){ <option value="@floor">Tầng @floor</option> }</select><select id="room-sort" class="form-select" aria-label="Sắp xếp phòng"><option value="room">Theo mã phòng</option><option value="total-desc">Tổng tiền giảm dần</option><option value="total-asc">Tổng tiền tăng dần</option></select></div>
+<div class="table-responsive"><table class="table table-hover align-middle mr-table mi-table" id="ready-table"><thead><tr><th><input type="checkbox" id="select-visible" checked aria-label="Chọn tất cả phòng hiển thị" /></th><th>Phòng / Khách thuê</th><th>Tiền phòng</th><th>Điện</th><th>Nước</th><th>Dịch vụ</th><th>Tổng cộng</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody>
+@foreach(var row in Model.DuKien) {
+var rentLines = row.HoaDon.ChiTiet.Where(d => d.LoaiKhoan == "TIEN_PHONG").ToList();
+var meterLines = row.HoaDon.ChiTiet.Where(d => d.ChiSoDau.HasValue).OrderBy(d => d.SoThuTu).ToList();
+var otherLines = row.HoaDon.ChiTiet.Where(d => d.LoaiKhoan != "TIEN_PHONG" && !d.ChiSoDau.HasValue).ToList();
+<tr data-room="@row.MaPhong" data-tenant="@row.TenKhach" data-floor="@row.Tang" data-total="@row.HoaDon.TongTien">
+<td><input type="checkbox" name="selectedIds" value="@row.HoaDon.HopDongId" checked form="issue-monthly-form" class="room-select" aria-label="Chọn phòng @row.MaPhong" /></td>
+<th scope="row">@row.MaPhong<small>@row.TenKhach</small></th>
+<td>@rentLines.Sum(x => x.ThanhTien).ToString("N0", vn)<small>@foreach(var line in rentLines){<span class="d-block">@line.DonGia.ToString("N0", vn) đ/tháng@if(line.SoNgayTinhTien.HasValue){<text> · @line.SoNgayTinhTien/@line.SoNgayTrongThang ngày</text>}</span>}</small></td>
+@for(var meterIndex=0;meterIndex<2;meterIndex++){<td>@(meterIndex < meterLines.Count ? meterLines[meterIndex].ThanhTien.ToString("N0", vn) : "—")</td>}
+<td>@otherLines.Sum(x=>(decimal)x.ThanhTien).ToString("N0",vn)</td><td><strong>@row.HoaDon.TongTien.ToString("N0", vn) đ</strong></td>
+<td><span class="mr-status">✓ Đủ dữ liệu</span></td><td><a asp-action="Preview" asp-route-toaNhaId="@Model.ToaNhaId" asp-route-hopDongId="@row.HoaDon.HopDongId" asp-route-nam="@Model.Nam" asp-route-thang="@Model.Thang" asp-route-ngayPhatHanh="@Model.NgayPhatHanh.ToString("yyyy-MM-dd")" asp-route-hanThanhToan="@Model.HanThanhToan.ToString("yyyy-MM-dd")">Xem</a></td></tr>
+}
+</tbody></table></div>
+@if(Model.DuKien.Count==0){<p>Không có phòng đủ điều kiện tạo hóa đơn mới trong kỳ này.</p>}
+<div class="mr-pagination"><span id="room-page-info"></span><div id="room-pages"></div></div>
+</div>
+<div id="skipped-panel">
+<h3>Phòng bị bỏ qua</h3><p class="mi-muted">Các phòng dưới đây không được đưa vào danh sách xác nhận tạo nháp.</p>
+<div class="table-responsive"><table class="table table-hover align-middle mr-table" id="skipped-table" data-page-size="15"><thead><tr><th>Phòng</th><th>Lý do bị bỏ qua</th></tr></thead><tbody>
+@foreach(var room in Model.BoQua){<tr><th scope="row">@room.MaPhong</th><td><span class="mr-reason">ⓘ @room.LyDo</span> @if(room.HoaDonId.HasValue){<a asp-action="Details" asp-route-id="@room.HoaDonId">Xem hóa đơn hiện có</a>}</td></tr>}
+</tbody></table></div>@if(Model.BoQua.Count==0){<p>Không có phòng bị bỏ qua.</p>}
+</div>
+</section>
+@if(existing.Count>0){<section class="mi-card" id="existing-invoices"><h2>Phòng đã có hóa đơn (@existing.Count)</h2><p class="mi-muted">Các hóa đơn hiện có được giữ nguyên khi chạy lại kỳ này.</p><div class="table-responsive"><table class="table table-hover align-middle mr-table" data-page-size="15"><thead><tr><th>Phòng</th><th>Kỳ áp dụng</th><th>Thao tác</th></tr></thead><tbody>@foreach(var row in existing){<tr><th>@row.MaPhong</th><td>@Model.Thang.ToString("00")/@Model.Nam</td><td><a asp-action="Details" asp-route-id="@row.HoaDonId">Xem hóa đơn hiện có</a></td></tr>}</tbody></table></div></section>}
+@if(Model.KetQua.Count>0){<section class="mi-card" id="issue-results"><h2>Kết quả từng phòng</h2><div class="table-responsive"><table class="table table-hover align-middle mr-table" data-page-size="15"><thead><tr><th>Phòng</th><th>Kết quả</th><th>Chi tiết</th><th></th></tr></thead><tbody>@foreach(var result in Model.KetQua){<tr><th>@result.MaPhong</th><td>@(result.TrangThai=="NHAP" ? "Nháp" : result.TrangThai=="DA_PHAT_HANH" ? "Đã phát hành" : result.TrangThai=="KHONG_CHON" ? "Không chọn" : "Bị bỏ qua")</td><td>@result.LyDo</td><td>@if(result.HoaDonId.HasValue){<a asp-action="Details" asp-route-id="@result.HoaDonId">Xem hóa đơn</a>}</td></tr>}</tbody></table></div></section>}
+</div><aside>
+<section class="mi-card"><h2>Kết quả kiểm tra</h2><ul class="mr-check-summary"><li><span>▤ Hóa đơn sẵn sàng</span><strong>@Model.DuKien.Count</strong></li><li><span>⚠ Phòng bị bỏ qua</span><strong>@Model.BoQua.Count</strong></li><li><span>▦ Phòng đang thuê</span><strong>@Model.TongPhong</strong></li></ul></section>
+<section class="mi-card"><h2>Phòng bị bỏ qua</h2><dl class="mr-skipped-list">@foreach(var room in Model.BoQua.Take(6)){<dt>@room.MaPhong</dt><dd>@room.LyDo</dd>}</dl>@if(Model.BoQua.Count==0){<p>Không có phòng bị bỏ qua.</p>}else{<button type="button" class="mr-text-link" data-review-tab="skipped">Xem danh sách đầy đủ →</button>}</section>
+<section class="mi-card"><h2>Thông tin kỳ</h2><dl class="mr-period-info"><dt>Kỳ áp dụng</dt><dd>Tháng @Model.Thang.ToString("00")/@Model.Nam</dd><dt>Ngày phát hành dự kiến</dt><dd>@Model.NgayPhatHanh.ToString("dd/MM/yyyy")</dd><dt>Hạn thanh toán</dt><dd>@Model.HanThanhToan.ToString("dd/MM/yyyy")</dd><dt>Đơn giá</dt><dd>Tiền phòng theo kỳ hạn; dịch vụ theo ngày chốt</dd></dl><p class="mi-muted">Thông tin được kiểm tra lại khi xác nhận. Phòng có dữ liệu thay đổi sẽ được báo rõ.</p></section>
+</aside></div>
+<section class="mi-card" id="invoice-history"><h2>Hóa đơn đã lưu · @Model.Thang.ToString("00")/@Model.Nam</h2>
+@if(write && Model.DaPhatHanh.Any(x=>x.HoaDon.TrangThai=="NHAP")){
+<form asp-action="PublishMonthlyDrafts" method="post" id="publish-monthly-drafts">
+<h3>Phát hành hóa đơn Nháp đã kiểm tra</h3>
+<p>Chọn tối đa 50 hóa đơn. Khi phát hành, nội dung được khóa và khách nhận thông báo. Nếu một bản không hợp lệ, toàn bộ lần phát hành được hoàn tác.</p>
+<p><button type="button" class="btn btn-outline-dark" data-batch-select>Chọn 50 bản nháp đầu tiên</button> <button type="button" class="btn btn-outline-dark" data-batch-clear>Bỏ chọn</button></p>
+<p data-batch-status role="status" class="text-danger"></p>
+<input type="hidden" name="toaNhaId" value="@Model.ToaNhaId" /><input type="hidden" name="nam" value="@Model.Nam" /><input type="hidden" name="thang" value="@Model.Thang" />
+<div class="mr-fields"><div><label for="batch-issue">Ngày phát hành</label><input id="batch-issue" type="date" name="ngayPhatHanh" value="@Model.NgayPhatHanh.ToString("yyyy-MM-dd")" required class="form-control" /></div>
+<div><label for="batch-due">Hạn thanh toán</label><input id="batch-due" type="date" name="hanThanhToan" value="@Model.HanThanhToan.ToString("yyyy-MM-dd")" min="@Model.NgayPhatHanh.ToString("yyyy-MM-dd")" required class="form-control" /></div></div>
+<div class="table-responsive"><table class="table"><thead><tr><th>Chọn</th><th>Phòng</th><th>Mã hóa đơn</th><th>Tổng tiền</th><th>Kiểm tra</th></tr></thead><tbody>
+@foreach(var row in Model.DaPhatHanh.Where(x=>x.HoaDon.TrangThai=="NHAP")){
+<tr><td><input type="checkbox" name="selectedInvoiceIds" value="@row.HoaDon.Id" data-amount="@row.HoaDon.TongTien" aria-label="Phát hành hóa đơn phòng @row.MaPhong" /><input type="hidden" name="versions[@row.HoaDon.Id]" value="@row.HoaDon.PhienBan" /></td><th>@row.MaPhong</th><td>@row.HoaDon.MaHoaDon</td><td>@row.HoaDon.TongTien.ToString("N0",vn) đ</td><td><a asp-action="Details" asp-route-id="@row.HoaDon.Id">Xem chi tiết</a></td></tr>
+}
+</tbody></table></div>
+<button type="button" class="btn btn-dark" data-batch-open>Phát hành các hóa đơn đã chọn</button>
+<dialog id="batch-confirmation" class="flow-confirm" aria-labelledby="batch-title">
+<h2 id="batch-title">Xác nhận phát hành hàng loạt</h2><p>Hệ thống tạo thông báo cho khách sau khi phát hành. Hóa đơn đã phát hành không thể chỉnh sửa.</p>
+<dl><dt>Số hóa đơn</dt><dd data-batch-count></dd><dt>Tổng tiền</dt><dd data-batch-total></dd><dt>Kỳ áp dụng</dt><dd>@Model.Thang.ToString("00")/@Model.Nam</dd><dt>Ngày phát hành</dt><dd data-batch-date></dd><dt>Hạn thanh toán</dt><dd data-batch-due></dd></dl>
+<div class="alert alert-warning">@Model.BoQua.Count phòng bị bỏ qua không nằm trong danh sách phát hành. Nếu một hóa đơn không hợp lệ, toàn bộ đợt sẽ được hoàn tác.</div>
+<label><input type="checkbox" name="xacNhan" value="true" required /> Tôi đã kiểm tra số tiền và đồng ý phát hành.</label>
+<div class="flow-actions"><button type="button" data-batch-close class="btn btn-outline-secondary">Quay lại kiểm tra</button><button type="submit" class="btn btn-dark">Xác nhận phát hành</button></div>
+</dialog>
+</form>
+}
+@if(Model.DaPhatHanh.Count==0){<p>Chưa có hóa đơn trong kỳ này.</p>}else{<div class="table-responsive"><table class="table table-hover align-middle mr-table" data-page-size="15"><thead><tr><th>Phòng</th><th>Trạng thái</th><th>Ngày phát hành</th><th>Hạn thanh toán</th><th>Tổng tiền</th><th></th></tr></thead><tbody>@foreach(var row in Model.DaPhatHanh){<tr><th>@row.MaPhong</th><td>@(row.HoaDon.TrangThai == "NHAP" ? "Nháp" : row.HoaDon.TrangThai == "DA_HUY" ? "Đã hủy" : "Đã phát hành")</td><td>@(row.HoaDon.NgayPhatHanhNghiepVu?.ToString("dd/MM/yyyy") ?? row.HoaDon.NgayPhatHanh?.AddHours(7).ToString("dd/MM/yyyy"))</td><td>@row.HoaDon.HanThanhToan.ToString("dd/MM/yyyy")</td><td>@row.HoaDon.TongTien.ToString("N0",vn) đ</td><td><a asp-action="Details" asp-route-id="@row.HoaDon.Id">Xem chi tiết</a></td></tr>}</tbody></table></div>}
+</section>
+<footer class="mi-footer"><strong>Đã chọn <span data-selected-count>@Model.DuKien.Count</span>/@Model.DuKien.Count hóa đơn · Tổng <span data-selected-total>@total.ToString("N0",vn) đ</span></strong>
+<form asp-action="IssueMonthly" method="post" id="issue-monthly-form">
+<input type="hidden" name="toaNhaId" value="@Model.ToaNhaId" /><input type="hidden" name="nam" value="@Model.Nam" /><input type="hidden" name="thang" value="@Model.Thang" /><input type="hidden" name="ngayPhatHanh" value="@Model.NgayPhatHanh.ToString("yyyy-MM-dd")" /><input type="hidden" name="hanThanhToan" value="@Model.HanThanhToan.ToString("yyyy-MM-dd")" /><input type="hidden" name="reviewToken" value="@Model.ReviewToken" />
+<a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Quay lại</a>
+<button type="button" data-review-open data-can-write="@write.ToString().ToLowerInvariant()" class="btn btn-dark" disabled="@(!write || !Model.SanSang || string.IsNullOrEmpty(Model.ReviewToken))">@(Model.DuKien.Count==0 ? "Chạy lại và xem kết quả" : "Tạo hóa đơn nháp")</button>
+<partial name="_IssueConfirmation" model="Model" />
+</form></footer>
+</div>

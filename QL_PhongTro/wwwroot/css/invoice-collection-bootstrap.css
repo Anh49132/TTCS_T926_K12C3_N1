@@ -1,0 +1,109 @@
+.ic-page.collection-bootstrap{padding:0;max-width:none;min-width:0;color:#25282d;font-size:.8125rem;line-height:1.5}
+.collection-bootstrap .ic-back{font-size:.8125rem;color:#7b8491;text-decoration:none;margin-bottom:1rem}
+.collection-bootstrap .ic-heading{gap:1rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem}
+.collection-bootstrap .ic-heading>div:first-child{min-width:0;flex:1 1 500px}
+.collection-bootstrap .ic-title{gap:.75rem;align-items:center;flex-wrap:wrap}
+.collection-bootstrap .ic-title h1{font-size:1.625rem;font-weight:750;line-height:1.35;letter-spacing:-.035rem;overflow-wrap:anywhere;margin:0}
+.collection-bootstrap .ic-heading p{font-size:.8125rem;color:#7a838f;line-height:1.5;margin:.5rem 0 0}
+.collection-bootstrap .ic-actions{gap:.625rem;flex-wrap:wrap}
+.collection-bootstrap .ic-button{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:.625rem 1rem;gap:.5rem;border-radius:8px;font-size:.8125rem;font-weight:600;line-height:1.5;white-space:normal}
+.collection-bootstrap .ic-button.primary{background:#30343b;border-color:#30343b;color:#fff}
+.collection-bootstrap .ic-button.secondary{background:#fff;border-color:#d8dde4;color:#30343b}
+.collection-bootstrap .ic-stats{gap:.875rem;margin-bottom:1rem}
+.collection-bootstrap .ic-stat{padding:1rem;gap:.75rem;border:1px solid #e4e7eb;border-radius:12px;min-width:0;box-shadow:0 2px 6px #25282d03}
+.collection-bootstrap .ic-stat>div{min-width:0}
+.collection-bootstrap .ic-stat>div>span{display:block;font-size:.75rem;line-height:1.5;margin-bottom:.375rem;color:#7a838f}
+.collection-bootstrap .ic-stat strong{font-size:1.25rem;line-height:1.4;overflow-wrap:anywhere}
+.collection-bootstrap .ic-icon{width:44px;height:44px;flex:0 0 44px;border-radius:12px}
+.collection-bootstrap .ic-stat.remaining{background:#fcf8ef;border-color:#e9ddc4}
+.collection-bootstrap .ic-columns{grid-template-columns:minmax(0,1fr) 340px;gap:1rem;align-items:start}
+.collection-bootstrap .ic-card{padding:1rem 1.125rem;margin-bottom:1rem;border:1px solid #e4e7eb;border-radius:12px;box-shadow:0 2px 6px #25282d03;min-width:0}
+.collection-bootstrap .ic-card h2{font-size:1.0625rem;line-height:1.4;font-weight:700;margin:0 0 .75rem}
+.collection-bootstrap .ic-table-wrap{border:1px solid #e9eaec;border-radius:8px}
+.collection-bootstrap .ic-table{font-size:.8125rem;min-width:560px}
+.collection-bootstrap .ic-table th,.collection-bootstrap .ic-table td{padding:.625rem .75rem;line-height:1.5;border-color:#e9eaec;vertical-align:middle}
+.collection-bootstrap .ic-table thead th{background:#f7f8f9;color:#697380;font-size:.6875rem;font-weight:600;white-space:nowrap}
+.collection-bootstrap .ic-table small{display:block;line-height:1.5;font-size:.6875rem;color:#8a939f;margin-top:.25rem}
+.collection-bootstrap .ic-table .money{font-variant-numeric:tabular-nums;white-space:nowrap;text-align:right}
+.collection-bootstrap .ic-table tfoot th,.collection-bootstrap .ic-table tfoot td{padding:.875rem .75rem;background:#f3f4f6}
+.collection-bootstrap .ic-table tfoot td{font-size:1rem;font-weight:700}
+.collection-bootstrap .ic-progress{height:12px;overflow:visible;margin:.875rem 0 1rem;background:#e9eaec;border-radius:8px}
+.collection-bootstrap #ic-progress-fill{min-height:12px;line-height:12px;border-radius:8px;font-size:0}
+.collection-bootstrap .ic-progress-labels{gap:.75rem;flex-wrap:wrap}
+.collection-bootstrap .ic-progress-labels span{font-size:.6875rem;line-height:1.5}
+.collection-bootstrap .ic-progress-labels strong{font-size:.8125rem;line-height:1.5;margin-top:.25rem}
+.collection-bootstrap .ic-info{margin:0}
+.collection-bootstrap .ic-info>div{padding:.5rem 0;gap:.75rem;font-size:.75rem;line-height:1.5;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr)}
+.collection-bootstrap .ic-info dt{font-weight:400;color:#8a939f}
+.collection-bootstrap .ic-info dd{margin:0;overflow-wrap:anywhere;line-height:1.5}
+.collection-bootstrap .ic-empty{padding:1rem;text-align:center;border:1px dashed #e4e7eb;border-radius:9px;background:#fafbfc}
+.collection-bootstrap .ic-empty strong{display:block;font-size:.875rem;line-height:1.5;margin-top:.625rem}
+.collection-bootstrap .ic-empty p,.collection-bootstrap .ic-hint,.collection-bootstrap .ic-permission{font-size:.75rem;line-height:1.6;color:#8a939f}
+.collection-bootstrap .ic-empty p{margin:.25rem 0 0}
+.collection-bootstrap .ic-hint{margin:.75rem 0 0}
+.collection-bootstrap .ic-status{font-size:.6875rem;line-height:1.5;padding:.375rem .625rem;border-radius:20px}
+@media(max-width:1100px){.collection-bootstrap .ic-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.collection-bootstrap .ic-columns{grid-template-columns:1fr}}
+@media(max-width:600px){.collection-bootstrap .ic-title h1{font-size:1.375rem}.collection-bootstrap .ic-actions{width:100%;display:flex}.collection-bootstrap .ic-actions .ic-button{flex:1}.collection-bootstrap .ic-stat{padding:.875rem;flex-wrap:wrap;gap:.625rem}.collection-bootstrap .ic-stat strong{font-size:1.0625rem}.collection-bootstrap .ic-icon{width:36px;height:36px;flex-basis:36px}.collection-bootstrap .ic-card{padding:1rem}.collection-bootstrap .ic-progress-labels{align-items:flex-start}}
+
+/* Compact, even rhythm throughout collection details. */
+.collection-bootstrap .ic-heading p{margin-top:.375rem;line-height:1.5}
+.collection-bootstrap .ic-stat>div>span{margin-bottom:.25rem;line-height:1.5}
+.collection-bootstrap .ic-card h2{line-height:1.4}
+.collection-bootstrap .ic-table small{margin-top:.25rem;line-height:1.5}
+.collection-bootstrap .ic-info dt,.collection-bootstrap .ic-info dd{line-height:1.5}
+.collection-bootstrap .ic-empty strong{margin-top:.625rem;line-height:1.5}
+.collection-bootstrap .ic-empty p{margin-top:.25rem;line-height:1.5}
+.collection-bootstrap .ic-hint,.collection-bootstrap .ic-permission{line-height:1.55}
+.collection-bootstrap .ic-progress{margin:.75rem 0 .875rem}
+@media(max-width:600px){.collection-bootstrap .ic-card{padding:1rem}}
+
+/* Match building detail breadcrumb typography and spacing. */
+.dashboard-header .invoice-detail-breadcrumb{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;font-size:1rem;font-weight:600;line-height:1.5;color:#25282d;min-width:0}
+.invoice-detail-breadcrumb a{display:inline-flex;align-items:center;gap:.75rem;color:#25282d80;text-decoration:none}
+.invoice-detail-breadcrumb svg{width:21px;height:21px;color:#25282d80;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.invoice-detail-breadcrumb strong{color:#25282d;font-weight:600}
+.invoice-detail-breadcrumb a:hover{color:#30343b}
+.invoice-detail-breadcrumb>span{color:#25282d66;font-weight:400}
+@media(max-width:600px){.dashboard-header:has(.invoice-detail-breadcrumb) .account-label{display:none}.dashboard-header .invoice-detail-breadcrumb{font-size:.72rem;gap:.35rem;flex:1}.invoice-detail-breadcrumb a{gap:.35rem}.invoice-detail-breadcrumb svg{width:17px;height:17px}}
+
+/* Bootstrap collection form within the native accessible dialog. */
+.collection-bootstrap #ic-dialog{width:min(680px,calc(100vw - 24px));max-height:calc(100dvh - 24px);padding:1.5rem;border:1px solid #e4e7eb;border-radius:16px;box-shadow:0 20px 80px #25282d30;overflow-y:auto;color:#25282d;background:#fff}
+.collection-bootstrap #ic-dialog::backdrop{background:#25282d66;backdrop-filter:blur(2px)}
+.collection-bootstrap #ic-dialog .ic-dialog-header{gap:1rem;margin-bottom:1rem;align-items:flex-start}
+.collection-bootstrap #ic-dialog .ic-dialog-header h2{font-size:1.5rem;line-height:1.3;font-weight:750;margin:0 0 .375rem}
+.collection-bootstrap #ic-dialog .ic-dialog-header p{font-size:.75rem;line-height:1.5;margin:0;color:#7b8491;overflow-wrap:anywhere}
+.collection-bootstrap #ic-dialog .ic-close{display:grid;place-items:center;width:34px;height:34px;padding:0;border:1px solid #e4e7eb;border-radius:8px;background:#f5f5f4;color:#606b79;flex-shrink:0;font-size:1.375rem;line-height:1}
+.collection-bootstrap #ic-dialog .ic-modal-stats{gap:.625rem;margin-bottom:1.25rem}
+.collection-bootstrap #ic-dialog .ic-modal-stats>div{padding:.875rem;border:1px solid #e4e7eb;border-radius:9px;background:#f8f9fa;min-width:0}
+.collection-bootstrap #ic-dialog .ic-modal-stats>div:last-child{background:#fcf7ec;border-color:#ebdfc8}
+.collection-bootstrap #ic-dialog .ic-modal-stats span{font-size:.6875rem;line-height:1.5;color:#7b8491}
+.collection-bootstrap #ic-dialog .ic-modal-stats strong{display:block;font-size:1.0625rem;line-height:1.5;margin-top:.375rem;overflow-wrap:anywhere}
+.collection-bootstrap #ic-dialog .ic-field{grid-template-columns:120px minmax(0,1fr);gap:.875rem;margin-bottom:1rem;align-items:start}
+.collection-bootstrap #ic-dialog .ic-field label{font-size:.8125rem;font-weight:600;line-height:1.5;padding-top:.625rem}
+.collection-bootstrap #ic-dialog .form-control,.collection-bootstrap #ic-dialog .form-select{min-height:44px;width:100%;padding:.625rem .75rem;border:1px solid #dfe3e8;border-radius:8px;font-size:.8125rem;line-height:1.5;box-shadow:none;background-color:#fff;color:#30343b}
+.collection-bootstrap #ic-dialog .form-select{padding-right:2rem}
+.collection-bootstrap #ic-dialog .form-control:focus,.collection-bootstrap #ic-dialog .form-select:focus{border-color:#bfa77a;outline:2px solid #bfa77a55;outline-offset:1px}
+.collection-bootstrap #ic-dialog .ic-amount input{padding-right:3rem;font-weight:650}
+.collection-bootstrap #ic-dialog .ic-amount>span{border-radius:0 7px 7px 0;background:#f5f6f7;color:#7b8491;font-size:.8125rem}
+.collection-bootstrap #ic-dialog textarea.form-control{min-height:92px;resize:vertical}
+.collection-bootstrap #ic-dialog .ic-field small{display:block;margin-top:.25rem;font-size:.6875rem;line-height:1.5;color:#8a939f}
+.collection-bootstrap #ic-dialog .ic-actor{padding:.75rem .875rem;border-radius:8px;background:#f5f6f8;font-size:.75rem;line-height:1.5}
+.collection-bootstrap #ic-dialog .ic-dialog-footer{gap:.625rem;padding-top:1rem;margin-top:1rem;flex-wrap:wrap;align-items:center}
+.collection-bootstrap #ic-dialog .ic-dialog-footer small{font-size:.6875rem;line-height:1.5;color:#8a939f}
+.collection-bootstrap #ic-dialog .ic-button{min-height:44px;font-size:.8125rem}
+@media(max-width:540px){.collection-bootstrap #ic-dialog{padding:1.25rem 1rem}.collection-bootstrap #ic-dialog .ic-field{grid-template-columns:1fr;gap:.375rem;margin-bottom:.875rem}.collection-bootstrap #ic-dialog .ic-field label{padding-top:0}.collection-bootstrap #ic-dialog .ic-modal-stats>div{padding:.625rem}.collection-bootstrap #ic-dialog .ic-modal-stats strong{font-size:.875rem}.collection-bootstrap #ic-dialog .ic-dialog-footer small{width:100%;margin:0 0 .25rem}.collection-bootstrap #ic-dialog .ic-dialog-footer .ic-button{flex:1}}
+
+/* Compact spacing inside the collection dialog only. */
+.collection-bootstrap #ic-dialog{padding:1.25rem 1.5rem}
+.collection-bootstrap #ic-dialog .ic-dialog-header{margin-bottom:.875rem}
+.collection-bootstrap #ic-dialog .ic-modal-stats{margin-bottom:1rem}
+.collection-bootstrap #ic-dialog .ic-modal-stats>div{padding:.75rem .875rem}
+.collection-bootstrap #ic-dialog .ic-modal-stats strong{margin-top:.25rem;line-height:1.5}
+.collection-bootstrap #ic-dialog .ic-field{margin-bottom:.875rem;gap:.75rem}
+.collection-bootstrap #ic-dialog .ic-field label{line-height:1.5}
+.collection-bootstrap #ic-dialog .ic-field small{margin-top:.25rem;line-height:1.5}
+.collection-bootstrap #ic-dialog .ic-error{margin:.25rem 0 0;line-height:1.4}
+.collection-bootstrap #ic-dialog .ic-error:empty{display:none}
+.collection-bootstrap #ic-dialog .ic-actor{padding:.625rem .75rem;line-height:1.5}
+.collection-bootstrap #ic-dialog .ic-dialog-footer{padding-top:.875rem;margin-top:.875rem}
+@media(max-width:540px){.collection-bootstrap #ic-dialog{padding:1.125rem 1rem}.collection-bootstrap #ic-dialog .ic-field{gap:.375rem;margin-bottom:.75rem}.collection-bootstrap #ic-dialog .ic-modal-stats>div{padding:.625rem}}

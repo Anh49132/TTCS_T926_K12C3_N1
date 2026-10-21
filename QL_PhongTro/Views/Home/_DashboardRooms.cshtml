@@ -1,0 +1,8 @@
+@model QL_PhongTro.ViewModels.HomeDashboardViewModel
+<div class="panel-heading"><h2>Tình trạng phòng</h2><span class="room-legend">● Đang thuê　○ Trống　● Đã đặt cọc</span></div>
+<div class="latte-room-grid">
+@foreach (var room in Model.Rooms) {
+<a href="/PhongTro/Edit/@room.Id" class="latte-room"><div><strong>@room.Code</strong><span class="latte-badge">@(room.Status switch { "DANG_THUE" => "Đang thuê", "TRONG" => "Trống", "DA_DAT_COC" => "Đã đặt cọc", _ => "Ngừng cho thuê" })</span></div><p>▥ @room.Building <span>›</span></p></a>
+}
+@if (Model.Rooms.Count == 0) { <p class="latte-empty">Chưa có phòng trong phạm vi quản lý.</p> }
+</div>

@@ -1,0 +1,1105 @@
+.role-home.admin-dashboard-bootstrap{font-size:.875rem;line-height:1.5;min-width:0}
+.admin-dashboard-bootstrap .role-home-heading{gap:1rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem;padding-bottom:1rem;border-color:#e9eaec}
+.admin-dashboard-bootstrap .role-home-heading h1{font-size:1.75rem;line-height:1.3;font-weight:750;letter-spacing:-.04rem;margin:0 0 .375rem}
+.admin-dashboard-bootstrap .role-home-heading p{font-size:.875rem;line-height:1.5;color:#7a838f;margin:0}
+.admin-dashboard-bootstrap .btn{min-height:44px;padding:.625rem 1rem;border-radius:8px;font-size:.8125rem;font-weight:600;line-height:1.5}
+.admin-dashboard-bootstrap .dashboard-stat-grid-admin{gap:1rem;margin-bottom:1rem}
+.admin-dashboard-bootstrap .dashboard-stat{padding:1.125rem;border:1px solid #e4e7eb;border-top:3px solid #bfa77a;border-radius:12px;background:#fff;min-width:0;box-shadow:0 2px 6px #25282d03;text-decoration:none}
+.admin-dashboard-bootstrap .dashboard-stat:hover{border-color:#cbb892;box-shadow:0 4px 14px #25282d09}
+.admin-dashboard-bootstrap .dashboard-stat .stat-icon{width:38px;height:38px;border-radius:10px;background:#e9eaec;color:#626d7b;font-size:1.25rem}
+.admin-dashboard-bootstrap .dashboard-stat small{font-size:.75rem;line-height:1.5;font-weight:600}
+.admin-dashboard-bootstrap .dashboard-stat>strong{font-size:1.875rem;line-height:1.25;margin:.75rem 0 .5rem}
+.admin-dashboard-bootstrap .dashboard-stat>span:last-child{font-size:.75rem;line-height:1.5;color:#8a939f}
+.admin-dashboard-bootstrap .latte-admin-grid{grid-template-columns:minmax(230px,1fr) minmax(0,1.7fr) minmax(230px,1fr);gap:1rem;align-items:start;margin-bottom:1rem}
+.admin-dashboard-bootstrap .dashboard-panel{padding:1.125rem;border:1px solid #e4e7eb;border-radius:12px;box-shadow:0 2px 6px #25282d03;min-width:0}
+.admin-dashboard-bootstrap .panel-heading{gap:.75rem;align-items:center;flex-wrap:wrap;margin-bottom:.875rem;padding-bottom:.875rem;border-bottom:1px solid #e9eaec}
+.admin-dashboard-bootstrap .panel-heading h2{font-size:1.0625rem;line-height:1.4;font-weight:700;margin:0}
+.admin-dashboard-bootstrap .panel-heading a{font-size:.75rem;line-height:1.5;color:#897044;text-decoration:none}
+.admin-dashboard-bootstrap .latte-table-scroll{overflow:auto;border:1px solid #e9eaec;border-radius:8px}
+.admin-dashboard-bootstrap .latte-table{font-size:.75rem}
+.admin-dashboard-bootstrap .latte-table th{background:#f7f8f9;font-size:.6875rem;color:#697380;font-weight:600;white-space:nowrap}
+.admin-dashboard-bootstrap .latte-table th,.admin-dashboard-bootstrap .latte-table td{padding:.75rem .625rem;line-height:1.5;border-color:#e9eaec;vertical-align:middle}
+.admin-dashboard-bootstrap .latte-table td{overflow-wrap:anywhere}
+.admin-dashboard-bootstrap .role-donut{margin:1.25rem auto;width:160px;height:160px}
+.admin-dashboard-bootstrap .role-distribution p{font-size:.75rem;line-height:1.5;margin:0;padding:.375rem 0}
+.admin-dashboard-bootstrap .system-status p{padding:.875rem;border:1px solid #e9eaec;border-radius:9px;background:#f8f9fa;margin:0 0 .625rem;font-size:.8125rem;line-height:1.5}
+.admin-dashboard-bootstrap .system-status small{font-size:.75rem;line-height:1.5;margin-top:.25rem;color:#8a939f}
+.admin-dashboard-bootstrap .dashboard-panel-grid{gap:1rem;margin-bottom:1rem}
+.admin-dashboard-bootstrap .quick-link-grid a{border-radius:9px;padding:1rem;font-size:.8125rem;line-height:1.5}
+@media(max-width:1100px){.admin-dashboard-bootstrap .dashboard-stat-grid-admin{grid-template-columns:repeat(3,minmax(0,1fr))}.admin-dashboard-bootstrap .latte-admin-grid{grid-template-columns:1fr 1fr}.admin-dashboard-bootstrap .latte-admin-grid>article:nth-child(2){grid-column:1/-1;grid-row:2}}
+@media(max-width:600px){.admin-dashboard-bootstrap .role-home-heading h1{font-size:1.5rem}.admin-dashboard-bootstrap .dashboard-stat-grid-admin{grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}.admin-dashboard-bootstrap .dashboard-stat{padding:.875rem}.admin-dashboard-bootstrap .dashboard-stat>strong{font-size:1.625rem}.admin-dashboard-bootstrap .latte-admin-grid,.admin-dashboard-bootstrap .dashboard-panel-grid{grid-template-columns:1fr}.admin-dashboard-bootstrap .latte-admin-grid>article:nth-child(2){grid-column:auto;grid-row:auto}.admin-dashboard-bootstrap .dashboard-panel{padding:1rem}}
+
+/* Consistent vertical rhythm for the admin overview. */
+.admin-dashboard-bootstrap .role-home-heading{padding-bottom:.875rem;margin-bottom:1rem}
+.admin-dashboard-bootstrap .role-home-heading p{line-height:1.5}
+.admin-dashboard-bootstrap .dashboard-stat{padding:1rem}
+.admin-dashboard-bootstrap .dashboard-stat>strong{margin:.625rem 0 .375rem;line-height:1.25}
+.admin-dashboard-bootstrap .dashboard-stat small,.admin-dashboard-bootstrap .dashboard-stat>span:last-child{line-height:1.5}
+.admin-dashboard-bootstrap .dashboard-panel{padding:1rem}
+.admin-dashboard-bootstrap .panel-heading{padding-bottom:.75rem;margin-bottom:.75rem;gap:.625rem}
+.admin-dashboard-bootstrap .panel-heading h2{line-height:1.4}
+.admin-dashboard-bootstrap .latte-table th,.admin-dashboard-bootstrap .latte-table td{padding:.625rem;line-height:1.5}
+.admin-dashboard-bootstrap .role-donut{margin:1rem auto}
+.admin-dashboard-bootstrap .role-distribution p{padding:.3125rem 0;line-height:1.5}
+.admin-dashboard-bootstrap .system-status p{padding:.75rem;margin-bottom:.5rem;line-height:1.5}
+.admin-dashboard-bootstrap .system-status small{margin-top:.25rem;line-height:1.5}
+.admin-dashboard-bootstrap .quick-link-grid a{padding:.875rem;line-height:1.5}
+@media(max-width:600px){.admin-dashboard-bootstrap .dashboard-stat{padding:.875rem}.admin-dashboard-bootstrap .dashboard-panel{padding:1rem}}
+
+/* Place search and notifications next to the admin account. */
+.role-admin .dashboard-header .latte-header-search{margin-left:auto;margin-right:0;flex:0 1 440px}
+.role-admin .dashboard-header .latte-header-user{margin-left:0;flex-shrink:0}
+.role-admin .dashboard-header .header-notification-bell{flex-shrink:0}
+@media(max-width:700px){.role-admin .dashboard-header .latte-header-user{margin-left:auto}}
+
+/* Light account button with explicit contrast in every interaction state. */
+.role-admin .dashboard-header .latte-header-user .account-trigger{display:flex;align-items:center;gap:.625rem;min-height:48px;width:auto;min-width:180px;padding:.5rem .75rem;border:1px solid #e4e7eb;border-radius:10px;background:#fff!important;color:#30343b!important;box-shadow:none;text-align:left}
+.role-admin .dashboard-header .latte-header-user .account-trigger:hover,.role-admin .dashboard-header .latte-header-user .account-trigger[aria-expanded=true]{background:#faf8f3!important;border-color:#bfa77a}
+.role-admin .dashboard-header .latte-header-user .account-trigger:focus-visible{outline:3px solid #bfa77a55;outline-offset:2px}
+.role-admin .dashboard-header .account-trigger .account-avatar{display:grid;place-items:center;flex:0 0 34px;width:34px;height:34px;border-radius:50%;background:#f4efe5;color:#897044;font-size:.8125rem}
+.role-admin .dashboard-header .account-trigger .account-label{display:block;min-width:0;color:#30343b}
+.role-admin .dashboard-header .account-trigger .account-label strong{display:block;color:#30343b;font-size:.75rem;font-weight:600;line-height:1.5;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.role-admin .dashboard-header .account-trigger .account-label small{display:block;color:#8a939f;font-size:.625rem;line-height:1.5}
+.role-admin .dashboard-header .account-trigger .account-chevron{color:#7b8491;margin-left:auto;font-size:.875rem}
+.role-admin .dashboard-header .account-popover{padding:.375rem;border:1px solid #e4e7eb;border-radius:10px;background:#fff;box-shadow:0 8px 28px #25282d1a}
+@media(max-width:600px){.role-admin .dashboard-header .latte-header-user .account-trigger{min-width:0;padding:.375rem}.role-admin .dashboard-header .account-trigger .account-label{display:none}.role-admin .dashboard-header .account-trigger .account-chevron{display:none}}
+
+/* Account header follows the landlord account appearance. */
+.role-admin .dashboard-header .latte-header-user .sidebar-account .account-trigger{min-width:178px;min-height:50px;padding:.4375rem .625rem;gap:.625rem;border:1px solid #e9eaec;border-radius:10px;background:#fff!important;color:#25282d!important;transition:background .15s,border-color .15s,box-shadow .15s}
+.role-admin .dashboard-header .latte-header-user .sidebar-account .account-trigger:hover,.role-admin .dashboard-header .latte-header-user .sidebar-account .account-trigger[aria-expanded=true]{background:#faf8f4!important;border-color:#bfa77a;box-shadow:0 2px 8px #25282d0a}
+.role-admin .dashboard-header .latte-header-user .sidebar-account .account-trigger:focus-visible{outline:2px solid #bfa77a;outline-offset:3px}
+.role-admin .dashboard-header .account-trigger .account-avatar{width:34px;height:34px;flex:0 0 34px;background:#f5f0e6;color:#80663a;font-size:.6875rem;font-weight:600}
+.role-admin .dashboard-header .account-trigger .account-label strong{font-size:.75rem;font-weight:600;line-height:1.4;max-width:10rem}
+.role-admin .dashboard-header .account-trigger .account-label small{color:#81858d;margin-top:.125rem;font-size:.625rem}
+.role-admin .dashboard-header .account-trigger .account-chevron{display:inline-flex;align-items:center;justify-content:center;flex:0 0 14px;width:14px;height:14px;margin-left:.25rem;color:#81858d;font-size:0}
+.role-admin .dashboard-header .account-trigger .account-chevron:after{content:'';width:6px;height:6px;border-right:1.6px solid currentColor;border-bottom:1.6px solid currentColor;transform:translateY(-2px) rotate(45deg);transition:transform .18s ease}
+.role-admin .dashboard-header .account-trigger[aria-expanded=true] .account-chevron:after{transform:translateY(1px) rotate(225deg);color:#967c4d}
+.role-admin .dashboard-header .account-popover{width:180px;top:calc(100% + 7px);padding:.3125rem;border:1px solid #e9eaec;border-radius:9px;box-shadow:0 6px 20px #25282d14,0 1px 4px #25282d08}
+.role-admin .dashboard-header .account-popover a,.role-admin .dashboard-header .account-popover button{display:flex;align-items:center;width:100%;min-height:34px;padding:.5rem .625rem;border:0;border-radius:5px;background:transparent;color:#30343b;text-align:left;text-decoration:none;font-size:.75rem;line-height:1.125rem;font-weight:400}
+.role-admin .dashboard-header .account-popover a:hover,.role-admin .dashboard-header .account-popover button:hover{background:#f5f0e6;color:#80663a}
+@media(max-width:600px){.role-admin .dashboard-header .latte-header-user .sidebar-account .account-trigger{min-width:0;padding:.4375rem}.role-admin .dashboard-header .account-trigger .account-chevron{display:none}}
+
+/* Match the landlord overview title beside the sidebar toggle. */
+.role-admin .dashboard-header .admin-account-breadcrumb{display:flex;align-items:center;gap:.75rem;min-width:0;font-size:1rem;font-weight:600;line-height:1.5}
+.role-admin .admin-account-breadcrumb a{color:#25282d80;text-decoration:none;white-space:nowrap}
+.role-admin .admin-account-breadcrumb a:hover{color:#30343b}
+.role-admin .admin-account-breadcrumb>span{color:#25282d66;font-weight:400}
+.role-admin .admin-account-breadcrumb strong{color:#25282d;font-size:1rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:700px){.role-admin .dashboard-header .admin-account-breadcrumb{flex:1;gap:.375rem;font-size:.75rem;flex-wrap:wrap}.role-admin .admin-account-breadcrumb strong{font-size:.75rem;white-space:normal}}
+.role-admin .dashboard-header>.page-title{font-size:1rem;font-weight:600;line-height:1.5;color:#25282d;margin:0}
+.role-admin .dashboard-header #sidebar-toggle.header-sidebar-toggle{width:36px;height:36px;flex:0 0 36px;border-radius:8px;padding:7px;background:#e9eaec;color:#606b79}
+
+/* Building management follows the Admin Bootstrap dashboard. */
+.role-admin .building-bootstrap{max-width:none;font-size:.8125rem;line-height:1.5}
+.role-admin .building-bootstrap>.d-flex{align-items:center!important;margin-bottom:1rem!important}
+.role-admin .building-bootstrap h1{font-size:1.75rem;line-height:1.3;letter-spacing:-.04rem;margin-bottom:.375rem!important}
+.role-admin .building-bootstrap>div>div>p{font-size:.875rem;line-height:1.5}
+.role-admin .building-bootstrap>.d-flex>.btn{min-height:44px;border-radius:8px;padding:.625rem 1rem;font-size:.8125rem;line-height:1.5}
+.role-admin .building-bootstrap .building-stats{gap:1rem;margin-bottom:1rem}
+.role-admin .building-bootstrap .building-stats article{padding:1rem;border-radius:12px;border-color:#e4e7eb;border-top:3px solid #bfa77a;display:flex;flex-direction:column}
+.role-admin .building-bootstrap .building-stat-heading{font-size:.75rem;margin-bottom:.625rem;line-height:1.5}
+.role-admin .building-bootstrap .building-stat-icon{width:36px;height:36px;background:#e9eaec;border-radius:10px}
+.role-admin .building-bootstrap .building-stats strong{font-size:1.875rem;line-height:1.25}
+.role-admin .building-bootstrap .building-stats p{font-size:.75rem;line-height:1.5;margin:.375rem 0 0}
+.role-admin .building-bootstrap .building-overview-grid{gap:1rem;margin-bottom:1rem;grid-template-columns:minmax(0,1.8fr) minmax(280px,1fr)}
+.role-admin .building-bootstrap .building-panel{padding:1rem;border-radius:12px;border-color:#e4e7eb}
+.role-admin .building-bootstrap .building-panel-heading{gap:.75rem;margin-bottom:.875rem;padding-bottom:.75rem;border-bottom:1px solid #e9eaec}
+.role-admin .building-bootstrap .building-panel-heading h2{font-size:1.0625rem;font-weight:700;line-height:1.4}
+.role-admin .building-bootstrap .building-collection{gap:1rem}
+.role-admin .building-bootstrap .building-chart-empty{height:160px;font-size:.8125rem;line-height:1.5;background-color:#f8f9fa}
+.role-admin .building-bootstrap .building-collection-summary{padding-left:1rem}
+.role-admin .building-bootstrap .building-alert-row{padding:.75rem 0;gap:.75rem}
+.role-admin .building-bootstrap .building-alert-row strong{font-size:.8125rem;line-height:1.5}
+.role-admin .building-bootstrap .building-alert-row small{font-size:.75rem;line-height:1.5;margin-top:.25rem}
+.role-admin .building-bootstrap .building-toolbar{gap:.75rem;margin-bottom:1rem;align-items:center}
+.role-admin .building-bootstrap .building-search,.role-admin .building-bootstrap .building-toolbar .form-select,.role-admin .building-bootstrap .building-sort{min-height:44px;border-radius:8px;font-size:.8125rem}
+.role-admin .building-bootstrap .building-toolbar .form-select:focus{border-color:#bfa77a;box-shadow:0 0 0 3px #bfa77a26}
+.role-admin .building-bootstrap .table-responsive{border:1px solid #e9eaec;border-radius:9px}
+.role-admin .building-bootstrap .table{margin-bottom:0;font-size:.8125rem}
+.role-admin .building-bootstrap .table th,.role-admin .building-bootstrap .table td{padding:.625rem .75rem;vertical-align:middle;line-height:1.5;border-color:#e9eaec}
+.role-admin .building-bootstrap .building-row-note{margin-top:.25rem;line-height:1.5}
+.role-admin .building-bootstrap .table th .text-secondary{margin-top:.25rem;line-height:1.5}
+.role-admin .building-bootstrap .building-collection-summary p{margin:0;line-height:1.5}
+.role-admin .building-bootstrap .building-collection-summary strong{margin:.75rem 0;line-height:1.25}
+.role-admin .building-bootstrap .building-attention-footer{padding-top:.75rem;line-height:1.5}
+.role-admin .building-bootstrap .table thead th{background:#f7f8f9;color:#697380;font-size:.6875rem;font-weight:600;white-space:nowrap}
+.role-admin .building-bootstrap .building-detail-link{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:.375rem .625rem;border:1px solid #dfe3e8;border-radius:7px;color:#606b79;background:#fff;font-size:.75rem;text-decoration:none}
+.role-admin .building-bootstrap .building-detail-link:hover{border-color:#bfa77a;background:#faf7ef;color:#80663a}
+@media(max-width:1000px){.role-admin .building-bootstrap .building-overview-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.role-admin .building-bootstrap h1{font-size:1.5rem}.role-admin .building-bootstrap>.d-flex>.btn{width:100%}.role-admin .building-bootstrap .building-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}.role-admin .building-bootstrap .building-stats article{padding:.875rem}.role-admin .building-bootstrap .building-search{max-width:none;flex-basis:100%}.role-admin .building-bootstrap .building-toolbar .form-select{flex:1 1 140px;max-width:none;min-width:0}}
+
+/* Admin building creation matches the shared Bootstrap workspace. */
+.role-admin .building-create-bootstrap{max-width:none;font-size:.8125rem;line-height:1.5}
+.role-admin .building-create-bootstrap .be-heading h1{font-size:1.75rem;line-height:1.3;letter-spacing:-.04rem;margin-bottom:.375rem}
+.role-admin .building-create-bootstrap .be-heading p{font-size:.875rem;line-height:1.5}
+.role-admin .building-create-bootstrap .be-layout{grid-template-columns:minmax(0,1fr) 300px;gap:1rem}
+.role-admin .building-create-bootstrap .be-card{padding:1.25rem;border-color:#e4e7eb;border-radius:12px;box-shadow:0 2px 8px #25282d04}
+.role-admin .building-create-bootstrap .be-section-heading{gap:.75rem;align-items:center;padding-bottom:.875rem;margin-bottom:1rem;border-color:#e9eaec}
+.role-admin .building-create-bootstrap .be-section-heading h2{font-size:1rem;font-weight:700;line-height:1.4;margin-bottom:.25rem}
+.role-admin .building-create-bootstrap .be-section-heading p{font-size:.75rem;line-height:1.5}
+.role-admin .building-create-bootstrap .be-fields,.role-admin .building-create-bootstrap .bc-address .be-fields{gap:1rem}
+.role-admin .building-create-bootstrap .be-fields label,.role-admin .building-create-bootstrap .bc-address .be-fields label{font-size:.75rem;line-height:1.5;margin-bottom:.375rem}
+.role-admin .building-create-bootstrap .be-fields input:not([type=radio]),.role-admin .building-create-bootstrap .be-fields select,.role-admin .building-create-bootstrap .be-fields textarea{border-radius:8px;border-color:#dfe3e8;background:#fff;font-size:.8125rem;line-height:1.5;padding:.625rem .75rem;min-height:44px}
+.role-admin .building-create-bootstrap .be-fields input:read-only,.role-admin .building-create-bootstrap .be-fields input:disabled{background:#f7f8f9;color:#81858d}
+.role-admin .building-create-bootstrap .be-fields input:focus,.role-admin .building-create-bootstrap .be-fields select:focus,.role-admin .building-create-bootstrap .be-fields textarea:focus{border-color:#bfa77a;box-shadow:0 0 0 3px #bfa77a26}
+.role-admin .building-create-bootstrap .be-fields small{display:block;font-size:.6875rem;margin-top:.375rem;line-height:1.5}
+.role-admin .building-create-bootstrap .bc-types .bc-type{padding:.875rem;border-radius:9px;gap:.75rem;min-height:80px}
+.role-admin .building-create-bootstrap .bc-types strong{font-size:.8125rem;line-height:1.5}
+.role-admin .building-create-bootstrap .bc-summary{border-top:3px solid #bfa77a}
+.role-admin .building-create-bootstrap .bc-summary-title{font-size:1rem;line-height:1.5;padding-bottom:.875rem;margin-bottom:0}
+.role-admin .building-create-bootstrap .bc-summary-name{padding-top:1rem}
+.role-admin .building-create-bootstrap .bc-summary dl>div{grid-template-columns:80px minmax(0,1fr);gap:.75rem;margin:.875rem 0;font-size:.75rem;line-height:1.5}
+.role-admin .building-create-bootstrap .bc-summary dd{margin:0;overflow-wrap:anywhere}
+.role-admin .building-create-bootstrap .bc-scale{background:#f7f8f9;border-radius:9px;padding:1rem}
+.role-admin .building-create-bootstrap .be-footer{gap:1rem;margin-top:1rem;padding:1rem 1.25rem;border:1px solid #e4e7eb;border-radius:12px;background:#fff;flex-wrap:wrap}
+.role-admin .building-create-bootstrap .be-footer .btn{min-height:44px;padding:.625rem 1rem;border-radius:8px;font-size:.8125rem;font-weight:600;line-height:1.5}
+@media(max-width:1000px){.role-admin .building-create-bootstrap .be-layout{grid-template-columns:1fr}.role-admin .building-create-bootstrap .be-aside{position:static}}
+@media(max-width:600px){.role-admin .building-create-bootstrap .be-heading h1{font-size:1.5rem}.role-admin .building-create-bootstrap .be-card{padding:1rem}.role-admin .building-create-bootstrap .be-fields,.role-admin .building-create-bootstrap .bc-address .be-fields{grid-template-columns:1fr}.role-admin .building-create-bootstrap .be-fields>div{grid-column:auto}.role-admin .building-create-bootstrap .be-footer{padding:1rem}.role-admin .building-create-bootstrap .be-footer>div{display:flex;gap:.75rem;width:100%}.role-admin .building-create-bootstrap .be-footer .btn{flex:1}}
+
+/* Compact, consistent spacing on Admin building creation. */
+.role-admin .building-create-bootstrap .be-heading{margin-bottom:1rem}
+.role-admin .building-create-bootstrap .be-card{padding:1rem}
+.role-admin .building-create-bootstrap .be-section-heading{padding-bottom:.75rem;margin-bottom:.875rem}
+.role-admin .building-create-bootstrap .be-section-heading h2{margin-bottom:.25rem;line-height:1.5}
+.role-admin .building-create-bootstrap .be-section-heading p,.role-admin .building-create-bootstrap .be-fields small{line-height:1.5}
+.role-admin .building-create-bootstrap .be-fields,.role-admin .building-create-bootstrap .bc-address .be-fields{row-gap:.875rem}
+.role-admin .building-create-bootstrap .be-fields small{margin-top:.25rem}
+.role-admin .building-create-bootstrap .bc-types .bc-type{min-height:72px;padding:.75rem}
+.role-admin .building-create-bootstrap .bc-summary-name{padding-top:.875rem}
+.role-admin .building-create-bootstrap .bc-summary-name small{display:block;margin-top:.25rem;line-height:1.5}
+.role-admin .building-create-bootstrap .bc-summary dl{margin:1rem 0 0}
+.role-admin .building-create-bootstrap .bc-summary dl>div{margin:.75rem 0;line-height:1.5}
+.role-admin .building-create-bootstrap .bc-summary-foot{margin:1rem 0 0;line-height:1.5}
+.role-admin .building-create-bootstrap .bc-photo>p,.role-admin .building-create-bootstrap .bc-note p{line-height:1.5;margin-top:.5rem}
+.role-admin .building-create-bootstrap .be-fields .field-validation-valid{display:none}
+.role-admin .building-create-bootstrap .be-fields .field-validation-error{display:block;margin-top:.25rem;line-height:1.5}
+
+/* Admin building details share the Bootstrap dashboard rhythm. */
+.role-admin .building-detail-bootstrap{max-width:none;font-size:.8125rem;line-height:1.5}
+.role-admin .building-detail-bootstrap .bd-heading{gap:1rem;margin-bottom:1rem;align-items:center;flex-wrap:wrap}
+.role-admin .building-detail-bootstrap .bd-heading h1{font-size:1.75rem;line-height:1.3;letter-spacing:-.04rem;margin:0}
+.role-admin .building-detail-bootstrap .bd-title{gap:.75rem;flex-wrap:wrap}
+.role-admin .building-detail-bootstrap .bd-button{min-height:44px;padding:.625rem 1rem;border-radius:8px;font-size:.8125rem;line-height:1.5}
+.role-admin .building-detail-bootstrap .bd-overview,.role-admin .building-detail-bootstrap .bd-stats article,.role-admin .building-detail-bootstrap .bd-room-panel{border-color:#e4e7eb;border-radius:12px;box-shadow:0 2px 8px #25282d04}
+.role-admin .building-detail-bootstrap .bd-overview{padding:1rem;gap:1rem;margin-bottom:1rem}
+.role-admin .building-detail-bootstrap .bd-address{font-size:.875rem;line-height:1.5;margin-bottom:.75rem;overflow-wrap:anywhere}
+.role-admin .building-detail-bootstrap .bd-overview .bd-facts small,.role-admin .building-detail-bootstrap .bd-management>small{font-size:.75rem;line-height:1.5;margin-bottom:.25rem}
+.role-admin .building-detail-bootstrap .bd-overview .bd-facts strong,.role-admin .building-detail-bootstrap .bd-management>strong{font-size:.8125rem;line-height:1.5;font-weight:600}
+.role-admin .building-detail-bootstrap .bd-stats{gap:1rem;margin-bottom:1rem}
+.role-admin .building-detail-bootstrap .bd-stats article{padding:1rem;border-top:3px solid #bfa77a}
+.role-admin .building-detail-bootstrap .bd-stats small{font-size:.75rem;line-height:1.5}
+.role-admin .building-detail-bootstrap .bd-stats small span{width:36px;height:36px;border-radius:10px;background:#e9eaec;color:#606b79}
+.role-admin .building-detail-bootstrap .bd-stats article>strong{font-size:1.875rem;line-height:1.25;margin-top:.625rem}
+.role-admin .building-detail-bootstrap .bd-stats p{font-size:.75rem;line-height:1.5;margin:.375rem 0 .625rem}
+.role-admin .building-detail-bootstrap .bd-attention{margin-bottom:1rem;padding:.875rem 1rem;border-radius:9px;font-size:.8125rem;line-height:1.5;gap:.75rem;flex-wrap:wrap}
+.role-admin .building-detail-bootstrap .bd-panel-heading{padding:1rem 1rem .75rem;gap:.75rem;flex-wrap:wrap}
+.role-admin .building-detail-bootstrap .bd-panel-heading h2{font-size:1.0625rem;font-weight:700;line-height:1.5;margin:0}
+.role-admin .building-detail-bootstrap .bd-tabs{padding-inline:1rem;gap:1.25rem}
+.role-admin .building-detail-bootstrap .bd-tabs a{font-size:.8125rem;line-height:1.5;padding:.75rem 0}
+.role-admin .building-detail-bootstrap .bd-filters{padding:.875rem 1rem;gap:.75rem;align-items:center;margin:0}
+.role-admin .building-detail-bootstrap .bd-filters .bd-room-search{height:44px;border-radius:8px;background:#fff}
+.role-admin .building-detail-bootstrap .bd-filter-dropdown summary{min-height:44px;border-radius:8px;font-size:.8125rem;line-height:1.5}
+.role-admin .building-detail-bootstrap .bd-table{font-size:.8125rem;margin-bottom:0}
+.role-admin .building-detail-bootstrap .bd-table th{padding:.75rem 1rem;background:#f7f8f9;color:#697380;font-size:.6875rem;line-height:1.5}
+.role-admin .building-detail-bootstrap .bd-table td{padding:.625rem 1rem;line-height:1.5;vertical-align:middle;border-color:#e9eaec}
+.role-admin .building-detail-bootstrap .bd-table small{margin-top:.25rem;line-height:1.5}
+.role-admin .building-detail-bootstrap .bd-muted{margin:.75rem 0 0;line-height:1.5}
+.role-admin .building-detail-bootstrap .bd-room-status{padding:.375rem .625rem;font-size:.6875rem;line-height:1.5}
+.role-admin .building-detail-bootstrap .bd-pagination{padding:1rem;font-size:.75rem;line-height:1.5}
+@media(max-width:600px){.role-admin .building-detail-bootstrap .bd-heading h1{font-size:1.5rem}.role-admin .building-detail-bootstrap .bd-heading>.bd-actions{width:100%;gap:.75rem}.role-admin .building-detail-bootstrap .bd-overview{padding:1rem;gap:.75rem}.role-admin .building-detail-bootstrap .bd-stats{gap:.75rem;grid-template-columns:repeat(2,minmax(0,1fr))}.role-admin .building-detail-bootstrap .bd-stats article{padding:.875rem}.role-admin .building-detail-bootstrap .bd-stats article>strong{font-size:1.5rem}.role-admin .building-detail-bootstrap .bd-filter-dropdown{flex:1 1 140px;min-width:0}.role-admin .building-detail-bootstrap .bd-filter-dropdown summary{font-size:.75rem}}
+
+/* Admin building editor: shared Bootstrap card and control sizes. */
+.role-admin .building-edit-bootstrap{max-width:none;font-size:.8125rem;line-height:1.5}
+.role-admin .building-edit-bootstrap .be-heading{margin-bottom:1rem;gap:1rem;flex-wrap:wrap}
+.role-admin .building-edit-bootstrap .be-heading h1{font-size:1.75rem;line-height:1.3;letter-spacing:-.04rem;margin-bottom:.375rem}
+.role-admin .building-edit-bootstrap .be-heading p{font-size:.875rem;line-height:1.5}
+.role-admin .building-edit-bootstrap .be-tabs{gap:1.5rem;margin-bottom:1rem;border-color:#e9eaec}
+.role-admin .building-edit-bootstrap .be-tabs a{font-size:.8125rem;line-height:1.5;padding-bottom:.75rem}
+.role-admin .building-edit-bootstrap .be-layout{grid-template-columns:minmax(0,1fr) 300px;gap:1rem}
+.role-admin .building-edit-bootstrap .be-sections,.role-admin .building-edit-bootstrap .be-aside{gap:1rem}
+.role-admin .building-edit-bootstrap .be-card{padding:1rem!important;border:1px solid #e4e7eb;border-radius:12px;box-shadow:0 2px 8px #25282d04}
+.role-admin .building-edit-bootstrap .be-section-heading{gap:.75rem;align-items:center;padding-bottom:.75rem;margin-bottom:1rem;border-color:#e9eaec}
+.role-admin .building-edit-bootstrap .be-section-heading h2{font-size:1rem;line-height:1.5;font-weight:700;margin-bottom:.25rem}
+.role-admin .building-edit-bootstrap .be-section-heading p{font-size:.75rem;line-height:1.5}
+.role-admin .building-edit-bootstrap .be-fields label{font-size:.75rem!important;line-height:1.5;margin-bottom:.375rem!important}
+.role-admin .building-edit-bootstrap .be-fields .form-control,.role-admin .building-edit-bootstrap .be-fields .form-select{background-color:#fff;border-color:#dfe3e8;border-radius:8px!important;font-size:.8125rem!important;line-height:1.5!important;padding:.625rem .75rem!important}
+.role-admin .building-edit-bootstrap .be-fields .form-select{padding-right:2rem!important}
+.role-admin .building-edit-bootstrap .be-fields input[readonly]{background:#f7f8f9;color:#81858d}
+.role-admin .building-edit-bootstrap .be-fields :focus{border-color:#bfa77a;box-shadow:0 0 0 3px #bfa77a26}
+.role-admin .building-edit-bootstrap .be-unit input{padding-right:4.1rem!important}
+.role-admin .building-edit-bootstrap .be-image{border-radius:9px;margin:1rem 0}
+.role-admin .building-edit-bootstrap .be-image-heading h2,.role-admin .building-edit-bootstrap .be-current h2{font-size:1rem;line-height:1.5;font-weight:700}
+.role-admin .building-edit-bootstrap .be-current{border-top:3px solid #bfa77a}
+.role-admin .building-edit-bootstrap .be-change-image{min-height:44px;border-radius:8px;font-size:.8125rem}
+.role-admin .building-edit-bootstrap .be-image-note{font-size:.75rem;line-height:1.5}
+.role-admin .building-edit-bootstrap .be-footer{margin-top:1rem;padding:1rem;border:1px solid #e4e7eb;border-radius:12px;background:#fff}
+.role-admin .building-edit-bootstrap .be-footer .btn{min-height:44px;border-radius:8px;padding:.625rem 1rem;font-size:.8125rem;line-height:1.5}
+@media(max-width:1000px){.role-admin .building-edit-bootstrap .be-layout{grid-template-columns:1fr}.role-admin .building-edit-bootstrap .be-aside{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.role-admin .building-edit-bootstrap .be-heading h1{font-size:1.5rem}.role-admin .building-edit-bootstrap .be-aside{grid-template-columns:1fr}.role-admin .building-edit-bootstrap .be-tabs{gap:1rem}.role-admin .building-edit-bootstrap .be-footer .btn{flex:1}}
+
+/* Consistent line and field spacing in the Admin building editor. */
+.role-admin .building-edit-bootstrap .be-section-heading{margin-bottom:.875rem}
+.role-admin .building-edit-bootstrap #be-general .be-fields,.role-admin .building-edit-bootstrap #be-address .be-fields,.role-admin .building-edit-bootstrap #be-size .be-fields,.role-admin .building-edit-bootstrap #be-manager .be-fields{row-gap:.875rem}
+.role-admin .building-edit-bootstrap .be-card p{line-height:1.5}
+.role-admin .building-edit-bootstrap .be-current>strong{display:block;margin-top:.75rem;line-height:1.5}
+.role-admin .building-edit-bootstrap .be-current-stats{margin-top:.75rem;padding-top:.75rem}
+.role-admin .building-edit-bootstrap .be-current-stats small{display:block;margin-top:.25rem;line-height:1.5}
+.role-admin .building-edit-bootstrap .be-image-note{margin:.75rem 0 0;line-height:1.5}
+.role-admin .building-edit-bootstrap .be-notice p{margin:.375rem 0 .75rem;line-height:1.5}
+.role-admin .building-edit-bootstrap .be-updated,.role-admin .building-edit-bootstrap .be-occupancy{line-height:1.5}
+.role-admin .building-edit-bootstrap .be-fields .field-validation-valid{display:none}
+.role-admin .building-edit-bootstrap .be-fields .field-validation-error{display:block;margin-top:.25rem;line-height:1.5}
+
+/* Admin utility configuration matches the Bootstrap building workspace. */
+.role-admin .utility-bootstrap{max-width:none;font-size:.8125rem;line-height:1.5}
+.role-admin .utility-bootstrap .uc-heading{gap:1rem;margin-bottom:1rem;flex-wrap:wrap}
+.role-admin .utility-bootstrap .uc-heading h1{font-size:1.75rem;line-height:1.3;letter-spacing:-.04rem;margin-bottom:.375rem}
+.role-admin .utility-bootstrap .uc-heading p{font-size:.875rem;line-height:1.5}
+.role-admin .utility-bootstrap .uc-tabs{margin-bottom:1rem;gap:1.5rem}
+.role-admin .utility-bootstrap .uc-tabs a,.role-admin .utility-bootstrap .uc-tabs>span{font-size:.8125rem;line-height:1.5;padding:.75rem 0}
+.role-admin .utility-bootstrap .uc-card{padding:1rem;border-color:#e4e7eb;border-radius:12px;box-shadow:0 2px 8px #25282d04;background:#fff}
+.role-admin .utility-bootstrap .uc-title,.role-admin .utility-bootstrap .uc-service-heading{padding-bottom:.75rem;margin-bottom:1rem!important;gap:.75rem}
+.role-admin .utility-bootstrap .uc-title h2,.role-admin .utility-bootstrap .uc-service-heading strong{font-size:1rem;font-weight:700;line-height:1.5}
+.role-admin .utility-bootstrap .uc-title p,.role-admin .utility-bootstrap .uc-service-heading small{font-size:.75rem;line-height:1.5}
+.role-admin .utility-bootstrap label,.role-admin .utility-bootstrap .form-label{font-size:.75rem;line-height:1.5;margin-bottom:.375rem}
+.role-admin .utility-bootstrap .form-control,.role-admin .utility-bootstrap .form-select{height:44px;border-color:#dfe3e8;border-radius:8px;background-color:#fff;padding:.625rem .75rem;font-size:.8125rem;line-height:1.5}
+.role-admin .utility-bootstrap .form-select{padding-right:2rem}
+.role-admin .utility-bootstrap .uc-price-unit input{padding-right:5rem}
+.role-admin .utility-bootstrap .form-control:focus,.role-admin .utility-bootstrap .form-select:focus{border-color:#bfa77a;box-shadow:0 0 0 3px #bfa77a26}
+.role-admin .utility-bootstrap .uc-scope-options .uc-scope-option,.role-admin .utility-bootstrap .uc-method-options button{border-radius:8px;min-height:44px;font-size:.8125rem;line-height:1.5}
+.role-admin .utility-bootstrap .uc-method-options{gap:.75rem;margin-bottom:1rem}
+.role-admin .utility-bootstrap .uc-strip{padding:.75rem;font-size:.75rem;line-height:1.5}
+.role-admin .utility-bootstrap .uc-history{font-size:.75rem;line-height:1.5}
+.role-admin .utility-bootstrap .uc-summary h2,.role-admin .utility-bootstrap .uc-example h2{font-size:1rem;font-weight:700;line-height:1.5}
+.role-admin .utility-bootstrap .uc-summary h3{font-size:.875rem;line-height:1.5}
+.role-admin .utility-bootstrap .uc-summary{border-top:3px solid #bfa77a}
+.role-admin .utility-bootstrap .uc-notice{padding:.875rem;font-size:.75rem;line-height:1.5;border-radius:9px}
+.role-admin .utility-bootstrap .uc-footer{padding:1rem;margin-top:1rem;border:1px solid #e4e7eb;border-radius:12px;background:#fff;gap:1rem;flex-wrap:wrap}
+.role-admin .utility-bootstrap .uc-footer .btn{min-height:44px;padding:.625rem 1rem;border-radius:8px;font-size:.8125rem;font-weight:600;line-height:1.5}
+@media(max-width:1000px){.role-admin .utility-bootstrap .uc-layout{grid-template-columns:1fr}.role-admin .utility-bootstrap .uc-aside{position:static}}
+@media(max-width:600px){.role-admin .utility-bootstrap .uc-heading h1{font-size:1.5rem}.role-admin .utility-bootstrap .uc-tabs{gap:1rem}.role-admin .utility-bootstrap .uc-two,.role-admin .utility-bootstrap .uc-method-options{grid-template-columns:1fr}.role-admin .utility-bootstrap .uc-footer>div{display:flex;gap:.75rem;width:100%}.role-admin .utility-bootstrap .uc-footer .btn{flex:1}}
+
+/* Even spacing for Admin utility configuration. */
+.role-admin .utility-bootstrap .uc-title,.role-admin .utility-bootstrap .uc-service-heading{margin-bottom:.875rem!important}
+.role-admin .utility-bootstrap .uc-title h2,.role-admin .utility-bootstrap .uc-service-heading strong{margin-bottom:.25rem}
+.role-admin .utility-bootstrap .uc-title p,.role-admin .utility-bootstrap .uc-service-heading small{margin-top:.25rem;line-height:1.5}
+.role-admin .utility-bootstrap .uc-electric-price-row,.role-admin .utility-bootstrap .uc-water-price-row,.role-admin .utility-bootstrap .uc-two{row-gap:.875rem}
+.role-admin .utility-bootstrap .uc-method-options{gap:.5rem .75rem;margin-bottom:.875rem}
+.role-admin .utility-bootstrap .uc-scope-options .uc-scope-option{margin-bottom:0}
+.role-admin .utility-bootstrap .uc-history{margin-bottom:.875rem}
+.role-admin .utility-bootstrap .uc-scope-hint{margin:.5rem 0 0;line-height:1.5}
+.role-admin .utility-bootstrap .uc-summary h2,.role-admin .utility-bootstrap .uc-example h2{margin-bottom:.75rem}
+.role-admin .utility-bootstrap .uc-summary h3{margin:.25rem 0 .75rem}
+.role-admin .utility-bootstrap .uc-example-item p{margin:.5rem 0;line-height:1.5}
+.role-admin .utility-bootstrap .uc-note p{margin:.5rem 0 0;line-height:1.5}
+.role-admin .utility-bootstrap .field-validation-valid{display:none}
+.role-admin .utility-bootstrap .field-validation-error{display:block;margin-top:.25rem;font-size:.75rem;line-height:1.5}
+
+/* Admin maintenance overview uses Bootstrap dashboard proportions. */
+.role-admin .maintenance-page{max-width:none;font-size:.8125rem;line-height:1.5}
+.role-admin .maintenance-page .mt-heading{gap:1rem;flex-wrap:wrap;margin-bottom:1rem;align-items:center}
+.role-admin .maintenance-page .mt-heading h1{font-size:1.75rem;font-weight:750;line-height:1.3;letter-spacing:-.04rem;margin:0 0 .375rem}
+.role-admin .maintenance-page .mt-heading p{font-size:.875rem;line-height:1.5;margin:0;color:#7a838f}
+.role-admin .maintenance-page button,.role-admin .maintenance-page input,.role-admin .maintenance-page select{min-height:44px;border-radius:8px;font-size:.8125rem;line-height:1.5}
+.role-admin .maintenance-page .mt-heading>div:last-child{display:flex;flex-wrap:wrap;gap:.75rem}
+.role-admin .maintenance-page .mt-stats{gap:1rem;margin-bottom:1rem}
+.role-admin .maintenance-page .mt-stats>section{padding:1rem;gap:.875rem;border:1px solid #e4e7eb;border-top:3px solid #bfa77a;border-radius:12px;background:#fff}
+.role-admin .maintenance-page .mt-icon{width:38px;height:38px;flex:0 0 38px;border-radius:10px;background:#e9eaec}
+.role-admin .maintenance-page .mt-stats small{font-size:.75rem;line-height:1.5}
+.role-admin .maintenance-page .mt-stats strong{font-size:1.875rem;line-height:1.25;margin:.375rem 0}
+.role-admin .maintenance-page .mt-stats p{font-size:.75rem;line-height:1.5;margin:0;color:#81858d}
+.role-admin .maintenance-page .mt-layout{grid-template-columns:minmax(0,1fr) 340px;gap:1rem}
+.role-admin .maintenance-page .mt-main{min-width:0}
+.role-admin .maintenance-page .mt-tabs{gap:1.25rem;overflow-x:auto;white-space:nowrap;margin-bottom:.875rem}
+.role-admin .maintenance-page .mt-tabs span{font-size:.8125rem;line-height:1.5;padding:.75rem 0}
+.role-admin .maintenance-page .mt-filters{gap:.75rem;flex-wrap:wrap;margin-bottom:.875rem}
+.role-admin .maintenance-page .mt-filters input{min-width:0;flex:1 1 240px;padding:.625rem .75rem}
+.role-admin .maintenance-page .mt-filters select{padding:.625rem 2rem .625rem .75rem}
+.role-admin .maintenance-page .mt-warning{padding:.875rem 1rem;border-radius:9px;font-size:.75rem;line-height:1.5;margin-bottom:1rem}
+.role-admin .maintenance-page .mt-card{border:1px solid #e4e7eb;border-radius:12px;background:#fff;box-shadow:0 2px 8px #25282d04}
+.role-admin .maintenance-page .mt-list table{width:100%;min-width:830px;font-size:.8125rem}
+.role-admin .maintenance-page .mt-list th{padding:.75rem;background:#f7f8f9;color:#697380;font-size:.6875rem;line-height:1.5;font-weight:600}
+.role-admin .maintenance-page .mt-list td{padding:.75rem;line-height:1.5;vertical-align:middle;border-color:#e9eaec}
+.role-admin .maintenance-page .mt-list td small{font-size:.6875rem;line-height:1.5;margin-top:.25rem}
+.role-admin .maintenance-page .mt-badge{font-size:.6875rem;line-height:1.5;padding:.375rem .625rem;border-radius:20px;white-space:nowrap}
+.role-admin .maintenance-page .mt-detail>header,.role-admin .maintenance-page .mt-schedule>header{padding:1rem;border-bottom:1px solid #e9eaec}
+.role-admin .maintenance-page h2{font-size:1.0625rem;line-height:1.5;font-weight:700}
+.role-admin .maintenance-page .mt-detail-body{padding:1rem}
+.role-admin .maintenance-page .mt-detail-body h3{font-size:.875rem;line-height:1.5;margin:1rem 0 .5rem}
+.role-admin .maintenance-page .mt-detail-body p{font-size:.8125rem;line-height:1.5}
+.role-admin .maintenance-page .mt-detail-body small{font-size:.6875rem;line-height:1.5}
+.role-admin .maintenance-page .mt-room,.role-admin .maintenance-page .mt-appointment{padding:1rem;border-radius:9px}
+.role-admin .maintenance-page .mt-events article{padding:1rem;gap:1rem}
+.role-admin .maintenance-page .mt-events h3{font-size:.875rem;line-height:1.5}
+.role-admin .maintenance-page .mt-events p,.role-admin .maintenance-page .mt-demo-note{font-size:.75rem;line-height:1.5}
+@media(max-width:1100px){.role-admin .maintenance-page .mt-layout{grid-template-columns:1fr}.role-admin .maintenance-page .mt-detail{position:static}}
+@media(max-width:600px){.role-admin .maintenance-page .mt-heading h1{font-size:1.5rem}.role-admin .maintenance-page .mt-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}.role-admin .maintenance-page .mt-stats>section{padding:.875rem;flex-wrap:wrap}.role-admin .maintenance-page .mt-heading>div:last-child{width:100%}.role-admin .maintenance-page .mt-heading button{flex:1}.role-admin .maintenance-page .mt-filters select{flex:1;min-width:130px}.role-admin .maintenance-page .mt-warning{display:flex;flex-wrap:wrap;gap:.5rem}}
+
+/* Consistent spacing in Admin maintenance cards and details. */
+.role-admin .maintenance-page .mt-stats strong{margin:.25rem 0 .375rem}
+.role-admin .maintenance-page .mt-list td{padding:.625rem .75rem;line-height:1.5}
+.role-admin .maintenance-page .mt-list td strong{line-height:1.5}
+.role-admin .maintenance-page .mt-detail>header h2,.role-admin .maintenance-page .mt-schedule>header h2{margin:0;line-height:1.5}
+.role-admin .maintenance-page .mt-detail-body>h2{margin:.75rem 0 .375rem;line-height:1.5}
+.role-admin .maintenance-page .mt-detail-body>p{margin:0 0 .75rem;line-height:1.5}
+.role-admin .maintenance-page .mt-detail-body h3{margin:1rem 0 .5rem;line-height:1.5}
+.role-admin .maintenance-page .mt-room{margin:.75rem 0 1rem;padding:.875rem}
+.role-admin .maintenance-page .mt-contact{margin-top:1rem;padding-top:1rem;line-height:1.5}
+.role-admin .maintenance-page .mt-contact-actions{margin-top:.75rem;gap:.5rem}
+.role-admin .maintenance-page .mt-appointment{margin-top:1rem;padding:.875rem}
+.role-admin .maintenance-page .mt-appointment p{margin:.375rem 0 0;line-height:1.5}
+.role-admin .maintenance-page .mt-timeline{margin:.75rem 0 1rem}
+.role-admin .maintenance-page .mt-timeline li{margin-bottom:.75rem}
+.role-admin .maintenance-page .mt-timeline strong{display:block;line-height:1.5;margin-top:.25rem}
+.role-admin .maintenance-page .mt-timeline p{margin:.25rem 0 0;line-height:1.5}
+.role-admin .maintenance-page .mt-events h3{margin:.375rem 0;line-height:1.5}
+.role-admin .maintenance-page .mt-events p{margin:0 0 .5rem;line-height:1.5}
+
+/* Admin revenue reports follow the shared Bootstrap dashboard. */
+.role-admin .report-bootstrap .bc-subtitle{font-size:.875rem;line-height:1.5}
+.role-admin .report-bootstrap .bc-filter-form{display:grid;grid-template-columns:minmax(190px,1.4fr) repeat(2,minmax(190px,1fr)) auto auto auto;gap:1rem;padding:1rem;align-items:end;border-radius:12px}
+.role-admin .report-bootstrap .bc-filter-group{width:auto;flex:none}
+.role-admin .report-bootstrap .bc-filter-limit{align-self:end;padding-bottom:.75rem;white-space:nowrap}
+.role-admin .report-bootstrap .bc-kpi-grid{gap:1rem}
+.role-admin .report-bootstrap .bc-kpi-card{padding:1rem;border-top:3px solid #bfa77a;display:flex;flex-direction:column;background:#fff}
+.role-admin .report-bootstrap .bc-kpi-label{font-size:.75rem;line-height:1.5;margin-bottom:.625rem;font-weight:600}
+.role-admin .report-bootstrap .bc-kpi-value{font-size:1.625rem;line-height:1.25;margin-bottom:.5rem}
+.role-admin .report-bootstrap .bc-kpi-hint{font-size:.75rem;line-height:1.5}
+.role-admin .report-bootstrap .bc-card-header{padding:1rem;align-items:center}
+.role-admin .report-bootstrap .bc-card-header h2{font-size:1.0625rem;line-height:1.5}
+.role-admin .report-bootstrap .bc-chart-wrapper{padding:1rem}
+.role-admin .report-bootstrap .bc-table th,.role-admin .report-bootstrap .bc-table td{padding:.75rem;line-height:1.5}
+.role-admin .report-bootstrap .report-select-toggle{box-shadow:0 1px 3px #25282d05}
+.role-admin .report-bootstrap .bc-filter-form .btn{width:auto}
+@media(max-width:1250px){.role-admin .report-bootstrap .bc-filter-form{grid-template-columns:repeat(3,minmax(0,1fr))}.role-admin .report-bootstrap .bc-filter-limit{align-self:center;padding:0}.role-admin .report-bootstrap .bc-kpi-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:800px){.role-admin .report-bootstrap .bc-filter-form{grid-template-columns:repeat(2,minmax(0,1fr))}.role-admin .report-bootstrap .bc-filter-group:first-child{grid-column:1/-1}.role-admin .report-bootstrap .bc-chart-grid,.role-admin .report-bootstrap .bc-bottom-grid{grid-template-columns:1fr}}
+@media(max-width:600px){.role-admin .report-bootstrap .bc-filter-form{grid-template-columns:1fr;gap:.875rem}.role-admin .report-bootstrap .bc-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}.role-admin .report-bootstrap .bc-kpi-card{padding:.875rem}.role-admin .report-bootstrap .bc-kpi-value{font-size:1.375rem}}
+
+/* Consistent vertical spacing in Admin reports. */
+.role-admin .report-bootstrap .bc-heading{margin-bottom:1rem}
+.role-admin .report-bootstrap .bc-filter-form{row-gap:.875rem}
+.role-admin .report-bootstrap .bc-label{margin-bottom:.375rem;line-height:1.5}
+.role-admin .report-bootstrap .bc-subtitle{margin-bottom:.875rem;line-height:1.5}
+.role-admin .report-bootstrap .bc-kpi-label{margin-bottom:.5rem}
+.role-admin .report-bootstrap .bc-kpi-value{margin-bottom:.375rem}
+.role-admin .report-bootstrap .bc-kpi-hint{margin:0;line-height:1.5}
+.role-admin .report-bootstrap .bc-card-header{padding:.875rem 1rem}
+.role-admin .report-bootstrap .bc-card-header h2{margin:0 0 .25rem;line-height:1.5}
+.role-admin .report-bootstrap .bc-card-header p{margin:0;line-height:1.5}
+.role-admin .report-bootstrap .bc-chart-wrapper{padding:.875rem 1rem}
+.role-admin .report-bootstrap .bc-axis-note{margin-bottom:.75rem;line-height:1.5}
+.role-admin .report-bootstrap .bc-table th,.role-admin .report-bootstrap .bc-table td{padding:.625rem .75rem;line-height:1.5}
+
+/* Admin debt dashboard shares Bootstrap workspace sizing. */
+.role-admin .debt-bootstrap{max-width:none;font-size:.8125rem;line-height:1.5}
+.role-admin .debt-bootstrap .debt-heading{gap:1rem;margin-bottom:1rem;align-items:center;flex-wrap:wrap}
+.role-admin .debt-bootstrap .debt-heading h1{font-size:1.75rem;line-height:1.3;letter-spacing:-.04rem;margin-bottom:.375rem}
+.role-admin .debt-bootstrap .debt-heading p{font-size:.875rem;line-height:1.5;margin:0}
+.role-admin .debt-bootstrap .debt-card{border:1px solid #e4e7eb;border-radius:12px;box-shadow:0 2px 8px #25282d04;background:#fff;margin-bottom:1rem}
+.role-admin .debt-bootstrap .debt-card>h2{font-size:1.0625rem;font-weight:700;line-height:1.5;padding:1rem;margin:0;border-bottom:1px solid #e9eaec}
+.role-admin .debt-bootstrap .debt-filter-grid,.role-admin .debt-bootstrap .debt-search-grid{gap:1rem;align-items:end}
+.role-admin .debt-bootstrap .debt-filters label{font-size:.75rem;line-height:1.5;font-weight:600}
+.role-admin .debt-bootstrap .form-control,.role-admin .debt-bootstrap .form-select{min-height:44px;border-radius:8px;border-color:#dfe3e8;background-color:#fff;padding:.625rem .75rem;font-size:.8125rem;line-height:1.5;font-weight:400}
+.role-admin .debt-bootstrap .form-select{padding-right:2rem}
+.role-admin .debt-bootstrap .form-control:focus,.role-admin .debt-bootstrap .form-select:focus{border-color:#bfa77a;box-shadow:0 0 0 3px #bfa77a26}
+.role-admin .debt-bootstrap .btn{min-height:44px;border-radius:8px;padding:.625rem .875rem;font-size:.8125rem;line-height:1.5;font-weight:600}
+.role-admin .debt-bootstrap .debt-filter-buttons{gap:.5rem;align-items:center}
+.role-admin .debt-bootstrap .debt-stats{gap:1rem;margin-bottom:1rem}
+.role-admin .debt-bootstrap .debt-stats>div{padding:1rem;border:1px solid #e4e7eb;border-top:3px solid #bfa77a;border-radius:12px;background:#fff}
+.role-admin .debt-bootstrap .debt-stats span{font-size:.75rem;line-height:1.5}
+.role-admin .debt-bootstrap .debt-stats strong{font-size:1.75rem;line-height:1.25;margin:.5rem 0 .375rem}
+.role-admin .debt-bootstrap .debt-stats small{font-size:.75rem;line-height:1.5}
+.role-admin .debt-bootstrap .debt-rule{padding:.875rem 1rem;border:1px solid #eee3cf;border-radius:9px;font-size:.75rem;line-height:1.5;margin-bottom:1rem}
+.role-admin .debt-bootstrap .debt-overview{gap:1rem;align-items:start}
+.role-admin .debt-bootstrap .table{font-size:.8125rem;margin-bottom:0}
+.role-admin .debt-bootstrap .table th,.role-admin .debt-bootstrap .table td{padding:.75rem;line-height:1.5;vertical-align:middle;border-color:#e9eaec}
+.role-admin .debt-bootstrap .table thead th{background:#f7f8f9;color:#697380;font-size:.6875rem;font-weight:600;white-space:nowrap}
+.role-admin .debt-bootstrap .table .btn{min-height:34px;padding:.375rem .625rem;font-size:.75rem}
+.role-admin .debt-bootstrap .debt-badge{border-radius:20px;font-size:.6875rem;line-height:1.5;padding:.375rem .625rem}
+.role-admin .debt-bootstrap .debt-help{font-size:.75rem;line-height:1.5}
+.role-admin .debt-bootstrap .debt-empty{padding:1.5rem 1rem;font-size:.8125rem;line-height:1.5}
+@media(max-width:1000px){.role-admin .debt-bootstrap .debt-overview{grid-template-columns:1fr}}
+@media(max-width:600px){.role-admin .debt-bootstrap .debt-heading h1{font-size:1.5rem}.role-admin .debt-bootstrap .debt-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}.role-admin .debt-bootstrap .debt-stats>div{padding:.875rem}.role-admin .debt-bootstrap .debt-stats strong{font-size:1.375rem;overflow-wrap:anywhere}}
+
+/* Consistent vertical rhythm in the Admin debt dashboard. */
+.role-admin .debt-bootstrap .debt-card>h2{padding:.875rem 1rem;line-height:1.5}
+.role-admin .debt-bootstrap .debt-filter-grid,.role-admin .debt-bootstrap .debt-search-grid{row-gap:.875rem}
+.role-admin .debt-bootstrap .debt-filters label{line-height:1.5}
+.role-admin .debt-bootstrap .debt-stats strong{margin:.375rem 0 .25rem}
+.role-admin .debt-bootstrap .debt-stats small{line-height:1.5}
+.role-admin .debt-bootstrap .debt-help{line-height:1.5;margin-top:.75rem;margin-bottom:0}
+.role-admin .debt-bootstrap .table th,.role-admin .debt-bootstrap .table td{padding:.625rem .75rem;line-height:1.5}
+.role-admin .debt-bootstrap .debt-priority{padding:.75rem 1rem;gap:.75rem;line-height:1.5}
+.role-admin .debt-bootstrap .debt-priority small{display:block;margin-top:.25rem;line-height:1.5}
+.role-admin .debt-bootstrap .debt-rule{padding:.75rem 1rem;line-height:1.5}
+.role-admin .debt-bootstrap .debt-pagination{padding:.875rem 1rem;line-height:1.5}
+
+/* Refine Admin building overview card balance and filter alignment. */
+.role-admin .building-bootstrap .building-stats article{min-height:140px;padding:1rem 1rem 1.25rem;box-shadow:0 2px 8px #25282d04!important}
+.role-admin .building-bootstrap .building-stats strong{margin:.25rem 0 .375rem;font-variant-numeric:tabular-nums}
+.role-admin .building-bootstrap .building-stat-heading{margin-bottom:.5rem}
+.role-admin .building-bootstrap .building-stats p{margin:0}
+.role-admin .building-bootstrap .building-overview-grid{align-items:stretch}
+.role-admin .building-bootstrap .building-overview-grid>.building-panel{display:flex;flex-direction:column}
+.role-admin .building-bootstrap .building-collection{flex:1;align-items:center}
+.role-admin .building-bootstrap .building-chart-empty{height:145px;border:1px solid #eef0f2}
+.role-admin .building-bootstrap .building-alert-row{padding:.625rem 0}
+.role-admin .building-bootstrap .building-attention-footer{margin-top:auto;padding-top:.75rem}
+.role-admin .building-bootstrap .building-list-panel .building-panel-heading{margin-bottom:.875rem}
+.role-admin .building-bootstrap .building-search{height:44px;min-height:44px;background:#fff}
+.role-admin .building-bootstrap .building-filter-dropdown>summary{height:44px;min-height:44px;border-radius:8px;font-size:.8125rem;line-height:1.5}
+.role-admin .building-bootstrap .building-filter-dropdown>summary:focus-visible{outline:2px solid #bfa77a;outline-offset:2px}
+.role-admin .building-bootstrap .building-view-switch button{width:36px;height:36px;border-radius:7px}
+.role-admin .building-bootstrap .building-view-switch button[aria-pressed=true]{background:#fff;box-shadow:0 1px 4px #25282d12;color:#30343b}
+@media(max-width:600px){.role-admin .building-bootstrap .building-stats article{min-height:132px;padding:.875rem .875rem 1.25rem}.role-admin .building-bootstrap .building-collection{align-items:start}.role-admin .building-bootstrap .building-collection-summary{padding:.75rem 0 0}}
+
+/* Final spacing pass for the Admin building overview. */
+.role-admin .building-bootstrap .building-stat-heading{margin-bottom:.375rem;line-height:1.5}
+.role-admin .building-bootstrap .building-stats strong{margin:.25rem 0 .25rem;line-height:1.25}
+.role-admin .building-bootstrap .building-stats p{line-height:1.5}
+.role-admin .building-bootstrap .building-panel-heading{padding-bottom:.625rem;margin-bottom:.75rem}
+.role-admin .building-bootstrap .building-panel-heading h2{margin:0;line-height:1.5}
+.role-admin .building-bootstrap .building-chart-legend{margin-bottom:.375rem;line-height:1.5}
+.role-admin .building-bootstrap .building-collection-summary>span{display:block;line-height:1.5}
+.role-admin .building-bootstrap .building-collection-summary strong{margin:.625rem 0;line-height:1.25}
+.role-admin .building-bootstrap .building-alert-row small{margin-top:.25rem;line-height:1.5}
+.role-admin .building-bootstrap .building-toolbar{margin-bottom:.875rem}
+.role-admin .building-bootstrap .building-row-note,.role-admin .building-bootstrap .table .text-secondary{margin-top:.25rem;line-height:1.5}
+
+/* Admin room management follows the Bootstrap dashboard. */
+.role-admin .room-management-bootstrap{max-width:none;font-size:.8125rem;line-height:1.5}
+.role-admin .room-management-bootstrap .rm-heading{gap:1rem;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
+.role-admin .room-management-bootstrap .rm-heading h1{font-size:1.75rem;line-height:1.3;letter-spacing:-.04rem;margin-bottom:.375rem}
+.role-admin .room-management-bootstrap .rm-heading p{font-size:.875rem;line-height:1.5;margin:0}
+.role-admin .room-management-bootstrap .rm-button{min-height:44px;border-radius:8px;padding:.625rem 1rem;font-size:.8125rem;line-height:1.5}
+.role-admin .room-management-bootstrap .rm-header-actions{gap:.75rem;flex-wrap:wrap}
+.role-admin .room-management-bootstrap .rm-stats{gap:1rem;margin-bottom:1rem}
+.role-admin .room-management-bootstrap .rm-stats article{padding:1rem;border:1px solid #e4e7eb;border-top:3px solid #bfa77a;border-radius:12px;background:#fff;box-shadow:0 2px 8px #25282d04}
+.role-admin .room-management-bootstrap .rm-stats article>span{font-size:.75rem;line-height:1.5}
+.role-admin .room-management-bootstrap .rm-stats strong{font-size:1.875rem;line-height:1.25;margin:.5rem 0 .375rem}
+.role-admin .room-management-bootstrap .rm-stats p{font-size:.75rem;line-height:1.5;margin:0}
+.role-admin .room-management-bootstrap .rm-stat-icon{width:36px;height:36px;border-radius:10px;background:#e9eaec;color:#606b79}
+.role-admin .room-management-bootstrap .rm-attention{padding:.875rem 1rem;margin-bottom:1rem;border-radius:9px;font-size:.8125rem;line-height:1.5;gap:.75rem;flex-wrap:wrap}
+.role-admin .room-management-bootstrap .rm-panel{border:1px solid #e4e7eb;border-radius:12px;background:#fff;box-shadow:0 2px 8px #25282d04}
+.role-admin .room-management-bootstrap .rm-panel-heading{padding:1rem;gap:.75rem;flex-wrap:wrap}
+.role-admin .room-management-bootstrap .rm-panel-heading h2{font-size:1.0625rem;font-weight:700;line-height:1.5;margin:0}
+.role-admin .room-management-bootstrap .rm-tabs{padding-inline:1rem;gap:1.25rem}
+.role-admin .room-management-bootstrap .rm-tabs a{padding:.75rem 0;font-size:.8125rem;line-height:1.5;white-space:nowrap}
+.role-admin .room-management-bootstrap .rm-table{font-size:.8125rem}
+.role-admin .room-management-bootstrap .rm-table th{padding:.75rem 1rem;background:#f7f8f9;font-size:.6875rem;font-weight:600;line-height:1.5;color:#697380}
+.role-admin .room-management-bootstrap .rm-table td{padding:.75rem 1rem;vertical-align:middle;line-height:1.5;border-color:#e9eaec}
+.role-admin .room-management-bootstrap .rm-table small{font-size:.6875rem;line-height:1.5;margin-top:.25rem}
+.role-admin .room-management-bootstrap .rm-table tbody tr:hover{background:#faf8f3}
+.role-admin .room-management-bootstrap .rm-status{font-size:.6875rem;line-height:1.5;padding:.375rem .625rem;border-radius:20px}
+.role-admin .room-management-bootstrap .rm-detail{display:inline-flex;align-items:center;justify-content:center;min-height:34px;padding:.375rem .625rem;border:1px solid #dfe3e8;border-radius:7px;background:#fff;color:#606b79;text-decoration:none;font-size:.75rem}
+.role-admin .room-management-bootstrap .rm-detail:hover{border-color:#bfa77a;background:#faf7ef;color:#80663a}
+.role-admin .room-management-bootstrap .rm-pagination{padding:1rem;font-size:.75rem;line-height:1.5;gap:.75rem;flex-wrap:wrap}
+@media(max-width:600px){.role-admin .room-management-bootstrap .rm-heading h1{font-size:1.5rem}.role-admin .room-management-bootstrap .rm-header-actions{width:100%}.role-admin .room-management-bootstrap .rm-header-actions .rm-button{flex:1}.role-admin .room-management-bootstrap .rm-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}.role-admin .room-management-bootstrap .rm-stats article{padding:.875rem}.role-admin .room-management-bootstrap .rm-stats strong{font-size:1.5rem}}
+.role-admin .room-management-bootstrap .rm-filters{padding:1rem;gap:.75rem;align-items:center;flex-wrap:wrap}
+.role-admin .room-management-bootstrap .rm-search,.role-admin .room-management-bootstrap .rm-filter-select{min-height:44px;border-radius:8px;background:#fff;margin:0}
+.role-admin .room-management-bootstrap .rm-search .form-control{min-width:0;font-size:.8125rem;line-height:1.5}
+
+/* Even line spacing in Admin room management. */
+.role-admin .room-management-bootstrap .rm-stats strong{margin:.375rem 0 .25rem;line-height:1.25}
+.role-admin .room-management-bootstrap .rm-stats p{line-height:1.5}
+.role-admin .room-management-bootstrap .rm-panel-heading{padding:.875rem 1rem .75rem}
+.role-admin .room-management-bootstrap .rm-filters{padding:.875rem 1rem}
+.role-admin .room-management-bootstrap .rm-table th,.role-admin .room-management-bootstrap .rm-table td{padding:.625rem 1rem;line-height:1.5}
+.role-admin .room-management-bootstrap .rm-table td>strong,.role-admin .room-management-bootstrap .rm-tenant>div{line-height:1.5}
+.role-admin .room-management-bootstrap .rm-table small{display:block;margin-top:.25rem;line-height:1.5}
+.role-admin .room-management-bootstrap .rm-attention{padding:.75rem 1rem;line-height:1.5}
+.role-admin .room-management-bootstrap .rm-pagination{padding:.875rem 1rem;line-height:1.5}
+
+/* Admin room creation uses the shared Bootstrap workspace. */
+.role-admin .room-create-bootstrap{max-width:none;font-size:.8125rem;line-height:1.5}
+.role-admin .room-create-bootstrap .rc-heading{gap:1rem;flex-wrap:wrap;margin-bottom:1rem}
+.role-admin .room-create-bootstrap .rc-heading h1{font-size:1.75rem;line-height:1.3;letter-spacing:-.04rem;margin-bottom:.375rem}
+.role-admin .room-create-bootstrap .rc-heading p{font-size:.875rem;line-height:1.5}
+.role-admin .room-create-bootstrap .rc-card{padding:1rem;border-color:#e4e7eb;border-radius:12px;background:#fff;box-shadow:0 2px 8px #25282d04}
+.role-admin .room-create-bootstrap .rc-card-heading{padding-bottom:.75rem;margin-bottom:1rem;gap:.75rem}
+.role-admin .room-create-bootstrap .rc-card-heading h2{font-size:1rem;font-weight:700;line-height:1.5;margin-bottom:.25rem}
+.role-admin .room-create-bootstrap .rc-card-heading p{font-size:.75rem;line-height:1.5}
+.role-admin .room-create-bootstrap .rc-fields,.role-admin .room-create-bootstrap .rc-three{gap:1rem}
+.role-admin .room-create-bootstrap label,.role-admin .room-create-bootstrap .rc-status legend{font-size:.75rem;line-height:1.5;margin-bottom:.375rem}
+.role-admin .room-create-bootstrap .form-control,.role-admin .room-create-bootstrap .form-select{height:44px;border-color:#dfe3e8;border-radius:8px;background-color:#fff;padding:.625rem .75rem;font-size:.8125rem;line-height:1.5}
+.role-admin .room-create-bootstrap .form-select{padding-right:2rem}
+.role-admin .room-create-bootstrap textarea.form-control{height:auto;min-height:104px}
+.role-admin .room-create-bootstrap .rc-unit input{padding-right:4.5rem}
+.role-admin .room-create-bootstrap .form-control:focus,.role-admin .room-create-bootstrap .form-select:focus{border-color:#bfa77a;box-shadow:0 0 0 3px #bfa77a26}
+.role-admin .room-create-bootstrap input:disabled,.role-admin .room-create-bootstrap input[readonly]{background:#f7f8f9;color:#81858d}
+.role-admin .room-create-bootstrap .rc-status-option{min-height:44px;border-radius:8px;margin:0;font-size:.8125rem;line-height:1.5}
+.role-admin .room-create-bootstrap .rc-amenity-options label{min-height:44px;margin:0;padding:.625rem .75rem;font-size:.8125rem;line-height:1.5;border-color:#e4e7eb}
+.role-admin .room-create-bootstrap .rc-amenity-count{font-size:.75rem;line-height:1.5;margin-top:1rem;padding-top:.75rem}
+.role-admin .room-create-bootstrap .rc-photo-drop{min-height:140px;gap:.75rem;border-radius:9px;background:#faf8f3;padding:1rem}
+.role-admin .room-create-bootstrap .rc-photo-drop strong{font-size:.8125rem;line-height:1.5}
+.role-admin .room-create-bootstrap .rc-fields small,.role-admin .room-create-bootstrap .rc-hint{font-size:.75rem;line-height:1.5;margin-top:.375rem}
+.role-admin .room-create-bootstrap .btn{min-height:44px;border-radius:8px;font-size:.8125rem;line-height:1.5;padding:.625rem 1rem}
+@media(max-width:1000px){.role-admin .room-create-bootstrap .rc-layout{grid-template-columns:1fr}}
+@media(max-width:600px){.role-admin .room-create-bootstrap .rc-heading h1{font-size:1.5rem}.role-admin .room-create-bootstrap .rc-fields,.role-admin .room-create-bootstrap .rc-three{grid-template-columns:1fr}.role-admin .room-create-bootstrap .rc-fields>div{grid-column:auto}.role-admin .room-create-bootstrap .rc-amenity-options{grid-template-columns:1fr}}
+
+/* Compact, even spacing in Admin room creation. */
+.role-admin .room-create-bootstrap .rc-card-heading{margin-bottom:.875rem}
+.role-admin .room-create-bootstrap .rc-fields,.role-admin .room-create-bootstrap .rc-three{row-gap:.875rem}
+.role-admin .room-create-bootstrap .rc-card-heading h2{margin-bottom:.25rem;line-height:1.5}
+.role-admin .room-create-bootstrap .rc-card-heading p{margin:0;line-height:1.5}
+.role-admin .room-create-bootstrap .rc-fields small,.role-admin .room-create-bootstrap .rc-hint{margin-top:.25rem;line-height:1.5}
+.role-admin .room-create-bootstrap .rc-status>small{display:block;margin-top:.5rem;line-height:1.5}
+.role-admin .room-create-bootstrap .rc-amenity-options{gap:.5rem .75rem}
+.role-admin .room-create-bootstrap .rc-amenity-count{margin:.75rem 0 0;padding-top:.75rem;line-height:1.5}
+.role-admin .room-create-bootstrap .rc-photo-drop{gap:.5rem}
+.role-admin .room-create-bootstrap .field-validation-valid{display:none}
+.role-admin .room-create-bootstrap .field-validation-error{display:block;margin-top:.25rem;font-size:.75rem;line-height:1.5}
+
+/* Admin bulk room creation matches Bootstrap room forms. */
+.role-admin .room-bulk-bootstrap{max-width:none;font-size:.8125rem;line-height:1.5}
+.role-admin .room-bulk-bootstrap .rb-heading{gap:1rem;margin-bottom:1rem;padding-bottom:1rem;flex-wrap:wrap}
+.role-admin .room-bulk-bootstrap .rb-heading h1{font-size:1.75rem;line-height:1.3;letter-spacing:-.04rem;margin-bottom:.375rem}
+.role-admin .room-bulk-bootstrap .rb-heading p{font-size:.875rem;line-height:1.5;margin:0}
+.role-admin .room-bulk-bootstrap .rb-card{padding:1rem;border-color:#e4e7eb;border-radius:12px;background:#fff;box-shadow:0 2px 8px #25282d04}
+.role-admin .room-bulk-bootstrap .rb-layout{grid-template-columns:minmax(0,1fr) 310px;gap:1rem}
+.role-admin .room-bulk-bootstrap .rb-card-heading{padding-bottom:.75rem;margin-bottom:1rem;gap:.75rem;align-items:center}
+.role-admin .room-bulk-bootstrap .rb-card-heading h2{font-size:1rem;line-height:1.5;font-weight:700;margin-bottom:.25rem}
+.role-admin .room-bulk-bootstrap .rb-card-heading p{font-size:.75rem;line-height:1.5}
+.role-admin .room-bulk-bootstrap .rb-fields{gap:1rem}
+.role-admin .room-bulk-bootstrap label{font-size:.75rem;line-height:1.5;margin-bottom:.375rem}
+.role-admin .room-bulk-bootstrap .form-control,.role-admin .room-bulk-bootstrap .form-select{height:44px;border-color:#dfe3e8;border-radius:8px;background-color:#fff;padding:.625rem .75rem;font-size:.8125rem;line-height:1.5}
+.role-admin .room-bulk-bootstrap .form-select{padding-right:2rem}
+.role-admin .room-bulk-bootstrap .rb-unit input{padding-right:5.8rem}
+.role-admin .room-bulk-bootstrap textarea.form-control{height:auto;min-height:88px}
+.role-admin .room-bulk-bootstrap input[readonly]{background:#f7f8f9;color:#81858d}
+.role-admin .room-bulk-bootstrap .form-control:focus,.role-admin .room-bulk-bootstrap .form-select:focus{border-color:#bfa77a;box-shadow:0 0 0 3px #bfa77a26}
+.role-admin .room-bulk-bootstrap .rb-fields small{display:block;margin-top:.375rem;font-size:.75rem;line-height:1.5}
+.role-admin .room-bulk-bootstrap .rb-preview h2{font-size:1rem;line-height:1.5;font-weight:700}
+.role-admin .room-bulk-bootstrap .rb-preview p,.role-admin .room-bulk-bootstrap .rb-preview dl{font-size:.8125rem;line-height:1.5}
+.role-admin .room-bulk-bootstrap .btn{min-height:44px;border-radius:8px;padding:.625rem 1rem;font-size:.8125rem;line-height:1.5}
+@media(max-width:1000px){.role-admin .room-bulk-bootstrap .rb-layout{grid-template-columns:1fr}.role-admin .room-bulk-bootstrap .rb-preview{position:static}}
+@media(max-width:600px){.role-admin .room-bulk-bootstrap .rb-heading h1{font-size:1.5rem}.role-admin .room-bulk-bootstrap .rb-fields{grid-template-columns:1fr}.role-admin .room-bulk-bootstrap .rb-fields>div{grid-column:auto}.role-admin .room-bulk-bootstrap .rb-card-heading{flex-wrap:wrap}}
+
+/* Even vertical spacing in Admin bulk room creation. */
+.role-admin .room-bulk-bootstrap .rb-card-heading{margin-bottom:.875rem}
+.role-admin .room-bulk-bootstrap .rb-fields{row-gap:.875rem}
+.role-admin .room-bulk-bootstrap .rb-card-heading h2{margin-bottom:.25rem;line-height:1.5}
+.role-admin .room-bulk-bootstrap .rb-card-heading p{margin:0;line-height:1.5}
+.role-admin .room-bulk-bootstrap .rb-fields small{margin-top:.25rem;line-height:1.5}
+.role-admin .room-bulk-bootstrap .rb-preview h2{margin-bottom:.75rem;line-height:1.5}
+.role-admin .room-bulk-bootstrap .rb-preview p{margin:.5rem 0 .75rem;line-height:1.5}
+.role-admin .room-bulk-bootstrap .rb-preview dl>div{padding-block:.375rem;line-height:1.5}
+.role-admin .room-bulk-bootstrap .rb-preview dd{margin-bottom:0;line-height:1.5}
+.role-admin .room-bulk-bootstrap .field-validation-valid{display:none}
+.role-admin .room-bulk-bootstrap .field-validation-error{display:block;margin-top:.25rem;font-size:.75rem;line-height:1.5}
+
+/* Admin room details match the Bootstrap management workspace. */
+.role-admin .room-detail-bootstrap{max-width:none;font-size:.8125rem;line-height:1.5}
+.role-admin .room-detail-bootstrap .rd-heading{gap:1rem;margin-bottom:1rem;flex-wrap:wrap}
+.role-admin .room-detail-bootstrap .rd-room-title h1{font-size:1.75rem;line-height:1.3;letter-spacing:-.04rem;margin-bottom:.375rem}
+.role-admin .room-detail-bootstrap .rd-room-title p{font-size:.875rem;line-height:1.5;margin:0}
+.role-admin .room-detail-bootstrap .rd-actions>a,.role-admin .room-detail-bootstrap .rd-actions>button{min-height:44px;border-radius:8px;padding:.625rem 1rem;font-size:.8125rem;line-height:1.5}
+.role-admin .room-detail-bootstrap .rd-tabs{margin-bottom:1rem;gap:1.5rem}
+.role-admin .room-detail-bootstrap .rd-tabs>*{padding:.75rem 0;font-size:.8125rem;line-height:1.5}
+.role-admin .room-detail-bootstrap .rd-card{padding:1rem;border-color:#e4e7eb;border-radius:12px;background:#fff;box-shadow:0 2px 8px #25282d04}
+.role-admin .room-detail-bootstrap .rd-card h2{font-size:1rem;font-weight:700;line-height:1.5;margin-bottom:1rem}
+.role-admin .room-detail-bootstrap .rd-card-title h2{margin-bottom:0}
+.role-admin .room-detail-bootstrap .rd-icon{width:36px;height:36px;flex-basis:36px;border-radius:10px}
+.role-admin .room-detail-bootstrap .rd-info{gap:1rem}
+.role-admin .room-detail-bootstrap .rd-info dt{font-size:.75rem;line-height:1.5;margin-bottom:.25rem}
+.role-admin .room-detail-bootstrap .rd-info dd{font-size:.8125rem;line-height:1.5;color:#30343b}
+.role-admin .room-detail-bootstrap .rd-divider{margin-top:1rem;padding-top:1rem;border-color:#e9eaec}
+.role-admin .room-detail-bootstrap h3{font-size:.875rem;line-height:1.5}
+.role-admin .room-detail-bootstrap .rd-amenities>span{padding:.5rem .625rem;font-size:.75rem;border-radius:8px;line-height:1.5}
+.role-admin .room-detail-bootstrap .rd-muted,.role-admin .room-detail-bootstrap .rd-unavailable{font-size:.75rem;line-height:1.5}
+.role-admin .room-detail-bootstrap .rd-photo-grid{gap:.75rem}
+.role-admin .room-detail-bootstrap .rd-photo img{aspect-ratio:4/3;object-fit:cover}
+.role-admin .room-detail-bootstrap .rd-photo-caption{padding:.625rem;font-size:.75rem;line-height:1.5}
+.role-admin .room-detail-bootstrap .rd-tenant h3{font-size:.875rem;line-height:1.5}
+.role-admin .room-detail-bootstrap .rd-tenant p{font-size:.75rem;line-height:1.5}
+.role-admin .room-detail-bootstrap .rd-full{min-height:44px;font-size:.8125rem;border-radius:8px}
+.role-admin .room-detail-bootstrap .rd-price{font-size:1.875rem;line-height:1.25;margin:.5rem 0 1rem}
+.role-admin .room-detail-bootstrap .rd-fee{padding:.75rem 0;font-size:.8125rem;line-height:1.5}
+.role-admin .room-detail-bootstrap .rd-deposit{font-size:.8125rem;padding:.875rem}
+@media(max-width:1000px){.role-admin .room-detail-bootstrap .rd-layout{grid-template-columns:1fr}}
+@media(max-width:600px){.role-admin .room-detail-bootstrap .rd-room-title h1{font-size:1.5rem}.role-admin .room-detail-bootstrap .rd-actions{width:100%}.role-admin .room-detail-bootstrap .rd-actions>a,.role-admin .room-detail-bootstrap .rd-actions>button{flex:1}.role-admin .room-detail-bootstrap .rd-info{grid-template-columns:repeat(2,minmax(0,1fr))}.role-admin .room-detail-bootstrap .rd-photo-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Consistent line spacing in Admin room details. */
+.role-admin .room-detail-bootstrap .rd-card h2{margin-bottom:.875rem;line-height:1.5}
+.role-admin .room-detail-bootstrap .rd-card-title h2{margin-bottom:0}
+.role-admin .room-detail-bootstrap .rd-info{row-gap:.875rem}
+.role-admin .room-detail-bootstrap .rd-divider{margin-top:.875rem;padding-top:.875rem}
+.role-admin .room-detail-bootstrap .rd-tenant{margin:.75rem 0;gap:.75rem}
+.role-admin .room-detail-bootstrap .rd-tenant h3{margin-bottom:.25rem;line-height:1.5}
+.role-admin .room-detail-bootstrap .rd-tenant p{margin:0;line-height:1.5}
+.role-admin .room-detail-bootstrap .rd-unavailable{margin:.625rem 0 0;line-height:1.5}
+.role-admin .room-detail-bootstrap .rd-card-title{margin-bottom:.75rem}
+.role-admin .room-detail-bootstrap .rd-price{margin:.375rem 0 .75rem}
+.role-admin .room-detail-bootstrap .rd-fee{padding:.625rem 0;line-height:1.5}
+.role-admin .room-detail-bootstrap .rd-deposit small{margin-top:.25rem;line-height:1.5}
+
+/* Admin room editor shares Bootstrap room form sizing. */
+.role-admin .room-edit-bootstrap{max-width:none;font-size:.8125rem;line-height:1.5}
+.role-admin .room-edit-bootstrap .rc-heading{gap:1rem;margin-bottom:1rem;flex-wrap:wrap}
+.role-admin .room-edit-bootstrap .rc-heading h1{font-size:1.75rem;line-height:1.3;letter-spacing:-.04rem;margin-bottom:.375rem;overflow-wrap:anywhere}
+.role-admin .room-edit-bootstrap .rc-heading p{font-size:.875rem;line-height:1.5;margin:0}
+.role-admin .room-edit-bootstrap .re-warning{padding:.875rem 1rem;border:1px solid #eee3cf;border-radius:9px;margin-bottom:1rem;line-height:1.5}
+.role-admin .room-edit-bootstrap .re-warning p{font-size:.75rem;line-height:1.5;margin:.375rem 0 0}
+.role-admin .room-edit-bootstrap .rc-card{padding:1rem;border-color:#e4e7eb;border-radius:12px;background:#fff;box-shadow:0 2px 8px #25282d04}
+.role-admin .room-edit-bootstrap .rc-card-heading{padding-bottom:.75rem;margin-bottom:1rem}
+.role-admin .room-edit-bootstrap .rc-card-heading h2{font-size:1rem;font-weight:700;line-height:1.5;margin-bottom:.25rem}
+.role-admin .room-edit-bootstrap .rc-card-heading p{font-size:.75rem;line-height:1.5}
+.role-admin .room-edit-bootstrap .rc-fields,.role-admin .room-edit-bootstrap .rc-three{gap:1rem}
+.role-admin .room-edit-bootstrap label{font-size:.75rem;line-height:1.5;margin-bottom:.375rem}
+.role-admin .room-edit-bootstrap .form-control,.role-admin .room-edit-bootstrap .form-select{height:44px;border-color:#dfe3e8;border-radius:8px;background-color:#fff;padding:.625rem .75rem;font-size:.8125rem;line-height:1.5}
+.role-admin .room-edit-bootstrap .form-select{padding-right:2rem}
+.role-admin .room-edit-bootstrap .rc-unit input{padding-right:4.5rem}
+.role-admin .room-edit-bootstrap textarea.form-control{height:auto;min-height:104px}
+.role-admin .room-edit-bootstrap input[readonly],.role-admin .room-edit-bootstrap input:disabled,.role-admin .room-edit-bootstrap select:disabled{background:#f7f8f9;color:#81858d}
+.role-admin .room-edit-bootstrap .form-control:focus,.role-admin .room-edit-bootstrap .form-select:focus{border-color:#bfa77a;box-shadow:0 0 0 3px #bfa77a26}
+.role-admin .room-edit-bootstrap .rc-fields small,.role-admin .room-edit-bootstrap .rc-hint{font-size:.75rem;line-height:1.5;margin-top:.375rem}
+.role-admin .room-edit-bootstrap .btn{min-height:44px;border-radius:8px;padding:.625rem 1rem;font-size:.8125rem;line-height:1.5}
+@media(max-width:1000px){.role-admin .room-edit-bootstrap .rc-layout{grid-template-columns:1fr}}
+@media(max-width:600px){.role-admin .room-edit-bootstrap .rc-heading h1{font-size:1.5rem}.role-admin .room-edit-bootstrap .rc-fields,.role-admin .room-edit-bootstrap .rc-three{grid-template-columns:1fr}.role-admin .room-edit-bootstrap .rc-fields>div{grid-column:auto}}
+
+/* Even vertical rhythm in Admin room editing. */
+.role-admin .room-edit-bootstrap .rc-card-heading{margin-bottom:.875rem}
+.role-admin .room-edit-bootstrap .rc-fields,.role-admin .room-edit-bootstrap .rc-three{row-gap:.875rem}
+.role-admin .room-edit-bootstrap .rc-card-heading h2{margin-bottom:.25rem;line-height:1.5}
+.role-admin .room-edit-bootstrap .rc-card-heading p{margin:0;line-height:1.5}
+.role-admin .room-edit-bootstrap .rc-fields small,.role-admin .room-edit-bootstrap .rc-hint{margin-top:.25rem;line-height:1.5}
+.role-admin .room-edit-bootstrap .re-warning{padding:.75rem 1rem}
+.role-admin .room-edit-bootstrap .re-warning p{margin-top:.375rem;line-height:1.5}
+.role-admin .room-edit-bootstrap .field-validation-valid{display:none}
+.role-admin .room-edit-bootstrap .field-validation-error{display:block;margin-top:.25rem;font-size:.75rem;line-height:1.5}
+
+/* Admin room journal follows the Bootstrap management workspace. */
+.role-admin .room-journal-bootstrap{max-width:none;font-size:.8125rem;line-height:1.5}
+.role-admin .room-journal-bootstrap .rj-heading{gap:1rem;margin-bottom:1rem;flex-wrap:wrap}
+.role-admin .room-journal-bootstrap .rj-heading h1{font-size:1.75rem;line-height:1.3;letter-spacing:-.04rem;margin-bottom:.375rem}
+.role-admin .room-journal-bootstrap .rj-heading p{font-size:.875rem;line-height:1.5;margin:0}
+.role-admin .room-journal-bootstrap .rj-room-summary,.role-admin .room-journal-bootstrap .rj-filters,.role-admin .room-journal-bootstrap .rj-timeline,.role-admin .room-journal-bootstrap .rj-card{border-color:#e4e7eb;border-radius:12px;box-shadow:0 2px 8px #25282d04}
+.role-admin .room-journal-bootstrap .rj-room-top{padding:1rem;gap:1rem}
+.role-admin .room-journal-bootstrap .rj-room-identity strong,.role-admin .room-journal-bootstrap .rj-summary-field strong{font-size:.8125rem;line-height:1.5}
+.role-admin .room-journal-bootstrap .rj-summary-field small{font-size:.6875rem;line-height:1.5}
+.role-admin .room-journal-bootstrap .rj-room-identity p,.role-admin .room-journal-bootstrap .rj-summary-field p{font-size:.75rem;line-height:1.5;margin-top:.25rem}
+.role-admin .room-journal-bootstrap .rj-room-bottom{padding:.75rem 1rem;font-size:.75rem;line-height:1.5}
+.role-admin .room-journal-bootstrap .rj-tabs{gap:1.5rem;margin:1rem 0}
+.role-admin .room-journal-bootstrap .rj-tabs>*{font-size:.8125rem;line-height:1.5;padding:.75rem 0}
+.role-admin .room-journal-bootstrap .rj-filter-row{gap:.75rem;flex-wrap:wrap}
+.role-admin .room-journal-bootstrap .rj-filters{margin-bottom:1rem}
+.role-admin .room-journal-bootstrap .form-control,.role-admin .room-journal-bootstrap .form-select{min-height:44px;border-radius:8px;border-color:#dfe3e8;background-color:#fff;padding:.625rem .75rem;font-size:.8125rem;line-height:1.5}
+.role-admin .room-journal-bootstrap .form-select{padding-right:2rem}
+.role-admin .room-journal-bootstrap .form-control:focus,.role-admin .room-journal-bootstrap .form-select:focus{border-color:#bfa77a;box-shadow:0 0 0 3px #bfa77a26}
+.role-admin .room-journal-bootstrap .rj-search{min-height:44px;border-radius:8px;background:#fff}
+.role-admin .room-journal-bootstrap #rj-export,.role-admin .room-journal-bootstrap .btn{min-height:44px;padding:.625rem 1rem;border-radius:8px;font-size:.8125rem;line-height:1.5}
+.role-admin .room-journal-bootstrap h2{font-size:1rem;font-weight:700;line-height:1.5}
+.role-admin .room-journal-bootstrap .rj-card label{font-size:.75rem;line-height:1.5;margin-bottom:.375rem}
+@media(max-width:600px){.role-admin .room-journal-bootstrap .rj-heading h1{font-size:1.5rem}.role-admin .room-journal-bootstrap .rj-tabs{gap:1rem}.role-admin .room-journal-bootstrap .rj-filter-row>.form-select{width:100%}}
+
+/* Even line spacing in the Admin room journal. */
+.role-admin .room-journal-bootstrap .rj-summary-field strong{margin-top:.25rem;line-height:1.5}
+.role-admin .room-journal-bootstrap .rj-room-identity p,.role-admin .room-journal-bootstrap .rj-summary-field p{margin-top:.25rem;line-height:1.5}
+.role-admin .room-journal-bootstrap .rj-tabs{margin:.75rem 0}
+.role-admin .room-journal-bootstrap .rj-event{padding:.625rem 0;gap:.75rem}
+.role-admin .room-journal-bootstrap .rj-event-content h4{margin:0 0 .25rem;line-height:1.5}
+.role-admin .room-journal-bootstrap .rj-event-content p,.role-admin .room-journal-bootstrap .rj-event-content dl{margin:.375rem 0;line-height:1.5}
+.role-admin .room-journal-bootstrap .rj-note-private{margin:.375rem 0 .75rem;line-height:1.5}
+.role-admin .room-journal-bootstrap .rj-note-actions{margin-top:.75rem;gap:.75rem}
+.role-admin .room-journal-bootstrap .rj-principles p,.role-admin .room-journal-bootstrap .rj-bottom{line-height:1.5}
+.role-admin .room-journal-bootstrap .rj-document{padding:.625rem 0}
+.role-admin .room-journal-bootstrap .rj-pagination{padding-top:.75rem;margin-top:.75rem;line-height:1.5}
+
+/* Admin listing management matches Bootstrap room management. */
+.role-admin .listing-manage-bootstrap{max-width:none;font-size:.8125rem;line-height:1.5}
+.role-admin .listing-manage-bootstrap .lm-heading{gap:1rem;margin-bottom:1rem;align-items:center;flex-wrap:wrap}
+.role-admin .listing-manage-bootstrap .lm-heading h1{font-size:1.75rem;line-height:1.3;letter-spacing:-.04rem;margin-bottom:.375rem}
+.role-admin .listing-manage-bootstrap .lm-heading p{font-size:.875rem;line-height:1.5;margin:0}
+.role-admin .listing-manage-bootstrap .lm-heading .btn{min-height:44px;padding:.625rem 1rem;border-radius:8px;font-size:.8125rem;line-height:1.5}
+.role-admin .listing-manage-bootstrap .lm-stats{gap:1rem;margin-bottom:1rem}
+.role-admin .listing-manage-bootstrap .lm-stats>button{padding:1rem;border:1px solid #e4e7eb;border-top:3px solid #bfa77a;border-radius:12px;background:#fff;box-shadow:0 2px 8px #25282d04}
+.role-admin .listing-manage-bootstrap .lm-stats>button:hover{border-color:#bfa77a;background:#fdfbf7}
+.role-admin .listing-manage-bootstrap .lm-stats>button:focus-visible{outline:2px solid #bfa77a;outline-offset:2px}
+.role-admin .listing-manage-bootstrap .lm-stats>button>span{font-size:.75rem;line-height:1.5}
+.role-admin .listing-manage-bootstrap .lm-stats strong{font-size:1.875rem;line-height:1.25;margin:.5rem 0 .375rem}
+.role-admin .listing-manage-bootstrap .lm-stats p{font-size:.75rem;line-height:1.5;margin:0}
+.role-admin .listing-manage-bootstrap .lm-warning{padding:.875rem 1rem;border-radius:9px;font-size:.75rem;line-height:1.5;margin-bottom:1rem}
+.role-admin .listing-manage-bootstrap .lm-panel{border-color:#e4e7eb;border-radius:12px;box-shadow:0 2px 8px #25282d04}
+.role-admin .listing-manage-bootstrap .lm-panel-heading{padding:1rem;gap:.75rem;flex-wrap:wrap}
+.role-admin .listing-manage-bootstrap .lm-panel-heading h2{font-size:1.0625rem;font-weight:700;line-height:1.5;margin:0}
+.role-admin .listing-manage-bootstrap .lm-tabs{padding-inline:1rem;gap:1.25rem;overflow-x:auto;flex-wrap:nowrap}
+.role-admin .listing-manage-bootstrap .lm-tabs button{font-size:.8125rem;line-height:1.5;padding:.75rem 0;white-space:nowrap}
+.role-admin .listing-manage-bootstrap .lm-filters{padding:1rem;gap:.75rem;align-items:center}
+.role-admin .listing-manage-bootstrap .lm-search-field{min-height:44px;border-radius:8px;background:#fff}
+.role-admin .listing-manage-bootstrap .form-control,.role-admin .listing-manage-bootstrap .form-select{min-height:44px;font-size:.8125rem;line-height:1.5;border-radius:8px}
+.role-admin .listing-manage-bootstrap .table{font-size:.8125rem}
+.role-admin .listing-manage-bootstrap .table th{padding:.75rem 1rem;background:#f7f8f9;color:#697380;font-size:.6875rem;font-weight:600;line-height:1.5}
+.role-admin .listing-manage-bootstrap .table td{padding:.75rem 1rem;vertical-align:middle;line-height:1.5;border-color:#e9eaec}
+.role-admin .listing-manage-bootstrap .table tbody tr:hover{background:#faf8f3}
+.role-admin .listing-manage-bootstrap .table small{font-size:.6875rem;line-height:1.5;margin-top:.25rem}
+@media(max-width:600px){.role-admin .listing-manage-bootstrap .lm-heading h1{font-size:1.5rem}.role-admin .listing-manage-bootstrap .lm-heading .btn{width:100%}.role-admin .listing-manage-bootstrap .lm-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}.role-admin .listing-manage-bootstrap .lm-stats>button{padding:.875rem}.role-admin .listing-manage-bootstrap .lm-stats strong{font-size:1.5rem}.role-admin .listing-manage-bootstrap .lm-filters{flex-wrap:wrap}}
+
+/* Even line spacing in Admin listing management. */
+.role-admin .listing-manage-bootstrap .lm-stats strong{margin:.375rem 0 .25rem;line-height:1.25}
+.role-admin .listing-manage-bootstrap .lm-stats p{line-height:1.5}
+.role-admin .listing-manage-bootstrap .lm-panel-heading{padding:.875rem 1rem .75rem}
+.role-admin .listing-manage-bootstrap .lm-filters{padding:.875rem 1rem}
+.role-admin .listing-manage-bootstrap .lm-warning{padding:.75rem 1rem;line-height:1.5}
+.role-admin .listing-manage-bootstrap .table th,.role-admin .listing-manage-bootstrap .table td{padding:.625rem 1rem;line-height:1.5}
+.role-admin .listing-manage-bootstrap .table small{display:block;margin-top:.25rem;line-height:1.5}
+
+/* Admin rental requests share the Bootstrap dashboard workspace. */
+.role-admin .requests-bootstrap{font-size:.8125rem;line-height:1.5}
+.role-admin .requests-bootstrap .or-heading{gap:1rem;margin-bottom:1rem;flex-wrap:wrap}
+.role-admin .requests-bootstrap .or-heading h1{font-size:1.75rem;line-height:1.3;letter-spacing:-.04rem;margin-bottom:.375rem}
+.role-admin .requests-bootstrap .or-heading p{font-size:.875rem;line-height:1.5;margin:0}
+.role-admin .requests-bootstrap .or-button{min-height:44px;padding:.625rem 1rem;border-radius:8px;font-size:.8125rem;line-height:1.5}
+.role-admin .requests-bootstrap .or-stats{gap:1rem;margin-bottom:1rem}
+.role-admin .requests-bootstrap .or-stats article{padding:1rem;border-color:#e4e7eb;border-top:3px solid #bfa77a;border-radius:12px;gap:.875rem}
+.role-admin .requests-bootstrap .or-stats strong{font-size:1.875rem;line-height:1.25;margin:.375rem 0}
+.role-admin .requests-bootstrap .or-stats small{font-size:.75rem;line-height:1.5}
+.role-admin .requests-bootstrap .or-detail-panel{border-color:#e4e7eb;border-radius:12px}
+.role-admin .requests-bootstrap .or-tabs{gap:1.25rem}
+.role-admin .requests-bootstrap .or-tabs a{font-size:.8125rem;line-height:1.5;padding:.75rem 0}
+.role-admin .requests-bootstrap .or-filters{gap:.75rem;padding:.875rem 0}
+.role-admin .requests-bootstrap .or-search-field{min-height:44px;border-radius:8px;background:#fff}
+.role-admin .requests-bootstrap .or-search-field input{height:42px;font-size:.8125rem}
+.role-admin .requests-bootstrap .or-filters select,.role-admin .requests-bootstrap .or-month-field input{height:44px;border-radius:8px;border-color:#dfe3e8;font-size:.8125rem;line-height:1.5}
+.role-admin .requests-bootstrap .or-scroll th{padding:.75rem 1rem;background:#f7f8f9;font-size:.6875rem;line-height:1.5;font-weight:600}
+.role-admin .requests-bootstrap .or-scroll td{padding:.75rem 1rem;font-size:.8125rem;line-height:1.5;vertical-align:middle;border-color:#e9eaec}
+.role-admin .requests-bootstrap .or-scroll small{font-size:.6875rem;line-height:1.5;margin-top:.25rem}
+.role-admin .requests-bootstrap .or-panel-header,.role-admin .requests-bootstrap .or-panel-body{padding:1rem}
+.role-admin .requests-bootstrap .or-panel-header h2{font-size:1rem;line-height:1.5;font-weight:700;margin:0}
+.role-admin .requests-bootstrap .or-person h3{font-size:.9375rem;line-height:1.5}
+.role-admin .requests-bootstrap .or-person p,.role-admin .requests-bootstrap .or-contact-lines{font-size:.8125rem;line-height:1.5}
+.role-admin .requests-bootstrap .or-detail-fields{gap:.875rem 1rem}
+.role-admin .requests-bootstrap .or-detail-fields dt{font-size:.75rem;line-height:1.5;margin-bottom:.25rem}
+.role-admin .requests-bootstrap .or-detail-fields dd{font-size:.8125rem;line-height:1.5;margin:0}
+.role-admin .requests-bootstrap .or-message{font-size:.8125rem;line-height:1.5;padding:.875rem}
+@media(max-width:600px){.role-admin .requests-bootstrap .or-heading h1{font-size:1.5rem}.role-admin .requests-bootstrap .or-stats{gap:.75rem}.role-admin .requests-bootstrap .or-stats article{padding:.875rem}.role-admin .requests-bootstrap .or-stats strong{font-size:1.5rem}}
+
+/* Consistent spacing in Admin rental requests. */
+.role-admin .requests-bootstrap .or-stats strong{margin:.25rem 0 .375rem;line-height:1.25}
+.role-admin .requests-bootstrap .or-stats small{line-height:1.5}
+.role-admin .requests-bootstrap .or-scroll th,.role-admin .requests-bootstrap .or-scroll td{padding:.625rem 1rem;line-height:1.5}
+.role-admin .requests-bootstrap .or-scroll small{margin-top:.25rem;line-height:1.5}
+.role-admin .requests-bootstrap .or-panel-header{padding:.875rem 1rem}
+.role-admin .requests-bootstrap .or-person h3{margin-bottom:.25rem;line-height:1.5}
+.role-admin .requests-bootstrap .or-person p{margin:0;line-height:1.5}
+.role-admin .requests-bootstrap .or-detail-fields{row-gap:.75rem}
+.role-admin .requests-bootstrap .or-room-summary strong{line-height:1.5}
+.role-admin .requests-bootstrap .or-contact-lines{line-height:1.5}
+.role-admin .requests-bootstrap .or-message{padding:.75rem;line-height:1.5}
+.role-admin .requests-bootstrap .or-pagination{padding:.75rem 0;line-height:1.5}
+
+/* Admin request details match the Bootstrap management workspace. */
+.role-admin .request-detail-bootstrap{max-width:none;font-size:.8125rem;line-height:1.5}
+.role-admin .request-detail-bootstrap .rq-heading{gap:1rem;margin-bottom:1rem;flex-wrap:wrap}
+.role-admin .request-detail-bootstrap .rq-heading h1{font-size:1.75rem;line-height:1.3;letter-spacing:-.04rem;margin-bottom:.375rem}
+.role-admin .request-detail-bootstrap .rq-heading p{font-size:.8125rem;line-height:1.5}
+.role-admin .request-detail-bootstrap .rq-button,.role-admin .request-detail-bootstrap .btn{min-height:44px;padding:.625rem 1rem;border-radius:8px;font-size:.8125rem;line-height:1.5}
+.role-admin .request-detail-bootstrap .rq-progress{margin-bottom:1rem;border-color:#e4e7eb;padding:1rem}
+.role-admin .request-detail-bootstrap .rq-progress strong{font-size:.8125rem;line-height:1.5}
+.role-admin .request-detail-bootstrap .rq-progress small{font-size:.6875rem;line-height:1.5}
+.role-admin .request-detail-bootstrap .rq-card{padding:1rem;border-color:#e4e7eb;border-radius:12px;box-shadow:0 2px 8px #25282d04}
+.role-admin .request-detail-bootstrap .rq-card-heading{margin-bottom:1rem;gap:.75rem;flex-wrap:wrap}
+.role-admin .request-detail-bootstrap .rq-card h2{font-size:1rem;font-weight:700;line-height:1.5}
+.role-admin .request-detail-bootstrap .rq-card-heading small{font-size:.6875rem;line-height:1.5}
+.role-admin .request-detail-bootstrap .rq-contact-row{font-size:.8125rem;line-height:1.5;margin:1rem 0}
+.role-admin .request-detail-bootstrap .rq-customer p,.role-admin .request-detail-bootstrap .rq-room p{font-size:.75rem;line-height:1.5}
+.role-admin .request-detail-bootstrap .rq-facts{gap:1rem;margin:1rem 0}
+.role-admin .request-detail-bootstrap .rq-facts dt{font-size:.75rem;line-height:1.5;margin-bottom:.25rem}
+.role-admin .request-detail-bootstrap .rq-facts dd{font-size:.8125rem;line-height:1.5;margin:0}
+.role-admin .request-detail-bootstrap .rq-message{padding:.875rem;border-radius:9px;font-size:.8125rem;line-height:1.5}
+.role-admin .request-detail-bootstrap .rq-message p{font-size:.8125rem;line-height:1.5;margin:.375rem 0 0}
+.role-admin .request-detail-bootstrap .form-control,.role-admin .request-detail-bootstrap .form-select{min-height:44px;border-color:#dfe3e8;border-radius:8px;background-color:#fff;padding:.625rem .75rem;font-size:.8125rem;line-height:1.5}
+.role-admin .request-detail-bootstrap .form-select{padding-right:2rem}
+.role-admin .request-detail-bootstrap label{font-size:.75rem;line-height:1.5;margin-bottom:.375rem}
+.role-admin .request-detail-bootstrap .form-control:focus,.role-admin .request-detail-bootstrap .form-select:focus{border-color:#bfa77a;box-shadow:0 0 0 3px #bfa77a26}
+.role-admin .request-detail-bootstrap .rq-muted,.role-admin .request-detail-bootstrap .rq-notification{font-size:.75rem;line-height:1.5}
+@media(max-width:1000px){.role-admin .request-detail-bootstrap .rq-layout{grid-template-columns:1fr}}
+@media(max-width:600px){.role-admin .request-detail-bootstrap .rq-heading h1{font-size:1.5rem}.role-admin .request-detail-bootstrap .rq-facts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Even line spacing in Admin request details. */
+.role-admin .request-detail-bootstrap .rq-card-heading{margin-bottom:.875rem}
+.role-admin .request-detail-bootstrap .rq-card h2{margin-bottom:.75rem;line-height:1.5}
+.role-admin .request-detail-bootstrap .rq-card-heading h2{margin-bottom:0}
+.role-admin .request-detail-bootstrap .rq-customer h3,.role-admin .request-detail-bootstrap .rq-room h3{margin-bottom:.25rem;line-height:1.5}
+.role-admin .request-detail-bootstrap .rq-customer p,.role-admin .request-detail-bootstrap .rq-room p{margin:0;line-height:1.5}
+.role-admin .request-detail-bootstrap .rq-contact-row{margin:.75rem 0;line-height:1.5}
+.role-admin .request-detail-bootstrap .rq-facts{row-gap:.75rem;margin:.875rem 0}
+.role-admin .request-detail-bootstrap .rq-message{padding:.75rem;line-height:1.5}
+.role-admin .request-detail-bootstrap .rq-room-links{padding-top:.75rem;margin-top:.75rem;line-height:1.5}
+.role-admin .request-detail-bootstrap .rq-schedule-form-title{padding-top:.75rem;margin-top:.75rem;line-height:1.5}
+.role-admin .request-detail-bootstrap .rq-history-event{padding:.625rem 0;line-height:1.5}
+.role-admin .request-detail-bootstrap .rq-processing-help,.role-admin .request-detail-bootstrap .rq-result-help{line-height:1.5}
+
+/* Admin contract list follows the Bootstrap dashboard. */
+.role-admin .contract-list.lease-overview{max-width:none;font-size:.8125rem;line-height:1.5}
+.role-admin .contract-list.lease-overview .contract-heading{flex-wrap:wrap;gap:1rem}
+.role-admin .contract-list.lease-overview .btn{min-height:44px;border-radius:8px}
+.role-admin .contract-list.lease-overview .contract-card{padding:1rem;border-color:#e4e7eb;border-radius:12px;box-shadow:0 2px 8px #25282d04}
+.role-admin .contract-list.lease-overview .lease-stats .contract-card{padding:1rem;border-top:3px solid #bfa77a}
+.role-admin .contract-list.lease-overview .contract-icon{width:38px;height:38px;flex-basis:38px;border-radius:10px}
+.role-admin .contract-list.lease-overview .lease-stats strong{font-size:1.875rem;line-height:1.25}
+.role-admin .contract-list.lease-overview .lease-filter-card{padding:1rem}
+.role-admin .contract-list.lease-overview .lease-filter-row{align-items:end}
+.role-admin .contract-list.lease-overview .lease-filter-card select,.role-admin .contract-list.lease-overview .lease-filter-card #lease-apply{min-height:44px;border-radius:8px}
+.role-admin .contract-list.lease-overview .lease-search-box #lease-search{background:#fff;border-radius:8px;border-color:#dfe3e8}
+.role-admin .contract-list.lease-overview .lease-filter-card .form-control:focus,.role-admin .contract-list.lease-overview .lease-filter-card select:focus{border-color:#bfa77a;box-shadow:0 0 0 3px #bfa77a26}
+.role-admin .contract-list.lease-overview .contract-card-title h2{font-size:1.0625rem;font-weight:700;line-height:1.5}
+.role-admin .contract-list.lease-overview .lease-tabs{gap:1.25rem}
+.role-admin .contract-list.lease-overview .table-responsive{border:1px solid #e9eaec;border-radius:9px}
+.role-admin .contract-list.lease-overview .table th,.role-admin .contract-list.lease-overview .table td{padding:.75rem;line-height:1.5;vertical-align:middle;border-color:#e9eaec}
+.role-admin .contract-list.lease-overview .table small{line-height:1.5}
+@media(max-width:600px){.role-admin .contract-list.lease-overview .lease-search-box{width:100%}.role-admin .contract-list.lease-overview .lease-stats{flex-direction:column}.role-admin .contract-list.lease-overview .lease-stats .contract-card{width:100%}}
+
+/* Even line spacing in the Admin contract list. */
+.role-admin .contract-list.lease-overview .lease-stats strong{line-height:1.25;margin-bottom:.25rem}
+.role-admin .contract-list.lease-overview .lease-stats small{line-height:1.5}
+.role-admin .contract-list.lease-overview .lease-filter-card .lease-filter-row{margin-top:.75rem;row-gap:.875rem}
+.role-admin .contract-list.lease-overview .lease-filter-card .lease-filter-row label{line-height:1.5;gap:.375rem}
+.role-admin .contract-list.lease-overview .contract-card-title h2{margin-bottom:.25rem;line-height:1.5}
+.role-admin .contract-list.lease-overview .contract-card-title p{margin:0;line-height:1.5}
+.role-admin .contract-list.lease-overview .table th,.role-admin .contract-list.lease-overview .table td{padding:.625rem .75rem;line-height:1.5}
+.role-admin .contract-list.lease-overview .table small{display:block;margin-top:.25rem;line-height:1.5}
+.role-admin .contract-list.lease-overview .lease-tabs button{padding:.625rem 0;line-height:1.5}
+
+/* Admin contract creation matches Bootstrap management forms. */
+.role-admin .lease-create.create-reference{max-width:none;font-size:.8125rem;line-height:1.5}
+.role-admin .lease-create.create-reference .contract-heading{align-items:center;gap:1rem}
+.role-admin .lease-create.create-reference .contract-heading p{margin:0;line-height:1.5}
+.role-admin .lease-create.create-reference .contract-card{padding:1rem;border-color:#e4e7eb;box-shadow:0 2px 8px #25282d04}
+.role-admin .lease-create.create-reference .contract-card-title{padding-bottom:.75rem;margin-bottom:1rem;border-bottom:1px solid #e9eaec}
+.role-admin .lease-create.create-reference .contract-card-title h2{margin:0;line-height:1.5}
+.role-admin .lease-create.create-reference .form-control,.role-admin .lease-create.create-reference .form-select{min-height:44px;background-color:#fff;border-radius:8px;font-size:.8125rem;line-height:1.5}
+.role-admin .lease-create.create-reference .contract-field label,.role-admin .lease-create.create-reference .create-terms .contract-field>label{font-size:.75rem;line-height:1.5}
+.role-admin .lease-create.create-reference .btn{min-height:44px;padding:.625rem 1rem;border-radius:8px;font-size:.8125rem;line-height:1.5}
+.role-admin .lease-create.create-reference .contract-note{font-size:.75rem;line-height:1.5}
+.role-admin .lease-create.create-reference .create-summary .lease-create-summary{padding:1rem}
+.role-admin .lease-create.create-reference .create-summary .contract-generated{padding:.75rem 0;font-size:.8125rem;line-height:1.5}
+.role-admin .lease-create.create-reference .create-summary .contract-generated strong{font-size:.8125rem;line-height:1.5}
+.role-admin .lease-create.create-reference .create-summary .create-room{padding:.875rem;border:1px solid #eee8dc;border-radius:9px}
+@media(max-width:1000px){.role-admin .lease-create.create-reference .create-workspace{grid-template-columns:1fr}}
+@media(max-width:600px){.role-admin .lease-create.create-reference .contract-heading h1{font-size:1.5rem}.role-admin .lease-create.create-reference .contract-heading>.btn{width:100%}}
+
+/* Even spacing in Admin contract creation. */
+.role-admin .lease-create.create-reference .contract-card-title{margin-bottom:.875rem}
+.role-admin .lease-create.create-reference .create-terms .contract-field{margin-bottom:.875rem!important}
+.role-admin .lease-create.create-reference .contract-field label,.role-admin .lease-create.create-reference .create-terms .contract-field>label{line-height:1.5;margin-bottom:.375rem!important}
+.role-admin .lease-create.create-reference .contract-note{margin-top:.5rem;line-height:1.5}
+.role-admin .lease-create.create-reference .create-summary .contract-generated{padding:.625rem 0;line-height:1.5}
+.role-admin .lease-create.create-reference .create-summary .create-room{margin:.75rem 0;padding:.75rem}
+.role-admin .lease-create.create-reference .contract-card-title small{margin-top:.25rem;line-height:1.5}
+.role-admin .lease-create.create-reference .create-meter-note{margin-top:.875rem;padding:.75rem;line-height:1.5}
+.role-admin .lease-create.create-reference .field-validation-valid{display:none}
+.role-admin .lease-create.create-reference .field-validation-error{display:block;margin-top:.25rem;font-size:.75rem;line-height:1.5}
+/* Refined Bootstrap contract workspace for Admin. */
+.role-admin .contract-list.lease-overview{max-width:1440px;margin:0 auto;min-width:0;line-height:1.5}
+.role-admin .contract-list.lease-overview .contract-heading{align-items:center;margin-bottom:1.25rem}
+.role-admin .contract-list.lease-overview .contract-heading h1{font-size:1.5rem;line-height:1.3;letter-spacing:-.025rem;margin:0 0 .375rem}
+.role-admin .contract-list.lease-overview .contract-heading p{font-size:.8125rem;line-height:1.5;color:#7a818b}
+.role-admin .contract-list.lease-overview .lease-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;margin:0 0 1.25rem}
+.role-admin .contract-list.lease-overview .lease-stats .contract-card{display:flex;align-items:center;gap:1rem;width:auto;padding:1.125rem;border:1px solid #e9eaec;border-radius:14px;background:#fff;min-width:0;box-shadow:0 2px 8px #25282d04}
+.role-admin .contract-list.lease-overview .contract-icon{width:44px;height:44px;flex:0 0 44px;border-radius:10px;background:#e9eaec}
+.role-admin .contract-list.lease-overview .contract-icon.gold{background:#f4efe5;color:#9c8150}
+.role-admin .contract-list.lease-overview .lease-stats strong{display:block;font-size:1.875rem;line-height:1.2;margin:0 0 .25rem;font-variant-numeric:tabular-nums}
+.role-admin .contract-list.lease-overview .lease-stats small{display:block;line-height:1.5;margin-top:.375rem;font-size:.6875rem}
+.role-admin .contract-list.lease-overview .contract-card{padding:1.25rem;border:1px solid #e9eaec;border-radius:14px;box-shadow:0 2px 8px #25282d04!important;margin-bottom:1.25rem}
+.role-admin .contract-list.lease-overview .lease-search-box{width:min(100%,640px)}
+.role-admin .contract-list.lease-overview .lease-search-box #lease-search{width:100%;min-height:44px;background:#f7f8f9;border-color:#e4e7eb;font-size:.8125rem;border-radius:8px}
+.role-admin .contract-list.lease-overview .lease-filter-card .lease-filter-row{grid-template-columns:repeat(4,minmax(0,1fr)) auto;gap:.875rem;margin-top:1rem}
+.role-admin .contract-list.lease-overview .lease-filter-row label{font-size:.75rem;line-height:1.5;font-weight:500;color:#697380;gap:.375rem}
+.role-admin .contract-list.lease-overview .lease-filter-row .form-select{min-height:44px;font-size:.8125rem;border-radius:8px;background-color:#fff;border-color:#dfe3e8}
+.role-admin .contract-list.lease-overview .btn{min-height:42px;border-radius:8px;font-size:.8125rem;padding:.625rem .875rem;line-height:1.5}
+.role-admin .contract-list.lease-overview .contract-card-title{align-items:center;gap:.75rem;margin-bottom:1rem}
+.role-admin .contract-list.lease-overview .contract-card-title h2{font-size:1rem;line-height:1.5;font-weight:600;margin:0 0 .25rem}
+.role-admin .contract-list.lease-overview .contract-card-title small{font-size:.75rem;line-height:1.5}
+.role-admin .contract-list.lease-overview .lease-list-tools{border-bottom:0;gap:.75rem}
+.role-admin .contract-list.lease-overview .lease-tabs{gap:.375rem;flex-wrap:wrap;background:#f5f5f4;padding:.25rem;border-radius:9px;margin-bottom:.75rem}
+.role-admin .contract-list.lease-overview .lease-tabs button{padding:.5rem .75rem;border:0;border-radius:7px;font-size:.75rem;line-height:1.5}
+.role-admin .contract-list.lease-overview .lease-tabs button.is-active{background:#fff;color:#80663a;box-shadow:0 1px 4px #25282d12}
+.role-admin .contract-list.lease-overview .lease-tabs span{border-radius:4px;background:#e9eaec;color:#626974;padding:.125rem .375rem}
+.role-admin .contract-list.lease-overview .table-responsive{border:0;border-radius:9px;margin-top:.5rem}
+.role-admin .contract-list.lease-overview .lease-table{min-width:960px}
+.role-admin .contract-list.lease-overview .table th{padding:.75rem;background:#f5f5f4;font-size:.6875rem;font-weight:600;color:#697380;line-height:1.5;white-space:nowrap;border-color:#eeeff0}
+.role-admin .contract-list.lease-overview .table td{padding:.8125rem .75rem;font-size:.8125rem;line-height:1.5;border-color:#eeeff0}
+.role-admin .contract-list.lease-overview .table strong{font-size:.8125rem;line-height:1.5}
+.role-admin .contract-list.lease-overview .table small{font-size:.6875rem;line-height:1.5;margin-top:.25rem}
+.role-admin .contract-list.lease-overview .table tbody tr:hover td{background:#faf8f4}
+.role-admin .contract-list.lease-overview .contract-badge{padding:.375rem .625rem;border-radius:20px;line-height:1.5}
+.role-admin .contract-list.lease-overview .lease-table-footer{padding-top:1rem;margin-top:.375rem;gap:.625rem;flex-wrap:wrap;line-height:1.5}
+.role-admin .contract-list.lease-overview .lease-table-footer button{min-width:32px;min-height:32px;border:1px solid #e9eaec;border-radius:7px}
+.role-admin .contract-list.lease-overview .lease-footnote{font-size:.6875rem;line-height:1.5;margin:.875rem 0 1rem;color:#858c96}
+@media(max-width:1100px){.role-admin .contract-list.lease-overview .lease-filter-card .lease-filter-row{grid-template-columns:repeat(2,minmax(0,1fr))}.role-admin .contract-list.lease-overview #lease-apply{justify-self:start;min-width:110px}}
+@media(max-width:767px){.role-admin .contract-list.lease-overview .lease-stats{grid-template-columns:1fr;gap:.75rem}.role-admin .contract-list.lease-overview .lease-stats .contract-card{padding:1rem;width:auto}.role-admin .contract-list.lease-overview .contract-card{padding:1rem}.role-admin .contract-list.lease-overview .lease-search-box{width:100%}.role-admin .contract-list.lease-overview .lease-table-footer>small{width:100%}.role-admin .contract-list.lease-overview .lease-list-tools{flex-direction:column;align-items:flex-start}.role-admin .contract-list.lease-overview .contract-card-title{flex-wrap:wrap}}
+@media(max-width:450px){.role-admin .contract-list.lease-overview .lease-filter-card .lease-filter-row{grid-template-columns:minmax(0,1fr)}.role-admin .contract-list.lease-overview #lease-apply{width:100%}.role-admin .contract-list.lease-overview .lease-tabs button{padding:.4375rem .5rem;font-size:.6875rem}}
+/* Even vertical rhythm for the Admin contract list. */
+.role-admin .contract-list.lease-overview .contract-heading{margin-bottom:1rem}
+.role-admin .contract-list.lease-overview .contract-heading h1{line-height:1.3;margin-bottom:.375rem}
+.role-admin .contract-list.lease-overview .contract-heading p{line-height:1.5}
+.role-admin .contract-list.lease-overview .lease-stats{margin-bottom:1rem}
+.role-admin .contract-list.lease-overview .lease-stats .contract-card{padding:1rem 1.125rem;margin-bottom:0}
+.role-admin .contract-list.lease-overview .lease-stats strong{line-height:1.2;margin-bottom:.25rem}
+.role-admin .contract-list.lease-overview .lease-stats small{line-height:1.5;margin-top:.25rem}
+.role-admin .contract-list.lease-overview .contract-card{padding:1.125rem;margin-bottom:1rem}
+.role-admin .contract-list.lease-overview .lease-filter-card .lease-filter-row{margin-top:.875rem;row-gap:.75rem}
+.role-admin .contract-list.lease-overview .lease-filter-row label{line-height:1.5;gap:.375rem;margin-bottom:0}
+.role-admin .contract-list.lease-overview .contract-card-title{margin-bottom:.875rem}
+.role-admin .contract-list.lease-overview .contract-card-title h2{line-height:1.5;margin-bottom:.25rem}
+.role-admin .contract-list.lease-overview .contract-card-title small{line-height:1.5}
+.role-admin .contract-list.lease-overview .lease-tabs{margin-bottom:.5rem}
+.role-admin .contract-list.lease-overview .table th{padding:.6875rem .75rem;line-height:1.5}
+.role-admin .contract-list.lease-overview .table td{padding:.75rem;line-height:1.5}
+.role-admin .contract-list.lease-overview .table small{line-height:1.5;margin-top:.25rem}
+.role-admin .contract-list.lease-overview .lease-table-footer{padding-top:.875rem;margin-top:.25rem;line-height:1.5}
+.role-admin .contract-list.lease-overview .lease-footnote{line-height:1.5;margin:.75rem 0 1rem}
+@media(max-width:767px){.role-admin .contract-list.lease-overview .contract-card,.role-admin .contract-list.lease-overview .lease-stats .contract-card{padding:1rem}}
+/* Refined Bootstrap invoice management for Admin. */
+.role-admin .invoice-bootstrap.payment-management{max-width:1440px;margin:auto;min-width:0;font-size:.8125rem;line-height:1.5;color:#25282d}
+.role-admin .invoice-bootstrap .mi-heading{align-items:center;gap:1rem;margin-bottom:1.25rem}
+.role-admin .invoice-bootstrap .mi-heading h1{font-size:1.5rem;line-height:1.3;letter-spacing:-.025rem;margin:0 0 .375rem}
+.role-admin .invoice-bootstrap .mi-heading p{font-size:.8125rem;line-height:1.5;margin:0;color:#7a818b}
+.role-admin .invoice-bootstrap .flow-metrics{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1rem;margin:0 0 1.25rem}
+.role-admin .invoice-bootstrap .mi-card{border:1px solid #e9eaec;border-radius:14px;background:#fff;padding:1.125rem;box-shadow:0 2px 8px #25282d04}
+.role-admin .invoice-bootstrap .flow-metrics .mi-card{min-width:0;display:flex;flex-direction:column;margin:0;min-height:126px}
+.role-admin .invoice-bootstrap .flow-metrics .mi-card>span,.role-admin .invoice-bootstrap .flow-metrics .mi-card a>span{font-size:.75rem;line-height:1.5;margin-bottom:.625rem;color:#7a818b}
+.role-admin .invoice-bootstrap .flow-metrics strong{display:block;font-size:1.625rem;line-height:1.25;margin:0 0 .5rem;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.role-admin .invoice-bootstrap .flow-metrics small{display:block;font-size:.6875rem;line-height:1.5;color:#858c96;margin-top:auto}
+.role-admin .invoice-bootstrap .pending-metric{background:#fcfaf6;border-color:#e8dcc5}
+.role-admin .invoice-bootstrap .pending-metric a{display:flex;flex-direction:column;flex:1;color:#967343;text-decoration:none}
+.role-admin .invoice-bootstrap>section.mi-card{padding:1.25rem}
+.role-admin .invoice-bootstrap .flow-tabs{display:flex;gap:.375rem;flex-wrap:wrap;border-bottom:0;padding:.25rem;background:#f5f5f4;border-radius:9px;width:fit-content;max-width:100%;margin:0 0 1rem}
+.role-admin .invoice-bootstrap .flow-tabs a{padding:.5625rem .875rem;font-size:.75rem;line-height:1.5;border:0;border-radius:7px;color:#777f89;background:transparent}
+.role-admin .invoice-bootstrap .flow-tabs a.active{background:#fff;color:#80663a;border:0;box-shadow:0 1px 4px #25282d12}
+.role-admin .invoice-bootstrap .flow-tabs .pw-badge{padding:.1875rem .4375rem;font-size:.6875rem;margin-left:.25rem}
+.role-admin .invoice-bootstrap .flow-filters{display:grid;grid-template-columns:minmax(220px,2fr) minmax(150px,1.1fr) minmax(120px,.9fr) 90px minmax(145px,1fr) auto;gap:.75rem;align-items:center;margin:0 0 1rem}
+.role-admin .invoice-bootstrap .flow-filters .form-control,.role-admin .invoice-bootstrap .flow-filters .form-select{min-width:0;min-height:44px;border:1px solid #dfe3e8;border-radius:8px;font-size:.8125rem;line-height:1.5;background-color:#fff}
+.role-admin .invoice-bootstrap .flow-filters .form-control:focus,.role-admin .invoice-bootstrap .flow-filters .form-select:focus{border-color:#bfa77a;outline:2px solid #bfa77a55;outline-offset:1px;box-shadow:none}
+.role-admin .invoice-bootstrap .btn{border-radius:8px;min-height:40px;font-size:.75rem;padding:.5rem .875rem;line-height:1.5}
+.role-admin .invoice-bootstrap .flow-filters .btn{min-height:44px}
+.role-admin .invoice-bootstrap .btn-dark{background:#30343b;border-color:#30343b}
+.role-admin .invoice-bootstrap .table-responsive{border:1px solid #eeeff0;border-radius:9px}
+.role-admin .invoice-bootstrap .flow-table{min-width:1180px;margin:0;table-layout:auto}
+.role-admin .invoice-bootstrap .flow-table thead th{padding:.75rem;background:#f5f5f4;font-size:.6875rem;font-weight:600;color:#697380;white-space:nowrap;line-height:1.5;border-color:#eeeff0}
+.role-admin .invoice-bootstrap .flow-table tbody td,.role-admin .invoice-bootstrap .flow-table tbody th{padding:.875rem .75rem;font-size:.8125rem;line-height:1.5;border-color:#eeeff0;vertical-align:middle;background:#fff}
+.role-admin .invoice-bootstrap .flow-table tbody th{min-width:170px;max-width:195px;overflow-wrap:anywhere;font-weight:600;font-variant-numeric:tabular-nums}
+.role-admin .invoice-bootstrap .flow-table td:nth-child(3){min-width:170px}
+.role-admin .invoice-bootstrap .flow-table td:nth-child(7),.role-admin .invoice-bootstrap .flow-table td:nth-child(8),.role-admin .invoice-bootstrap .flow-table thead th:nth-child(7),.role-admin .invoice-bootstrap .flow-table thead th:nth-child(8){text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.role-admin .invoice-bootstrap .flow-table td small{display:block;margin-top:.25rem;font-size:.6875rem;line-height:1.5;color:#858c96}
+.role-admin .invoice-bootstrap .flow-table tbody tr:hover>*{background:#faf8f4}
+.role-admin .invoice-bootstrap .flow-badge{font-size:.6875rem;font-weight:500;line-height:1.5;padding:.375rem .625rem;border-radius:20px;white-space:nowrap}
+.role-admin .invoice-bootstrap .flow-pagination{padding-top:1rem;margin-top:1rem;gap:.75rem;border-color:#eeeff0;flex-wrap:wrap;line-height:1.5;font-size:.75rem}
+.role-admin .invoice-bootstrap .flow-pagination .btn{min-width:34px;min-height:34px;padding:.375rem .625rem;border-radius:7px}
+.role-admin .invoice-bootstrap .flow-empty{padding:2rem 1rem;text-align:center;font-size:.8125rem;line-height:1.5;color:#858c96}
+@media(max-width:1100px){.role-admin .invoice-bootstrap .flow-metrics{grid-template-columns:repeat(3,minmax(0,1fr))}.role-admin .invoice-bootstrap .flow-filters{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){.role-admin .invoice-bootstrap .flow-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}.role-admin .invoice-bootstrap .flow-metrics .mi-card{padding:1rem;min-height:116px}.role-admin .invoice-bootstrap .flow-metrics .mi-card:last-child{grid-column:1/-1}.role-admin .invoice-bootstrap>section.mi-card{padding:1rem}.role-admin .invoice-bootstrap .flow-filters{grid-template-columns:minmax(0,1fr)}.role-admin .invoice-bootstrap .flow-tabs{width:100%}.role-admin .invoice-bootstrap .flow-tabs a{padding:.5rem .625rem}.role-admin .invoice-bootstrap .flow-pagination .management-page-info{width:100%}}
+/* Even vertical rhythm in Admin invoice management. */
+.role-admin .invoice-bootstrap .mi-heading{margin-bottom:1rem}
+.role-admin .invoice-bootstrap .mi-heading h1{line-height:1.3;margin-bottom:.375rem}
+.role-admin .invoice-bootstrap .mi-heading p{line-height:1.5}
+.role-admin .invoice-bootstrap .flow-metrics{margin-bottom:1rem}
+.role-admin .invoice-bootstrap .flow-metrics .mi-card{padding:1rem;min-height:118px}
+.role-admin .invoice-bootstrap .flow-metrics .mi-card>span,.role-admin .invoice-bootstrap .flow-metrics .mi-card a>span{line-height:1.5;margin-bottom:.5rem}
+.role-admin .invoice-bootstrap .flow-metrics strong{line-height:1.25;margin-bottom:.375rem}
+.role-admin .invoice-bootstrap .flow-metrics small{line-height:1.5}
+.role-admin .invoice-bootstrap>section.mi-card{padding:1.125rem}
+.role-admin .invoice-bootstrap .flow-tabs{margin-bottom:.875rem}
+.role-admin .invoice-bootstrap .flow-tabs a{padding:.5rem .75rem;line-height:1.5}
+.role-admin .invoice-bootstrap .flow-filters{margin-bottom:.875rem;row-gap:.75rem}
+.role-admin .invoice-bootstrap .flow-table thead th{padding:.6875rem .75rem;line-height:1.5}
+.role-admin .invoice-bootstrap .flow-table tbody td,.role-admin .invoice-bootstrap .flow-table tbody th{padding:.75rem;line-height:1.5}
+.role-admin .invoice-bootstrap .flow-table td small{line-height:1.5;margin-top:.25rem}
+.role-admin .invoice-bootstrap .flow-pagination{padding-top:.875rem;margin-top:.875rem;line-height:1.5}
+.role-admin .invoice-bootstrap .flow-empty{padding:1.75rem 1rem;line-height:1.5}
+@media(max-width:600px){.role-admin .invoice-bootstrap>section.mi-card{padding:1rem}.role-admin .invoice-bootstrap .flow-metrics .mi-card{padding:.875rem;min-height:110px}}
+/* Bootstrap refinements for the Admin invoice detail. */
+.role-admin .ic-page.collection-bootstrap{max-width:1440px;margin:auto;min-width:0;font-size:.8125rem;line-height:1.5;color:#25282d}
+.role-admin .collection-bootstrap .ic-heading{align-items:center;gap:1rem;margin-bottom:1.25rem}
+.role-admin .collection-bootstrap .ic-title{display:flex;align-items:center;flex-wrap:wrap;gap:.75rem}
+.role-admin .collection-bootstrap .ic-heading h1{font-size:1.5rem;line-height:1.35;letter-spacing:-.025rem;margin:0;overflow-wrap:anywhere;min-width:0}
+.role-admin .collection-bootstrap .ic-heading p{font-size:.8125rem;line-height:1.5;margin:.5rem 0 0;color:#7a818b}
+.role-admin .collection-bootstrap .ic-status{padding:.375rem .625rem;border-radius:20px;font-size:.6875rem;line-height:1.5;font-weight:500}
+.role-admin .collection-bootstrap .ic-actions{flex-shrink:0}
+.role-admin .collection-bootstrap .ic-button{min-height:42px;border-radius:8px;padding:.625rem .875rem;font-size:.8125rem;line-height:1.5}
+.role-admin .collection-bootstrap .ic-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem;margin-bottom:1.25rem}
+.role-admin .collection-bootstrap .ic-stat{display:flex;align-items:center;gap:.875rem;border:1px solid #e9eaec;border-radius:14px;padding:1.125rem;background:#fff;box-shadow:0 2px 8px #25282d04;min-width:0}
+.role-admin .collection-bootstrap .ic-stat>div{min-width:0}
+.role-admin .collection-bootstrap .ic-stat>div>span{font-size:.75rem;line-height:1.5;color:#858c96;display:block;margin-bottom:.375rem}
+.role-admin .collection-bootstrap .ic-stat strong{font-size:1.25rem;line-height:1.3;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.role-admin .collection-bootstrap .ic-stat.remaining{background:#fcfaf6;border-color:#e8dcc5}
+.role-admin .collection-bootstrap .ic-icon{width:42px;height:42px;flex:0 0 42px;border-radius:11px}
+.role-admin .collection-bootstrap .ic-icon.blue{background:#e9eaec;color:#626974}
+.role-admin .collection-bootstrap .ic-icon.green{background:#eaf3ee;color:#64927f}
+.role-admin .collection-bootstrap .ic-icon.amber{background:#f4eddf;color:#9c8150}
+.role-admin .collection-bootstrap .ic-columns{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(290px,1fr);gap:1rem;align-items:start}
+.role-admin .collection-bootstrap .ic-card{padding:1.25rem;border:1px solid #e9eaec;border-radius:14px;background:#fff;box-shadow:0 2px 8px #25282d04;margin-bottom:1rem;min-width:0}
+.role-admin .collection-bootstrap .ic-card h2{font-size:1rem;line-height:1.5;font-weight:600;margin:0 0 1rem}
+.role-admin .collection-bootstrap .ic-table-wrap{border:1px solid #eeeff0;border-radius:9px}
+.role-admin .collection-bootstrap .ic-table th{background:#f5f5f4;padding:.75rem;font-size:.6875rem;line-height:1.5;color:#697380;font-weight:600;border-color:#eeeff0}
+.role-admin .collection-bootstrap .ic-table td{padding:.8125rem .75rem;font-size:.8125rem;line-height:1.5;border-color:#eeeff0;background:#fff}
+.role-admin .collection-bootstrap .ic-table tbody tr:hover>*{background:#faf8f4;--bs-table-accent-bg:#faf8f4;--bs-table-bg-state:#faf8f4}
+.role-admin .collection-bootstrap .ic-table small{display:block;margin-top:.25rem;font-size:.6875rem;line-height:1.5;color:#858c96}
+.role-admin .collection-bootstrap .ic-table .money{font-variant-numeric:tabular-nums;white-space:nowrap}
+.role-admin .collection-bootstrap .ic-table tfoot th,.role-admin .collection-bootstrap .ic-table tfoot td{background:#f7f5ef;padding:1rem .75rem;font-size:.875rem;font-weight:600;color:#30343b}
+.role-admin .collection-bootstrap .ic-empty{padding:1.5rem 1rem;border:1px dashed #e4e7eb;border-radius:10px;background:#fcfcfb;text-align:center}
+.role-admin .collection-bootstrap .ic-empty strong{font-size:.8125rem;line-height:1.5;margin-top:.625rem}
+.role-admin .collection-bootstrap .ic-empty p{font-size:.75rem;line-height:1.5;margin:.375rem 0 0;color:#858c96}
+.role-admin .collection-bootstrap .ic-progress{height:8px;border-radius:20px;margin-bottom:1rem;background:#e9eaec}
+.role-admin .collection-bootstrap .ic-progress>div{background:#bfa77a;min-width:0}
+.role-admin .collection-bootstrap .ic-progress-labels{line-height:1.5;gap:1rem}
+.role-admin .collection-bootstrap .ic-progress-labels strong{display:block;margin-top:.375rem;font-size:.75rem;font-variant-numeric:tabular-nums}
+.role-admin .collection-bootstrap .ic-info{margin:0}
+.role-admin .collection-bootstrap .ic-info>div{padding:.6875rem 0;gap:.75rem;border-color:#eeeff0;line-height:1.5}
+.role-admin .collection-bootstrap .ic-info>div:last-child{padding-bottom:0;border-bottom:0}
+.role-admin .collection-bootstrap .ic-info dt{font-size:.75rem;font-weight:400;color:#858c96}
+.role-admin .collection-bootstrap .ic-info dd{font-size:.8125rem;line-height:1.5;overflow-wrap:anywhere;margin:0}
+@media(max-width:1100px){.role-admin .collection-bootstrap .ic-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.role-admin .collection-bootstrap .ic-columns{grid-template-columns:minmax(0,1fr)}.role-admin .collection-bootstrap .ic-heading{flex-wrap:wrap}}
+@media(max-width:600px){.role-admin .collection-bootstrap .ic-stat{padding:.875rem;gap:.625rem}.role-admin .collection-bootstrap .ic-stat strong{font-size:1.0625rem}.role-admin .collection-bootstrap .ic-stat .ic-icon{width:32px;height:32px;flex-basis:32px}.role-admin .collection-bootstrap .ic-card{padding:1rem}.role-admin .collection-bootstrap .ic-heading h1{font-size:1.25rem}.role-admin .collection-bootstrap .ic-actions{width:100%}.role-admin .collection-bootstrap .ic-actions .ic-button{width:100%}.role-admin .collection-bootstrap .ic-table{min-width:570px}.role-admin .collection-bootstrap .ic-stats{gap:.75rem}}
+/* Even vertical rhythm in Admin invoice details. */
+.role-admin .collection-bootstrap .ic-heading{margin-bottom:1rem}
+.role-admin .collection-bootstrap .ic-heading h1{line-height:1.3}
+.role-admin .collection-bootstrap .ic-heading p{line-height:1.5;margin-top:.375rem}
+.role-admin .collection-bootstrap .ic-stats{margin-bottom:1rem}
+.role-admin .collection-bootstrap .ic-stat{padding:1rem}
+.role-admin .collection-bootstrap .ic-stat>div>span{line-height:1.5;margin-bottom:.25rem}
+.role-admin .collection-bootstrap .ic-stat strong{line-height:1.3}
+.role-admin .collection-bootstrap .ic-card{padding:1.125rem;margin-bottom:1rem}
+.role-admin .collection-bootstrap .ic-card h2{line-height:1.5;margin-bottom:.875rem}
+.role-admin .collection-bootstrap .ic-table th{padding:.6875rem .75rem;line-height:1.5}
+.role-admin .collection-bootstrap .ic-table td{padding:.75rem;line-height:1.5}
+.role-admin .collection-bootstrap .ic-table small{line-height:1.5;margin-top:.25rem}
+.role-admin .collection-bootstrap .ic-table tfoot th,.role-admin .collection-bootstrap .ic-table tfoot td{padding:.875rem .75rem;line-height:1.5}
+.role-admin .collection-bootstrap .ic-empty{padding:1.25rem 1rem}
+.role-admin .collection-bootstrap .ic-empty strong{line-height:1.5;margin-top:.5rem}
+.role-admin .collection-bootstrap .ic-empty p{line-height:1.5;margin-top:.375rem}
+.role-admin .collection-bootstrap .ic-progress{margin-bottom:.875rem}
+.role-admin .collection-bootstrap .ic-progress-labels{line-height:1.5}
+.role-admin .collection-bootstrap .ic-progress-labels strong{line-height:1.5;margin-top:.25rem}
+.role-admin .collection-bootstrap .ic-info>div{padding:.625rem 0;line-height:1.5}
+.role-admin .collection-bootstrap .ic-info dt,.role-admin .collection-bootstrap .ic-info dd{line-height:1.5}
+@media(max-width:600px){.role-admin .collection-bootstrap .ic-card{padding:1rem}.role-admin .collection-bootstrap .ic-stat{padding:.875rem}}
+/* Admin Bootstrap navigation: clear groups, aligned icons and compact rows. */
+.role-admin .dashboard-sidebar .bootstrap-sidebar{padding:1.25rem .875rem 1rem;scrollbar-width:thin;scrollbar-color:#60666e transparent}
+.role-admin .dashboard-sidebar .bootstrap-sidebar .sidebar-brand{padding:.125rem .5rem 1rem;margin-bottom:.75rem;gap:.75rem;border-bottom:1px solid #ffffff12}
+.role-admin .dashboard-sidebar .bootstrap-sidebar .sidebar-brand>svg{width:38px;height:38px;padding:9px;border-radius:11px;background:#bfa77a}
+.role-admin .dashboard-sidebar .bootstrap-sidebar .sidebar-brand strong{font-size:1.375rem;line-height:1.2;letter-spacing:-.025rem}
+.role-admin .dashboard-sidebar .bootstrap-sidebar .sidebar-brand small{font-size:.625rem;line-height:1.5;margin-top:.25rem;color:#aeb5bd}
+.role-admin .dashboard-sidebar .bootstrap-sidebar nav{gap:0}
+.role-admin .dashboard-sidebar .bootstrap-sidebar section{margin-top:.75rem}
+.role-admin .dashboard-sidebar .bootstrap-sidebar section[data-menu-group=""]{margin-top:.125rem}
+.role-admin .dashboard-sidebar .bootstrap-sidebar h2{font-size:.625rem;font-weight:600;line-height:1.5;letter-spacing:.065em;color:#bfa77a;margin:.125rem .75rem .375rem}
+.role-admin .dashboard-sidebar .bootstrap-sidebar .sidebar-link{display:flex;align-items:center;gap:.75rem;min-height:40px;padding:.5625rem .75rem;margin:0 0 .125rem;border:1px solid transparent;border-radius:8px;font-size:.75rem;line-height:1.5;font-weight:500;color:#bec5cc;box-shadow:none}
+.role-admin .dashboard-sidebar .bootstrap-sidebar .sidebar-link>svg{width:18px;height:18px;flex:0 0 18px;color:#929da7;stroke-width:1.6}
+.role-admin .dashboard-sidebar .bootstrap-sidebar .sidebar-link>span:not(.badge){line-height:1.5;min-width:0}
+.role-admin .dashboard-sidebar .bootstrap-sidebar .sidebar-link:hover{background:#ffffff08;border-color:#ffffff0b;color:#fff}
+.role-admin .dashboard-sidebar .bootstrap-sidebar .sidebar-link:hover>svg{color:#d4bd93}
+.role-admin .dashboard-sidebar .bootstrap-sidebar .sidebar-link.is-active{background:#bfa77a19;border-color:#bfa77a30;box-shadow:inset 3px 0 #bfa77a;color:#efdfc2;font-weight:600}
+.role-admin .dashboard-sidebar .bootstrap-sidebar .sidebar-link.is-active>svg{color:#d4bd93}
+.role-admin .dashboard-sidebar .bootstrap-sidebar .sidebar-link .badge{display:inline-flex;align-items:center;justify-content:center;min-width:21px;height:21px;margin-left:auto;padding:0 .375rem;font-size:.625rem;line-height:1;font-weight:600;border:1px solid #d6c39f;background:#f4efe5;color:#80663a}
+.role-admin .dashboard-sidebar .bootstrap-sidebar .sidebar-link:focus-visible{outline:2px solid #bfa77a;outline-offset:2px}
+@media(max-width:767px){.role-admin .dashboard-sidebar .bootstrap-sidebar .sidebar-link{min-height:44px;padding:.625rem .75rem}}
+/* Even vertical rhythm in the Admin sidebar. */
+.role-admin .dashboard-sidebar .bootstrap-sidebar .sidebar-brand{padding-bottom:.875rem;margin-bottom:.625rem}
+.role-admin .dashboard-sidebar .bootstrap-sidebar nav{gap:0}
+.role-admin .dashboard-sidebar .bootstrap-sidebar section{margin-top:.625rem}
+.role-admin .dashboard-sidebar .bootstrap-sidebar section[data-menu-group=""]{margin-top:0}
+.role-admin .dashboard-sidebar .bootstrap-sidebar h2{margin:.125rem .75rem .375rem;line-height:1.5}
+.role-admin .dashboard-sidebar .bootstrap-sidebar .sidebar-link{min-height:38px;padding:.5rem .75rem;margin:0 0 .125rem;line-height:1.5}
+.role-admin .dashboard-sidebar .bootstrap-sidebar .sidebar-link>span:not(.badge){line-height:1.5}
+@media(max-width:767px){.role-admin .dashboard-sidebar .bootstrap-sidebar .sidebar-link{min-height:44px;padding:.625rem .75rem}}

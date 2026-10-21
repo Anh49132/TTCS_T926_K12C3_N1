@@ -1,0 +1,77 @@
+.monthly-invoices.invoice-setup-bootstrap{max-width:none;padding:0;font-size:.875rem;line-height:1.5;color:#25282d}
+.invoice-setup-bootstrap>a{display:inline-block;font-size:.8125rem;color:#7b8491;text-decoration:none;margin-bottom:.875rem}
+.invoice-setup-bootstrap .mi-heading{margin-bottom:1rem}
+.invoice-setup-bootstrap .mi-heading h1{font-size:1.75rem;font-weight:750;line-height:1.3;letter-spacing:-.04rem;margin:0 0 .375rem}
+.invoice-setup-bootstrap .mi-heading p{font-size:.875rem;color:#7a838f;line-height:1.5;margin:0}
+.invoice-setup-bootstrap .flow-columns{gap:1rem;align-items:start}
+.invoice-setup-bootstrap .mi-card{display:block;padding:1rem 1.125rem;margin:0;border:1px solid #e4e7eb;border-radius:12px;box-shadow:0 2px 6px #25282d03;background:#fff;min-width:0}
+.invoice-setup-bootstrap h2{font-size:1.0625rem;font-weight:700;line-height:1.4;margin:0 0 .875rem}
+.invoice-setup-bootstrap .flow-fields{gap:.75rem 1rem}
+.invoice-setup-bootstrap .flow-fields>div{min-width:0}
+.invoice-setup-bootstrap label{display:block;font-size:.8125rem;font-weight:600;line-height:1.5;margin-bottom:.375rem}
+.invoice-setup-bootstrap .form-control,.invoice-setup-bootstrap .form-select{width:100%;min-width:0;min-height:44px;height:auto;padding:.625rem .75rem;font-size:.8125rem;line-height:1.5;border:1px solid #dfe3e8;border-radius:8px;background-color:#fff;color:#30343b;box-shadow:none}
+.invoice-setup-bootstrap .form-select{padding-right:2rem}
+.invoice-setup-bootstrap .form-control:focus,.invoice-setup-bootstrap .form-select:focus{border-color:#bfa77a;outline:2px solid #bfa77a55;outline-offset:1px}
+.invoice-setup-bootstrap .flow-fields small{display:block;font-size:.75rem;color:#8a939f;line-height:1.5;margin-top:.25rem}
+.invoice-setup-bootstrap hr{margin:1rem 0;border-color:#e9eaec;opacity:1}
+.invoice-setup-bootstrap .flow-methods{padding:0;margin:0;list-style:none;border:1px solid #eceef0;border-radius:10px;overflow:hidden;background:#faf9f6}
+.invoice-setup-bootstrap .flow-methods li{padding:.75rem .875rem;border-bottom:1px solid #eceef0}
+.invoice-setup-bootstrap .flow-methods li:last-child{border-bottom:0}
+.invoice-setup-bootstrap .flow-methods strong{display:block;font-size:.8125rem;line-height:1.5}
+.invoice-setup-bootstrap .flow-methods small{display:block;margin-top:.25rem;font-size:.75rem;line-height:1.5;color:#8a939f}
+.invoice-setup-bootstrap .flow-columns>.mi-card>p{font-size:.8125rem;line-height:1.5;color:#7b8491;margin:0 0 .875rem}
+.invoice-setup-bootstrap .flow-metrics.compact{gap:.625rem;margin:0 0 1rem;grid-template-columns:repeat(4,minmax(0,1fr))}
+.invoice-setup-bootstrap .flow-metrics.compact>div{padding:.75rem;border:1px solid #e9ecef;border-radius:9px;background:#f8f9fa;min-width:0}
+.invoice-setup-bootstrap .flow-metrics strong{display:block;margin:0 0 .25rem;font-size:1.5rem;line-height:1.25}
+.invoice-setup-bootstrap .flow-metrics small{display:block;font-size:.6875rem;line-height:1.5;color:#8a939f}
+.invoice-setup-bootstrap .alert{padding:.875rem;margin:0 0 .875rem;border-radius:10px;font-size:.8125rem;line-height:1.5}
+.invoice-setup-bootstrap .alert-warning{background:#fcf8ef;border:1px solid #ebdfc8;color:#80683d}
+.invoice-setup-bootstrap .alert h3{margin:0 0 .75rem;font-size:.875rem;font-weight:700;line-height:1.5}
+.invoice-setup-bootstrap .table{margin:0 0 .75rem;font-size:.75rem}
+.invoice-setup-bootstrap .table th,.invoice-setup-bootstrap .table td{padding:.5rem;line-height:1.5;border-color:#ece8df;background:transparent;vertical-align:top}
+.invoice-setup-bootstrap .table th{font-weight:600;overflow-wrap:anywhere;min-width:115px}
+.invoice-setup-bootstrap .alert a{font-size:.75rem;color:#897044}
+.invoice-setup-bootstrap .flow-actions{position:static;display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:.625rem;margin-top:1rem;padding:1rem;background:#fff}
+.invoice-setup-bootstrap .btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:.625rem 1rem;border-radius:8px;font-size:.8125rem;line-height:1.5;font-weight:600;white-space:normal}
+.invoice-setup-bootstrap .btn-dark{background:#30343b;border-color:#30343b;color:#fff}
+.invoice-setup-bootstrap .btn-outline-secondary{border-color:#d8dde4;color:#30343b;background:#fff}
+@media(max-width:1000px){.invoice-setup-bootstrap .flow-columns{grid-template-columns:1fr}}
+@media(max-width:600px){.invoice-setup-bootstrap .mi-heading h1{font-size:1.5rem}.invoice-setup-bootstrap .mi-card{padding:1rem}.invoice-setup-bootstrap .flow-fields{grid-template-columns:1fr}.invoice-setup-bootstrap .flow-metrics.compact{grid-template-columns:repeat(2,minmax(0,1fr))}.invoice-setup-bootstrap .flow-actions .btn{width:100%}.invoice-setup-bootstrap .alert{padding:.875rem}}
+
+/* Consistent vertical rhythm for monthly invoice setup. */
+.invoice-setup-bootstrap h2{line-height:1.4;margin-bottom:.875rem}
+.invoice-setup-bootstrap .flow-fields label{line-height:1.4;margin-bottom:.375rem}
+.invoice-setup-bootstrap .flow-fields small{margin-top:.25rem;line-height:1.5}
+.invoice-setup-bootstrap .flow-methods small{line-height:1.5}
+.invoice-setup-bootstrap .flow-columns>.mi-card>p{margin-bottom:.875rem;line-height:1.5}
+.invoice-setup-bootstrap .alert h3{margin-bottom:.625rem;line-height:1.5}
+.invoice-setup-bootstrap .alert .table{margin-bottom:.625rem}
+.invoice-setup-bootstrap .flow-actions{padding:.875rem 1rem}
+@media(max-width:600px){.invoice-setup-bootstrap .mi-card{padding:1rem}.invoice-setup-bootstrap .flow-fields{gap:.75rem}}
+
+/* Match the building detail header breadcrumb. */
+.dashboard-header .invoice-setup-breadcrumb{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;font-size:1rem;font-weight:600;line-height:1.5;color:#25282d;min-width:0}
+.invoice-setup-breadcrumb a{display:inline-flex;align-items:center;gap:.75rem;color:#25282d80;text-decoration:none}
+.invoice-setup-breadcrumb svg{width:21px;height:21px;color:#25282d80;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.invoice-setup-breadcrumb strong{color:#25282d;font-weight:600}
+.invoice-setup-breadcrumb a:hover{color:#30343b}
+.invoice-setup-breadcrumb>span{color:#25282d66;font-weight:400}
+@media(max-width:600px){.dashboard-header:has(.invoice-setup-breadcrumb) .account-label{display:none}.dashboard-header .invoice-setup-breadcrumb{font-size:.72rem;gap:.35rem;flex:1}.invoice-setup-breadcrumb a{gap:.35rem}.invoice-setup-breadcrumb svg{width:17px;height:17px}}
+
+/* Floating Bootstrap menus for building and month. */
+.invoice-setup-bootstrap select[hidden]{display:none!important}
+.invoice-setup-bootstrap .setup-select-dropdown{min-width:0;flex:1}
+.invoice-setup-bootstrap .setup-select-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;gap:.75rem;min-height:44px;padding:.625rem .75rem;border:1px solid #dfe3e8;border-radius:8px;background:#fff;color:#606b79;font-size:.8125rem;font-weight:400;line-height:1.5;text-align:left}
+.invoice-setup-bootstrap .setup-select-toggle>span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.invoice-setup-bootstrap .setup-select-toggle:after{flex-shrink:0;color:#78828f}
+.invoice-setup-bootstrap .setup-select-toggle:hover,.invoice-setup-bootstrap .setup-select-toggle.show{border-color:#bfa77a;background:#faf8f3}
+.invoice-setup-bootstrap .setup-select-toggle:focus-visible{outline:3px solid #bfa77a55;outline-offset:2px;box-shadow:none}
+.invoice-setup-bootstrap .setup-select-toggle.is-invalid{border-color:#b84d4d}
+.invoice-setup-bootstrap #month-dropdown{min-width:120px}
+.invoice-setup-bootstrap #month-dropdown+ul{min-width:150px}
+.invoice-setup-bootstrap .flow-fields .d-flex>input[name=nam]{flex:1;width:0;min-width:80px}
+.invoice-setup-bootstrap .setup-select-menu{min-width:100%;width:max-content;max-width:min(340px,calc(100vw - 32px));max-height:280px;overflow:auto;padding:.375rem;border:1px solid #e4e7eb;border-radius:10px;box-shadow:0 8px 28px #25282d1a;scrollbar-width:thin;scrollbar-color:#cbbb9a transparent}
+.invoice-setup-bootstrap .setup-select-menu .dropdown-item{position:relative;min-height:38px;padding:.5rem 2rem .5rem .75rem;border:0;border-radius:6px;background:#fff;color:#606b79;font-size:.8125rem;line-height:1.5;text-align:left;white-space:normal;overflow-wrap:anywhere}
+.invoice-setup-bootstrap .setup-select-menu .dropdown-item:hover,.invoice-setup-bootstrap .setup-select-menu .dropdown-item:focus{background:#f5f5f4;color:#30343b}
+.invoice-setup-bootstrap .setup-select-menu .dropdown-item.active{background:#f3eddf;color:#8a7040;font-weight:650}
+.invoice-setup-bootstrap .setup-select-menu .dropdown-item.active:after{content:'✓';position:absolute;right:.625rem;top:.5rem}

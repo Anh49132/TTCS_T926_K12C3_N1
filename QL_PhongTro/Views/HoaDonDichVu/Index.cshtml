@@ -1,0 +1,58 @@
+@model QL_PhongTro.ViewModels.LapHoaDonDichVuViewModel
+@using System.Globalization
+@using QL_PhongTro.Models
+@inject QL_PhongTro.Authorization.PermissionService Permissions
+@{ ViewData["Title"] = "Lập hóa đơn"; var write = await Permissions.AllowsAsync("TAI_CHINH", true); }
+<a asp-controller="DichVu" asp-action="Index" asp-route-toaNhaId="@Model.ToaNhaId">← Dịch vụ và đơn giá</a>
+<h1 class="h2 mt-3">Lập hóa đơn tiền phòng và dịch vụ</h1>
+@if (User.IsInRole("CHU_NHA")) { <a asp-action="Monthly" asp-route-toaNhaId="@Model.ToaNhaId" class="btn btn-dark mb-3">Tạo hóa đơn Nháp tháng cho cả tòa</a> }
+@if (!Model.SanSang)
+{
+    <div class="alert alert-info">Chức năng hóa đơn chưa sẵn sàng. Vui lòng liên hệ người quản trị để hoàn tất thiết lập.</div>
+}
+else
+{
+    <form method="get" class="d-flex flex-wrap gap-2 align-items-end my-3">
+        <input name="toaNhaId" value="@Model.ToaNhaId" type="hidden" />
+        <div><label for="contract-filter" class="form-label">Hợp đồng / phòng</label><select id="contract-filter" asp-for="HopDongId" asp-items="Model.HopDongs" class="form-select"></select></div>
+        <div><label for="apply-date" class="form-label">Chọn ngày trong kỳ hóa đơn</label><input id="apply-date" name="ngayApDung" type="date" value="@Model.NgayApDung?.ToString("yyyy-MM-dd")" class="form-control" required /></div>
+        <button class="btn btn-outline-primary">Xem dịch vụ của phòng trong kỳ</button>
+    </form>
+    <p class="text-secondary">Hóa đơn tháng @Model.NgayApDung?.ToString("MM/yyyy") gồm tiền phòng theo hợp đồng và các dịch vụ được chọn. Chỉ hỗ trợ hợp đồng thuê trọn tháng; chưa hỗ trợ trả phòng hoặc gia hạn giữa tháng.</p>
+    <p>Ngày chốt số người và đơn giá theo hợp đồng: <strong>@Model.NgayChotSoNguoi?.ToString("dd/MM/yyyy")</strong>. Người ở ghép mới tính trọn tháng từ tháng sau ngày vào; người chuyển đi vẫn tính đủ tháng rời phòng và giảm từ tháng kế tiếp.</p>
+    @if (Model.HopDongs.Count == 0) { <div class="alert alert-info">Chưa có hợp đồng đang hiệu lực trong tòa nhà.</div> }
+    else if (write)
+    {
+        <form asp-action="Issue" method="post">
+            <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+            <input asp-for="ToaNhaId" type="hidden" /><input asp-for="NgayApDung" type="hidden" />
+            <div class="row g-3 mb-3">
+                <div class="col-md-8"><input asp-for="HopDongId" type="hidden" /><p>Hợp đồng: <strong>@Model.HopDongs.FirstOrDefault(x => x.Value == Model.HopDongId?.ToString())?.Text</strong></p></div>
+                <div class="col-md-4"><p>Số người tính phí: <strong id="billing-occupants">@Model.SoNguoi người</strong></p><input asp-for="PhienBanPhong" type="hidden" /></div>
+            </div>
+            <div class="table-responsive"><table class="table align-middle"><thead><tr><th>Chọn</th><th>Dịch vụ</th><th>Đơn giá</th><th>Số lượng tính phí</th><th>Thành tiền xem trước</th></tr></thead><tbody>
+            @for (var i = 0; i < Model.Dong.Count; i++)
+            {
+                var price = Model.DonGias.SingleOrDefault(x => x.DichVuId == Model.Dong[i].DichVuId);
+                if (price is null) { <tr class="d-none"><td colspan="5"><input asp-for="Dong[i].DichVuId" type="hidden" /><input asp-for="Dong[i].Chon" type="hidden" /></td></tr> continue; }
+                <tr><td><input asp-for="Dong[i].Chon" aria-label="Chọn @price.TenDichVu" /><input asp-for="Dong[i].DichVuId" type="hidden" /><input asp-for="Dong[i].CauHinhId" type="hidden" /><input asp-for="Dong[i].DonGiaDaXem" type="hidden" /></td>
+                <td>@price.TenDichVu <small class="d-block">@CachTinhDichVu.Ten(price.CachTinh)</small></td>
+                <td class="text-nowrap">@price.DonGia.ToString("N0", CultureInfo.GetCultureInfo("vi-VN")) đ/@price.DonViTinh</td>
+                <td>@if (price.CachTinh == CachTinhDichVu.TheoChiSo) {
+                    <label asp-for="Dong[i].ChiSoDau" class="small">Chỉ số đầu</label><input asp-for="Dong[i].ChiSoDau" type="number" min="0" step="0.001" class="form-control" />
+                    <label asp-for="Dong[i].ChiSoCuoi" class="small">Chỉ số cuối</label><input asp-for="Dong[i].ChiSoCuoi" type="number" min="0" step="0.001" class="form-control" />
+                } else { <span>@(price.CachTinh == CachTinhDichVu.TheoNguoi ? $"{Model.SoNguoi} người" : "1 phòng/tháng")</span> }</td>
+                <td class="text-nowrap">@if (price.CachTinh == CachTinhDichVu.TheoChiSo) { <span>Tính theo chỉ số khi phát hành</span> } else { <span>@QL_PhongTro.Services.HoaDonDichVuService.ThanhTien(price.CachTinh == CachTinhDichVu.TheoNguoi ? Model.SoNguoi : 1, price.DonGia).ToString("N0", CultureInfo.GetCultureInfo("vi-VN")) đ</span> }</td></tr>
+            }
+            </tbody></table></div>
+            <p class="small text-secondary">Bỏ dịch vụ giữa tháng vẫn tính hết tháng đó, ngừng từ kỳ sau. Danh sách đã lọc theo phòng và kỳ đang chọn. Nếu không còn dịch vụ, hóa đơn chỉ gồm tiền phòng. Sau phát hành, nội dung và đơn giá được giữ nguyên.</p>
+            <button type="submit" class="btn btn-primary">Tạo hóa đơn Nháp</button>
+        </form>
+    }
+    <h2 class="h4 mt-4">Hóa đơn gần đây</h2>
+    <div class="table-responsive"><table class="table"><thead><tr><th>STT</th><th>Mã hóa đơn</th><th>Mã phòng</th><th>Tòa nhà</th><th>Kỳ</th><th>Ngày áp dụng giá</th><th>Tổng tiền</th></tr></thead><tbody>
+    @{ var invoiceStt = 0; }
+    @foreach (var invoice in Model.DaPhatHanh) { invoiceStt++; <tr><td>@invoiceStt</td><td><a asp-action="Details" asp-route-id="@invoice.Id">@invoice.MaHoaDon</a></td><td>@invoice.MaPhong</td><td>@invoice.TenToaNha</td><td>@invoice.Thang/@invoice.Nam</td><td>@invoice.NgayChot.ToString("dd/MM/yyyy")</td><td class="text-nowrap">@invoice.TongTien.ToString("N0", CultureInfo.GetCultureInfo("vi-VN")) đ</td></tr> }
+    @if (Model.DaPhatHanh.Count == 0) { <tr><td colspan="7" class="text-secondary">Chưa có hóa đơn trong tòa nhà này.</td></tr> }
+    </tbody></table></div>
+}

@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/Tests/">
+    <Project Path="../Tests/QL_PhongTro.Tests/QL_PhongTro.Tests.csproj" />
+  </Folder>
+  <Project Path="QL_PhongTro.csproj" />
+</Solution>

@@ -1,0 +1,73 @@
+@model QL_PhongTro.ViewModels.CauHinhDienNuocViewModel
+@using QL_PhongTro.Models
+@using System.Globalization
+@{
+    ViewData["Title"] = "Cấu hình điện nước";
+}
+<div class="utility-config-page utility-bootstrap">
+<header class="uc-heading"><div><h1>Cấu hình điện &amp; nước</h1><p>Thiết lập cách tính, đơn giá và thời điểm áp dụng cho các phòng của bạn.</p></div><span>▥ TN-@Model.ToaNhaId.ToString("D3")</span></header>
+<nav class="uc-tabs nav" aria-label="Thông tin tòa nhà"><a asp-controller="PhongTro" asp-action="ChiTietToaNha" asp-route-id="@Model.ToaNhaId">Thông tin chung</a><a asp-controller="PhongTro" asp-action="Index" asp-route-toaNhaId="@Model.ToaNhaId">Phòng &amp; căn hộ</a><span aria-current="page">Điện &amp; nước</span><a asp-action="Index" asp-route-toaNhaId="@Model.ToaNhaId">Dịch vụ khác</a></nav>
+<form asp-action="DienNuoc" method="post">
+    <input asp-for="ToaNhaId" type="hidden" />
+    <input asp-for="KyDaXem" type="hidden" />
+    <input asp-for="TrangThaiDaXem" type="hidden" />
+    <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+    <div class="uc-layout"><div class="uc-main"><section class="uc-card uc-scope"><div class="uc-title"><span class="uc-icon uc-scope-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 21V9h6m0 12V3h8v18m0-10h3v10H2m11-15h2m-2 4h2m-2 4h2M6 12v2m0 3v1"/></svg></span><div><h2>Phạm vi áp dụng</h2><p>Chọn tòa nhà và các phòng sử dụng chung cấu hình này.</p></div></div><div class="uc-two"><div><label for="uc-building">Tòa nhà <em>*</em></label><select class="form-select" id="uc-building"><option>@Model.TenToaNha</option></select></div><div><label>Áp dụng cho phòng</label><div class="uc-scope-options"><label class="uc-scope-option"><input type="radio" name="ScopePreview" checked value="all" /><span>Tất cả phòng</span></label><label class="uc-scope-option uc-scope-disabled" title="Chưa hỗ trợ chọn phòng cụ thể ở cấu hình chung"><input type="radio" name="ScopePreview" disabled /><span>Chọn phòng cụ thể</span></label></div></div></div><p class="uc-strip"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 3h7v18H9Z"/><path d="m9 3 4 2v14l-4 2M11 12h.1"/></svg><span>Phòng dùng cấu hình chung và các phòng tạo mới sẽ dùng cấu hình này.</span> <a asp-controller="PhongTro" asp-action="Index" asp-route-toaNhaId="@Model.ToaNhaId">Xem danh sách <svg class="uc-list-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 12 12 4M5 4h7v7"/></svg></a></p><p class="uc-scope-hint">Phòng có cấu hình riêng giữ nguyên cách tính, đơn vị và đơn giá. Chọn phòng cụ thể chưa được hỗ trợ tại đây.</p></section>
+        @foreach (var item in new[] { (Prefix: "Dien", Name: "điện", Unit: "kWh", Value: Model.Dien), (Prefix: "Nuoc", Name: "nước", Unit: "m³", Value: Model.Nuoc) })
+        {
+            var current = item.Prefix == "Dien" ? Model.DienHienTai : Model.NuocHienTai;
+            var pending = item.Prefix == "Dien" ? Model.DienCho : Model.NuocCho;
+            string Describe(QL_PhongTro.ViewModels.CauHinhTienDichVuViewModel value) =>
+                (value.CachTinh == CachTinhDichVu.TheoChiSo ? "Theo chỉ số đồng hồ" : "Khoán theo đầu người") +
+                " · " + (value.GiaApDung?.ToString("N0") ?? "Chưa chốt giá") + " " +
+                (value.CachTinh == CachTinhDichVu.TheoChiSo ? "VND/" + item.Unit : "VND/người/tháng");
+            var saved = item.Prefix == "Dien" ? Model.DienDaLuu : Model.NuocDaLuu;
+            <div class="uc-card">
+                <fieldset class="uc-utility @(item.Prefix == "Dien" ? "uc-electric" : "uc-water")" data-utility data-saved-method="@saved.CachTinh" data-saved-price="@(saved.GiaApDung?.ToString(CultureInfo.InvariantCulture))">
+                    <legend class="uc-service-heading"><span class="uc-service-icon" aria-hidden="true">@if (item.Prefix == "Dien") { <svg viewBox="0 0 24 24"><path d="m13 3-9 11h7l-1 7 10-12h-7l1-6Z"/></svg> } else { <svg viewBox="0 0 24 24"><path d="M13 4s-5 6-5 9a5 5 0 0 0 10 0c0-3-5-9-5-9Z"/><path d="M11 14a2 2 0 0 0 2 2M5 8s-2 3-2 4a2 2 0 0 0 4 0c0-1-2-4-2-4Z"/></svg> }</span><span><strong>Tiền @item.Name</strong><small>Tính theo lượng @item.Name tiêu thụ của từng phòng trong kỳ.</small></span><span class="uc-enabled">@(current is null ? "Chưa cấu hình" : "Đang bật")</span></legend>
+                    <details class="uc-history"><summary>Cấu hình hiện tại và chờ áp dụng</summary><div class="mb-3" data-current>
+                        <h2 class="h6">Cấu hình đang áp dụng</h2>
+                        <p>@(current is null ? "Chưa có cấu hình đang áp dụng." : Describe(current))</p>
+                    </div>
+                    @if (pending is not null)
+                    {
+                        <div class="alert alert-info" data-pending>
+                            <h2 class="h6">Cấu hình đang chờ áp dụng</h2>
+                            <p class="mb-1">@Describe(pending)</p>
+                            <p class="mb-0">Áp dụng từ kỳ @Model.KyKeTiep.ToString("MM/yyyy")</p>
+                        </div>
+                    }
+                    </details>
+                    <label class="form-label" for="@(item.Prefix)_CachTinh">Cách tính phí</label>
+                    <select class="form-select mb-3 uc-method" id="@(item.Prefix)_CachTinh" name="@(item.Prefix).CachTinh" data-method>
+                        <option value="THEO_CHI_SO" selected="@(item.Value.CachTinh == CachTinhDichVu.TheoChiSo)">Theo chỉ số đồng hồ</option>
+                        <option value="THEO_NGUOI" selected="@(item.Value.CachTinh == CachTinhDichVu.TheoNguoi)">Khoán theo đầu người</option>
+                    </select>
+                    <div data-price="THEO_CHI_SO" hidden="@(item.Value.CachTinh != CachTinhDichVu.TheoChiSo)">
+                        <label class="form-label" for="@(item.Prefix)_DonGiaChiSo">Đơn giá (VND/@item.Unit)</label>
+                        @Html.TextBox(item.Prefix + ".DonGiaChiSo", item.Value.DonGiaChiSo, new { @class = "form-control", type = "number", min = "1", step = "1", id = item.Prefix + "_DonGiaChiSo", data_val = "true", data_val_required = "Hãy nhập mức giá cho cách tính đã chọn.", data_val_range = "Mức giá phải là số nguyên đồng lớn hơn 0.", data_val_range_min = "1", data_val_range_max = "9223372036854775807", data_val_number = "Mức giá phải là số nguyên đồng lớn hơn 0." })
+                        @Html.ValidationMessage(item.Prefix + ".DonGiaChiSo", null, new { @class = "text-danger" })
+                    </div>
+                    <div data-price="THEO_NGUOI" hidden="@(item.Value.CachTinh != CachTinhDichVu.TheoNguoi)">
+                        <label class="form-label" for="@(item.Prefix)_TienMotNguoi">Tiền một người một tháng (VND/người/tháng)</label>
+                        @Html.TextBox(item.Prefix + ".TienMotNguoi", item.Value.TienMotNguoi, new { @class = "form-control", type = "number", min = "1", step = "1", id = item.Prefix + "_TienMotNguoi", data_val = "true", data_val_required = "Hãy nhập mức giá cho cách tính đã chọn.", data_val_range = "Mức giá phải là số nguyên đồng lớn hơn 0.", data_val_range_min = "1", data_val_range_max = "9223372036854775807", data_val_number = "Mức giá phải là số nguyên đồng lớn hơn 0." })
+                        @Html.ValidationMessage(item.Prefix + ".TienMotNguoi", null, new { @class = "text-danger" })
+                    </div>
+                </fieldset>
+            </div>
+        }
+<section class="uc-card uc-effective"><div class="uc-title"><span class="uc-icon uc-effective-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="16" rx="2"/><path d="M8 3v4m8-4v4M5 10h14M8 13h2m2 0h2m2 0h1m-9 3h2m2 0h2"/></svg></span><div><h2>Thời điểm hiệu lực</h2><p>Đơn giá mới được áp dụng từ kỳ thu tiền bên dưới.</p></div></div><div class="uc-two"><div><label for="uc-effective-date">Ngày bắt đầu áp dụng <em>*</em></label><div class="uc-effective-date"><input class="form-control" id="uc-effective-date" value="@Model.KyKeTiep.ToString("dd/MM/yyyy")" readonly /><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="16" rx="2"/><path d="M8 3v4m8-4v4M5 10h14M8 14h8m-8 3h5"/></svg></div></div><div><label for="uc-effective-month">Kỳ thu tiền đầu tiên</label><select class="form-select" id="uc-effective-month" aria-label="Kỳ thu tiền đầu tiên"><option>Tháng @Model.KyKeTiep.ToString("MM/yyyy")</option></select></div></div><p class="uc-notice"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 11v6M12 7h.01"/></svg><span>Hóa đơn đã lập không thay đổi. Kỳ trước tháng @Model.KyKeTiep.ToString("MM/yyyy") vẫn dùng đơn giá cũ; cấu hình mới chỉ áp dụng khi tạo hóa đơn từ kỳ này.</span></p><p id="utility-effective-period" role="status" aria-live="polite" hidden="@(!Model.CoThayDoi)">Áp dụng từ kỳ @Model.KyKeTiep.ToString("MM/yyyy")</p></section>
+</div><aside class="uc-aside"><section class="uc-card uc-summary"><h2>Tóm tắt áp dụng <span class="uc-badge">Chưa lưu</span></h2><small>TÒA NHÀ</small><h3>@Model.TenToaNha</h3><div class="uc-room-count"><b>@(ViewData["UtilityRoomCount"] ?? 0)</b><span>phòng · Toàn bộ tòa nhà</span></div><div class="uc-summary-service"><small data-uc-method-label="Dien">TIỀN ĐIỆN</small><strong data-uc-summary="Dien">—</strong></div><div class="uc-summary-service"><small data-uc-method-label="Nuoc">TIỀN NƯỚC</small><strong data-uc-summary="Nuoc">—</strong></div><div class="uc-summary-date"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="16" rx="2"/><path d="M8 3v4m8-4v4M5 10h14M8 14h8m-8 3h5"/></svg><div><small>Có hiệu lực từ</small><strong>@Model.KyKeTiep.ToString("dd/MM/yyyy")</strong></div></div></section>
+<section class="uc-card uc-example"><h2>Một phòng sẽ trả bao nhiêu?</h2><p class="uc-example-caption">Ví dụ phòng P.101 · Kỳ tháng @Model.KyKeTiep.ToString("MM/yyyy")<br />Chỉ số dưới đây dùng để minh họa.</p>
+<div class="uc-example-item"><h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m13 3-9 11h7l-1 7 10-12h-7l1-6Z"/></svg>Tiền điện</h3><div class="uc-meter-example" data-uc-meter="Dien"><div><small>CHỈ SỐ CŨ</small><b>1.250</b></div><span>→</span><div><small>CHỈ SỐ MỚI</small><b>1.350</b></div></div><p data-uc-formula="Dien"></p><strong data-uc-example="Dien">—</strong></div>
+<div class="uc-example-item"><h3><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 4s-5 6-5 9a5 5 0 0 0 10 0c0-3-5-9-5-9Z"/><path d="M5 8s-2 3-2 4a2 2 0 0 0 4 0c0-1-2-4-2-4Z"/></svg>Tiền nước</h3><div class="uc-meter-example" data-uc-meter="Nuoc"><div><small>CHỈ SỐ CŨ</small><b>120</b></div><span>→</span><div><small>CHỈ SỐ MỚI</small><b>125</b></div></div><p data-uc-formula="Nuoc"></p><strong data-uc-example="Nuoc">—</strong></div>
+<div class="uc-example-total"><small>Tổng điện &amp; nước trong kỳ</small><strong data-uc-total>—</strong></div>
+</section>
+<section class="uc-note"><strong class="uc-note-heading"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 11v6M12 7h.01"/></svg>Ghi chỉ số trước khi lập hóa đơn</strong><p>Mỗi phòng cần đồng hồ riêng và chỉ số đầu kỳ. Tiền thực tế được tính từ chỉ số bạn ghi nhận cuối tháng.</p></section></aside></div>
+<footer class="uc-footer"><span>ⓘ Thay đổi chưa được lưu. Các trường có dấu * là bắt buộc.</span><div><a asp-controller="PhongTro" asp-action="ChiTietToaNha" asp-route-id="@Model.ToaNhaId" class="btn btn-outline-secondary">Hủy thay đổi</a><button type="submit" class="btn btn-dark">✓ Lưu cấu hình</button></div></footer>
+</form></div>
+@section Styles { <link rel="stylesheet" href="~/css/utility-config.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/utility-bootstrap.css" asp-append-version="true" /> }
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script src="~/js/electric-water-config.js" asp-append-version="true"></script><script src="~/js/utility-config-preview.js" asp-append-version="true"></script>
+}

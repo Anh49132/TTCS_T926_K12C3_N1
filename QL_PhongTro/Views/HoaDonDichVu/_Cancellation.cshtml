@@ -1,0 +1,40 @@
+@model QL_PhongTro.ViewModels.ChiTietHoaDonViewModel
+@inject QL_PhongTro.Authorization.PermissionService CancellationPermissions
+@{ var bill = Model.HoaDon; var write = !Model.KhachXem && User.IsInRole("CHU_NHA") && await CancellationPermissions.AllowsAsync("TAI_CHINH", true);
+   var relatedController = Model.KhachXem ? "ThongBao" : "HoaDonDichVu"; var relatedAction = Model.KhachXem ? "HoaDon" : "Details"; }
+@if (bill.TrangThai == "DA_HUY") {
+<section class="mi-card" id="cancelled-invoice"><h2>Hóa đơn đã hủy</h2>
+<p>Bản này được giữ nguyên để tra cứu, không còn là hóa đơn cần thanh toán.</p>
+<p><strong>Lý do hủy:</strong> <span style="white-space:pre-wrap;overflow-wrap:anywhere">@bill.LyDoHuy</span></p>
+<p><strong>Thời điểm hủy:</strong> @bill.NgayHuy?.AddHours(7).ToString("dd/MM/yyyy HH:mm")</p>
+@if (write && !Model.HoaDonThayTheId.HasValue) {
+<form asp-action="CreateReplacement" method="post"><input type="hidden" name="id" value="@bill.Id" /><input type="hidden" name="phienBan" value="@bill.PhienBan" />
+<button class="btn btn-dark" id="create-replacement">Tạo Nháp thay thế</button></form>
+<p class="mi-muted">Sao chép các khoản tiền của bản cũ để kiểm tra, chỉnh sửa rồi phát hành lại. Không thông báo cho khách khi còn Nháp.</p>
+}
+</section>
+}
+@if (Model.HoaDonGocId.HasValue || Model.HoaDonThayTheId.HasValue) {
+<section class="mi-card"><h2>Hóa đơn liên quan</h2>
+@if (Model.HoaDonGocId.HasValue) { <p>Thay thế bản đã hủy: <a asp-controller="@relatedController" asp-action="@relatedAction" asp-route-id="@Model.HoaDonGocId">@Model.MaHoaDonGoc</a></p> }
+@if (Model.HoaDonThayTheId.HasValue) { <p>Bản thay thế: <a asp-controller="@relatedController" asp-action="@relatedAction" asp-route-id="@Model.HoaDonThayTheId">@Model.MaHoaDonThayThe</a> · @(Model.TrangThaiThayThe == "NHAP" ? "Nháp" : Model.TrangThaiThayThe == "DA_HUY" ? "Đã hủy" : "Đã phát hành")</p> }
+</section>
+}
+@if (write && bill.TrangThai == "DA_PHAT_HANH") {
+<section class="mi-card"><h2>Sửa hóa đơn đã phát hành</h2><p>Nội dung đã khóa. Nếu có sai sót, hủy có lý do rồi tạo Nháp thay thế.</p>
+@if (Model.LyDoChanHuy is string blocked) { <p class="alert alert-warning">@blocked</p> }
+else {
+<button type="button" class="btn btn-outline-danger" id="cancel-open">Hủy hóa đơn</button>
+<dialog id="cancel-confirmation" style="width:min(500px,calc(100% - 32px));border:0;border-radius:12px;padding:24px;color:#25282D">
+<h2>Xác nhận hủy hóa đơn</h2><p>Phòng @Model.MaPhong · Kỳ @bill.Thang/@bill.Nam · @bill.TongTien.ToString("N0",System.Globalization.CultureInfo.GetCultureInfo("vi-VN")) đ</p>
+<p>Bản cũ sẽ giữ nguyên để tra cứu. Hủy không tự tạo hay phát hành hóa đơn mới.</p>
+<form asp-action="CancelInvoice" method="post" id="cancel-invoice-form">
+<input type="hidden" name="Id" value="@bill.Id" /><input type="hidden" name="PhienBan" value="@bill.PhienBan" />
+<label for="cancel-reason">Lý do hủy (bắt buộc)</label><textarea name="LyDo" id="cancel-reason" maxlength="1000" rows="3" class="form-control mb-3" required></textarea>
+<label class="d-block mb-3"><input type="checkbox" name="XacNhan" value="true" required /> Tôi xác nhận hủy và giữ bản này để tra cứu.</label>
+<div class="d-flex flex-wrap gap-2"><button type="button" id="cancel-close" class="btn btn-outline-secondary">Quay lại</button><button type="submit" class="btn btn-danger">Xác nhận hủy</button></div>
+</form></dialog>
+<script src="~/js/invoice-cancel.js" asp-append-version="true" defer></script>
+}
+</section>
+}

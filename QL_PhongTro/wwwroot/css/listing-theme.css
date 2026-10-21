@@ -1,0 +1,84 @@
+/* Public rental listings follow the homepage palette. */
+.public-site {
+    --color-primary: #30343B;
+    --color-primary-hover: #30343B;
+    --color-text: #25282D;
+    --color-text-muted: #656A73;
+    --color-border: #E9EAEC;
+    --bs-primary-rgb: 48, 52, 59;
+    --bs-link-color: #30343B;
+    --bs-link-hover-color: #30343B;
+    --bs-border-color: #E9EAEC;
+    background: #FFFFFF;
+    color: #25282D;
+}
+
+.listing-search-form,
+.listing-index-item {
+    background: #FFFFFF;
+    border-color: #E9EAEC;
+}
+
+.listing-eyebrow,
+.listing-index-item h2 a,
+.listing-breadcrumb a {
+    color: #30343B;
+}
+
+.listing-address,
+.listing-muted,
+.listing-search-field label span,
+.listing-search-actions span {
+    color: #656A73;
+}
+
+.listing-search-field input,
+.listing-search-field .form-select {
+    background-color: #FFFFFF;
+    color: #25282D;
+    border-color: #E9EAEC;
+}
+
+.listing-search-field input:focus,
+.listing-search-field .form-select:focus {
+    border-color: #30343B;
+    outline-color: #30343B;
+    box-shadow: 0 0 0 .2rem rgba(191, 167, 122, .15);
+}
+
+.listing-search-submit {
+    background: #30343B;
+    border-color: #30343B;
+    color: #FFFFFF;
+}
+
+.listing-search-submit:hover,
+.listing-search-submit:active {
+    background: #30343B;
+    border-color: #30343B;
+}
+
+.listing-search-submit:focus-visible {
+    outline-color: #30343B;
+}
+
+.listing-gallery-stage,
+.listing-gallery-stage img {
+    background: #F5F5F4;
+}
+
+.listing-index-image { background: #F5F5F4; }
+.listing-price { border-color: #E9EAEC; border-top-color: #30343B; }
+.listing-rent { color: #30343B; }
+.listing-facts div { border-left-color: #30343B; }
+.listing-services, .listing-deposit, .service-list, .service-row { border-color: #E9EAEC; }
+.first-month-estimate { background: #F5F5F4; border-left-color: #30343B; }
+
+.listing-index .page-link {
+    --bs-pagination-color: #30343B;
+    --bs-pagination-hover-color: #30343B;
+    --bs-pagination-hover-bg: #F5F5F4;
+    --bs-pagination-active-bg: #30343B;
+    --bs-pagination-active-border-color: #30343B;
+    --bs-pagination-focus-box-shadow: 0 0 0 .2rem rgba(191, 167, 122, .15);
+}

@@ -1,0 +1,54 @@
+@model QL_PhongTro.ViewModels.HopDongGiaHanViewModel
+@{
+    ViewData["Title"] = "Gia hạn hợp đồng";
+    var vi = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+<div class="contract-page renewal-page">
+    <div class="contract-heading">
+        <div>
+            <h1>Gia hạn hợp đồng</h1>
+            <p>@Model.MaHopDong</p>
+        </div>
+    </div>
+    <div class="contract-card card">
+        <div class="renewal-card-heading"><span aria-hidden="true">↻</span><div><h2>Thông tin kỳ gia hạn</h2><p>Thiết lập thời hạn và giá thuê cho kỳ tiếp theo.</p></div></div>
+        <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+        <form method="post" asp-action="GiaHan" asp-route-id="@Model.HopDongId">
+            @Html.AntiForgeryToken()
+            <div class="contract-field">
+                <label for="NgayBatDau">Ngày bắt đầu kỳ gia hạn</label>
+                <div>
+                    <input class="form-control" id="NgayBatDau" type="text" value="@(Model.NgayBatDau?.ToString("dd/MM/yyyy") ?? "Không xác định")" readonly />
+                    <small>Tự động là ngày liền sau ngày kết thúc hiện tại (@Model.NgayKetThucHienTai.ToString("dd/MM/yyyy")). Không thể chỉnh sửa.</small>
+                </div>
+            </div>
+            <div class="contract-field">
+                <label asp-for="SoThang">Thời hạn gia hạn (tháng) <em>*</em></label>
+                <div>
+                    <input class="form-control" asp-for="SoThang" type="number" min="1" max="120" />
+                    <span asp-validation-for="SoThang" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="contract-field">
+                <label asp-for="GiaThueMoi">Giá thuê mới (đ/tháng)</label>
+                <div>
+                    <input class="form-control" asp-for="GiaThueMoi" type="number" min="1" step="1" />
+                    <small>Mặc định giữ nguyên giá hiện tại: @Model.GiaThueHienTai.ToString("N0", vi) đ/tháng.</small>
+                    <p>Giá mới áp dụng từ ngày bắt đầu kỳ gia hạn. Nếu gia hạn giữa tháng, tiền phòng được chia theo số ngày: giá cũ đến hết kỳ cũ, giá mới từ ngày gia hạn; mỗi phần tính theo số ngày thực tế của tháng và làm tròn đến đồng. Hóa đơn đã phát hành giữ nguyên.</p>
+                    <span asp-validation-for="GiaThueMoi" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="contract-actions d-flex flex-wrap gap-2">
+                <button type="submit" class="btn btn-primary">Lưu gia hạn</button>
+                <a asp-action="Details" asp-route-id="@Model.HopDongId" class="btn btn-outline-secondary">Hủy</a>
+            </div>
+        </form>
+    </div>
+</div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/contracts.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/contract-renewal-bootstrap.css" asp-append-version="true" />
+}
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

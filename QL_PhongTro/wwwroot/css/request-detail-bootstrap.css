@@ -1,0 +1,41 @@
+.request-detail-bootstrap{max-width:1440px;margin:0 auto;line-height:1.5;min-width:0}
+.request-detail-bootstrap .rq-heading{gap:1rem;margin-bottom:.875rem}
+.request-detail-bootstrap .rq-heading h1{font-size:clamp(1.45rem,2.2vw,2rem);line-height:1.3;letter-spacing:-.025em;margin-bottom:.3rem}
+.request-detail-bootstrap .rq-heading p{font-size:.74rem;line-height:1.5}
+.request-detail-bootstrap .rq-button,.request-detail-bootstrap .btn{min-height:40px;border-radius:9px;padding:.6rem .85rem;font-size:.76rem;font-weight:600}
+.request-detail-bootstrap .rq-progress{padding:1rem;border:1px solid #e6e9eb;border-radius:12px;background:#fff;margin-bottom:.875rem;gap:.75rem}
+.request-detail-bootstrap .rq-progress strong{font-size:.73rem;line-height:1.5}
+.request-detail-bootstrap .rq-progress small{font-size:.65rem;line-height:1.5}
+.request-detail-bootstrap .rq-layout{grid-template-columns:minmax(0,1fr) 340px;gap:1rem;align-items:start}
+.request-detail-bootstrap .rq-main,.request-detail-bootstrap .rq-aside{gap:1rem;min-width:0}
+.request-detail-bootstrap .rq-card{padding:1rem;border:1px solid #e6e9eb;border-radius:13px;box-shadow:0 3px 12px #25282d03;background:#fff;min-width:0}
+.request-detail-bootstrap .rq-card-heading{gap:.75rem;margin-bottom:.7rem;align-items:center}
+.request-detail-bootstrap .rq-card h2{font-size:.95rem;line-height:1.5}
+.request-detail-bootstrap .rq-card-heading small{font-size:.67rem;line-height:1.5}
+.request-detail-bootstrap .rq-avatar,.request-detail-bootstrap .rq-room-icon{width:40px;height:40px;flex:0 0 40px;border-radius:10px;background:#bfa77a19;color:#92774c}
+.request-detail-bootstrap .rq-customer,.request-detail-bootstrap .rq-room{gap:.75rem;min-width:0}
+.request-detail-bootstrap h3{font-size:.9rem;line-height:1.5}
+.request-detail-bootstrap .rq-customer p,.request-detail-bootstrap .rq-room p{font-size:.73rem;line-height:1.5;overflow-wrap:anywhere}
+.request-detail-bootstrap .rq-badge{display:inline-block;font-size:.65rem;padding:.35rem .6rem;border-radius:20px;line-height:1.5;white-space:nowrap}
+.request-detail-bootstrap .rq-contact-row{gap:.75rem;font-size:.76rem;line-height:1.5;margin:.75rem 0}
+.request-detail-bootstrap .rq-contact-row>div{min-width:0;overflow-wrap:anywhere}
+.request-detail-bootstrap .rq-facts{gap:.7rem 1rem;margin:.75rem 0}
+.request-detail-bootstrap .rq-facts dt{font-size:.7rem;line-height:1.5;margin-bottom:.3rem;font-weight:400}
+.request-detail-bootstrap .rq-facts dd{font-size:.79rem;line-height:1.5;overflow-wrap:anywhere}
+.request-detail-bootstrap .rq-message{padding:.85rem;border-radius:9px;background:#fafaf7;font-size:.76rem;line-height:1.6}
+.request-detail-bootstrap .rq-message p{font-size:.75rem;line-height:1.6;margin-top:.35rem}
+.request-detail-bootstrap .rq-room-links{padding-top:.75rem;margin-top:.85rem;font-size:.73rem}
+.request-detail-bootstrap .form-control,.request-detail-bootstrap .form-select{min-height:44px;border:1px solid #e3e7e9;border-radius:9px;padding:.65rem .8rem;font-size:.8rem;line-height:1.4;background-color:#fafaf9;min-width:0}
+.request-detail-bootstrap .form-control:focus,.request-detail-bootstrap .form-select:focus{border-color:#bfa77a;box-shadow:0 0 0 .18rem #bfa77a26;outline:0;background-color:#fff}
+.request-detail-bootstrap label{font-size:.75rem;line-height:1.5;margin-bottom:.3rem}
+.request-detail-bootstrap .rq-scheduling{border-top:3px solid #bfa77a}
+.request-detail-bootstrap .rq-schedule-form-title{padding-top:.75rem;margin-top:.75rem}
+.request-detail-bootstrap .rq-notification,.request-detail-bootstrap .rq-processing-help,.request-detail-bootstrap .rq-result-help,.request-detail-bootstrap .rq-muted{font-size:.7rem;line-height:1.6}
+.request-detail-bootstrap .rq-history-event{padding:.65rem 0;gap:.75rem;font-size:.75rem;line-height:1.5}
+.request-detail-bootstrap .rq-processing-fields{gap:.75rem}
+.request-detail-bootstrap .text-danger{font-size:.72rem;line-height:1.5}
+@media(max-width:1000px){.request-detail-bootstrap .rq-layout{grid-template-columns:minmax(0,1fr) 300px}.request-detail-bootstrap .rq-facts{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:850px){.request-detail-bootstrap .rq-layout{grid-template-columns:minmax(0,1fr)}.request-detail-bootstrap .rq-progress{overflow-x:auto}}
+@media(max-width:600px){.request-detail-bootstrap .rq-heading{flex-direction:column;align-items:stretch}.request-detail-bootstrap .rq-card{padding:1rem}.request-detail-bootstrap .rq-card-heading{flex-wrap:wrap}.request-detail-bootstrap .rq-contact-row{grid-template-columns:1fr}.request-detail-bootstrap .rq-customer,.request-detail-bootstrap .rq-room{flex-wrap:wrap}.request-detail-bootstrap .rq-progress{display:flex;flex-wrap:wrap}.request-detail-bootstrap .rq-progress>*{min-width:110px;flex:1}.dashboard-header:has(.or-breadcrumb) .account-label{display:none}.dashboard-header .or-breadcrumb{font-size:.72rem;gap:.35rem;flex:1;min-width:0}}
+
+.request-detail-bootstrap .rq-main,.request-detail-bootstrap .rq-aside{gap:.875rem}.request-detail-bootstrap .rq-message{padding:.75rem}.request-detail-bootstrap .rq-room-links{margin-top:.75rem;padding-top:.65rem}.request-detail-bootstrap .rq-progress{padding:.85rem}

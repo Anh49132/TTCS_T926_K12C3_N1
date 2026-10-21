@@ -1,0 +1,23 @@
+@model QL_PhongTro.ViewModels.TinDangChiTietViewModel
+@{
+    ViewData["Title"] = "Chi tiết tin đăng";
+    var vi = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+    var fees = Model.DichVuTheoSuDung.Concat(Model.KhoanCoDinh).ToList();
+}
+<div class="admin-listing-detail container-fluid px-0">
+<article>
+<header class="card shadow-sm ald-summary mb-4"><div class="card-body p-4"><div class="row g-4 align-items-center">
+<div class="col-12 col-lg-8"><p class="ald-eyebrow mb-2">THÔNG TIN TIN ĐĂNG</p><h1 class="h4 fw-bold mb-2">@Model.TieuDe</h1><p class="ald-room mb-2">Phòng <strong>@Model.MaPhong</strong> <span class="mx-1">·</span> @Model.TenToaNha</p><p class="text-muted mb-0 ald-address">@Model.DiaChi · @Model.PhuongXa · @Model.QuanHuyen · @Model.TinhThanh</p></div>
+<div class="col-12 col-lg-4"><div class="ald-price-box"><span class="d-block ald-price-label mb-2">Giá thuê mỗi tháng</span><strong class="ald-price">@Model.GiaThue.ToString("N0", vi) <small>đ / tháng</small></strong><div class="d-flex flex-wrap gap-2 mt-3"><span class="badge ald-fact">@Model.DienTich.ToString("0.#", vi) m²</span><span class="badge ald-fact">Tối đa @Model.SoNguoiToiDa người</span></div></div></div>
+</div></div></header>
+@if (Model.Anh.Count > 0)
+{
+<section class="card shadow-sm mb-4" aria-labelledby="ald-photos"><div class="card-body p-4"><h2 id="ald-photos" class="h6 fw-bold mb-3">Hình ảnh phòng</h2><div class="row g-3">@foreach(var photo in Model.Anh){<div class="col-12 col-sm-6 col-lg-4"><img src="@photo.DuongDan" alt="@(photo.MoTa ?? Model.TieuDe)" class="img-fluid rounded-3 ald-photo" loading="lazy" /></div>}</div></div></section>
+}
+<div class="row g-4 align-items-start">
+<div class="col-12 col-lg-5"><section class="card shadow-sm" aria-labelledby="ald-description"><div class="card-body p-4"><h2 id="ald-description" class="h6 fw-bold mb-3">Mô tả phòng</h2><p class="ald-description mb-0">@(string.IsNullOrWhiteSpace(Model.MoTa) ? "Chưa có mô tả cho tin đăng này." : Model.MoTa)</p></div></section></div>
+<div class="col-12 col-lg-7"><section class="card shadow-sm" aria-labelledby="ald-services"><header class="card-header bg-white p-4 d-flex flex-wrap align-items-center justify-content-between gap-2"><h2 id="ald-services" class="h6 fw-bold mb-0">Dịch vụ và đơn giá</h2><span class="badge ald-count">@fees.Count dịch vụ</span></header><div class="table-responsive"><table class="table table-hover align-middle mb-0"><thead><tr><th scope="col">Dịch vụ</th><th scope="col" class="text-end">Đơn giá</th><th scope="col">Đơn vị</th></tr></thead><tbody>@foreach(var fee in fees){<tr><td>@fee.TenDichVu</td><td class="text-end fw-semibold text-nowrap">@fee.DonGia.ToString("N0", vi) đ</td><td class="text-muted">@fee.DonViTinh</td></tr>}@if(fees.Count == 0){<tr><td colspan="3" class="text-center text-muted py-4">Chưa có dịch vụ được áp dụng cho phòng.</td></tr>}</tbody></table></div></section></div>
+</div>
+</article>
+</div>
+@section Styles { <link rel="stylesheet" href="~/css/admin-listing-detail-bootstrap.css" asp-append-version="true" /> }

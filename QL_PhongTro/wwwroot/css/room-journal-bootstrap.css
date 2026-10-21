@@ -1,0 +1,64 @@
+/* Scoped Bootstrap journal presentation, retaining audit and note actions. */
+.room-journal-bootstrap{max-width:1440px;margin:0 auto;line-height:1.5}
+.room-journal-bootstrap .rj-heading{gap:1rem;margin-bottom:.875rem}
+.room-journal-bootstrap .rj-heading h1{font-size:clamp(1.5rem,2.3vw,2rem);line-height:1.25;letter-spacing:-.025em;margin-bottom:.3rem}
+.room-journal-bootstrap .rj-heading p{font-size:.82rem;line-height:1.5}
+.room-journal-bootstrap #rj-export{min-height:42px;border-radius:9px;font-size:.78rem;padding:.65rem 1rem;gap:.5rem}
+.room-journal-bootstrap .rj-room-summary,.room-journal-bootstrap .rj-filters,.room-journal-bootstrap .rj-timeline,.room-journal-bootstrap .rj-card{border:1px solid #e6e9eb;border-radius:13px;box-shadow:0 3px 12px #25282d03;background:#fff;min-width:0}
+.room-journal-bootstrap .rj-room-top{padding:1rem;gap:1rem}
+.room-journal-bootstrap .rj-room-identity{gap:.8rem;min-width:0}
+.room-journal-bootstrap .rj-room-identity img{width:76px;height:76px;border-radius:9px;object-fit:cover}
+.room-journal-bootstrap .rj-room-identity h2{font-size:1.05rem;line-height:1.5;margin-bottom:.25rem;overflow-wrap:anywhere}
+.room-journal-bootstrap .rj-room-identity h2>span{font-size:.65rem;border-radius:20px;padding:.25rem .5rem}
+.room-journal-bootstrap .rj-room-identity strong{font-size:.78rem}
+.room-journal-bootstrap .rj-room-identity p,.room-journal-bootstrap .rj-summary-field p{font-size:.7rem;line-height:1.5;margin:.2rem 0 0}
+.room-journal-bootstrap .rj-summary-field small{font-size:.62rem;line-height:1.5}
+.room-journal-bootstrap .rj-summary-field strong{font-size:.8rem;line-height:1.5;margin-top:.35rem;overflow-wrap:anywhere}
+.room-journal-bootstrap .rj-room-bottom{padding:.7rem 1rem;font-size:.7rem;line-height:1.5;gap:.65rem;background:#fafaf7;border-radius:0 0 13px 13px}
+.room-journal-bootstrap .rj-tabs{gap:1.4rem;margin:.75rem 0;flex-wrap:nowrap;overflow-x:auto}
+.room-journal-bootstrap .rj-tabs>*{font-size:.77rem;line-height:1.5;padding:.55rem 0;white-space:nowrap}
+.room-journal-bootstrap .rj-filters{padding:1rem;margin-bottom:.875rem}
+.room-journal-bootstrap .rj-filter-row{gap:.65rem;align-items:center}
+.room-journal-bootstrap .rj-search{min-height:42px;border-radius:9px;background:#fafaf9;border-color:#e3e7e9;min-width:0}
+.room-journal-bootstrap .rj-search input.form-control{height:40px;font-size:.8rem;background:transparent;border:0;box-shadow:none}
+.room-journal-bootstrap .rj-filter-row>.form-select,.room-journal-bootstrap .rj-date-picker summary{min-height:42px;border-radius:9px;border-color:#e3e7e9;font-size:.77rem;padding:.6rem .75rem}
+.room-journal-bootstrap .rj-filter-row>a{font-size:.73rem;white-space:nowrap;color:#92774c}
+.room-journal-bootstrap .rj-date-menu{border-radius:10px;padding:.8rem;box-shadow:0 6px 18px #25282d12}
+.room-journal-bootstrap .rj-date-menu input{font-size:.78rem;min-height:40px;border-radius:8px}
+.room-journal-bootstrap .rj-event-tabs{gap:.5rem;margin-top:.65rem;flex-wrap:wrap}
+.room-journal-bootstrap .rj-event-tabs button{font-size:.72rem;line-height:1.5;min-height:34px;padding:.4rem .65rem;border-radius:7px}
+.room-journal-bootstrap .rj-event-tabs button.active{background:#bfa77a19;border-color:#bfa77a;color:#92774c}
+.room-journal-bootstrap .rj-layout{grid-template-columns:minmax(0,1fr) 310px;gap:1rem;align-items:start}
+.room-journal-bootstrap .rj-timeline,.room-journal-bootstrap .rj-card{padding:1rem}
+.room-journal-bootstrap .rj-aside{gap:1rem;min-width:0}
+.room-journal-bootstrap .rj-timeline>header{gap:.6rem;margin-bottom:.875rem;align-items:center;flex-wrap:wrap}
+.room-journal-bootstrap .rj-timeline h2,.room-journal-bootstrap .rj-card h2{font-size:.95rem;line-height:1.5}
+.room-journal-bootstrap .rj-count-badge{font-size:.65rem;padding:.25rem .5rem;border-radius:20px}
+.room-journal-bootstrap .rj-sort-label{font-size:.68rem}
+.room-journal-bootstrap .rj-empty{font-size:.76rem;line-height:1.5;padding:.75rem 0;color:#92969d}
+.room-journal-bootstrap .rj-event{gap:.75rem;padding:.75rem 0}
+.room-journal-bootstrap .rj-event time{font-size:.72rem;line-height:1.5}
+.room-journal-bootstrap .rj-event-icon{width:32px;height:32px;border-radius:9px;background:#bfa77a19;color:#92774c}
+.room-journal-bootstrap .rj-event-content{min-width:0}
+.room-journal-bootstrap .rj-event-content h4{font-size:.85rem;line-height:1.5}
+.room-journal-bootstrap .rj-event-content p,.room-journal-bootstrap .rj-event-content dl{font-size:.76rem;line-height:1.6;overflow-wrap:anywhere}
+.room-journal-bootstrap .rj-event-content footer{font-size:.68rem;line-height:1.5;gap:.5rem;flex-wrap:wrap}
+.room-journal-bootstrap .rj-month{font-size:.83rem;line-height:1.5;margin:1rem 0 .5rem}
+.room-journal-bootstrap .rj-pagination{padding-top:.75rem;margin-top:.75rem;font-size:.72rem;gap:.65rem;flex-wrap:wrap}
+.room-journal-bootstrap .rj-note-card{border-top:3px solid #bfa77a}
+.room-journal-bootstrap .rj-note-card label{font-size:.76rem;line-height:1.5;margin-bottom:.3rem}
+.room-journal-bootstrap .rj-note-card .form-control{height:44px;border:1px solid #e3e7e9;border-radius:9px;padding:.65rem .8rem;font-size:.8rem;line-height:1.4;background:#fafaf9}
+.room-journal-bootstrap .rj-note-card textarea.form-control{height:auto;min-height:125px;resize:vertical}
+.room-journal-bootstrap .rj-note-card input[type=file]{height:auto;font-size:.7rem;padding:.5rem}
+.room-journal-bootstrap .rj-note-card .form-control:focus{border-color:#bfa77a;box-shadow:0 0 0 .18rem #bfa77a26;outline:0;background:#fff}
+.room-journal-bootstrap .rj-note-private,.room-journal-bootstrap .rj-note-label small,.room-journal-bootstrap .rj-note-file small{font-size:.68rem;line-height:1.5}
+.room-journal-bootstrap .rj-note-actions{gap:.65rem;margin-top:.875rem}
+.room-journal-bootstrap .rj-note-actions .btn{min-height:40px;border-radius:8px;padding:.6rem .85rem;font-size:.76rem;font-weight:600}
+.room-journal-bootstrap .rj-principles p,.room-journal-bootstrap .rj-document-info small,.room-journal-bootstrap .rj-bottom{font-size:.7rem;line-height:1.6}
+.room-journal-bootstrap .rj-document{padding:.65rem 0;gap:.65rem}
+.room-journal-bootstrap .rj-document-info strong{font-size:.78rem;line-height:1.5}
+.room-journal-bootstrap .rj-document-icon{border-radius:8px;background:#bfa77a19;color:#92774c}
+@media(max-width:1100px){.room-journal-bootstrap .rj-room-top{grid-template-columns:repeat(3,minmax(0,1fr))}.room-journal-bootstrap .rj-room-identity{grid-column:1/-1;border:0;padding:0}.room-journal-bootstrap .rj-filter-row{flex-wrap:wrap}.room-journal-bootstrap .rj-search{flex:1 1 100%}.room-journal-bootstrap .rj-layout{grid-template-columns:minmax(0,1fr) 280px}}
+@media(max-width:850px){.room-journal-bootstrap .rj-layout{grid-template-columns:1fr}.room-journal-bootstrap .rj-aside{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.room-journal-bootstrap .rj-note-card{grid-column:1/-1}}
+@media(max-width:600px){.room-journal-bootstrap .rj-heading{align-items:stretch;flex-direction:column}.room-journal-bootstrap .rj-heading-actions{display:flex}.room-journal-bootstrap #rj-export{flex:1}.room-journal-bootstrap .rj-room-top{padding:1rem;grid-template-columns:1fr;gap:.75rem}.room-journal-bootstrap .rj-summary-field{padding-top:.65rem;border-top:1px solid #eef0ed}.room-journal-bootstrap .rj-room-bottom{flex-wrap:wrap}.room-journal-bootstrap .rj-filter-row{display:flex;flex-wrap:wrap}.room-journal-bootstrap .rj-filter-row>.form-select,.room-journal-bootstrap .rj-date-picker{width:100%;flex:1 1 100%;min-width:0}.room-journal-bootstrap .rj-aside{grid-template-columns:1fr}.room-journal-bootstrap .rj-card,.room-journal-bootstrap .rj-timeline{padding:1rem}.room-journal-bootstrap .rj-event{flex-wrap:wrap}.dashboard-header:has(.rj-breadcrumb) .account-label{display:none}.dashboard-header .rj-breadcrumb{font-size:.72rem;gap:.35rem;flex:1;min-width:0}.rj-breadcrumb svg{width:17px;height:17px}}
+.room-journal-bootstrap .rj-kind-trigger{min-height:42px;border-radius:9px;font-size:.77rem;padding:.6rem .75rem}.room-journal-bootstrap .rj-kind-menu{border-radius:9px;padding:.3rem}.room-journal-bootstrap .rj-kind-option{font-size:.75rem;min-height:34px;border-radius:6px}@media(max-width:600px){.room-journal-bootstrap .rj-kind-picker{width:100%;flex:1 1 100%;min-width:0}}

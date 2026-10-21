@@ -1,0 +1,11 @@
+@model QL_PhongTro.Models.YeuCauThue
+@{ ViewData["Title"] = "Gửi yêu cầu thành công"; }
+<section class="card p-4">
+    <div class="alert alert-success" role="status"><h1 class="h4">Gửi yêu cầu thành công</h1>
+        <p class="mb-0">Mã yêu cầu của bạn: <strong id="ma-yeu-cau">@Model.MaYeuCau</strong></p></div>
+    <p>Loại yêu cầu: @(Model.LoaiYeuCau == "XEM_PHONG" ? "Xem phòng" : "Thuê ngay")</p>
+    <p>Ngày mong muốn: @Model.NgayMongMuon.ToString("dd/MM/yyyy") · Số người dự kiến: @Model.SoNguoiDuKien</p>
+    <p style="white-space: pre-wrap">@Model.LoiNhan</p>
+    <a asp-action="YeuCau" asp-route-id="@Model.Id">Xem thông tin yêu cầu</a>
+    <a asp-action="ChiTiet" asp-route-id="@Model.TinDangId">Quay lại tin đăng</a>
+</section>

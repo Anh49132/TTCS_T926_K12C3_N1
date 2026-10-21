@@ -1,0 +1,30 @@
+@model QL_PhongTro.ViewModels.HopDongChiTietViewModel
+@{
+    ViewData["Title"] = "Xem hợp đồng " + Model.MaHopDong;
+    ViewData["PageStyles"] = "contracts";
+    var fileName = $"HopDong-{Model.MaHopDong}.pdf";
+}
+
+<section class="contract-pdf-page" aria-labelledby="contract-pdf-title">
+    <div class="contract-pdf-toolbar">
+        <a class="contract-pdf-back" asp-action="Details" asp-route-maHopDong="@Model.MaHopDong">‹ &nbsp; Quay lại hợp đồng</a>
+        <strong id="contract-pdf-title">@fileName</strong>
+        <span class="contract-pdf-meta">Tài liệu chỉ dành cho người có tên trong hợp đồng.</span>
+    </div>
+
+    <main class="contract-pdf-workspace">
+        <aside class="contract-pdf-file-card">
+            <div class="contract-pdf-file-icon">PDF</div>
+            <strong>@fileName</strong>
+            <small>Hợp đồng thuê phòng</small>
+            <a asp-action="DownloadPdf" asp-route-maHopDong="@Model.MaHopDong">Tải xuống</a>
+        </aside>
+        <div class="contract-pdf-canvas">
+            <iframe title="Bản xem trước hợp đồng PDF" src="@Url.Action("PdfPreviewFile", new { maHopDong = Model.MaHopDong })"></iframe>
+        </div>
+    </main>
+</section>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/contracts.css" asp-append-version="true" />
+}

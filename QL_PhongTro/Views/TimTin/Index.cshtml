@@ -1,0 +1,291 @@
+@model QL_PhongTro.ViewModels.TimTinViewModel
+@using System.Globalization
+@{
+    ViewData["Title"] = "Tìm phòng trọ";
+    Layout = User.Identity?.IsAuthenticated == true ? "~/Views/Shared/_Layout.cshtml" : "~/Views/Shared/_PublicLayout.cshtml";
+    var culture = CultureInfo.GetCultureInfo("vi-VN");
+    var hasFilters = !string.IsNullOrWhiteSpace(Model.TuKhoa) || !string.IsNullOrWhiteSpace(Model.QuanHuyen)
+        || !string.IsNullOrWhiteSpace(Model.PhuongXa) || Model.GiaToiThieu.HasValue || Model.GiaToiDa.HasValue
+        || Model.DienTichToiThieu.HasValue || Model.DienTichToiDa.HasValue || Model.SoNguoiToiDa.HasValue;
+}
+<div class="timtin-page">
+    <div class="timtin-top nhatot-container">
+
+        <div class="mb-4"><h1 class="fw-bold mb-2">Tìm căn phòng phù hợp với bạn</h1><p class="timtin-intro mb-0">Khám phá phòng trọ và căn hộ theo khu vực, ngân sách và nhu cầu của bạn.</p></div>
+
+        <form asp-controller="TimTin" asp-action="Index" method="get" class="listing-search-form timtin-search-form" id="tim-tin-form">
+            <div class="listing-search-grid timtin-search-grid">
+                <input type="hidden" name="GiaToiThieu" value="@Model.GiaToiThieu?.ToString(CultureInfo.InvariantCulture)" />
+                <input type="hidden" name="DienTichToiThieu" value="@Model.DienTichToiThieu?.ToString(CultureInfo.InvariantCulture)" />
+                <input type="hidden" name="DienTichToiDa" value="@Model.DienTichToiDa?.ToString(CultureInfo.InvariantCulture)" />
+                <input type="hidden" name="SoNguoiToiDa" value="@Model.SoNguoiToiDa" />
+                <input id="timtin-sort-value" type="hidden" name="SapXep" value="@Model.SapXep" />
+                <div class="timtin-location-field home-district-dropdown dropdown">
+                    <label for="search-district-toggle">Khu vực</label>
+                    <input type="hidden" name="QuanHuyen" value="@Model.QuanHuyen" />
+                    <button id="search-district-toggle" class="home-district-toggle dropdown-toggle w-100" type="button" data-bs-toggle="dropdown" aria-expanded="false"><span data-district-label>@(string.IsNullOrWhiteSpace(Model.QuanHuyen) ? "Tất cả khu vực" : Model.QuanHuyen)</span></button>
+                    <ul class="dropdown-menu w-100" aria-labelledby="search-district-toggle">
+                        <li><button type="button" class="dropdown-item @(string.IsNullOrWhiteSpace(Model.QuanHuyen) ? "active" : "")" data-district="" aria-pressed="@(string.IsNullOrWhiteSpace(Model.QuanHuyen) ? "true" : "false")">Tất cả khu vực</button></li>
+                        @foreach (var district in Model.QuanHuyens) {
+                            <li><button type="button" class="dropdown-item @(Model.QuanHuyen == district ? "active" : "")" data-district="@district" aria-pressed="@(Model.QuanHuyen == district ? "true" : "false")">@district</button></li>
+                        }
+                    </ul>
+                </div>                <div class="timtin-keyword-field">
+                    <label asp-for="TuKhoa" class="timtin-keyword-label">Bạn đang tìm phòng ở đâu?</label>
+                    <input asp-for="TuKhoa" class="form-control" maxlength="200" placeholder="Nhập tên đường, phường hoặc từ khóa..." />
+                </div>
+                <button type="submit" class="listing-search-submit btn-nhatot-search btn btn-dark">
+                    <svg class="timtin-search-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                        <circle cx="10.8" cy="10.8" r="6.3" />
+                        <path d="m15.5 15.5 4.2 4.2" />
+                    </svg>
+                    <span>Tìm phòng</span>
+                </button>
+            </div>
+            <span asp-validation-for="TuKhoa" class="text-danger"></span>
+            <span asp-validation-for="QuanHuyen" class="text-danger"></span>
+
+            <div class="timtin-quick-filters" aria-label="Lọc nhanh">
+                <label class="timtin-quick-select">
+                    <span class="visually-hidden">Phường xã</span>
+                    <select asp-for="PhuongXa" class="form-select">
+                        <option value="">Phường/xã</option>
+                        @foreach (var ward in Model.PhuongXas)
+                        {
+                            <option value="@ward">@ward</option>
+                        }
+                    </select>
+                </label>
+                <label class="timtin-quick-select">
+                    <span class="visually-hidden">Giá tối đa</span>
+                    <select name="GiaToiDa" class="form-select">
+                        <option value="">Mức giá</option>
+                        @if (Model.GiaToiDa.HasValue && Model.GiaToiDa.Value is not (3000000 or 6000000 or 10000000 or 20000000))
+                        {
+                            <option value="@Model.GiaToiDa" selected>@Model.GiaToiDa.Value.ToString("N0", culture) đ</option>
+                        }
+                        <option value="3000000" selected="@(Model.GiaToiDa == 3000000)">Dưới 3 triệu</option>
+                        <option value="6000000" selected="@(Model.GiaToiDa == 6000000)">Dưới 6 triệu</option>
+                        <option value="10000000" selected="@(Model.GiaToiDa == 10000000)">Dưới 10 triệu</option>
+                        <option value="20000000" selected="@(Model.GiaToiDa == 20000000)">Dưới 20 triệu</option>
+                    </select>
+                </label>
+                <button type="button" class="timtin-advanced-toggle btn btn-outline-secondary" aria-expanded="false" aria-controls="timtin-sidebar">
+                    <span aria-hidden="true">☷</span> Bộ lọc nâng cao
+                </button>
+            </div>
+
+            <div class="timtin-active-filters">
+                <span>Đang lọc:</span>
+                @if (!string.IsNullOrWhiteSpace(Model.QuanHuyen))
+                {
+                    <span class="timtin-filter-chip">@Model.QuanHuyen</span>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.PhuongXa))
+                {
+                    <span class="timtin-filter-chip">@Model.PhuongXa</span>
+                }
+                @if (Model.GiaToiDa.HasValue)
+                {
+                    <span class="timtin-filter-chip">Đến @Model.GiaToiDa.Value.ToString("N0", culture) đ</span>
+                }
+                @if (Model.GiaToiThieu.HasValue)
+                {
+                    <span class="timtin-filter-chip">Từ @Model.GiaToiThieu.Value.ToString("N0", culture) đ</span>
+                }
+                @if (Model.DienTichToiThieu.HasValue || Model.DienTichToiDa.HasValue)
+                {
+                    <span class="timtin-filter-chip">@(Model.DienTichToiThieu?.ToString(culture) ?? "0") – @(Model.DienTichToiDa?.ToString(culture) ?? "∞") m²</span>
+                }
+                @if (Model.SoNguoiToiDa.HasValue)
+                {
+                    <span class="timtin-filter-chip">@Model.SoNguoiToiDa người</span>
+                }
+                @if (!string.IsNullOrWhiteSpace(Model.TuKhoa))
+                {
+                    <span class="timtin-filter-chip">“@Model.TuKhoa”</span>
+                }
+                @if (hasFilters)
+                {
+                    <a asp-action="Index" class="timtin-clear-filters">Xóa tất cả</a>
+                }
+                else
+                {
+                    <span class="timtin-no-filters">Chưa chọn bộ lọc</span>
+                }
+            </div>
+
+        </form>
+    </div>
+
+    <p id="tim-tin-loading" class="timtin-loading" role="status" aria-live="polite" hidden>
+        <span class="spinner-border spinner-border-sm" aria-hidden="true"></span> Đang tải kết quả…
+    </p>
+    @if (!Model.SchemaReady)
+    {
+        <p role="status" class="timtin-empty-state">Chức năng tìm tin chưa sẵn sàng trên cơ sở dữ liệu hiện tại.</p>
+    }
+    else if (ViewData.ModelState.IsValid)
+    {
+        <div class="timtin-results-layout nhatot-container">
+            <aside class="timtin-sidebar" id="timtin-sidebar" aria-label="Bộ lọc tìm phòng">
+                <form asp-controller="TimTin" asp-action="Index" method="get" class="timtin-sidebar-form">
+                    <input type="hidden" name="TuKhoa" value="@Model.TuKhoa" />
+                    <input type="hidden" name="PhuongXa" value="@Model.PhuongXa" />
+                    <input type="hidden" name="QuanHuyen" value="@Model.QuanHuyen" />
+                    <input type="hidden" name="SapXep" value="@Model.SapXep" />
+                    <div class="timtin-sidebar-title"><strong>☷ &nbsp;Bộ lọc</strong><a asp-action="Index">Đặt lại</a></div>
+                    <section class="timtin-filter-group">
+                        <h2>Khoảng giá <small>đ / tháng</small></h2>
+                        <div class="timtin-range-inputs">
+                            <label><span class="visually-hidden">Giá tối thiểu</span><input asp-for="GiaToiThieu" type="number" min="0" step="500000" class="form-control" placeholder="Từ" /></label>
+                            <label><span class="visually-hidden">Giá tối đa</span><input asp-for="GiaToiDa" type="number" min="0" step="500000" class="form-control" placeholder="Đến" /></label>
+                        </div>
+                        <span asp-validation-for="GiaToiThieu" class="text-danger"></span>
+                        <span asp-validation-for="GiaToiDa" class="text-danger"></span>
+                    </section>
+                    <section class="timtin-filter-group">
+                        <h2>Diện tích (m²)</h2>
+                        <div class="timtin-range-inputs">
+                            <label><span class="visually-hidden">Diện tích tối thiểu</span><input asp-for="DienTichToiThieu" type="number" min="0" step="1" class="form-control" placeholder="Từ" /></label>
+                            <label><span class="visually-hidden">Diện tích tối đa</span><input asp-for="DienTichToiDa" type="number" min="0" step="1" class="form-control" placeholder="Đến" /></label>
+                        </div>
+                        <span asp-validation-for="DienTichToiThieu" class="text-danger"></span>
+                        <span asp-validation-for="DienTichToiDa" class="text-danger"></span>
+                    </section>
+                    <section class="timtin-filter-group">
+                        <h2>Số người ở</h2>
+                        <div class="dropdown capacity-dropdown">
+                            <input type="hidden" name="SoNguoiToiDa" value="@Model.SoNguoiToiDa" />
+                            <button type="button" id="capacity-toggle" class="form-select text-start" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Số người ở"><span data-capacity-label>@(Model.SoNguoiToiDa.HasValue ? $"{Model.SoNguoiToiDa} người" : "Tất cả sức chứa")</span></button>
+                            <ul class="dropdown-menu w-100" aria-labelledby="capacity-toggle">
+                                <li><button type="button" class="dropdown-item @(!Model.SoNguoiToiDa.HasValue ? "active" : "")" data-capacity="" aria-pressed="@(!Model.SoNguoiToiDa.HasValue ? "true" : "false")">Tất cả sức chứa</button></li>
+                                @foreach (var capacity in Model.SoNguoiOptions) {
+                                    <li><button type="button" class="dropdown-item @(Model.SoNguoiToiDa == capacity ? "active" : "")" data-capacity="@capacity" aria-pressed="@(Model.SoNguoiToiDa == capacity ? "true" : "false")">@capacity người</button></li>
+                                }
+                            </ul>
+                        </div>
+                        <span asp-validation-for="SoNguoiToiDa" class="text-danger"></span>
+                    </section>
+                    <button type="submit" class="timtin-filter-apply btn btn-dark w-100">Áp dụng bộ lọc</button>
+                </form>
+            </aside>
+            <div class="timtin-results-section">
+                <div class="timtin-results-header">
+                    <p class="timtin-results-count" role="status"><strong>@Model.TongKetQua</strong> phòng phù hợp</p>
+                    <label class="timtin-sort">Sắp xếp
+                        <select id="timtin-sort" name="SapXep" form="tim-tin-form" class="form-select">
+                            <option value="moi-nhat" selected="@(Model.SapXep == "moi-nhat")">Mới đăng nhất</option>
+                            <option value="gia-tang" selected="@(Model.SapXep == "gia-tang")">Giá thấp đến cao</option>
+                            <option value="gia-giam" selected="@(Model.SapXep == "gia-giam")">Giá cao đến thấp</option>
+                        </select>
+                    </label>
+                </div>
+
+                @if (Model.TongKetQua == 0)
+                {
+                    <p role="status" class="timtin-empty-state">Không có tin phù hợp. Bạn hãy nới rộng khoảng giá thuê, diện tích hoặc khu vực rồi tìm lại.</p>
+                    @if (Model.CoGoiYGia)
+                    {
+                        var suggestedRoutes = new Dictionary<string, string>
+                        {
+                            ["TuKhoa"] = Model.TuKhoa ?? "",
+                            ["PhuongXa"] = Model.PhuongXa ?? "",
+                            ["QuanHuyen"] = Model.QuanHuyen ?? "",
+                            ["GiaToiThieu"] = Model.GiaGoiYToiThieu?.ToString(CultureInfo.InvariantCulture) ?? "",
+                            ["GiaToiDa"] = Model.GiaGoiYToiDa?.ToString(CultureInfo.InvariantCulture) ?? "",
+                            ["DienTichToiThieu"] = Model.DienTichToiThieu?.ToString(CultureInfo.InvariantCulture) ?? "",
+                            ["DienTichToiDa"] = Model.DienTichToiDa?.ToString(CultureInfo.InvariantCulture) ?? "",
+                            ["SoNguoiToiDa"] = Model.SoNguoiToiDa?.ToString(CultureInfo.InvariantCulture) ?? "",
+                            ["SapXep"] = Model.SapXep,
+                            ["Trang"] = "1"
+                        };
+                        var minimum = Model.GiaGoiYToiThieu?.ToString("N0", culture) ?? "0";
+                        var maximum = Model.GiaGoiYToiDa?.ToString("N0", culture) ?? "không giới hạn";
+                        <p id="tim-tin-suggested-range" class="timtin-suggested-range">Khoảng giá đề xuất: @minimum – @maximum đ/tháng.</p>
+                        <a id="tim-tin-price-suggestion" class="btn btn-outline-primary mb-3"
+                           asp-controller="TimTin" asp-action="Index" asp-all-route-data="suggestedRoutes">Áp dụng khoảng giá gợi ý</a>
+                    }
+                    else
+                    {
+                        <p class="timtin-empty-note">Bạn có thể điều chỉnh khu vực, diện tích hoặc số người ở.</p>
+                    }
+                }
+
+                <div class="timtin-result-grid">
+                    @foreach (var tin in Model.TinDangs)
+                    {
+                        <article class="nhatot-listing-card timtin-listing-card">
+                            <a asp-controller="TinDang" asp-action="ChiTiet" asp-route-id="@tin.Id" class="card-image-wrap">
+                                <img src="@(tin.AnhDaiDien ?? Url.Content("~/room-placeholder.svg"))" alt="Ảnh đại diện: @tin.TieuDe" loading="lazy" />
+                                <span class="timtin-image-tag">Phòng trống</span>
+
+                            </a>
+                            <div class="card-content card-body">
+                                <div class="timtin-card-heading">
+                                    <span class="timtin-card-type">PHÒNG TRỌ</span>
+                                    <span class="timtin-card-price">@tin.GiaThue.ToString("N0", culture)<small> đ/tháng</small></span>
+                                </div>
+                                <h2 class="card-title"><a asp-controller="TinDang" asp-action="ChiTiet" asp-route-id="@tin.Id">@tin.TieuDe</a></h2>
+                                <p class="card-location"><span aria-hidden="true">⌖</span> @tin.DiaChi@(string.IsNullOrWhiteSpace(tin.QuanHuyen) ? "" : $" · {tin.QuanHuyen}")</p>
+                                <div class="card-meta">
+                                    <span>@tin.DienTich m²</span>
+                                    <span>Tối đa @tin.SoNguoiToiDa người</span>
+                                </div>
+                                <div class="timtin-card-footer"><div class="timtin-owner-contact"><span><i aria-hidden="true"></i> Chủ nhà: @(tin.TenChuNha ?? "Chưa cập nhật")</span>@if(!string.IsNullOrWhiteSpace(tin.DienThoaiChuNha)){<a href="tel:@tin.DienThoaiChuNha" aria-label="Gọi chủ nhà @tin.TenChuNha">☎ @tin.DienThoaiChuNha</a>}else{<small>Chưa cập nhật số điện thoại</small>}</div><small>@(tin.NgayDang?.ToString("dd/MM/yyyy") ?? "Tin mới")</small></div>
+                            </div>
+                        </article>
+                    }
+                </div>
+                @if (Model.TongTrang > 1)
+                {
+                    var routes = new Dictionary<string, string>
+                    {
+                        ["TuKhoa"] = Model.TuKhoa ?? "",
+                        ["PhuongXa"] = Model.PhuongXa ?? "",
+                        ["QuanHuyen"] = Model.QuanHuyen ?? "",
+                        ["GiaToiThieu"] = Model.GiaToiThieu?.ToString(CultureInfo.InvariantCulture) ?? "",
+                        ["GiaToiDa"] = Model.GiaToiDa?.ToString(CultureInfo.InvariantCulture) ?? "",
+                        ["DienTichToiThieu"] = Model.DienTichToiThieu?.ToString(CultureInfo.InvariantCulture) ?? "",
+                        ["DienTichToiDa"] = Model.DienTichToiDa?.ToString(CultureInfo.InvariantCulture) ?? "",
+                        ["SoNguoiToiDa"] = Model.SoNguoiToiDa?.ToString(CultureInfo.InvariantCulture) ?? "",
+                        ["SapXep"] = Model.SapXep
+                    };
+                    <nav aria-label="Chuyển trang kết quả" class="timtin-pagination">
+                        <ul class="pagination">
+                            @if (Model.Trang > 1)
+                            {
+                                <li class="page-item"><a class="page-link" aria-label="Trang trước" asp-action="Index" asp-all-route-data="routes" asp-route-Trang="@(Model.Trang - 1)">‹</a></li>
+                            }
+                            @for (var pageNumber = Math.Max(1, Model.Trang - 2); pageNumber <= Math.Min(Model.TongTrang, Model.Trang + 2); pageNumber++)
+                            {
+                                if (pageNumber == Model.Trang)
+                                {
+                                    <li class="page-item active"><span class="page-link" aria-current="page">@pageNumber</span></li>
+                                }
+                                else
+                                {
+                                    <li class="page-item"><a class="page-link" asp-action="Index" asp-all-route-data="routes" asp-route-Trang="@pageNumber">@pageNumber</a></li>
+                                }
+                            }
+                            @if (Model.Trang < Model.TongTrang)
+                            {
+                                <li class="page-item"><a class="page-link" aria-label="Trang sau" asp-action="Index" asp-all-route-data="routes" asp-route-Trang="@(Model.Trang + 1)">›</a></li>
+                            }
+                        </ul>
+                    </nav>
+                }
+            </div>
+        </div>
+    }
+</div>
+@section Scripts {
+    @if (User.Identity?.IsAuthenticated != true) { <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> }
+    <script src="~/js/home-district.js" asp-append-version="true"></script>
+    <script src="~/js/search-capacity.js" asp-append-version="true"></script>
+    <script src="~/js/tim-tin.js" asp-append-version="true"></script>
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/room-search-bootstrap.css" asp-append-version="true" />
+}

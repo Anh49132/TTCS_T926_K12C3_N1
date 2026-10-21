@@ -1,0 +1,30 @@
+@model QL_PhongTro.ViewModels.HomeVacantRoomsViewModel
+@using System.Globalization
+@{ ViewData["Title"] = "Phòng trống chưa có tin hiển thị"; var vi=CultureInfo.GetCultureInfo("vi-VN"); }
+<div class="vacant-list-page">
+    <header class="vacant-list-heading"><div><h1>Phòng trống chưa có tin hiển thị</h1><p>Ưu tiên phòng vừa trả. Kiểm tra nội dung trước khi đăng để đón khách mới.</p></div><a asp-action="Index" asp-route-toaNhaId="@Model.BuildingId">Về tổng quan</a></header>
+    <form method="get" asp-action="PhongTrongChuaDangTin" class="vacant-list-filter">
+        <label for="vacant-building">Cơ sở</label><select id="vacant-building" name="toaNhaId"><option value="">Tất cả cơ sở</option>@foreach(var building in Model.Buildings){<option value="@building.Id" selected="@(Model.BuildingId==building.Id)">@building.Name</option>}</select>
+        <button type="submit">Áp dụng</button><a asp-action="PhongTrongChuaDangTin" asp-route-toaNhaId="@Model.BuildingId" asp-route-trang="@Model.Page">Làm mới</a>
+    </form>
+    <p class="vacant-list-total" data-unlisted-count="@Model.Total">@Model.Total phòng trống chưa có tin hiển thị · Trang @Model.Page/@Model.TotalPages</p>
+    @if(Model.Rooms.Count==0){<div class="vacant-list-empty" role="status">Không có phòng trống chưa đăng tin trong phạm vi đang xem.</div>}
+    else {
+        <section class="vacant-list-grid" aria-label="Danh sách phòng cần đăng tin">
+        @foreach(var room in Model.Rooms){
+            <article class="vacant-room-card" data-vacant-room="@room.Id">
+                <header><h2>Phòng @room.Code</h2><span>@room.StatusLabel</span></header><p>@room.Building</p>
+                <strong class="vacant-room-price">@room.Rent.ToString("N0",vi) đ/tháng</strong><p>@room.Area.ToString("0.#",vi) m² · Phòng trống</p>
+                @if(room.VacantSince is { } since){<p>Trống từ @since.AddHours(7).ToString("dd/MM/yyyy HH:mm")</p>}
+                <footer>@if(Model.CanManage){<a class="vacant-room-action" href="@(room.ListingId.HasValue ? Url.Action("Sua", "TinDang", new {id=room.ListingId}) : Url.Action("Tao", "TinDang", new {phongId=room.Id}))">@room.ActionLabel</a>}else{<span>Bạn đang có quyền chỉ xem.</span>}</footer>
+            </article>
+        }
+        </section>
+    }
+    @if(Model.TotalPages>1){<nav class="vacant-list-pagination" aria-label="Phân trang phòng trống">
+        @if(Model.Page>1){<a asp-action="PhongTrongChuaDangTin" asp-route-toaNhaId="@Model.BuildingId" asp-route-trang="@(Model.Page-1)">Trang trước</a>}
+        <span>Trang @Model.Page/@Model.TotalPages</span>
+        @if(Model.Page<Model.TotalPages){<a asp-action="PhongTrongChuaDangTin" asp-route-toaNhaId="@Model.BuildingId" asp-route-trang="@(Model.Page+1)">Trang sau</a>}
+    </nav>}
+</div>
+@section Styles {<link rel="stylesheet" href="~/css/vacant-room-list.css" asp-append-version="true" />}

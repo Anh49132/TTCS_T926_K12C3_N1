@@ -1,0 +1,298 @@
+{
+  "roles": [
+    {
+      "code": "KHACH_THUE",
+      "name": "Khách thuê",
+      "sortOrder": 1
+    },
+    {
+      "code": "CHU_NHA",
+      "name": "Chủ nhà",
+      "sortOrder": 2
+    },
+    {
+      "code": "QUAN_LY",
+      "name": "Quản lý tòa nhà",
+      "sortOrder": 3
+    },
+    {
+      "code": "ADMIN",
+      "name": "Quản trị hệ thống",
+      "sortOrder": 4
+    }
+  ],
+  "modules": [
+    {
+      "code": "TAI_KHOAN",
+      "name": "Tài khoản và phân quyền",
+      "groupName": "Hệ thống",
+      "sortOrder": 1
+    },
+    {
+      "code": "PHONG_TRO",
+      "name": "Tòa nhà, phòng và bảng giá",
+      "groupName": "Vận hành",
+      "sortOrder": 2
+    },
+    {
+      "code": "TIN_DANG",
+      "name": "Tin đăng cho thuê",
+      "groupName": "Cho thuê",
+      "sortOrder": 3
+    },
+    {
+      "code": "YEU_CAU_THUE",
+      "name": "Yêu cầu thuê và lịch xem phòng",
+      "groupName": "Cho thuê",
+      "sortOrder": 4
+    },
+    {
+      "code": "HOP_DONG",
+      "name": "Hợp đồng thuê và người ở ghép",
+      "groupName": "Cho thuê",
+      "sortOrder": 5
+    },
+    {
+      "code": "DIEN_NUOC",
+      "name": "Chỉ số điện nước",
+      "groupName": "Vận hành",
+      "sortOrder": 6
+    },
+    {
+      "code": "TAI_CHINH",
+      "name": "Hoá đơn, thanh toán và công nợ",
+      "groupName": "Tài chính",
+      "sortOrder": 7
+    },
+    {
+      "code": "BAO_HONG",
+      "name": "Báo hỏng và bảo trì",
+      "groupName": "Vận hành",
+      "sortOrder": 8
+    },
+    {
+      "code": "BAO_CAO",
+      "name": "Báo cáo doanh thu và tỉ lệ lấp đầy",
+      "groupName": "Tài chính",
+      "sortOrder": 9
+    }
+  ],
+  "permissions": [
+    {
+      "roleCode": "KHACH_THUE",
+      "moduleCode": "TAI_KHOAN",
+      "accessLevel": "READ",
+      "ownDataOnly": true
+    },
+    {
+      "roleCode": "CHU_NHA",
+      "moduleCode": "TAI_KHOAN",
+      "accessLevel": "READ",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "QUAN_LY",
+      "moduleCode": "TAI_KHOAN",
+      "accessLevel": "NONE",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "ADMIN",
+      "moduleCode": "TAI_KHOAN",
+      "accessLevel": "FULL",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "KHACH_THUE",
+      "moduleCode": "PHONG_TRO",
+      "accessLevel": "READ",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "CHU_NHA",
+      "moduleCode": "PHONG_TRO",
+      "accessLevel": "FULL",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "QUAN_LY",
+      "moduleCode": "PHONG_TRO",
+      "accessLevel": "READ",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "ADMIN",
+      "moduleCode": "PHONG_TRO",
+      "accessLevel": "READ",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "KHACH_THUE",
+      "moduleCode": "TIN_DANG",
+      "accessLevel": "READ",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "CHU_NHA",
+      "moduleCode": "TIN_DANG",
+      "accessLevel": "FULL",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "QUAN_LY",
+      "moduleCode": "TIN_DANG",
+      "accessLevel": "WRITE",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "ADMIN",
+      "moduleCode": "TIN_DANG",
+      "accessLevel": "READ",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "KHACH_THUE",
+      "moduleCode": "YEU_CAU_THUE",
+      "accessLevel": "WRITE",
+      "ownDataOnly": true
+    },
+    {
+      "roleCode": "CHU_NHA",
+      "moduleCode": "YEU_CAU_THUE",
+      "accessLevel": "FULL",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "QUAN_LY",
+      "moduleCode": "YEU_CAU_THUE",
+      "accessLevel": "READ",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "ADMIN",
+      "moduleCode": "YEU_CAU_THUE",
+      "accessLevel": "READ",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "KHACH_THUE",
+      "moduleCode": "HOP_DONG",
+      "accessLevel": "READ",
+      "ownDataOnly": true
+    },
+    {
+      "roleCode": "CHU_NHA",
+      "moduleCode": "HOP_DONG",
+      "accessLevel": "FULL",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "QUAN_LY",
+      "moduleCode": "HOP_DONG",
+      "accessLevel": "READ",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "ADMIN",
+      "moduleCode": "HOP_DONG",
+      "accessLevel": "READ",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "KHACH_THUE",
+      "moduleCode": "DIEN_NUOC",
+      "accessLevel": "READ",
+      "ownDataOnly": true
+    },
+    {
+      "roleCode": "CHU_NHA",
+      "moduleCode": "DIEN_NUOC",
+      "accessLevel": "FULL",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "QUAN_LY",
+      "moduleCode": "DIEN_NUOC",
+      "accessLevel": "WRITE",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "ADMIN",
+      "moduleCode": "DIEN_NUOC",
+      "accessLevel": "READ",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "KHACH_THUE",
+      "moduleCode": "TAI_CHINH",
+      "accessLevel": "READ",
+      "ownDataOnly": true
+    },
+    {
+      "roleCode": "CHU_NHA",
+      "moduleCode": "TAI_CHINH",
+      "accessLevel": "FULL",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "QUAN_LY",
+      "moduleCode": "TAI_CHINH",
+      "accessLevel": "NONE",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "ADMIN",
+      "moduleCode": "TAI_CHINH",
+      "accessLevel": "READ",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "KHACH_THUE",
+      "moduleCode": "BAO_HONG",
+      "accessLevel": "WRITE",
+      "ownDataOnly": true
+    },
+    {
+      "roleCode": "CHU_NHA",
+      "moduleCode": "BAO_HONG",
+      "accessLevel": "FULL",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "QUAN_LY",
+      "moduleCode": "BAO_HONG",
+      "accessLevel": "WRITE",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "ADMIN",
+      "moduleCode": "BAO_HONG",
+      "accessLevel": "READ",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "KHACH_THUE",
+      "moduleCode": "BAO_CAO",
+      "accessLevel": "NONE",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "CHU_NHA",
+      "moduleCode": "BAO_CAO",
+      "accessLevel": "FULL",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "QUAN_LY",
+      "moduleCode": "BAO_CAO",
+      "accessLevel": "READ",
+      "ownDataOnly": false
+    },
+    {
+      "roleCode": "ADMIN",
+      "moduleCode": "BAO_CAO",
+      "accessLevel": "READ",
+      "ownDataOnly": false
+    }
+  ]
+}

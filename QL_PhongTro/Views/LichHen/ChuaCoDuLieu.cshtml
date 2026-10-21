@@ -1,0 +1,13 @@
+@{
+    ViewData["Title"] = "Chưa có dữ liệu yêu cầu";
+}
+<p class="eyebrow">LỊCH HẸN XEM PHÒNG</p>
+<h1>Chưa có dữ liệu yêu cầu</h1>
+
+@* yeu_cau_thue thuộc S2-06 và chỉ được tạo khi chạy --initialize-rental-requests. CSDL của máy
+   này chưa có bảng đó nên S2-08 chưa có gì để hiển thị. Màn hình báo trạng thái chờ thay vì lỗi. *@
+<div class="alert alert-info" role="status">
+    <p class="mb-0">Chưa có dữ liệu yêu cầu. Màn hình sẽ hoạt động khi dữ liệu từ chức năng gửi yêu cầu có sẵn.</p>
+</div>
+
+<p class="text-muted">Xác nhận lịch hẹn, đổi lịch, từ chối yêu cầu và lịch sử thay đổi sẽ tự xuất hiện ở đây.</p>

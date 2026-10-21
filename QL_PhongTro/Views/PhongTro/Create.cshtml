@@ -1,0 +1,13 @@
+@model QL_PhongTro.ViewModels.TaoPhongViewModel
+@{ var isEdit = ViewData["RoomId"] is int; ViewData["Title"] = isEdit ? "Chỉnh sửa phòng " + Model.MaPhong : "Thêm phòng"; }
+@if (isEdit) { <partial name="_EditRoomForm" model="Model" /> } else { <partial name="_CreateRoomForm" model="Model" /> }
+@section Styles {
+<link rel="stylesheet" href="~/css/room-create.css" asp-append-version="true" />
+@if (!isEdit) { <link rel="stylesheet" href="~/css/room-create-bootstrap.css" asp-append-version="true" /> }
+@if (isEdit) { <link rel="stylesheet" href="~/css/room-edit.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/room-edit-bootstrap.css" asp-append-version="true" /> }
+}
+@section Scripts {
+<partial name="_ValidationScriptsPartial" />
+<script src="~/js/room-form.js" asp-append-version="true"></script>
+@if (isEdit) { <script src="~/js/room-images.js" asp-append-version="true"></script> }
+}

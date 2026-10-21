@@ -1,0 +1,91 @@
+.monthly-invoices.review-bootstrap{padding:0;max-width:none;font-size:.8125rem;line-height:1.5;color:#25282d}
+.review-bootstrap .mi-breadcrumb{font-size:.75rem;line-height:1.5;margin-bottom:.75rem;color:#7e8793}
+.review-bootstrap>a{display:inline-block;color:#7b8491;font-size:.8125rem;text-decoration:none;margin-bottom:.75rem}
+.review-bootstrap .mi-heading{gap:1rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem}
+.review-bootstrap .mi-heading h1{font-size:1.75rem;line-height:1.3;letter-spacing:-.04rem;margin:0 0 .375rem}
+.review-bootstrap .mi-heading p{font-size:.875rem;line-height:1.5;color:#7a838f;margin:0}
+.review-bootstrap .mi-card{padding:1rem 1.125rem;margin-bottom:1rem;border:1px solid #e4e7eb;border-radius:12px;box-shadow:0 2px 6px #25282d03;background:#fff;min-width:0}
+.review-bootstrap h2{font-size:1.0625rem;font-weight:700;line-height:1.4;margin:0 0 .75rem}
+.review-bootstrap h3{font-size:.9375rem;line-height:1.4}
+.review-bootstrap .mr-fields{gap:.625rem .75rem;align-items:end}
+.review-bootstrap .mr-fields>div{min-width:0}
+.review-bootstrap label{font-size:.8125rem;font-weight:600;line-height:1.5;margin-bottom:.375rem}
+.review-bootstrap .form-control,.review-bootstrap .form-select{width:100%;min-width:0;min-height:44px;padding:.625rem .75rem;border:1px solid #dfe3e8;border-radius:8px;font-size:.8125rem;line-height:1.5;color:#30343b;background-color:#fff;box-shadow:none}
+.review-bootstrap .form-select{padding-right:2rem}
+.review-bootstrap .form-control:focus,.review-bootstrap .form-select:focus{border-color:#bfa77a;outline:2px solid #bfa77a55;outline-offset:1px}
+.review-bootstrap .mi-muted{font-size:.75rem;line-height:1.6;color:#8a939f;margin:.75rem 0 0}
+.review-bootstrap .mr-summary{gap:.875rem;margin:0 0 1rem}
+.review-bootstrap .mr-metric{padding:1rem;border:1px solid #e4e7eb;border-radius:12px;min-width:0;box-shadow:0 2px 6px #25282d03}
+.review-bootstrap .mr-metric>span{display:block;font-size:.75rem;line-height:1.5;color:#77818e;margin-bottom:.375rem}
+.review-bootstrap .mr-metric strong{display:block;font-size:1.5rem;line-height:1.25;margin:0 0 .25rem;overflow-wrap:anywhere}
+.review-bootstrap .mr-metric small{display:block;font-size:.6875rem;line-height:1.5;color:#8a939f}
+.review-bootstrap .mr-highlight{background:#faf6ed;border-color:#e6d9bf}
+.review-bootstrap .mr-columns{gap:1rem;align-items:start}
+.review-bootstrap .mr-card-title{gap:.75rem;flex-wrap:wrap;margin-bottom:.875rem;align-items:center}
+.review-bootstrap .mr-card-title h2{margin:0}
+.review-bootstrap .mr-tabs{gap:.5rem;margin-bottom:.875rem;flex-wrap:wrap}
+.review-bootstrap .mr-tabs button{padding:.625rem .875rem;min-height:42px;font-size:.8125rem;line-height:1.5;border-radius:8px}
+.review-bootstrap .mr-tabs button[aria-selected=true]{background:#f4efe5;color:#897044;border-color:#bfa77a}
+.review-bootstrap .mr-filters{gap:.625rem;margin-bottom:.875rem}
+.review-bootstrap .table-responsive{border:1px solid #e9eaec;border-radius:8px}
+.review-bootstrap .mr-table{font-size:.75rem;margin:0}
+.review-bootstrap .mr-table th,.review-bootstrap .mr-table td{padding:.625rem .75rem;line-height:1.5;vertical-align:middle;border-color:#e9eaec}
+.review-bootstrap .mr-table thead th{background:#f7f8f9;color:#697380;font-size:.6875rem;font-weight:600;white-space:nowrap}
+.review-bootstrap .mr-table small{display:block;font-size:.6875rem;line-height:1.5;margin-top:.25rem;color:#8a939f}
+.review-bootstrap .mr-status,.review-bootstrap .mr-reason{font-size:.6875rem;line-height:1.5;border-radius:8px;padding:.375rem .5rem}
+.review-bootstrap .mr-check-summary{padding:0;margin:0;list-style:none}
+.review-bootstrap .mr-check-summary li{padding:.5rem 0;font-size:.8125rem;line-height:1.5;border-color:#e9eaec}
+.review-bootstrap .mr-period-info,.review-bootstrap .mr-skipped-list{font-size:.75rem;line-height:1.6}
+.review-bootstrap .mr-skipped-list dt{margin-top:.75rem;font-weight:600;overflow-wrap:anywhere}
+.review-bootstrap .mr-skipped-list dd{margin:.25rem 0 0;color:#8a939f}
+.review-bootstrap .btn{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:.625rem 1rem;border-radius:8px;font-size:.8125rem;font-weight:600;line-height:1.5;white-space:normal}
+.review-bootstrap .btn-dark{background:#30343b;border-color:#30343b;color:#fff}
+.review-bootstrap .btn-outline-secondary{background:#fff;border-color:#d8dde4;color:#30343b}
+.review-bootstrap .mi-footer{position:static;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;padding:1rem;margin:0 0 1rem;border:1px solid #e4e7eb;border-radius:12px;background:#fff;box-shadow:0 2px 6px #25282d03}
+.review-bootstrap .mi-footer>strong{font-size:.8125rem;line-height:1.5}
+.review-bootstrap .mi-footer>form{display:flex;gap:.625rem;flex-wrap:wrap;align-items:center}
+@media(max-width:1100px){.review-bootstrap .mr-fields{grid-template-columns:repeat(3,minmax(0,1fr))}.review-bootstrap .mr-summary{grid-template-columns:repeat(3,minmax(0,1fr))}.review-bootstrap .mr-columns{grid-template-columns:1fr}}
+@media(max-width:600px){.review-bootstrap .mi-heading h1{font-size:1.5rem}.review-bootstrap .mi-card{padding:1rem}.review-bootstrap .mr-fields{grid-template-columns:1fr}.review-bootstrap .mr-summary{grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem}.review-bootstrap .mr-metric{padding:.875rem}.review-bootstrap .mr-filters{display:grid;grid-template-columns:1fr}.review-bootstrap .mi-footer>form{width:100%}.review-bootstrap .mi-footer .btn{flex:1;min-height:44px}.review-bootstrap .mi-footer{margin-bottom:3.5rem}.review-bootstrap .form-control,.review-bootstrap .form-select{min-height:44px}}
+
+/* Even spacing across monthly review details. */
+.review-bootstrap .mr-fields label{line-height:1.4;margin-bottom:.375rem}
+.review-bootstrap .mi-muted{margin-top:.625rem;line-height:1.55}
+.review-bootstrap .mr-metric small,.review-bootstrap .mr-metric>span{line-height:1.5}
+.review-bootstrap .mr-card-title{margin-bottom:.75rem}
+.review-bootstrap .mr-filters{margin-bottom:.75rem}
+.review-bootstrap .mr-period-info dt,.review-bootstrap .mr-period-info dd{line-height:1.5}
+.review-bootstrap .mr-skipped-list dt{margin-top:.625rem;line-height:1.5}
+.review-bootstrap .mr-skipped-list dd{line-height:1.5}
+.review-bootstrap .mi-footer{padding:.875rem 1rem;gap:.75rem}
+.review-bootstrap .mr-pagination{padding-top:.75rem;line-height:1.5}
+@media(max-width:600px){.review-bootstrap .mi-card{padding:1rem}.review-bootstrap .mr-fields{gap:.75rem}}
+
+/* Header breadcrumb matches building details. */
+.dashboard-header .invoice-review-breadcrumb{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;font-size:1rem;font-weight:600;line-height:1.5;color:#25282d;min-width:0}
+.invoice-review-breadcrumb a{display:inline-flex;align-items:center;gap:.75rem;color:#25282d80;text-decoration:none}
+.invoice-review-breadcrumb svg{width:21px;height:21px;color:#25282d80;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.invoice-review-breadcrumb strong{color:#25282d;font-weight:600}
+.invoice-review-breadcrumb a:hover{color:#30343b}
+.invoice-review-breadcrumb>span{color:#25282d66;font-weight:400}
+@media(max-width:600px){.dashboard-header:has(.invoice-review-breadcrumb) .account-label{display:none}.dashboard-header .invoice-review-breadcrumb{font-size:.72rem;gap:.35rem;flex:1}.invoice-review-breadcrumb a{gap:.35rem}.invoice-review-breadcrumb svg{width:17px;height:17px}}
+
+/* Floating Bootstrap menus for building and month. */
+.review-bootstrap select[hidden]{display:none!important}
+.review-bootstrap .setup-select-dropdown{min-width:0;flex:1}
+.review-bootstrap .setup-select-toggle{display:flex;align-items:center;justify-content:space-between;width:100%;gap:.75rem;min-height:44px;padding:.625rem .75rem;border:1px solid #dfe3e8;border-radius:8px;background:#fff;color:#606b79;font-size:.8125rem;font-weight:400;line-height:1.5;text-align:left}
+.review-bootstrap .setup-select-toggle>span{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.review-bootstrap .setup-select-toggle:after{flex-shrink:0;color:#78828f}
+.review-bootstrap .setup-select-toggle:hover,.review-bootstrap .setup-select-toggle.show{border-color:#bfa77a;background:#faf8f3}
+.review-bootstrap .setup-select-toggle:focus-visible{outline:3px solid #bfa77a55;outline-offset:2px;box-shadow:none}
+.review-bootstrap .setup-select-toggle.is-invalid{border-color:#b84d4d}
+.review-bootstrap #month-dropdown{min-width:120px}
+.review-bootstrap #month-dropdown+ul{min-width:150px}
+.review-bootstrap .flow-fields .d-flex>input[name=nam]{flex:1;width:0;min-width:80px}
+.review-bootstrap .setup-select-menu{min-width:100%;width:max-content;max-width:min(340px,calc(100vw - 32px));max-height:280px;overflow:auto;padding:.375rem;border:1px solid #e4e7eb;border-radius:10px;box-shadow:0 8px 28px #25282d1a;scrollbar-width:thin;scrollbar-color:#cbbb9a transparent}
+.review-bootstrap .setup-select-menu .dropdown-item{position:relative;min-height:38px;padding:.5rem 2rem .5rem .75rem;border:0;border-radius:6px;background:#fff;color:#606b79;font-size:.8125rem;line-height:1.5;text-align:left;white-space:normal;overflow-wrap:anywhere}
+.review-bootstrap .setup-select-menu .dropdown-item:hover,.review-bootstrap .setup-select-menu .dropdown-item:focus{background:#f5f5f4;color:#30343b}
+.review-bootstrap .setup-select-menu .dropdown-item.active{background:#f3eddf;color:#8a7040;font-weight:650}
+.review-bootstrap .setup-select-menu .dropdown-item.active:after{content:'✓';position:absolute;right:.625rem;top:.5rem}
+
+.review-bootstrap .mr-filters .setup-select-dropdown{min-width:0}
+.review-bootstrap .mr-filters .setup-select-toggle{min-height:44px}

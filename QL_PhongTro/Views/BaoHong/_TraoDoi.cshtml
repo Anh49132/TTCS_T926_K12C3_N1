@@ -1,0 +1,20 @@
+@model QL_PhongTro.ViewModels.BaoHongChiTiet
+<section class="repairs-card" aria-labelledby="repair-history-title">
+<h2 id="repair-history-title">Phản hồi và lịch sử xử lý</h2>
+<div class="ru-history-origin"><strong>Khách gửi báo hỏng</strong><time>@Model.BaoHong.NgayTao.AddHours(7).ToString("dd/MM/yyyy HH:mm")</time><p>@Model.TenNguoiBao · Trạng thái Mới</p></div>
+@if (Model.TraoDois.Count == 0) { <p>Chưa có phản hồi hoặc cập nhật từ quản lý.</p> }
+else {
+    <ol class="repair-timeline">
+    @foreach (var item in Model.TraoDois) {
+        <li class="@(item.Loai == "TRANG_THAI" ? item.TrangThaiSau == "HOAN_THANH" ? "repair-event-complete" : "repair-event-status" : "repair-event-reply")">
+            <strong>@item.TenNguoiGui · Quản lý</strong>
+            <time datetime="@item.ThoiDiem.ToString("O")">@item.ThoiDiem.AddHours(7).ToString("dd/MM/yyyy HH:mm")</time>
+            @if (item.Loai == "TRANG_THAI") {
+                <p class="repair-history-status">@QL_PhongTro.Services.BaoHongService.TenTrangThai(item.TrangThaiTruoc!) → @QL_PhongTro.Services.BaoHongService.TenTrangThai(item.TrangThaiSau!)</p>
+            } else { <p class="repair-history-status">Phản hồi</p> }
+            <p class="repairs-description">@item.NoiDung</p>
+        </li>
+    }
+    </ol>
+}
+</section>

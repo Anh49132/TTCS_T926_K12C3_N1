@@ -1,0 +1,43 @@
+.admin-listing-detail{max-width:1440px;margin:auto;color:#25282d;font-size:.8125rem;line-height:1.5;min-width:0}
+.admin-listing-detail .card{border:1px solid #e9eaec;border-radius:14px;background:#fff;box-shadow:0 2px 8px #25282d04!important;overflow:hidden}
+.admin-listing-detail .ald-back{font-size:.8125rem;min-height:40px;padding:.5rem .875rem;border-color:#dfe3e8;color:#626974;border-radius:8px;background:#fff}
+.admin-listing-detail .ald-back:hover{background:#f8f5ef;border-color:#bfa77a;color:#80663a}
+.admin-listing-detail .ald-eyebrow{font-size:.6875rem;letter-spacing:.06em;font-weight:600;color:#9c8150;line-height:1.5}
+.admin-listing-detail h1{font-size:1.5rem;line-height:1.35;overflow-wrap:anywhere}
+.admin-listing-detail h2{font-size:1rem;line-height:1.5}
+.admin-listing-detail .ald-room{font-size:.875rem;line-height:1.5}
+.admin-listing-detail .ald-address{font-size:.8125rem;line-height:1.6;overflow-wrap:anywhere}
+.ald-price-box{background:#f8f5ef;border:1px solid #eee5d5;border-radius:11px;padding:1.125rem}
+.ald-price-label{font-size:.75rem;color:#858078;line-height:1.5}
+.ald-price{display:block;font-size:1.75rem;line-height:1.25;font-variant-numeric:tabular-nums;color:#30343b}
+.ald-price small{font-size:.75rem;font-weight:400;color:#858078}
+.admin-listing-detail .ald-fact{background:#fff;color:#69717b;border:1px solid #e9e3d9;font-size:.6875rem;font-weight:500;padding:.4375rem .625rem;border-radius:6px}
+.ald-photo{width:100%;aspect-ratio:3/2;object-fit:cover}
+.ald-description{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7;color:#626974}
+.admin-listing-detail .card-header{border-color:#eeeff0}
+.ald-count{background:#f1ede4;color:#80663a;font-weight:400;font-size:.6875rem;padding:.375rem .625rem;border-radius:6px}
+.admin-listing-detail .table th{background:#f5f5f4;font-size:.6875rem;font-weight:600;color:#697380;white-space:nowrap;padding:.75rem 1.125rem;line-height:1.5}
+.admin-listing-detail .table td{padding:.8125rem 1.125rem;font-size:.8125rem;line-height:1.5;border-color:#eeeff0}
+.admin-listing-detail .table tr:last-child td{border-bottom:0}
+.admin-listing-detail a:focus-visible{outline:2px solid #bfa77a;outline-offset:3px}
+@media(max-width:600px){.admin-listing-detail .card-body,.admin-listing-detail .card-header{padding:1rem!important}.admin-listing-detail h1{font-size:1.25rem}.ald-price{font-size:1.5rem}.admin-listing-detail .table th,.admin-listing-detail .table td{padding:.75rem}.ald-price-box{padding:1rem}}
+/* Consistent vertical spacing in the admin listing detail. */
+.admin-listing-detail{line-height:1.5}
+.admin-listing-detail .ald-summary{margin-bottom:1rem!important}
+.admin-listing-detail article>section.card{margin-bottom:1rem!important}
+.admin-listing-detail .card-body,.admin-listing-detail .card-header{padding:1.125rem!important}
+.admin-listing-detail article>.row{--bs-gutter-y:1rem;--bs-gutter-x:1rem}
+.admin-listing-detail .ald-eyebrow{line-height:1.5;margin-bottom:.375rem!important}
+.admin-listing-detail h1{line-height:1.3;margin-bottom:.5rem!important}
+.admin-listing-detail .ald-room{line-height:1.5;margin-bottom:.375rem!important}
+.admin-listing-detail .ald-address{line-height:1.5}
+.admin-listing-detail h2{line-height:1.5}
+.admin-listing-detail .card-body>h2{margin-bottom:.875rem!important}
+.ald-price-box{padding:1rem}
+.admin-listing-detail .ald-price-label{line-height:1.5;margin-bottom:.375rem!important}
+.admin-listing-detail .ald-price{line-height:1.25}
+.admin-listing-detail .ald-price-box>.d-flex{margin-top:.75rem!important}
+.admin-listing-detail .ald-description{line-height:1.6;margin:0}
+.admin-listing-detail .table th{padding:.6875rem 1rem;line-height:1.5}
+.admin-listing-detail .table td{padding:.75rem 1rem;line-height:1.5}
+@media(max-width:600px){.admin-listing-detail .card-body,.admin-listing-detail .card-header{padding:1rem!important}.admin-listing-detail .table th,.admin-listing-detail .table td{padding:.6875rem .75rem}}

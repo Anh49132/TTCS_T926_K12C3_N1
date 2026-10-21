@@ -1,0 +1,25 @@
+<section class="op-card bank-settings" data-bank-settings>
+    <h2>Thông tin nhận chuyển khoản</h2>
+    <p class="text-muted">Dùng cho khách thuê chuyển khoản thanh toán hóa đơn của các phòng thuộc sở hữu của bạn.</p>
+    <p data-bank-status role="status" aria-live="polite">Đang tải thông tin…</p>
+    <div data-bank-read hidden>
+        <dl class="op-facts"><div><dt>Ngân hàng</dt><dd data-bank-name></dd></div><div><dt>Số tài khoản</dt><dd data-bank-number></dd></div></dl>
+        <img data-bank-qr class="bank-qr" alt="Mã QR nhận chuyển khoản của bạn" hidden />
+        <button type="button" class="btn btn-outline-secondary" data-bank-edit disabled>Chỉnh sửa thông tin</button>
+    </div>
+    <form data-bank-form enctype="multipart/form-data" hidden>
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="PhienBan" />
+        <input type="hidden" name="XoaQr" value="false" />
+        <div class="mb-3"><label class="form-label" for="bank-name">Tên ngân hàng <span aria-hidden="true">*</span></label><input id="bank-name" name="TenNganHang" class="form-control" maxlength="120" required aria-describedby="bank-error-name" /><span id="bank-error-name" class="text-danger" data-bank-error="TenNganHang"></span></div>
+        <div class="mb-3"><label class="form-label" for="bank-number">Số tài khoản <span aria-hidden="true">*</span></label><input id="bank-number" name="SoTaiKhoan" class="form-control" maxlength="50" pattern="[A-Za-z0-9]+" required aria-describedby="bank-error-number" /><span id="bank-error-number" class="text-danger" data-bank-error="SoTaiKhoan"></span></div>
+        <div class="mb-3"><label class="form-label" for="bank-file">Ảnh QR nhận chuyển khoản</label><p class="form-text">JPG/JPEG hoặc PNG, tối đa 5 MiB. Bạn có thể lưu thông tin ngân hàng khi chưa có QR.</p>
+            <img data-bank-preview class="bank-qr" alt="Xem trước QR nhận chuyển khoản" hidden />
+            <input id="bank-file" name="AnhQr" type="file" class="form-control" accept=".jpg,.jpeg,.png,image/jpeg,image/png" aria-describedby="bank-error-image" />
+            <span id="bank-error-image" class="text-danger" data-bank-error="AnhQr"></span>
+            <div class="bank-actions mt-2"><button type="button" class="btn btn-outline-secondary" data-bank-replace>Thay ảnh</button><button type="button" class="btn btn-outline-danger" data-bank-remove>Xóa ảnh</button></div>
+        </div>
+        <div class="text-danger mb-2" data-bank-error="" role="alert"></div>
+        <div class="bank-actions"><button type="button" class="btn btn-outline-secondary" data-bank-cancel>Hủy</button><button type="submit" class="btn btn-dark">Lưu thay đổi</button></div>
+    </form>
+</section>

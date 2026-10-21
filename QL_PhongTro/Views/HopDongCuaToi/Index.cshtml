@@ -1,0 +1,187 @@
+@model QL_PhongTro.ViewModels.HopDongCuaToiViewModel
+@{
+    ViewData["Title"] = "Hợp đồng của tôi";
+    var today = DateOnly.FromDateTime(DateTimeOffset.UtcNow.ToOffset(TimeSpan.FromHours(7)).DateTime);
+    var soonCount = Model.Contracts.Count(x =>
+        x.Category == "active" && x.NgayKetThuc is not null &&
+        x.SapHetHan);
+    var allCount = Model.Contracts.Count;
+    var vi = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+
+<section class="tenant-contracts-page" aria-labelledby="tenant-contracts-title">
+    <nav class="tenant-contracts-breadcrumb" aria-label="Đường dẫn">
+        <a asp-controller="Home" asp-action="Index">Trang chủ</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">Hợp đồng của tôi</span>
+    </nav>
+
+    <header class="tenant-contracts-heading">
+        <div>
+            <h1 id="tenant-contracts-title">Hợp đồng của tôi</h1>
+            <p>Xem và tải các hợp đồng mà bạn đang đứng tên hoặc là người ở cùng.</p>
+        </div>
+    </header>
+    <p><a class="btn btn-outline-secondary" asp-controller="YeuCauTraPhong" asp-action="Index">Yêu cầu trả phòng trước hạn của tôi</a></p>
+
+    @if (!Model.SchemaReady || !string.IsNullOrWhiteSpace(Model.Message))
+    {
+        <div class="tenant-contracts-message" role="status">@Model.Message</div>
+    }
+    else if (allCount == 0)
+    {
+        <div class="tenant-contracts-empty">
+            <span aria-hidden="true">▤</span>
+            <h2>Bạn chưa có hợp đồng</h2>
+            <p>Hợp đồng có tên bạn trong danh sách người ở sẽ xuất hiện tại đây.</p>
+        </div>
+    }
+    else
+    {
+        <div class="tenant-contracts-toolbar">
+            <div class="tenant-contract-tabs" role="group" aria-label="Lọc theo trạng thái">
+                <button type="button" class="is-selected" data-contract-filter="active">Đang hiệu lực <span>@Model.ActiveCount</span></button>
+                <button type="button" data-contract-filter="soon">Sắp hết hạn <span>@soonCount</span></button>
+                <button type="button" data-contract-filter="ended">Đã kết thúc <span>@Model.EndedCount</span></button>
+                <button type="button" data-contract-filter="all">Tất cả <span>@allCount</span></button>
+            </div>
+            <div class="tenant-contract-search">
+                <label class="visually-hidden" for="tenant-contract-query">Tìm hợp đồng</label>
+                <input id="tenant-contract-query" type="search" placeholder="Tìm theo mã hợp đồng, phòng..." />
+                <label class="visually-hidden" for="tenant-contract-role">Lọc theo vai trò</label>
+                <select id="tenant-contract-role">
+                    <option value="">Vai trò</option>
+                    <option value="Người đứng tên">Người đứng tên</option>
+                    <option value="Người ở cùng">Người ở cùng</option>
+                </select>
+            </div>
+        </div>
+
+        <p class="tenant-contracts-no-results" id="tenant-contracts-no-results" hidden>Không tìm thấy hợp đồng phù hợp.</p>
+        <div class="tenant-contracts-list">
+            @foreach (var contract in Model.Contracts.Where(x => x.Category != "ended"))
+            {
+                var isSoon = contract.Category == "active" && contract.NgayKetThuc is not null &&
+                    contract.SapHetHan;
+                var statusText = contract.Category == "ended" ? "Đã kết thúc" :
+                    contract.TrangThai == "DANG_HIEU_LUC" ? "Đang hiệu lực" :
+                    contract.TrangThai == "CHO_HIEU_LUC" ? "Chờ hiệu lực" :
+                    contract.TrangThai == "DA_HUY" ? "Đã hủy" : contract.TrangThai;
+                <article class="tenant-contract-card" data-contract-card data-category="@contract.Category" data-soon="@isSoon.ToString().ToLowerInvariant()" data-role="@contract.VaiTro"
+                         data-search="@($"{contract.MaHopDong} {contract.MaPhong} {contract.TenToaNha}".ToLowerInvariant())">
+                    <div class="tenant-contract-icon" aria-hidden="true">▤</div>
+                    <div class="tenant-contract-main">
+                        <div class="tenant-contract-title-row">
+                            <h2>@contract.MaHopDong</h2>
+                            <span class="tenant-contract-status @(contract.Category == "ended" ? "is-ended" : contract.Category == "active" ? "is-active" : "is-other")">
+                                <i aria-hidden="true"></i>@statusText
+                            </span>
+                            @if (isSoon)
+                            {
+                                <span class="tenant-contract-expiry">◷ @(contract.SoNgayConLai == 0 ? "Hết hạn hôm nay" : $"Còn {contract.SoNgayConLai} ngày")</span>
+                            }
+                        </div>
+                        <p class="tenant-contract-room">Phòng @contract.MaPhong <span aria-hidden="true">·</span> @contract.TenToaNha</p>
+                        <span class="tenant-contract-role">♙ @contract.VaiTro</span>
+                    </div>
+                    <div class="tenant-contract-fact">
+                        <span class="tenant-contract-fact-icon" aria-hidden="true">$</span>
+                        <div><small>Giá thuê</small><strong>@contract.GiaThue.ToString("N0", vi) đ/tháng</strong></div>
+                    </div>
+                    <div class="tenant-contract-fact tenant-contract-term">
+                        <span class="tenant-contract-fact-icon" aria-hidden="true">▣</span>
+                        <div>
+                            <small>Thời hạn hợp đồng</small>
+                            <strong>@(contract.NgayBatDau?.ToString("dd/MM/yyyy") ?? "Chưa cập nhật") — @(contract.NgayKetThuc?.ToString("dd/MM/yyyy") ?? "Chưa cập nhật")</strong>
+                        </div>
+                    </div>
+                    <div class="tenant-contract-actions">
+                        <a class="tenant-contract-open" asp-action="Details" asp-route-maHopDong="@contract.MaHopDong">Xem hợp đồng</a>
+                        <a class="tenant-contract-pdf" asp-action="PreviewPdf" asp-route-maHopDong="@contract.MaHopDong">Xem PDF</a>
+                    </div>
+                </article>
+            }
+        </div>
+
+        @if (Model.EndedCount > 0)
+        {
+            <section class="tenant-ended-contracts" id="tenant-ended-contracts" aria-labelledby="tenant-ended-title">
+                <div class="tenant-ended-heading">
+                    <h2 id="tenant-ended-title">Hợp đồng đã kết thúc</h2>
+                    <span>Xem tất cả →</span>
+                </div>
+                @foreach (var contract in Model.Contracts.Where(x => x.Category == "ended"))
+                {
+                    <a class="tenant-ended-row" data-ended-row data-category="ended" data-role="@contract.VaiTro"
+                       data-search="@($"{contract.MaHopDong} {contract.MaPhong} {contract.TenToaNha}".ToLowerInvariant())"
+                       asp-action="Details" asp-route-maHopDong="@contract.MaHopDong">
+                        <span class="tenant-contract-icon" aria-hidden="true">▤</span>
+                        <span class="tenant-ended-code"><strong>@contract.MaHopDong</strong><small>Phòng @contract.MaPhong <span aria-hidden="true">·</span> @contract.TenToaNha</small></span>
+                        <span class="tenant-ended-rent"><small>Giá thuê</small><strong>@contract.GiaThue.ToString("N0", vi) đ/tháng</strong></span>
+                        <span class="tenant-ended-term"><small>Thời hạn hợp đồng</small><strong>@(contract.NgayBatDau?.ToString("dd/MM/yyyy") ?? "Chưa cập nhật") — @(contract.NgayKetThuc?.ToString("dd/MM/yyyy") ?? "Chưa cập nhật")</strong></span>
+                    </a>
+                }
+            </section>
+        }
+    }
+
+    <p class="tenant-contracts-footnote"><span aria-hidden="true">ⓘ</span> Bạn chỉ nhìn thấy hợp đồng mà mình có tên trong danh sách người ở.</p>
+</section>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/contracts.css" asp-append-version="true" />
+}
+@section Scripts {
+    <script src="~/js/tenant-contract-dropdown.js" asp-append-version="true"></script>
+    <script>
+        (() => {
+            const cards = [...document.querySelectorAll("[data-contract-card]")];
+            const endedRows = [...document.querySelectorAll("[data-ended-row]")];
+            if (cards.length === 0) return;
+
+            const query = document.getElementById("tenant-contract-query");
+            const role = document.getElementById("tenant-contract-role");
+            const endedGroup = document.getElementById("tenant-ended-contracts");
+            const empty = document.getElementById("tenant-contracts-no-results");
+            let filter = "active";
+
+            const apply = () => {
+                const text = query.value.trim().toLocaleLowerCase("vi");
+                let visible = 0;
+                for (const card of cards) {
+                    const matches = (filter === "all" ||
+                        (filter === "soon" ? card.dataset.soon === "true" :
+                            filter === "active" ? card.dataset.category === "active" :
+                            card.dataset.category === filter)) &&
+                        (!role.value || card.dataset.role === role.value) &&
+                        (!text || card.dataset.search.includes(text));
+                    card.hidden = !matches;
+                    if (matches) visible++;
+                }
+
+                for (const row of endedRows) {
+                    const matches = (filter === "all" || filter === "ended") &&
+                        (!role.value || row.dataset.role === role.value) &&
+                        (!text || row.dataset.search.includes(text));
+                    row.hidden = !matches;
+                    if (matches && filter !== "ended") visible++;
+                }
+
+                if (endedGroup) endedGroup.hidden = filter !== "all" && filter !== "ended";
+                empty.hidden = visible !== 0;
+            };
+
+            for (const button of document.querySelectorAll("[data-contract-filter]")) {
+                button.addEventListener("click", () => {
+                    filter = button.dataset.contractFilter;
+                    document.querySelectorAll("[data-contract-filter]").forEach(item =>
+                        item.classList.toggle("is-selected", item === button));
+                    apply();
+                });
+            }
+            query.addEventListener("input", apply);
+            role.addEventListener("change", apply);
+            apply();
+        })();
+    </script>
+}

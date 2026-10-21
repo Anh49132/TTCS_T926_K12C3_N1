@@ -1,0 +1,8 @@
+@model QL_PhongTro.ViewModels.HomeDashboardViewModel
+<div class="panel-heading"><h2>Yêu cầu thuê gần đây</h2><a href="/YeuCau">Xem tất cả →</a></div>
+<div class="latte-table-scroll"><table class="latte-table"><thead><tr><th>Mã yêu cầu</th><th>Khách thuê</th><th>Phòng</th><th>Trạng thái</th><th></th></tr></thead><tbody>
+@foreach (var item in Model.Requests) {
+<tr><td>@item.Code</td><td>@item.Name</td><td>@item.Room</td><td><span class="latte-badge">@QL_PhongTro.Models.LichHenTrangThai.Label(item.Status)</span></td><td><a href="/LichHen/ChiTiet/@item.Id">Chi tiết →</a></td></tr>
+}
+@if (Model.Requests.Count == 0) { <tr><td colspan="5" class="latte-empty">Chưa có yêu cầu thuê.</td></tr> }
+</tbody></table></div>

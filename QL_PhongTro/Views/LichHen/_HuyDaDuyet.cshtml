@@ -1,0 +1,17 @@
+@model QL_PhongTro.ViewModels.LichHenChiTietViewModel
+@inject QL_PhongTro.Authorization.PermissionService CancelPermissions
+@if (Model.HienThiFormHuyDaDuyet && await CancelPermissions.AllowsAsync("YEU_CAU_THUE", true)) {
+    <section class="rq-cancel-approved" aria-labelledby="cancel-approved-title">
+        <h2 id="cancel-approved-title">Khách đổi ý, không thuê</h2>
+        <p>Hủy yêu cầu đã duyệt và giải phóng giữ chỗ khi chưa lập hợp đồng. Tin nguồn sẽ tự động đăng lại với hạn 30 ngày.</p>
+        <form method="post" asp-action="HuyDaDuyet" asp-route-id="@Model.YeuCau.Id">
+            <input type="hidden" name="PhienBan" value="@Model.YeuCau.PhienBan" />
+            <input type="hidden" name="PhienBanPhong" value="@Model.YeuCau.PhienBanPhong" />
+            <label for="cancel-approved-reason">Lý do khách không thuê <span aria-hidden="true">*</span></label>
+            <textarea id="cancel-approved-reason" name="LyDo" class="form-control" rows="3" minlength="5" maxlength="500" required placeholder="Ví dụ: Khách đã xem phòng nhưng không còn nhu cầu thuê."></textarea>
+            <label class="d-flex align-items-start gap-2 my-3"><input type="checkbox" name="XacNhan" value="true" required /> Tôi xác nhận khách không thuê và muốn hủy giữ chỗ.</label>
+            <button type="submit" class="btn btn-outline-danger">Hủy yêu cầu đã duyệt</button>
+            <p class="text-muted mt-2">Hệ thống sẽ kiểm tra lại hợp đồng, cọc và các giữ chỗ khác trước khi lưu. Thao tác này không hoàn tiền cọc.</p>
+        </form>
+    </section>
+}

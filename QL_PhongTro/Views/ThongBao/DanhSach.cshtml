@@ -1,0 +1,45 @@
+@model QL_PhongTro.ViewModels.HoaDonKhachDanhSachPageViewModel
+@using QL_PhongTro.ViewModels
+@{ ViewData["Title"] = "Hóa đơn của tôi"; }
+<section class="tenant-invoice-list" data-list-url="@Url.Action("DanhSachDuLieu")" data-detail-url="@Url.Action("HoaDon")" data-page-url="@Url.Action("DanhSach")" data-page="@Model.Page">
+    <nav class="til-breadcrumb" aria-label="Đường dẫn"><a asp-controller="Home" asp-action="Index">Trang chủ</a><span>/</span><span>Hóa đơn của tôi</span></nav>
+    <header class="tenant-invoice-list-heading"><div><h1>Hóa đơn của tôi</h1><p>Theo dõi khoản phải trả, hạn thanh toán và lịch sử hóa đơn.</p></div><a asp-action="Index" class="btn btn-outline-secondary"><svg class="til-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M9 21h6" /></svg> Thông báo hóa đơn</a></header>
+    <div class="til-overview" aria-label="Tổng quan hóa đơn" aria-live="polite">
+        <article><span class="til-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14 3H5v18h14V8zM14 3v6h5M8 13h8M8 17h8" /></svg></span><div><h2>Tổng hóa đơn</h2><strong data-total>—</strong><p>Tổng số hóa đơn của bạn</p></div></article>
+        <article><span class="til-icon amber" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 7v7m0 3v.1" /></svg></span><div><h2>Cần thanh toán</h2><strong data-unpaid>—</strong><p>Chưa thanh toán hoặc trả một phần</p></div></article>
+        <article class="gold"><span class="til-icon amber" aria-hidden="true"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3" /><path d="M4 5v5c0 4 16 4 16 0V5M4 10v5c0 4 16 4 16 0v-5M4 15v4c0 4 16 4 16 0v-4" /></svg></span><div><h2>Tổng còn phải trả</h2><strong data-balance>—</strong><p>Tổng số tiền còn phải thanh toán</p></div></article>
+        <article><span class="til-icon red" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" /><path d="M12 6v7l4 2" /></svg></span><div><h2>Quá hạn</h2><strong class="til-red" data-overdue>—</strong><p>Đã quá hạn thanh toán</p></div></article>
+    </div>
+    <section class="til-panel til-filter-panel"><h2>Tìm và lọc hóa đơn</h2>
+        <form asp-action="DanhSach" method="get" class="tenant-invoice-filters" aria-label="Lọc hóa đơn">
+            <label class="til-search"><span>Tìm hóa đơn</span><input type="search" name="timKiem" value="@Model.TimKiem" maxlength="100" placeholder="Tìm theo mã hóa đơn…" /></label>
+            <label><span>Kỳ hóa đơn</span><input type="month" name="ky" value="@Model.Ky" /></label>
+            <label><span>Trạng thái hóa đơn</span><select name="tinhTrang">
+                <option value="TAT_CA" selected="@(Model.TrangThai == "TAT_CA")">Tất cả</option>
+                <option value="CHUA_THANH_TOAN" selected="@(Model.TrangThai == "CHUA_THANH_TOAN")">Chưa thanh toán</option>
+                <option value="THANH_TOAN_MOT_PHAN" selected="@(Model.TrangThai == "THANH_TOAN_MOT_PHAN")">Trả một phần</option>
+                <option value="DA_THANH_TOAN" selected="@(Model.TrangThai == "DA_THANH_TOAN")">Đã thanh toán</option>
+                <option value="QUA_HAN" selected="@(Model.TrangThai == "QUA_HAN")">Quá hạn</option>
+                <option value="CHO_XAC_NHAN" selected="@(Model.TrangThai == "CHO_XAC_NHAN")">Chờ xác nhận</option>
+            </select></label>
+            <label><span>Báo thanh toán</span><select name="baoThanhToan"><option value="TAT_CA" selected="@(Model.BaoThanhToan == "TAT_CA")">Tất cả</option><option value="CHO_XAC_NHAN" selected="@(Model.BaoThanhToan == "CHO_XAC_NHAN")">Chờ xác nhận</option><option value="KHONG_CHO" selected="@(Model.BaoThanhToan == "KHONG_CHO")">Không có báo chờ</option></select></label>
+            <input type="hidden" name="pageSize" value="@Model.PageSize" /><input type="hidden" name="nhom" value="@Model.Nhom" />
+            <button type="submit" class="btn btn-dark">Lọc hóa đơn</button><a asp-action="DanhSach" class="til-reset">Đặt lại</a>
+        </form>
+    </section>
+    @if (Model.LoiLoc is not null) { <div class="alert alert-danger" role="alert">@Model.LoiLoc</div> }
+    else
+    {
+        <div id="tenant-invoice-list-loading" class="alert alert-light" role="status" aria-live="polite">Đang tải danh sách hóa đơn…</div>
+        <div id="tenant-invoice-list-error" class="alert alert-danger" role="alert" hidden></div>
+        <div id="tenant-invoice-list-empty" class="alert alert-light" role="status" hidden>Bạn chưa có hóa đơn nào.</div>
+        <div id="tenant-invoice-list-no-match" class="alert alert-light" role="status" hidden>Không có hóa đơn nào khớp bộ lọc.</div>
+        <section id="tenant-invoice-list-results" class="til-panel" aria-label="Danh sách hóa đơn" hidden>
+            <div class="til-results-heading"><h2>Danh sách hóa đơn <span id="tenant-invoice-list-count" class="til-count"></span></h2><nav class="til-tabs" aria-label="Nhóm hóa đơn"><a data-group="TAT_CA">Tất cả <span data-tab-total></span></a><a data-group="CAN_THANH_TOAN">Cần thanh toán <span data-tab-unpaid></span></a><a data-group="DA_THANH_TOAN">Đã thanh toán <span data-tab-paid></span></a></nav></div>
+            <div class="tenant-invoice-list-table-wrap"><table class="tenant-invoice-list-table"><caption class="visually-hidden">Hóa đơn đã phát hành của bạn</caption><thead><tr><th>Mã hóa đơn / Phòng</th><th>Kỳ</th><th class="til-money">Tổng hóa đơn</th><th class="til-money">Đã thanh toán</th><th class="til-money">Còn phải trả</th><th>Hạn thanh toán</th><th>Trạng thái</th><th>Thao tác</th></tr></thead><tbody id="tenant-invoice-list-rows"></tbody></table></div>
+            <footer class="til-footer"><p data-result-range></p><div><label for="til-page-size" class="visually-hidden">Số hóa đơn mỗi trang</label><select id="til-page-size"><option value="10" selected="@(Model.PageSize == 10)">10 / trang</option><option value="20" selected="@(Model.PageSize == 20)">20 / trang</option><option value="50" selected="@(Model.PageSize == 50)">50 / trang</option></select><nav id="tenant-invoice-list-pagination" aria-label="Phân trang hóa đơn"></nav></div></footer>
+        </section>
+    }
+</section>
+@section Styles { <link rel="stylesheet" href="~/css/tenant-invoice-list.css" asp-append-version="true" /> }
+@section Scripts { @if (Model.LoiLoc is null) { <script src="~/js/tenant-invoice-list.js" asp-append-version="true"></script> } }

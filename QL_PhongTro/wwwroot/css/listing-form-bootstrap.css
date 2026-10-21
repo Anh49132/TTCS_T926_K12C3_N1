@@ -1,0 +1,82 @@
+.listing-form-bootstrap{max-width:1440px;margin:0 auto;line-height:1.5}
+.listing-form-bootstrap .lc-heading{gap:1rem;margin-bottom:.875rem}
+.listing-form-bootstrap .lc-heading h1{font-size:clamp(1.5rem,2.3vw,2rem);line-height:1.25;letter-spacing:-.025em;margin-bottom:.3rem}
+.listing-form-bootstrap .lc-heading p{font-size:.82rem;line-height:1.5}
+.listing-form-bootstrap .lc-heading>small{font-size:.7rem;padding:.45rem .65rem;border-radius:8px;background:#f2eee5;color:#92774c}
+.listing-form-bootstrap .lc-layout{grid-template-columns:minmax(0,1fr) 320px;gap:1rem;align-items:start}
+.listing-form-bootstrap .lc-main,.listing-form-bootstrap .lc-aside{gap:1rem;min-width:0}
+.listing-form-bootstrap .lc-card{padding:1rem;border:1px solid #e6e9eb;border-radius:13px;box-shadow:0 3px 12px #25282d03;background:#fff;min-width:0}
+.listing-form-bootstrap .lc-title{gap:.75rem;padding-bottom:.65rem;margin-bottom:.75rem;border-bottom:1px solid #eef0ed}
+.listing-form-bootstrap .lc-icon{width:36px;height:36px;flex:0 0 36px;border-radius:9px;background:#bfa77a19;color:#92774c}
+.listing-form-bootstrap .lc-icon svg{width:20px;height:20px;stroke:#92774c}
+.listing-form-bootstrap .lc-title h2{font-size:.95rem;line-height:1.4;margin:0 0 .2rem}
+.listing-form-bootstrap .lc-title p{font-size:.74rem;line-height:1.5;margin:0}
+.listing-form-bootstrap .lc-fields{gap:.75rem 1rem}
+.listing-form-bootstrap .lc-fields>div{min-width:0}
+.listing-form-bootstrap label{font-size:.77rem;line-height:1.5;margin-bottom:.3rem}
+.listing-form-bootstrap .form-control,.listing-form-bootstrap .form-select{height:44px;border:1px solid #e3e7e9;border-radius:9px;padding:.65rem .8rem;font-size:.8rem;line-height:1.4;background-color:#fafaf9;min-width:0}
+.listing-form-bootstrap .form-select{padding-right:2rem}
+.listing-form-bootstrap textarea.form-control{height:auto;min-height:155px;resize:vertical}
+.listing-form-bootstrap .form-control:focus,.listing-form-bootstrap .form-select:focus{border-color:#bfa77a;box-shadow:0 0 0 .18rem #bfa77a26;background:#fff;outline:0}
+.listing-form-bootstrap input[readonly]{background:#f3f4f1;border-style:dashed;color:#8a929b}
+.listing-form-bootstrap .lc-unit input{padding-right:4.5rem}
+.listing-form-bootstrap .lc-unit>span{top:0;height:44px;display:flex;align-items:center;font-size:.7rem}
+.listing-form-bootstrap .lc-field{margin-top:.75rem}
+.listing-form-bootstrap small,.listing-form-bootstrap .lc-hint{font-size:.7rem;line-height:1.5}
+.listing-form-bootstrap .lc-notice{padding:.75rem;border:1px solid #e9dfca;border-radius:9px;background:#f7f2e8;font-size:.72rem;line-height:1.5;margin:.75rem 0}
+.listing-form-bootstrap .lc-amenity-grid{gap:.6rem}
+.listing-form-bootstrap .lc-amenity-grid label{font-size:.73rem;line-height:1.5}
+.listing-form-bootstrap .lc-service-list>div{font-size:.75rem;line-height:1.5;padding:.6rem 0}
+.listing-form-bootstrap .lc-upload{padding:1rem;border-radius:10px;background:#fafaf7;border-color:#d9d4c7;min-height:120px}
+.listing-form-bootstrap .lc-upload strong{font-size:.8rem;line-height:1.5}
+.listing-form-bootstrap .lc-gallery{gap:.65rem}
+.listing-form-bootstrap .lc-photo,.listing-form-bootstrap .lc-add-photo{border-radius:9px;overflow:hidden}
+.listing-form-bootstrap .lc-preview{padding:0;overflow:hidden;border-top:3px solid #bfa77a}
+.listing-form-bootstrap .lc-preview-heading{padding:1rem;gap:.65rem}
+.listing-form-bootstrap .lc-preview-heading h2{font-size:.9rem;line-height:1.5}
+.listing-form-bootstrap .lc-preview-heading p{font-size:.69rem;line-height:1.5}
+.listing-form-bootstrap .lc-preview-heading>span{font-size:.64rem;border-radius:20px;padding:.3rem .5rem}
+.listing-form-bootstrap .lc-cover img{display:block;width:100%;aspect-ratio:1.4;object-fit:cover}
+.listing-form-bootstrap .lc-preview-body{padding:1rem}
+.listing-form-bootstrap .lc-preview-body h3{font-size:.95rem;line-height:1.5;overflow-wrap:anywhere}
+.listing-form-bootstrap .lc-price{font-size:1.6rem;line-height:1.4;color:#92774c}
+.listing-form-bootstrap .lc-preview-body p{font-size:.72rem;line-height:1.6;overflow-wrap:anywhere}
+.listing-form-bootstrap .lc-preview-tags{gap:.35rem}
+.listing-form-bootstrap .lc-preview-tags span{font-size:.65rem;border-radius:6px;padding:.3rem .45rem}
+.listing-form-bootstrap .lc-contact-avatar{background:#f3f1eb;color:#92774c}
+.listing-form-bootstrap .lc-post-options{gap:.6rem}
+.listing-form-bootstrap .lc-post-option{min-height:44px;border-radius:9px;padding:.7rem;font-size:.75rem}
+.listing-form-bootstrap .lc-visibility-note{padding:.75rem;border-radius:9px;background:#f7f2e8;font-size:.71rem;line-height:1.6}
+.listing-form-bootstrap .lc-footer{margin-top:.875rem;padding-top:.875rem;gap:1rem}
+.listing-form-bootstrap .lc-footer strong{font-size:.76rem;line-height:1.5}
+.listing-form-bootstrap .lc-footer a,.listing-form-bootstrap .lc-footer button{min-height:42px;padding:.65rem 1rem;border-radius:9px;font-size:.78rem;font-weight:600}
+.listing-form-bootstrap .text-danger{font-size:.72rem;line-height:1.5}.listing-form-bootstrap .validation-summary-valid{display:none}
+@media(max-width:1100px){.listing-form-bootstrap .lc-layout{grid-template-columns:minmax(0,1fr) 290px}.listing-form-bootstrap .lc-three{grid-template-columns:1fr}}
+@media(max-width:850px){.listing-form-bootstrap .lc-layout{grid-template-columns:1fr}.listing-form-bootstrap .lc-aside{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}.listing-form-bootstrap .lc-preview{grid-column:1/-1}.listing-form-bootstrap .lc-cover img{max-height:320px}}
+@media(max-width:600px){.listing-form-bootstrap .lc-card{padding:1rem}.listing-form-bootstrap .lc-preview{padding:0}.listing-form-bootstrap .lc-fields,.listing-form-bootstrap .lc-aside{grid-template-columns:1fr}.listing-form-bootstrap .lc-heading>small{display:none}.listing-form-bootstrap .lc-footer{flex-direction:column;align-items:stretch}.listing-form-bootstrap .lc-footer>div:last-child{display:flex;flex-wrap:wrap;gap:.65rem}.listing-form-bootstrap .lc-footer a,.listing-form-bootstrap .lc-footer button{flex:1}.dashboard-header:has(.lc-breadcrumb) .account-label{display:none}.dashboard-header .lc-breadcrumb{font-size:.72rem;gap:.35rem;flex:1;min-width:0}.lc-breadcrumb svg{width:17px;height:17px}}
+/* Creation form follows the management Bootstrap theme. */
+.listing-create-mode .lc-info{border-top:3px solid #bfa77a}
+.listing-create-mode .lc-fields{padding:.85rem;border:1px solid #eef0ed;border-radius:10px;background:#fcfcfa}
+.listing-create-mode .lc-fields .form-select{background-color:#fff}
+.listing-create-mode .lc-room-pricing .lc-fields{background:#f8f8f5}
+.listing-create-mode .lc-preview-heading{background:#fcfcfa}
+.listing-create-mode .lc-footer{border:1px solid #e6e9eb;border-radius:12px;background:#fff;padding:1rem}
+.listing-create-mode .lc-footer .lc-submit{box-shadow:0 3px 8px #30343b14}
+.listing-create-mode .lc-field>small{display:block;margin-top:.4rem}
+.listing-create-mode .lc-preview-body h3{font-weight:650}
+.listing-create-mode .lc-amenity-grid label{padding:.45rem;border:1px solid #eef0ed;border-radius:7px;background:#fafaf7}
+@media(max-width:600px){.listing-create-mode .lc-fields{padding:.75rem}.listing-create-mode .lc-footer{padding:.85rem}}
+/* Compact, consistent spacing for new listings. */
+.listing-create-mode .lc-heading{margin-bottom:.75rem}
+.listing-create-mode .lc-main,.listing-create-mode .lc-aside{gap:.875rem}
+.listing-create-mode .lc-card{padding:.9rem}
+.listing-create-mode .lc-preview{padding:0}
+.listing-create-mode .lc-title{padding-bottom:.55rem;margin-bottom:.65rem}
+.listing-create-mode .lc-fields{padding:.7rem;gap:.65rem .875rem}
+.listing-create-mode .lc-field{margin-top:.65rem}
+.listing-create-mode label{margin-bottom:.25rem}
+.listing-create-mode .lc-field>small{margin-top:.3rem}
+.listing-create-mode .lc-notice{padding:.65rem .75rem;margin:.65rem 0}
+.listing-create-mode .lc-preview-heading,.listing-create-mode .lc-preview-body{padding:.9rem}
+.listing-create-mode .lc-service-list>div{padding:.5rem 0}
+.listing-create-mode .lc-footer{margin-top:.875rem;padding:.85rem}

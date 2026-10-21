@@ -1,0 +1,9 @@
+@model QL_PhongTro.ViewModels.PhatHanhThangViewModel
+<dialog id="issue-confirmation" class="mr-confirm-dialog" aria-labelledby="issue-confirmation-title">
+<h2 id="issue-confirmation-title">Xác nhận tạo nháp hóa đơn</h2>
+<p>Tạo hóa đơn Nháp <strong data-selected-count>@Model.DuKien.Count</strong> hóa đơn với tổng <strong data-selected-total>@Model.DuKien.Sum(x=>(decimal)x.HoaDon.TongTien).ToString("N0",System.Globalization.CultureInfo.GetCultureInfo("vi-VN")) đ</strong>.</p>
+<dl class="mr-period-info"><dt>Ngày phát hành dự kiến</dt><dd>@Model.NgayPhatHanh.ToString("dd/MM/yyyy")</dd><dt>Hạn thanh toán</dt><dd>@Model.HanThanhToan.ToString("dd/MM/yyyy")</dd></dl>
+<p>Chỉ các phòng đã chọn trong danh sách sẵn sàng được tạo nháp. Phòng bị bỏ qua sẽ không có hóa đơn mới.</p>
+<label class="mr-confirm-check"><input type="checkbox" name="xacNhan" value="true" required /> Tôi đã kiểm tra danh sách, số tiền và ngày thanh toán.</label>
+<div class="mr-dialog-actions"><button type="button" data-review-close class="btn btn-outline-secondary">Quay lại kiểm tra</button><button type="submit" class="btn btn-dark">Xác nhận tạo nháp</button></div>
+</dialog>

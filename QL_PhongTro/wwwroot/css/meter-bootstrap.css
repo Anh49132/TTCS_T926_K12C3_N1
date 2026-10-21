@@ -1,0 +1,66 @@
+/* Bootstrap refinements preserve the existing per-room form grid. */
+.meter-reference.meter-bootstrap{font-size:.8125rem;line-height:1.5;min-width:0}
+.meter-bootstrap .meter-heading{gap:1rem;margin-bottom:1rem}
+.meter-bootstrap .meter-heading h1{font-size:1.75rem;font-weight:750;line-height:1.3;letter-spacing:-.04rem;margin:0 0 .375rem}
+.meter-bootstrap .meter-heading p{font-size:.875rem;color:#7a838f;margin:0;line-height:1.5}
+.meter-bootstrap .meter-top-actions .btn{min-height:42px;font-size:.8125rem;padding:.625rem 1rem;border-radius:8px;line-height:1.5;white-space:normal}
+.meter-bootstrap .meter-reference-filters{padding:1rem;background:#fff;border:1px solid #e4e7eb;border-radius:12px;gap:1rem;margin-bottom:1rem}
+.meter-bootstrap .meter-reference-filters .meter-building{min-height:44px;margin-top:1.375rem;border-radius:8px}
+.meter-bootstrap .meter-building-label,.meter-bootstrap .meter-month label{font-size:.75rem;font-weight:600;color:#697380;line-height:1.5}
+.meter-bootstrap .meter-building-trigger{min-height:42px;font-size:.8125rem!important}
+.meter-bootstrap .meter-month-trigger,.meter-bootstrap .meter-month select{min-height:44px;font-size:.8125rem!important;border-radius:8px;width:220px}
+.meter-bootstrap .meter-building .form-select{font-size:.8125rem;min-height:42px}
+.meter-bootstrap .meter-current-period{padding-left:1rem;line-height:1.6}
+.meter-bootstrap .meter-current-period small{font-size:.625rem;margin-bottom:.25rem}
+.meter-bootstrap .meter-current-period span{font-size:.75rem}
+.meter-bootstrap .meter-period-state{font-size:.6875rem;padding:.375rem .625rem}
+.meter-bootstrap .meter-stats{gap:1rem;margin-bottom:1rem}
+.meter-bootstrap .meter-stat{padding:1rem;border:1px solid #e4e7eb;border-radius:12px;min-height:120px;box-shadow:0 2px 6px #25282d03}
+.meter-bootstrap .meter-stat>div>span{font-size:.75rem;margin-bottom:.5rem;line-height:1.5}
+.meter-bootstrap .meter-stat strong{font-size:1.75rem;line-height:1.25;margin-bottom:.5rem}
+.meter-bootstrap .meter-stat em,.meter-bootstrap .meter-stat small{font-size:.6875rem;line-height:1.5}
+.meter-bootstrap .meter-stat-icon{width:32px;height:32px;border-radius:8px}
+.meter-bootstrap .meter-stat progress{height:6px;margin:.25rem 0 .5rem}
+.meter-bootstrap .meter-list-panel{border:1px solid #e4e7eb;border-radius:12px;padding:1rem;background:#fff;min-width:0;box-shadow:0 2px 6px #25282d03}
+.meter-bootstrap .meter-list-heading{gap:.625rem;flex-wrap:wrap;margin-bottom:.75rem}
+.meter-bootstrap .meter-list-heading h2{font-size:1.0625rem;line-height:1.4;margin:0}
+.meter-bootstrap .meter-list-heading>span{font-size:.6875rem;padding:.25rem .5rem;border-radius:6px;background:#f0f1f2}
+.meter-bootstrap .meter-period-comparison{font-size:.6875rem;line-height:1.5}
+.meter-bootstrap .meter-list-tools{gap:.75rem;margin-bottom:.75rem;flex-wrap:wrap}
+.meter-bootstrap .meter-list-tools .form-control,.meter-bootstrap .meter-list-tools .form-select{min-height:42px;border-radius:8px;font-size:.8125rem;line-height:1.5}
+.meter-bootstrap .meter-list-note{font-size:.75rem;line-height:1.5;margin:.75rem 0}
+.meter-bootstrap .meter-table-heading{background:#f7f8f9;border-color:#e9eaec;padding-top:.875rem;padding-bottom:.875rem}
+.meter-bootstrap .meter-table-heading>span,.meter-bootstrap .meter-table-heading>strong{font-size:.6875rem;line-height:1.5}
+.meter-bootstrap .meter-room{padding-top:.875rem;padding-bottom:.875rem;border-color:#e9eaec}
+.meter-bootstrap .meter-room-heading h4{font-size:.8125rem;line-height:1.5;overflow-wrap:anywhere}
+.meter-bootstrap .meter-room-heading small,.meter-bootstrap .meter-occupancy{font-size:.625rem;line-height:1.5}
+.meter-bootstrap .meter-room .form-control{min-height:42px;height:auto;padding:.5rem;border:1px solid #dfe3e8;border-radius:7px;font-size:.8125rem;line-height:1.5;box-shadow:none}
+.meter-bootstrap .meter-room .form-control:focus{border-color:#bfa77a;outline:2px solid #bfa77a55;outline-offset:1px}
+.meter-bootstrap .meter-room .form-control[readonly]{background:#f5f6f7}
+.meter-bootstrap .meter-service label,.meter-bootstrap .meter-previous label{font-size:.6875rem;line-height:1.5;margin-bottom:.25rem}
+.meter-bootstrap .meter-previous small{font-size:.625rem;line-height:1.5;margin-top:.25rem}
+.meter-bootstrap .meter-unavailable{font-size:.6875rem;line-height:1.5}
+.meter-bootstrap .meter-status-badge{font-size:.625rem;padding:.375rem .5rem;border-radius:20px;line-height:1.5}
+.meter-bootstrap .meter-save{min-height:42px;min-width:64px;padding:.5rem .75rem;font-size:.75rem;border-radius:7px;background:#30343b;border-color:#30343b}
+.meter-bootstrap .meter-table-total{padding:.875rem .625rem;background:#f8f9fa;border-radius:8px;line-height:1.5}
+.meter-bootstrap .meter-list-foot{font-size:.6875rem;line-height:1.5;margin:.75rem 0 0}
+.meter-bootstrap .meter-side-card{padding:1rem;border-radius:12px;border-color:#e4e7eb}
+.meter-bootstrap .meter-side-card p{font-size:.8125rem;line-height:1.6}
+@media(max-width:767px){.meter-bootstrap .meter-stats{grid-template-columns:1fr}.meter-bootstrap .meter-stat{min-height:0}.meter-bootstrap .meter-heading h1{font-size:1.5rem}.meter-bootstrap .meter-list-panel{padding:1rem}.meter-bootstrap .meter-top-actions{width:100%}.meter-bootstrap .meter-top-actions .btn{flex:1}.meter-bootstrap .meter-reference-filters{padding:1rem}.meter-bootstrap .meter-current-period{border:0;padding-left:0}.meter-bootstrap .meter-month-trigger,.meter-bootstrap .meter-month select{width:100%}.meter-bootstrap .meter-period-state{margin-left:0}}
+@media(max-width:600px){.meter-bootstrap .meter-room{padding:1rem;border-radius:10px}.meter-bootstrap .meter-room .form-control,.meter-bootstrap .meter-save{min-height:44px}.meter-bootstrap .meter-list-tools>label{flex:1 1 100%;min-width:0}.meter-bootstrap .meter-list-tools .form-select{width:100%}.meter-bootstrap .meter-period-comparison{width:100%;margin-left:0}.meter-bootstrap .meter-reference-filters .meter-building,.meter-bootstrap .meter-month{flex-basis:100%;width:100%;max-width:none}.meter-bootstrap .meter-month{margin-top:.25rem}}
+
+/* Consistent spacing for reading labels, help text and room rows. */
+.meter-bootstrap .meter-reference-filters{padding:.875rem 1rem;gap:.875rem}
+.meter-bootstrap .meter-stat>div>small{display:block;line-height:1.5;margin-top:.25rem}
+.meter-bootstrap .meter-list-note{margin:.625rem 0 .75rem;line-height:1.5}
+.meter-bootstrap .meter-room-heading h4{margin:0 0 .25rem;line-height:1.5}
+.meter-bootstrap .meter-room-heading .meter-occupancy{margin:0;line-height:1.5}
+.meter-bootstrap .meter-service label,.meter-bootstrap .meter-previous label{margin-bottom:.375rem;line-height:1.4}
+.meter-bootstrap .meter-previous small{display:block;margin-top:.25rem;line-height:1.4}
+.meter-bootstrap .meter-previous{margin-bottom:0}
+.meter-bootstrap .meter-service .text-danger{font-size:.6875rem;line-height:1.4;margin-top:.25rem}
+.meter-bootstrap .meter-service .text-danger:empty{display:none!important}
+.meter-bootstrap .meter-side-card p{margin:.5rem 0 0;line-height:1.5}
+.meter-bootstrap .meter-table-total{padding:.75rem .625rem;line-height:1.5}
+.meter-bootstrap .meter-list-foot{margin-top:.625rem;line-height:1.5}
+@media(max-width:600px){.meter-bootstrap .meter-room{padding:.875rem}.meter-bootstrap .meter-reference-filters{padding:.875rem}.meter-bootstrap .meter-list-panel{padding:.875rem}}

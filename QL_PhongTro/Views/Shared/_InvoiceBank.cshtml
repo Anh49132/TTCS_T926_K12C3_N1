@@ -1,0 +1,13 @@
+<section class="invoice-bank mb-3" data-invoice-bank hidden aria-label="Thông tin chuyển khoản của chủ nhà">
+    <h4 class="h6">Thông tin chuyển khoản của chủ nhà</h4>
+    <p data-bank-message role="status" aria-live="polite"></p>
+    <div data-bank-details hidden>
+        <div class="invoice-bank-content">
+            <img data-bank-qr class="bank-qr" alt="Mã QR nhận chuyển khoản của chủ nhà" hidden />
+            <dl><div><dt>Ngân hàng</dt><dd data-bank-name></dd></div><div><dt>Số tài khoản</dt><dd><span data-bank-number></span> <button type="button" class="btn btn-outline-secondary btn-sm" data-bank-copy>Sao chép</button></dd></div></dl>
+            @if (ViewData["PaymentMemo"] is string memo) { <div class="pw-bank-memo"><small>Nội dung gợi ý</small><strong>@memo</strong></div> }
+        </div>
+        <p class="alert alert-warning mb-0">Quét QR để chuyển khoản. Sau đó tải ảnh chứng từ bên dưới để chủ nhà xác nhận.</p>
+        <p class="form-text mb-0">QR chỉ hỗ trợ chuyển khoản. Số đã thu chỉ cập nhật sau khi chủ nhà xác nhận.</p>
+    </div>
+</section>

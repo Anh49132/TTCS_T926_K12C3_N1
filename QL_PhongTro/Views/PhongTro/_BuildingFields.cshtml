@@ -1,0 +1,43 @@
+@model QL_PhongTro.ViewModels.TaoToaNhaViewModel
+    <div class="col-12 col-md-6">
+        <label asp-for="TenToaNha" class="form-label"></label>
+        <input asp-for="TenToaNha" class="form-control" />
+        <span asp-validation-for="TenToaNha" class="text-danger"></span>
+    </div>
+    <div class="col-12 col-md-6">
+        <label asp-for="DiaChi" class="form-label"></label>
+        <input asp-for="DiaChi" class="form-control" />
+        <span asp-validation-for="DiaChi" class="text-danger"></span>
+    </div>
+    <div class="col-12 col-md-4">
+        <label asp-for="PhuongXa" class="form-label"></label>
+        <input asp-for="PhuongXa" class="form-control" />
+        <span asp-validation-for="PhuongXa" class="text-danger"></span>
+    </div>
+    <div class="col-12 col-md-4">
+        <label asp-for="QuanHuyen" class="form-label"></label>
+        <input asp-for="QuanHuyen" class="form-control" />
+        <span asp-validation-for="QuanHuyen" class="text-danger"></span>
+    </div>
+    <div class="col-12 col-md-4">
+        <label asp-for="TinhThanh" class="form-label"></label>
+        <input asp-for="TinhThanh" class="form-control" />
+        <span asp-validation-for="TinhThanh" class="text-danger"></span>
+    </div>
+    <div class="col-12 col-md-4">
+        <label asp-for="SoTang" class="form-label"></label>
+        <input asp-for="SoTang" class="form-control" type="number" min="1" max="99" />
+        <span asp-validation-for="SoTang" class="text-danger"></span>
+    </div>
+    <div class="col-12 col-md-8">
+        <label asp-for="QuanLyId" class="form-label"></label>
+        <select asp-for="QuanLyId" asp-items="Model.QuanLyOptions" class="form-select">
+            <option value="">Chưa phân công</option>
+        </select>
+        <span asp-validation-for="QuanLyId" class="text-danger"></span>
+    </div>
+    <div class="col-12 col-md-6">
+        <label asp-for="GhiChu" class="form-label"></label>
+        <textarea asp-for="GhiChu" class="form-control" rows="3"></textarea>
+        <span asp-validation-for="GhiChu" class="text-danger"></span>
+    </div>

@@ -1,0 +1,59 @@
+@using Microsoft.EntityFrameworkCore
+@inject QL_PhongTro.Data.AppDbContext NotificationDb
+@inject QL_PhongTro.Authorization.PermissionService NotificationPermissions
+@{
+    var name = User.Identity?.Name ?? "Khách thuê";
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+    string Active(string value) => (controller == value || (controller == "TatToan" && value == "HopDongCuaToi")) && !(value == "Home" && action == "GioiThieu") ? "is-active" : "";
+    var actor = int.TryParse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value, out var actorId) ? actorId : 0;
+    var showNotifications = await NotificationPermissions.AllowsAsync("TAI_CHINH")
+        && await QL_PhongTro.Services.InvoiceNotificationDispatcher.IsInstalledAsync(NotificationDb);
+    var showRepairs = await NotificationPermissions.AllowsAsync("BAO_HONG");
+    var unread = 0;
+    if (showNotifications) {
+        var published = NotificationDb.HoaDons.Where(x => x.TrangThai == "DA_PHAT_HANH" || x.TrangThai == "DA_HUY").Select(x => x.Id);
+        unread = await NotificationDb.ThongBaoThanhToans.CountAsync(x => x.NguoiNhanId == actor && x.NgayDoc == null) + await NotificationDb.ThongBaoHoaDons.CountAsync(x => x.NguoiNhanId == actor && x.NgayDoc == null && published.Contains(x.HoaDonId));
+    }
+}
+<header class="tenant-header">
+    <div class="tenant-menu">
+        <button type="button" class="tenant-menu-toggle" aria-label="Mở menu" aria-controls="tenant-sidebar" aria-expanded="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14M5 12h14M5 18h14" /></svg></button>
+        <dialog id="tenant-sidebar" class="tenant-sidebar" aria-labelledby="tenant-sidebar-title">
+        <div class="tenant-sidebar-heading"><a class="tenant-drawer-brand" asp-controller="Home" asp-action="Index"><span class="tenant-drawer-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v11H3ZM9 21v-8h6v8" /></svg></span><span><strong id="tenant-sidebar-title">NhàTốt</strong><small>Sống đúng nơi</small></span></a><button type="button" class="tenant-sidebar-close" aria-label="Đóng menu">×</button></div>
+        <nav class="tenant-menu-panel nav nav-pills flex-column gap-1" aria-label="Menu khách thuê">
+            <a class="@Active("Home")" asp-controller="Home" asp-action="Index"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 10 9-7 9 7v11H3ZM9 21v-8h6v8" /></svg><span>Tổng quan</span></a>
+            <a class="@Active("TimTin")" asp-controller="TimTin" asp-action="Index"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0" /></svg><span>Tìm phòng</span></a>
+            <a class="@Active("HopDongCuaToi")" asp-controller="HopDongCuaToi" asp-action="Index"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h10l4 4v14H5ZM14 3v5h5M8 12h8m-8 4h8" /></svg><span>Hợp đồng của tôi</span></a>
+            @if (showRepairs) {
+                <a class="@Active("BaoHong")" asp-controller="BaoHong" asp-action="Index"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 5 5-3a7 7 0 0 1-8 9L4 20l-3-3 9-8a7 7 0 0 1 3-7l1 3Z" /></svg> <span>Báo hỏng của tôi</span></a>
+            }
+            <a class="@Active("YeuCau")" asp-controller="YeuCau" asp-action="Index"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h10l4 4v14H5ZM14 3v5h5M8 12h8m-8 4h8" /></svg><span>Yêu cầu thuê</span></a>
+            <a class="@Active("HoSo")" asp-controller="HoSo" asp-action="Xem"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M4 21v-2a8 8 0 0 1 16 0v2" /></svg><span>Hồ sơ của tôi</span></a>
+            @if (showNotifications) { <a class="@(controller == "ThongBao" && action == "DanhSach" ? "is-active" : "")" asp-controller="ThongBao" asp-action="DanhSach"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h14v18l-3-2-4 2-4-2-3 2ZM8 7h8M8 11h8M8 15h5"/></svg><span>Hóa đơn của tôi</span></a> }
+            @if (showNotifications) { <a class="@(controller == "ThongBao" && action == "Index" ? "is-active" : "")" asp-controller="ThongBao" asp-action="Index"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><span>Thông báo hóa đơn</span><span class="badge rounded-pill tenant-menu-count">@unread</span></a> }
+        </nav>
+        </dialog>
+    </div>
+    <a class="tenant-brand" asp-controller="Home" asp-action="Index" aria-label="NhàTốt, về trang chủ">
+        <span class="tenant-brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="m4 10 8-7 8 7v11h-6v-7h-4v7H4Z" /></svg></span>
+        <span><strong>NhàTốt</strong><small>Sống đúng nơi</small></span>
+    </a>
+    <nav class="tenant-primary-nav" aria-label="Điều hướng chính">
+        <a class="@Active("Home")" asp-controller="Home" asp-action="Index">Trang chủ</a>
+        <a class="@Active("TimTin")" asp-controller="TimTin" asp-action="Index">Tìm phòng</a>
+
+        <a class="@(controller == "Home" && action == "GioiThieu" ? "is-active" : "")" asp-controller="Home" asp-action="GioiThieu">Giới thiệu</a>
+    </nav>
+    <div class="tenant-header-actions">
+    @if (showNotifications) { <partial name="_PaymentBell" /> }
+    <details class="tenant-account">
+        <summary aria-label="Tài khoản @name"><span class="tenant-avatar" aria-hidden="true"><img src="/PersonalAccount/Avatar" alt="" /></span><span class="tenant-account-name">@name</span><svg class="tenant-account-chevron" viewBox="0 0 24 24" aria-hidden="true"><path d="m7 9 5 5 5-5" /></svg></summary>
+        <div class="tenant-account-panel">
+            <a asp-controller="HoSo" asp-action="Xem">Hồ sơ của tôi</a>
+            <a asp-controller="Account" asp-action="ChangePassword">Đổi mật khẩu</a>
+            <form asp-controller="Account" asp-action="Logout" method="post"><button type="submit">Đăng xuất</button></form>
+        </div>
+    </details>
+    </div>
+</header>

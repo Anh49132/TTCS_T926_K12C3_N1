@@ -1,0 +1,234 @@
+@model QL_PhongTro.ViewModels.LichHenChiTietViewModel
+@using System.Globalization
+@using QL_PhongTro.Models
+@using QL_PhongTro.Services
+@using QL_PhongTro.ViewModels
+@{
+    ViewData["Title"] = "Chi tiết yêu cầu " + Model.YeuCau.MaYeuCau;
+    var ok = TempData["LichHenOk"] as string;
+    var err = TempData["LichHenError"] as string;
+    var warning = TempData["LichHenWarning"] as string;
+    var yeuCau = Model.YeuCau;
+    var ngayHenNhap = Model.LichHenNhap?.ToString("yyyy-MM-dd");
+    var gioHenNhap = Model.LichHenNhap?.ToString("HH':'mm", CultureInfo.InvariantCulture);
+    var lichHenNhap = Model.LichHenNhap?.ToString("yyyy-MM-ddTHH':'mm", CultureInfo.InvariantCulture);
+}
+@if(Model.LaChuNha){<partial name="_OwnerRequestDetail" model="Model"/>}
+else{
+@if(Model.LaChuNha) {
+<div class="owner-requests or-detail">
+<a class="or-back" asp-controller="YeuCau" asp-action="Index">← Quay lại danh sách</a>
+<header class="or-heading"><div><p class="or-eyebrow">@LichHenTrangThai.LoaiLabel(yeuCau.LoaiYeuCau).ToUpperInvariant()</p><h1>@yeuCau.MaYeuCau <span class="or-tag amber">@LichHenTrangThai.LabelHienThi(yeuCau.TrangThai, yeuCau.DaDoiLich)</span></h1><p>Gửi lúc @LichHenService.HienThoiGio(yeuCau.NgayTao)</p></div><a class="or-button" asp-controller="TinDang" asp-action="ChiTiet" asp-route-id="@ViewData["RequestedListingId"]">Mở tin đăng ↗</a></header>
+@if(yeuCau.TrangThai is "MOI" or "DA_HEN_LICH") { <p class="or-notice">@(yeuCau.LoaiYeuCau == "THUE_NGAY" ? "Phòng chỉ được giữ cho khách sau khi yêu cầu được duyệt." : "Yêu cầu mới nên được phản hồi trong vòng 24 giờ.")</p> }
+</div>
+}
+<div class="@(Model.LaChuNha ? "owner-requests or-detail-body" : "request-detail-page container-fluid px-0")">
+@if(!Model.LaChuNha) {
+<header class="rd-heading mb-4"><div><p class="eyebrow mb-2">LỊCH HẸN XEM PHÒNG</p>
+<h1 class="h4 fw-bold mb-2">@yeuCau.MaYeuCau</h1>
+<p>
+    Phòng <strong>@yeuCau.MaPhong</strong> · @yeuCau.TenToaNha
+    @if (!string.IsNullOrWhiteSpace(yeuCau.DiaChiToaNha)) { <text>· @yeuCau.DiaChiToaNha</text> }
+</p></div><span class="badge rounded-pill rd-status">@LichHenTrangThai.LabelHienThi(yeuCau.TrangThai, yeuCau.DaDoiLich)</span></header>
+}
+
+@if (ok is not null) { <p class="text-success">@ok</p> }
+@if (warning is not null) { <div class="alert alert-warning" role="alert">@warning</div> }
+@if (err is not null) { <p class="text-danger">@err</p> }
+
+<div class="@(Model.LaChuNha ? "or-layout" : "row g-4 align-items-start")"><div class="or-detail-main rd-columns">
+<section class="@(Model.LaChuNha ? "or-card" : "col-12 col-lg-8 rd-information")">
+<div class="card border-0 shadow-sm rd-card"><div class="card-body p-4"><h2 class="h6 fw-bold mb-4">Thông tin yêu cầu</h2>
+<div class="table-responsive">
+<table class="table align-middle mb-0 rd-info-table">
+    <tbody>
+    <tr><th>Loại yêu cầu</th><td>@LichHenTrangThai.LoaiLabel(yeuCau.LoaiYeuCau)</td></tr>
+    <tr><th>Trạng thái</th><td><span class="badge @LichHenTrangThai.BadgeClass(yeuCau.TrangThai)">@LichHenTrangThai.LabelHienThi(yeuCau.TrangThai, yeuCau.DaDoiLich)</span></td></tr>
+    <tr><th>Khách</th><td>@yeuCau.TenKhach @if (!string.IsNullOrWhiteSpace(yeuCau.SoDienThoaiKhach)) { <text>· @yeuCau.SoDienThoaiKhach</text> }</td></tr>
+    @if (!Model.LaChuNha) { <tr><th>Chủ nhà</th><td>@yeuCau.TenChuNha</td></tr> }
+    <tr><th>Ngày mong muốn</th><td>@(DateOnly.TryParseExact(yeuCau.NgayMongMuon, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var wantedDate) ? wantedDate.ToString("dd/MM/yyyy") : yeuCau.NgayMongMuon)</td></tr>
+    <tr><th>Số người dự kiến</th><td>@yeuCau.SoNguoiDuKien</td></tr>
+    @if (!string.IsNullOrWhiteSpace(yeuCau.LoiNhan)) { <tr><th>Lời nhắn</th><td>@yeuCau.LoiNhan</td></tr> }
+    @if (yeuCau.TrangThai == LichHenTrangThai.TuChoi) {
+    <tr><th>Lý do từ chối</th><td>@(yeuCau.LyDoTuChoi is null ? "" : LichHenService.LyDoLabel(yeuCau.LyDoTuChoi))</td></tr>
+    @if (!string.IsNullOrWhiteSpace(yeuCau.GhiChuTuChoi)) { <tr><th>Ghi chú</th><td>@yeuCau.GhiChuTuChoi</td></tr> }
+    }
+    <tr>
+        <th>Lịch hẹn</th>
+        <td>
+            @if (yeuCau.LichHen is { } lichHen) { <text>@LichHenService.HienThoiGio(lichHen)</text> }
+            else { <text>Chưa có lịch hẹn</text> }
+            @if (yeuCau.DaDoiLich && yeuCau.LichHenCu is { } cuNhat) {
+                <br /><span class="text-muted">Lịch trước: @LichHenService.HienThoiGio(cuNhat)</span>
+            }
+        </td>
+    </tr>
+    </tbody>
+</table>
+</div>
+</div></div></section>
+<section class="@(Model.LaChuNha ? "or-card or-processing" : "col-12 col-lg-4 rd-processing")"><div class="card border-0 shadow-sm rd-card"><div class="card-body p-4"><h2 class="h6 fw-bold mb-3">Thao tác yêu cầu</h2><p class="text-muted small">Các thao tác khả dụng được hiển thị theo vai trò và trạng thái yêu cầu.</p>
+
+@if (Model.HienThiFormXacNhan && (!Model.LaChuNha || yeuCau.LoaiYeuCau == "XEM_PHONG")) {
+<h2>Xác nhận lịch hẹn</h2>
+<form method="post" class="row g-3 mb-4" asp-action="XacNhanLich" asp-route-id="@yeuCau.Id">
+    <div class="col-md-3">
+        <label for="lich-hen-ngay" class="form-label">Ngày hẹn</label>
+        <input id="lich-hen-ngay" type="date" class="form-control" value="@ngayHenNhap" required data-role="lich-hen-ngay" />
+    </div>
+    <div class="col-md-2">
+        <label for="lich-hen-gio" class="form-label">Giờ hẹn (24 giờ)</label>
+        <input id="lich-hen-gio" type="text" class="form-control" value="@gioHenNhap" placeholder="19:30" maxlength="5" autocomplete="off"
+               inputmode="text" pattern="([01][0-9]|2[0-3]):[0-5][0-9]" title="Nhập giờ theo định dạng HH:mm, ví dụ 19:30" required data-role="lich-hen-gio" />
+        <input type="hidden" name="LichHenNhap" value="@lichHenNhap" data-role="lich-hen" />
+    </div>
+    <div class="col-md-4 d-flex align-items-end">
+        <button class="btn btn-primary" type="submit">Xác nhận lịch</button>
+    </div>
+</form>
+<p class="text-muted" data-role="canh-bao-trung" data-yeu-cau-id="@yeuCau.Id">
+    Hệ thống cảnh báo nếu phòng đã có lịch hẹn khác trong khoảng ±30 phút. Cảnh báo không chặn xác nhận.
+</p>
+}
+
+@if (Model.HienThiFormDoiLich) {
+<h2>Đổi lịch hẹn</h2>
+<form method="post" class="row g-3 mb-4" asp-action="DoiLich" asp-route-id="@yeuCau.Id">
+    <div class="col-md-3">
+        <label for="lich-hen-ngay" class="form-label">Ngày hẹn mới</label>
+        <input id="lich-hen-ngay" type="date" class="form-control" value="@ngayHenNhap" required data-role="lich-hen-ngay" />
+    </div>
+    <div class="col-md-2">
+        <label for="lich-hen-gio" class="form-label">Giờ hẹn mới (24 giờ)</label>
+        <input id="lich-hen-gio" type="text" class="form-control" value="@gioHenNhap" placeholder="19:30" maxlength="5" autocomplete="off"
+               inputmode="text" pattern="([01][0-9]|2[0-3]):[0-5][0-9]" title="Nhập giờ theo định dạng HH:mm, ví dụ 19:30" required data-role="lich-hen-gio" />
+        <input type="hidden" name="LichHenNhap" value="@lichHenNhap" data-role="lich-hen" />
+    </div>
+    <div class="col-md-4 d-flex align-items-end">
+        <button class="btn btn-primary" type="submit">Lưu lịch mới</button>
+    </div>
+</form>
+<p class="text-muted" data-role="canh-bao-trung" data-yeu-cau-id="@yeuCau.Id">
+    Lịch cũ được giữ lại để cả chủ nhà và người thuê đều thấy thay đổi. Cảnh báo trùng lịch không chặn lưu.
+</p>
+}
+
+@if (Model.HienThiNutDuyetThueNgay) {
+<h2>Xử lý yêu cầu thuê ngay</h2><p class="text-muted">Kiểm tra thông tin phòng và khách trước khi duyệt. Hệ thống sẽ kiểm tra lại điều kiện giữ phòng khi lưu.</p>
+<form method="post" class="row g-3 mb-4" asp-action="DuyetThueNgay" asp-route-id="@yeuCau.Id">
+    <div class="col-md-4 d-flex align-items-center gap-2">
+        <button class="btn btn-success" type="submit">Duyệt thuê ngay</button>
+        <span class="text-muted">Phòng sẽ chuyển sang trạng thái Đã đặt cọc.</span>
+    </div>
+</form>
+}
+
+@if (Model.HienThiNutLapHopDong) {
+@* Cùng luồng lập hợp đồng cho thuê ngay và thuê sau khi xem. *@
+<div class="mb-4">
+    <a class="btn btn-primary" href="@LichHenChiTietViewModel.DuongDanLapHopDong?@($"id={yeuCau.Id}")">Lập hợp đồng</a>
+    <span class="text-muted">Yêu cầu đã duyệt và phòng đã đặt cọc, sẵn sàng lập hợp đồng.</span>
+</div>
+}
+<partial name="_HuyDaDuyet" model="Model" />
+
+@if (Model.HienThiNutDuyetSauKhiXem) {
+<h2>Duyệt thuê sau khi xem phòng</h2>
+<p class="text-muted">Sau khi khách xem phòng và đồng ý thuê, duyệt yêu cầu để giữ phòng và lập hợp đồng. Thao tác này chưa ghi nhận tiền cọc thực thu.</p>
+<form method="post" asp-action="DuyetSauKhiXem" asp-route-id="@yeuCau.Id" class="mb-4">
+    <label class="d-flex align-items-center gap-2 mb-3"><input type="checkbox" name="daDongYThue" value="true" required /> Khách đã đồng ý thuê sau khi xem phòng.</label>
+    <button class="btn btn-primary" type="submit">Duyệt thuê sau khi xem</button>
+</form>
+}
+
+@if (Model.HienThiFormTuChoi) {
+<h2>Từ chối yêu cầu</h2>
+<form method="post" class="row g-3 mb-4" asp-action="TuChoi" asp-route-id="@yeuCau.Id">
+    <div class="col-md-4">
+        <label asp-for="LyDoTuChoi" class="form-label">Lý do từ chối</label>
+        <select asp-for="LyDoTuChoi" class="form-select" data-role="ly-do-tu-choi">
+            @foreach (var lyDo in LyDoTuChoi.All) { <option value="@lyDo">@LichHenService.LyDoLabel(lyDo)</option> }
+        </select>
+    </div>
+    <div class="col-auto d-flex align-items-end">
+        <button class="btn btn-outline-danger" type="submit">Từ chối</button>
+    </div>
+    <div class="col-12 @(Model.LyDoTuChoi == LyDoTuChoi.Khac ? "" : "d-none")" data-role="vung-ghi-chu">
+        <label asp-for="GhiChuTuChoi" class="form-label">Ghi chú <span class="text-danger">*</span></label>
+        <input asp-for="GhiChuTuChoi" class="form-control" maxlength="500"
+               data-role="ghi-chu-tu-choi" data-doi-kiem-tra="1" />
+        <div class="form-text" data-role="loi-ghi-chu"></div>
+    </div>
+</form>
+}
+
+@if (Model.HienThiNutHuy) {
+<section class="rd-cancel pt-3 mt-3" aria-labelledby="huy-yeu-cau-heading">
+    <h2 id="huy-yeu-cau-heading">Hủy yêu cầu</h2>
+    <p class="text-muted">Yêu cầu đã hủy không thể tiếp tục xác nhận, đổi lịch hoặc duyệt thuê.</p>
+    <form method="post" asp-action="Huy" asp-route-id="@yeuCau.Id"
+          onsubmit="return confirm('Bạn chắc chắn muốn hủy yêu cầu này?');">
+        <button class="btn btn-outline-danger" type="submit">Hủy yêu cầu</button>
+    </form>
+</section>
+}
+
+</div></div></section><section class="@(Model.LaChuNha ? "or-card or-history" : "col-12 rd-history")"><div class="card border-0 shadow-sm rd-card"><div class="card-body p-4">
+<h2>Lịch sử yêu cầu</h2>
+@if (Model.LichSu.Count == 0) {
+    <p class="text-muted mb-4">Chưa có thay đổi nào được ghi nhận.</p>
+} else {
+    <ul class="list-unstyled mb-4">
+    @foreach (var muc in Model.LichSu) {
+        <li class="rd-history-event pb-3 mb-3">
+            <div>
+                <strong>@HanhDongYeuCau.Label(muc.HanhDong)</strong>
+                @if (muc.TrangThaiCu is { } cu && cu != muc.TrangThaiMoi) {
+                    <span class="text-muted">· @LichHenTrangThai.Label(cu) → @LichHenTrangThai.Label(muc.TrangThaiMoi)</span>
+                } else {
+                    <span class="text-muted">· @LichHenTrangThai.Label(muc.TrangThaiMoi)</span>
+                }
+            </div>
+            <div class="text-muted">
+                @if (!string.IsNullOrWhiteSpace(muc.TenNguoiThucHien)) {
+                    @muc.TenNguoiThucHien
+                    @if (muc.VaiTro == LichHenTrangThai.VaiTroChuNha) { <text> (chủ nhà)</text> }
+                    else if (muc.VaiTro == LichHenTrangThai.VaiTroKhachThue) { <text> (khách)</text> }
+                    <text> · </text>
+                }
+                @LichHenService.HienThoiGio(muc.ThoiDiem)
+            </div>
+            @if (muc.LichHenCu is { } lichCu && muc.LichHenMoi is { } lichMoi && lichCu != lichMoi) {
+                <div class="text-muted">Lịch: @LichHenService.HienThoiGio(lichCu) → @LichHenService.HienThoiGio(lichMoi)</div>
+            } else if (muc.LichHenMoi is { } lichMoi2) {
+                <div class="text-muted">Lịch hẹn: @LichHenService.HienThoiGio(lichMoi2)</div>
+            }
+            @if (!string.IsNullOrEmpty(muc.LyDoTuChoi)) {
+                <div class="text-muted">Lý do: @LichHenService.LyDoLabel(muc.LyDoTuChoi)</div>
+            }
+            @if (!string.IsNullOrWhiteSpace(muc.GhiChuTuChoi)) {
+                <div class="text-muted">Ghi chú: @muc.GhiChuTuChoi</div>
+            }
+        </li>
+    }
+    </ul>
+}
+
+</div></div></section></div>
+@if(Model.LaChuNha){
+<aside><section class="or-card"><h2>Khách thuê</h2><div class="or-customer"><span class="or-icon">@(string.IsNullOrEmpty(yeuCau.TenKhach) ? "—" : yeuCau.TenKhach[..1])</span><div><strong>@yeuCau.TenKhach</strong><p>@yeuCau.SoDienThoaiKhach</p></div></div></section>
+<section class="or-card"><h2>Phòng được yêu cầu</h2>
+@if(ViewData["RequestedRoomImage"] is string photo){<img class="or-room-photo" src="@photo" alt="Ảnh phòng @yeuCau.MaPhong" />}
+<h3>Phòng @yeuCau.MaPhong</h3><p>@yeuCau.TenToaNha</p><p class="or-muted">@yeuCau.DiaChiToaNha</p>
+@if(ViewData["RequestedRoom"] is PhongTro room){<strong class="or-room-price">@room.GiaThue.ToString("N0", CultureInfo.GetCultureInfo("vi-VN")) đ / tháng</strong><p>@room.DienTich.ToString("0.#", CultureInfo.GetCultureInfo("vi-VN")) m² · Tối đa @room.SoNguoiToiDa người</p>}
+<span class="or-tag">@QL_PhongTro.Controllers.PhongTroController.StatusLabel(Enum.Parse<TrangThaiPhong>(yeuCau.TrangThaiPhong))</span><a class="or-button or-full" asp-controller="PhongTro" asp-action="Details" asp-route-id="@yeuCau.PhongId">Xem thông tin phòng</a></section>
+@if(yeuCau.LoaiYeuCau == "THUE_NGAY"){<section class="or-card"><h2>Sau khi duyệt</h2><p>Phòng được giữ cho khách và mở thao tác lập hợp đồng.</p><p class="or-muted">Duyệt yêu cầu không tự tạo hợp đồng và không ghi nhận tiền cọc thực thu.</p></section>}
+</aside>
+}
+</div></div>
+
+}
+@section Styles { <link rel="stylesheet" href="~/css/request-detail-fallback-bootstrap.css" asp-append-version="true" /> @if(Model.LaChuNha){<link rel="stylesheet" href="~/css/request-detail.css" asp-append-version="true" /><link rel="stylesheet" href="~/css/request-detail-bootstrap.css" asp-append-version="true" />} }
+@section Scripts {
+<script src="~/js/lich-hen.js" asp-append-version="true"></script>
+}

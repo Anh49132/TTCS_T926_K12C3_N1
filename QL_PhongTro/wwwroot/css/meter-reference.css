@@ -1,0 +1,223 @@
+.meter-reference{width:100%;margin:0;padding:0;font-size:12px}
+.meter-reference .meter-heading{align-items:flex-start;flex-wrap:wrap;margin-bottom:20px}
+.meter-reference .meter-heading h1{font-size:25px;font-weight:700}
+.meter-reference .meter-heading p{font-size:12px;color:#858991}
+.meter-reference .meter-heading-controls{gap:12px}
+.meter-top-actions{display:flex;gap:8px;align-items:center}
+.meter-top-actions .btn{font-size:11px;padding:7px 12px;min-height:34px;border-radius:5px;font-weight:600}
+.meter-top-actions .meter-export{background:#fff;border:1px solid #e9eaec;color:#30343b}
+.meter-top-actions .meter-export{display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.meter-export svg{width:14px;height:14px;flex-shrink:0}
+.meter-top-actions .btn-primary{background:#30343b;border-color:#30343b}
+.meter-reference .meter-reference-filters{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.meter-reference .meter-reference-filters .meter-building{position:relative;margin-top:18px;max-width:240px;border-radius:5px;min-height:34px}
+.meter-building-label{position:absolute;left:0;bottom:calc(100% + 5px);font-size:10px;color:#858991}
+.meter-month label{display:block;font-size:10px;color:#858991;margin-bottom:5px}
+.meter-month input[type=month]{width:200px;min-height:34px;padding:6px 10px;background:#fff;border:1px solid #e9eaec;border-radius:5px;font-size:11px;color:#30343b}
+.meter-month select{width:200px;min-height:34px;padding:6px 10px;background:#fff;border:1px solid #e9eaec;border-radius:5px;font-size:11px;color:#30343b}
+.meter-reference .meter-month select{appearance:none;padding:6px 30px 6px 30px;background-color:#fff;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23858991' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='4' y='5' width='16' height='16' rx='2'/%3E%3Cpath d='M8 3v4M16 3v4M4 10h16M8 13h2M14 13h2M8 17h2'/%3E%3C/svg%3E"),url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='%23858991' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m4 6 4 4 4-4'/%3E%3C/svg%3E");background-position:left 10px center,right 10px center;background-size:13px 13px,11px 11px;background-repeat:no-repeat;font-weight:500;line-height:1.5}
+.meter-reference .meter-month select:focus-visible{outline:2px solid #bfa77a;outline-offset:2px}
+.meter-month{position:relative}
+.meter-month-trigger{position:relative;display:block;width:200px;min-height:34px;padding:6px 30px;text-align:left;font-size:11px!important;font-weight:500;color:#30343b;border:1px solid #e9eaec;border-radius:5px;background:#fff;line-height:1.5;white-space:nowrap}
+.meter-month-trigger::before{content:'';position:absolute;left:10px;top:50%;transform:translateY(-50%);width:13px;height:13px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23858991' stroke-width='1.6'%3E%3Crect x='4' y='5' width='16' height='16' rx='2'/%3E%3Cpath d='M8 3v4M16 3v4M4 10h16M8 13h2M14 13h2M8 17h2'/%3E%3C/svg%3E") center/contain no-repeat}
+.meter-month-trigger::after{content:'';position:absolute;right:13px;top:50%;width:6px;height:6px;border-right:1.5px solid #858991;border-bottom:1.5px solid #858991;transform:translateY(-70%) rotate(45deg)}
+.meter-month-trigger[aria-expanded=true]::after{transform:translateY(-30%) rotate(225deg)}
+.meter-month-trigger:focus-visible{outline:2px solid #bfa77a;outline-offset:2px}
+.meter-reference .meter-month>.meter-month-menu{display:block;width:100%;min-width:0;max-height:238px;padding:5px;box-sizing:border-box;overflow-x:hidden;overflow-y:auto;scrollbar-width:thin;scrollbar-color:#d4c4a8 transparent}
+.meter-reference .meter-month>.meter-month-menu[hidden]{display:none}
+.meter-reference .meter-month-menu button{box-sizing:border-box;width:100%;white-space:nowrap;overflow-wrap:normal;word-break:normal;flex-shrink:0}
+@media(max-width:600px){.meter-month-trigger{width:100%}}
+@media(max-width:600px){.meter-reference .meter-month select{width:100%}}
+.meter-month>div:not(.meter-building-menu){display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #e9eaec;border-radius:5px;min-height:34px;padding:7px 12px;font-size:11px;min-width:180px}
+.meter-month>div:not(.meter-building-menu)>span:last-child{margin-left:auto}
+.meter-current-period{border-left:1px solid #e9eaec;padding-left:14px;line-height:1.7}
+.meter-current-period small{display:block;font-size:9px;color:#858991}
+.meter-current-period span{font-size:10px;color:#656a73}
+.meter-period-state{display:inline-flex;align-items:center;gap:5px;margin-left:auto;background:#f7f3eb;color:#9c8150;padding:4px 8px;border-radius:12px;font-size:10px;line-height:1.4;white-space:nowrap}
+.meter-period-state svg{width:12px;height:12px;flex-shrink:0}
+.meter-reference .meter-reference-filters{gap:14px}
+.meter-reference .meter-reference-filters .meter-building{width:240px;max-width:100%;min-height:34px;margin-top:18px;border-color:#e9eaec;border-radius:5px}
+.meter-reference .meter-building-label,.meter-reference .meter-month label{font-size:10px;line-height:1.4;color:#858991;font-weight:400}
+.meter-reference .meter-building .meter-control-icon{display:flex;align-items:center;padding:0 9px;color:#858991}
+.meter-reference .meter-control-icon svg,.meter-reference .meter-month svg{width:14px;height:14px;display:block}
+.meter-reference .meter-building .form-select{font-size:11px;min-height:32px;padding:6px 30px 6px 0;color:#30343b;background-size:10px}
+.meter-reference .meter-month>div:not(.meter-building-menu){width:200px;min-height:34px;padding:6px 10px;border-color:#e9eaec;font-size:11px;gap:8px;color:#30343b}
+.meter-reference .meter-month>div:not(.meter-building-menu)>span{color:#858991}
+.meter-building-trigger{flex:1;min-width:0;text-align:left;border:0;background:transparent;padding:7px 30px 7px 0;font-size:11px!important;color:#30343b;position:relative;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:4px}
+.meter-building-trigger::after{content:'';position:absolute;right:13px;top:50%;width:6px;height:6px;border-right:1.5px solid #858991;border-bottom:1.5px solid #858991;transform:translateY(-70%) rotate(45deg);transition:transform .15s}
+.meter-building-trigger[aria-expanded=true]::after{transform:translateY(-30%) rotate(225deg)}
+.meter-reference .meter-month>div:not(.meter-building-menu)>span:last-child{font-size:0;width:6px;height:6px;border-right:1.5px solid #858991;border-bottom:1.5px solid #858991;transform:translateY(-2px) rotate(45deg);margin-right:3px;flex-shrink:0}
+.meter-building-trigger:focus-visible{outline:2px solid #bfa77a;outline-offset:2px}
+.meter-building-menu{position:absolute;top:calc(100% + 6px);left:0;width:100%;z-index:30;max-height:220px;overflow-y:auto;padding:5px;background:#fff;border:1px solid #e9eaec;border-radius:7px;box-shadow:0 8px 24px #30343b14}
+.meter-building-menu[hidden]{display:none}
+.meter-building-menu button{display:block;width:100%;min-height:34px!important;padding:8px 24px 8px 10px;text-align:left;background:#fff;border:0;border-radius:4px;font-size:11px!important;line-height:1.5;color:#555b64;position:relative;overflow-wrap:anywhere}
+.meter-building-menu button:hover,.meter-building-menu button:focus-visible{background:#f5f5f4;outline:none}
+.meter-building-menu button[aria-selected=true]{background:#f7f3eb;color:#80663a;font-weight:600}
+.meter-building-menu button[aria-selected=true]::after{content:'✓';position:absolute;right:9px;top:8px;color:#9c8150}
+@media(max-width:600px){.meter-reference .meter-reference-filters .meter-building,.meter-reference .meter-month{flex:1 1 150px}.meter-reference .meter-month>div:not(.meter-building-menu){width:100%}}
+@media(max-width:600px){.meter-top-actions{width:100%}.meter-top-actions .btn{flex:1}.meter-current-period{border:0;padding-left:0}.meter-period-state{margin-left:0}}
+.meter-reference .meter-building,.meter-reference .meter-period{border-radius:5px;font-size:11px}
+.meter-reference .meter-building select{font-size:12px}
+.meter-reference .meter-stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:20px}
+.meter-reference .meter-stat{position:relative;padding:18px;border-radius:7px;min-height:112px}
+.meter-reference .meter-stat>div{width:100%}
+.meter-reference .meter-stat>div>span{display:block;font-size:11px;color:#858991;margin-bottom:15px}
+.meter-reference .meter-stat strong{font-size:24px;color:#30343b;margin-bottom:10px}
+.meter-reference .meter-stat em{font-size:10px;color:#858991;font-style:normal;font-weight:400}
+.meter-reference .meter-stat small{font-size:10px}
+.meter-reference .meter-stat-icon{position:absolute;right:16px;top:14px;width:26px;height:26px;font-size:18px;border-radius:5px;background:#e9eaec}
+.meter-stat-progress b{float:right;color:#9c8150;font-size:10px}
+.meter-stat-progress progress{width:100%;height:5px;accent-color:#bfa77a;display:block;margin:12px 0}
+.meter-reference .meter-stat-icon svg{width:15px;height:15px}
+.meter-reference .meter-stat progress{appearance:none;border:0;height:4px;border-radius:4px;overflow:hidden;background:#e9eaec}
+.meter-reference .meter-stat progress::-webkit-progress-bar{background:#e9eaec;border-radius:4px}
+.meter-reference .meter-stat progress::-webkit-progress-value{background:#bfa77a;border-radius:4px}
+.meter-reference .meter-stat progress::-moz-progress-bar{background:#bfa77a;border-radius:4px}
+.meter-reference .meter-stat strong{font-size:23px;line-height:1.3;margin:0 0 9px;font-weight:700}
+.meter-reference .meter-stat>div>span{font-size:10px;margin-bottom:12px;padding-right:26px}
+.meter-reference .meter-stat-progress>div>span{padding-right:0;margin-bottom:7px}
+.meter-reference .meter-stat small{font-size:9px;line-height:1.5}
+.meter-reference .meter-stat-icon{width:24px;height:24px;right:14px;top:14px}
+.meter-reference .meter-workspace{grid-template-columns:minmax(0,1fr)}
+.meter-reference .meter-side-panel{display:none}
+.meter-reference .meter-list-panel{padding:16px;border-radius:7px}
+.meter-reference .meter-list-heading h2{font-size:14px}
+.meter-reference .meter-list-heading>span{background:#f5f5f4;color:#858991;font-size:10px}
+.meter-reference .meter-search{flex:0 1 300px;border-color:#e9eaec}
+.meter-reference .meter-filter-tabs button{border-radius:5px;font-size:10px}
+.meter-reference .meter-filter-tabs .is-active{background:#f7f3eb;color:#80663a}
+.meter-reference .meter-column-head{margin-top:14px;background:#f5f5f4;font-size:10px;padding:12px 8px;font-weight:500;color:#858991}
+.meter-reference .meter-room{padding:12px 8px;font-size:11px}
+.meter-reference .meter-floor h3{background:#fff;font-size:10px;color:#858991;border-bottom:1px solid #e9eaec}
+.meter-reference .meter-room-heading h4{font-size:12px}
+.meter-reference .meter-occupancy{font-size:9px;background:transparent;padding:0}
+.meter-reference .meter-status-badge{font-size:9px;border-radius:12px;padding:4px 8px}
+.meter-reference .meter-status-badge.is-complete{background:#e9eaec;color:#555b64}
+.meter-reference .meter-list-note,.meter-reference .meter-list-foot{font-size:10px;color:#858991}
+.meter-period-comparison{margin-left:auto;font-size:9px;color:#858991;font-weight:400}
+.meter-state-filter select{font-size:10px;border-color:#e9eaec;min-height:30px}
+.meter-filter-dropdown{position:relative;display:block}
+.meter-filter-trigger{position:relative;width:100%;min-height:34px!important;padding:7px 30px 7px 10px;border:1px solid #e9eaec;border-radius:5px;background:#fff;color:#555b64;font-size:12px!important;line-height:1.5;text-align:left;white-space:nowrap}
+.meter-filter-trigger::after{content:'';position:absolute;right:12px;top:50%;width:6px;height:6px;border-right:1.5px solid #858991;border-bottom:1.5px solid #858991;transform:translateY(-70%) rotate(45deg)}
+.meter-filter-trigger[aria-expanded=true]::after{transform:translateY(-30%) rotate(225deg)}
+.meter-filter-trigger:focus-visible{outline:2px solid #bfa77a;outline-offset:2px}
+.meter-filter-menu{min-width:100%;max-height:220px;scrollbar-width:thin}
+.meter-reference .meter-filter-menu button{font-size:11px!important;min-height:34px}
+.meter-reference .meter-list-tools{gap:8px;margin-bottom:14px}
+.meter-reference .meter-search{flex-basis:260px}
+.meter-reference .meter-search input{font-size:10px;min-height:30px}
+.meter-reference .meter-floor-filter{flex-basis:120px}
+.meter-reference .meter-floor-filter select{font-size:10px;min-height:30px;border-color:#e9eaec}
+.meter-reference .meter-room-heading h4 small{font-weight:400;font-size:9px;color:#858991;margin-left:5px}
+.meter-reference .meter-room{min-height:48px;padding:9px 8px}
+.meter-reference .meter-saved-reading{background:transparent;padding:0}
+.meter-reference .meter-saved-reading strong{font-size:11px}
+.meter-table-total{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 8px;background:#f5f5f4;font-size:10px}
+.meter-table-total small{font-size:9px;color:#858991}
+.meter-service-groups{display:none}
+.meter-table-heading{display:none}
+.meter-unavailable{display:none}
+@media(min-width:1001px){.meter-reference .meter-unavailable{display:block;font-size:10px;color:#858991;line-height:1.5;text-align:center}.meter-reference .meter-room>.meter-form .meter-unavailable{align-self:center}}
+@media(min-width:1001px){
+.meter-reference .meter-table-heading{display:grid;grid-template-columns:var(--meter-columns);grid-template-rows:auto auto;column-gap:12px;row-gap:8px;padding:12px 8px 9px;background:#f8f8f8;border-top:1px solid #e9eaec;border-bottom:1px solid #e9eaec;margin-top:14px;font-size:10px;color:#858991;align-items:center}
+.meter-head-room{grid-column:1;grid-row:1/3}
+.meter-head-electric,.meter-head-water{display:flex;align-items:center;justify-content:center;gap:5px;font-size:10px;font-weight:600;color:#555b64}
+.meter-head-electric{grid-column:2/5;grid-row:1}
+.meter-head-water{grid-column:5/8;grid-row:1}
+.meter-table-heading svg{width:12px;height:12px;color:#9c8150}
+.meter-head-status{grid-column:8;grid-row:1/3;text-align:center}
+.meter-head-action{grid-column:9;grid-row:1/3;text-align:right}
+.meter-head-sub{grid-row:2;text-align:center;font-size:9px;font-weight:400}
+}
+.meter-reference .meter-list-heading{gap:8px;margin-bottom:12px}
+.meter-reference .meter-list-heading h2{font-size:15px;font-weight:650}
+.meter-reference .meter-list-heading>span{font-size:11px;padding:3px 7px}
+.meter-reference .meter-period-comparison{font-size:10px}
+.meter-reference .meter-list-tools{align-items:center;gap:8px;margin-bottom:12px}
+.meter-reference .meter-search input,.meter-reference .meter-floor-filter select,.meter-reference .meter-state-filter select{font-size:12px;min-height:34px}
+.meter-reference .meter-state-filter{min-width:145px}
+.meter-reference .meter-column-head{font-size:11px;line-height:1.5;padding:10px 8px}
+.meter-reference .meter-room-heading h4{font-size:12px;line-height:1.5;font-weight:650;overflow-wrap:anywhere}
+.meter-reference .meter-room-heading h4 small,.meter-reference .meter-occupancy{font-size:10px}
+.meter-reference .meter-previous{font-size:11px;line-height:1.45}
+.meter-reference .meter-previous strong{font-size:12px}
+.meter-reference .meter-previous small{font-size:10px;line-height:1.4;margin-top:3px}
+.meter-reference .meter-service .form-label{font-size:11px;margin-bottom:4px}
+.meter-reference .meter-room .form-control{min-height:32px;height:32px;padding:5px 8px;font-size:12px;border-radius:5px;border-color:#e9eaec}
+.meter-reference .meter-row-actions .btn{min-height:32px;font-size:11px;padding:5px 10px;border-radius:5px}
+.meter-reference .meter-status-badge{font-size:10px;padding:4px 7px;font-weight:500}
+.meter-reference .meter-table-total{font-size:11px;padding:11px 8px}
+.meter-reference .meter-list-note,.meter-reference .meter-list-foot{font-size:11px;line-height:1.5}
+/* Bộ lọc cùng chiều cao và cỡ chữ, ô tìm kiếm chiếm phần rộng hơn. */
+.meter-reference .meter-list-tools{gap:8px;align-items:center}
+.meter-reference .meter-search{flex:0 1 280px;height:36px;min-height:36px;padding:0 10px;border:1px solid #e9eaec;border-radius:5px}
+.meter-reference .meter-search>span{font-size:20px;line-height:1;color:#656a73}
+.meter-reference .meter-search input{height:34px;min-height:34px;padding:0;font-size:12px;line-height:1.5;color:#30343b}
+.meter-reference .meter-search input::placeholder{color:#858991}
+.meter-reference .meter-floor-filter{flex:0 0 125px}
+.meter-reference .meter-state-filter{flex:0 0 150px;min-width:0}
+.meter-reference .meter-filter-trigger{height:36px;min-height:36px!important;padding:7px 30px 7px 11px;font-size:12px!important;line-height:1.5;font-weight:400;color:#656a73;border-radius:5px}
+.meter-reference .meter-filter-trigger::after{right:12px;width:6px;height:6px}
+@media(max-width:600px){.meter-reference .meter-search{flex:1 1 100%;width:100%}.meter-reference .meter-floor-filter,.meter-reference .meter-state-filter{flex:1 1 125px}}
+@media(min-width:1001px){.meter-reference .meter-room{gap:12px;padding:11px 8px;min-height:64px}.meter-reference .meter-service-groups{font-size:11px}.meter-reference .meter-column-head{gap:12px}.meter-reference .meter-previous>span{display:none}.meter-reference .meter-consumption>span:not(.meter-cell-label){font-size:11px}.meter-reference .meter-previous input{margin-top:4px}}
+@media(min-width:1001px){.meter-service-groups{display:grid;grid-template-columns:var(--meter-columns);gap:10px;background:#f5f5f4;padding:10px 8px 0;font-size:10px;color:#656a73;margin-top:14px}.meter-service-groups strong:nth-child(2){grid-column:2/5;text-align:center}.meter-service-groups strong:nth-child(3){grid-column:5/8;text-align:center}.meter-reference .meter-column-head{margin-top:0}.meter-reference .meter-floor h3{display:none}}
+@media(min-width:1001px){
+.meter-reference{--meter-columns:minmax(100px,1.5fr) repeat(6,minmax(58px,1fr)) 90px 68px}
+.meter-reference .meter-references,.meter-reference .meter-consumption{display:contents}
+.meter-reference .meter-prev-electric{grid-column:2}
+.meter-reference .meter-electric{grid-column:3}
+.meter-reference .meter-use-electric{grid-column:4}
+.meter-reference .meter-prev-water{grid-column:5}
+.meter-reference .meter-water{grid-column:6}
+.meter-reference .meter-use-water{grid-column:7}
+.meter-reference .meter-row-status{grid-column:8}
+.meter-reference .meter-row-actions{grid-column:9}
+.meter-reference .meter-previous strong{display:block;margin:0;font-size:11px}
+.meter-reference .meter-use-electric,.meter-reference .meter-use-water{font-size:10px;color:#555b64}
+.meter-reference .meter-consumption i{display:none}
+.meter-reference .meter-unsaved-usage{display:none}
+}
+@media(max-width:700px){.meter-reference .meter-stats{grid-template-columns:1fr;gap:10px}.meter-reference .meter-heading-controls{flex-wrap:wrap}.meter-reference .meter-stat{min-height:100px}.meter-reference .meter-list-panel{padding:12px}}
+/* Giữ mọi ô chỉ số trên cùng hàng, kể cả khi một dịch vụ không theo đồng hồ. */
+@media(min-width:1001px){
+.meter-reference .meter-room-heading,
+.meter-reference .meter-prev-electric,.meter-reference .meter-prev-water,
+.meter-reference .meter-electric,.meter-reference .meter-water,
+.meter-reference .meter-use-electric,.meter-reference .meter-use-water,
+.meter-reference .meter-row-status,.meter-reference .meter-row-actions{grid-row:1;align-self:center}
+.meter-reference .meter-previous,.meter-reference .meter-service{text-align:center}
+.meter-reference .meter-saved-reading{padding:0;background:transparent;line-height:1.5}
+.meter-reference .meter-saved-reading strong{font-size:12px;font-weight:650;color:#30343b}
+.meter-reference .meter-use-electric,.meter-reference .meter-use-water{text-align:center;white-space:nowrap}
+.meter-reference .meter-row-status{text-align:center}
+.meter-reference .meter-row-actions{display:flex;align-items:center;justify-content:flex-end}
+.meter-reference .meter-edit{min-height:32px;padding:5px 10px;border:1px solid #e1e3e6;border-radius:5px;font-size:11px;background:#fff;color:#555b64;transition:background .15s,border-color .15s}
+.meter-reference .meter-edit:hover{background:#f5f5f4;border-color:#bfa77a}
+.meter-reference .meter-edit:focus-visible{outline:2px solid #bfa77a;outline-offset:2px}
+}
+/* Dùng chung lưới cột cho tiêu đề, từng phòng và tổng tiêu thụ. */
+@media(min-width:1001px){
+.meter-reference{--meter-columns:minmax(180px,1.65fr) repeat(6,minmax(64px,1fr)) 96px 72px}
+.meter-reference .meter-table-heading,.meter-reference .meter-room,.meter-reference .meter-table-total{column-gap:10px;padding-left:10px;padding-right:10px}
+.meter-reference .meter-table-heading{padding-top:13px;padding-bottom:12px;row-gap:7px;font-size:11px;line-height:1.5}
+.meter-reference .meter-head-electric,.meter-reference .meter-head-water{font-size:12px;font-weight:600}
+.meter-reference .meter-head-sub{font-size:10px}
+.meter-reference .meter-head-action{text-align:center}
+.meter-reference .meter-room{min-height:68px;padding-top:12px;padding-bottom:12px;row-gap:8px}
+.meter-reference .meter-room-heading h4{font-size:12px;line-height:1.5;margin-bottom:3px}
+.meter-reference .meter-room-heading h4 small{display:inline-block;font-size:10px;margin-left:6px;font-weight:400}
+.meter-reference .meter-occupancy{display:block;line-height:1.5;font-size:10px}
+.meter-reference .meter-previous strong,.meter-reference .meter-saved-reading strong,.meter-reference .meter-use-electric,.meter-reference .meter-use-water{font-size:12px;line-height:1.5;font-variant-numeric:tabular-nums}
+.meter-reference .meter-previous small{font-size:10px;margin-top:2px}
+.meter-reference .meter-unavailable{font-size:10px;line-height:1.5}
+.meter-reference .meter-status-badge{font-size:10px;line-height:1.5;padding:4px 8px;white-space:nowrap}
+.meter-reference .meter-row-actions{justify-content:center}
+.meter-reference .meter-edit,.meter-reference .meter-save{width:68px;min-height:32px;font-size:11px;line-height:1.5}
+.meter-reference .meter-table-total{display:grid;grid-template-columns:var(--meter-columns);min-height:46px;font-size:11px;line-height:1.5}
+.meter-reference .meter-table-total>strong{grid-column:1}
+.meter-reference .meter-table-total>span{grid-row:1;text-align:center;font-variant-numeric:tabular-nums}
+.meter-reference .meter-table-total>span:nth-child(2){grid-column:4}
+.meter-reference .meter-table-total>span:nth-child(3){grid-column:7}
+.meter-reference .meter-table-total>small{grid-column:8/10;grid-row:1;font-size:10px;text-align:right;line-height:1.5}
+}
+.meter-top-actions .meter-progress-link{display:inline-flex;align-items:center;justify-content:center;gap:6px;text-decoration:none;white-space:nowrap}.meter-progress-link svg{width:14px;height:14px;flex-shrink:0}

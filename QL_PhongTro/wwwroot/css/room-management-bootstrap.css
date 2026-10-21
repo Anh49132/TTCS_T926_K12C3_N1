@@ -1,0 +1,57 @@
+/* Bootstrap room management, preserving filtering, export and room actions. */
+.room-management-bootstrap{max-width:1440px;margin:0 auto;line-height:1.5}
+.room-management-bootstrap .rm-heading{gap:1rem;margin-bottom:.875rem}
+.room-management-bootstrap .rm-heading h1{font-size:clamp(1.5rem,2.3vw,2rem);line-height:1.25;letter-spacing:-.025em;margin-bottom:.3rem}
+.room-management-bootstrap .rm-heading p{font-size:.82rem;line-height:1.5}
+.room-management-bootstrap .rm-button{min-height:42px;border-radius:9px;font-size:.78rem;padding:.65rem 1rem;font-weight:600}
+.room-management-bootstrap .rm-stats{gap:.875rem;margin-bottom:.875rem}
+.room-management-bootstrap .rm-stats article,.room-management-bootstrap .rm-panel{border:1px solid #e6e9eb;border-radius:13px;box-shadow:0 3px 12px #25282d03;background:#fff}
+.room-management-bootstrap .rm-stats article{padding:1rem;min-width:0}
+.room-management-bootstrap .rm-stats article>span{font-size:.78rem;line-height:1.5;gap:.5rem;align-items:center}
+.room-management-bootstrap .rm-stats .rm-stat-icon{display:grid;place-items:center;width:32px;height:32px;flex:0 0 32px;border-radius:9px;background:#bfa77a19;color:#92774c}
+.room-management-bootstrap .rm-stat-icon svg{width:19px;height:19px;stroke:currentColor}
+.room-management-bootstrap .rm-stats strong{font-size:1.9rem;line-height:1.3;margin-top:.5rem;letter-spacing:-.02em}
+.room-management-bootstrap .rm-stats small{font-size:.73rem;letter-spacing:0}
+.room-management-bootstrap .rm-stats p{font-size:.72rem;line-height:1.5;margin:.4rem 0 0}
+.room-management-bootstrap .rm-attention{padding:.7rem 1rem;margin-bottom:.875rem;border:1px solid #e9dfca;border-radius:10px;background:#f7f2e8;font-size:.74rem;line-height:1.5;align-items:center}
+.room-management-bootstrap .rm-panel-heading{padding:.9rem 1.1rem .55rem;gap:.75rem}
+.room-management-bootstrap .rm-panel-heading h2{font-size:1.1rem;line-height:1.5}
+.room-management-bootstrap .rm-panel-heading h2 small{font-size:.68rem;display:inline-block;padding:.25rem .6rem;border-radius:20px}
+.room-management-bootstrap .rm-view{padding:.25rem;border-radius:9px}
+.room-management-bootstrap .rm-view button{height:30px;width:32px;border-radius:6px;cursor:pointer}
+.room-management-bootstrap .rm-tabs{padding:0 1.1rem;gap:1.3rem;flex-wrap:nowrap}
+.room-management-bootstrap .rm-tabs a{font-size:.77rem;padding:.6rem 0;line-height:1.5}
+.room-management-bootstrap .rm-filters{padding:.75rem 1.1rem;gap:.65rem;align-items:center;flex-wrap:wrap}
+.room-management-bootstrap .rm-search{height:42px;flex:1 1 280px;min-width:0;border-radius:9px;background:#fafaf9;border-color:#e3e7e9;padding:0 .8rem;gap:.65rem}
+.room-management-bootstrap .rm-search svg{width:17px;height:17px}
+.room-management-bootstrap .rm-search .form-control{height:40px;font-size:.8rem;line-height:1.5;padding:0;border:0;border-radius:0;background:transparent;box-shadow:none}
+.room-management-bootstrap .rm-search:focus-within{border-color:#bfa77a;box-shadow:0 0 0 .18rem #bfa77a26}
+.room-management-bootstrap .rm-filter-select{height:42px;min-height:42px;flex:0 1 220px;border-radius:9px;border-color:#e3e7e9;padding:0 .7rem;font-size:.75rem;min-width:0;gap:.5rem}
+.room-management-bootstrap .rm-custom-trigger{height:40px;font-size:.76rem;min-width:0}
+.room-management-bootstrap .rm-custom-menu{border-radius:9px;padding:.3rem;box-shadow:0 6px 18px #25282d12}
+.room-management-bootstrap .rm-custom-menu button{font-size:.75rem;min-height:34px;border-radius:6px}
+.room-management-bootstrap .rm-filters #rm-sort{height:42px;font-size:.75rem;border-radius:9px;padding:.6rem .75rem;gap:.4rem}
+.room-management-bootstrap .rm-table{font-size:.79rem;--bs-table-bg:transparent}
+.room-management-bootstrap .rm-table th{font-size:.65rem;font-weight:600;letter-spacing:.02em;padding:.7rem 1.1rem;background:#f8f9f7;color:#7d858f;border-block:1px solid #eef0ed}
+.room-management-bootstrap .rm-table td{padding:.8rem 1.1rem;font-size:.79rem;line-height:1.5;border-color:#eef0ed;box-shadow:none}
+.room-management-bootstrap .rm-table tbody tr:hover{background:#fafaf7}
+.room-management-bootstrap .rm-table small{font-size:.7rem;line-height:1.5;margin-top:.2rem}
+.room-management-bootstrap .rm-avatar{width:32px;height:32px;font-size:.72rem;background:#f3f1eb;color:#92774c}
+.room-management-bootstrap .rm-status{display:inline-block;border-radius:20px;padding:.35rem .65rem;font-size:.7rem}
+.room-management-bootstrap .rm-actions .rm-detail{font-size:.75rem}
+.room-management-bootstrap .rm-edit{padding:.3rem .5rem;border-radius:7px}
+.room-management-bootstrap .rm-actions details>div{border-radius:9px;padding:.3rem}
+.room-management-bootstrap .rm-actions details a,.room-management-bootstrap .rm-actions details button{font-size:.75rem;border-radius:6px}
+.room-management-bootstrap .rm-pagination{padding:.8rem 1.1rem;font-size:.72rem;gap:.65rem;flex-wrap:wrap}
+.room-management-bootstrap .rm-pagination select{font-size:.72rem;border-radius:7px;width:auto;min-height:34px;padding:.4rem 1.8rem .4rem .6rem}
+.room-management-bootstrap .rm-pagination button{height:32px;width:32px;border-radius:7px;font-size:.75rem}
+.room-management-bootstrap .rm-grid .rm-table tbody{gap:1rem;padding:1rem}
+.room-management-bootstrap .rm-grid .rm-table tr{border-radius:11px;padding:.65rem}
+.room-management-bootstrap .rm-grid .rm-table td{padding:.5rem}
+.room-management-bootstrap .rm-grid .rm-table td:first-child{width:100%}
+.room-management-bootstrap .rm-grid .rm-table td:nth-child(2){width:auto}
+.rm-create-choice{border-radius:16px;border:1px solid #e6e9eb;box-shadow:0 16px 60px #25282d26}
+@media(max-width:1000px){.room-management-bootstrap .rm-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.room-management-bootstrap .rm-search{flex-basis:100%}.room-management-bootstrap .rm-filter-select{flex:1 1 190px}}
+@media(max-width:600px){.room-management-bootstrap .rm-heading{align-items:stretch}.room-management-bootstrap .rm-header-actions{display:flex}.room-management-bootstrap .rm-header-actions .rm-button{flex:1;padding:.6rem}.room-management-bootstrap .rm-stats{gap:.65rem}.room-management-bootstrap .rm-stats article{padding:.85rem}.room-management-bootstrap .rm-stats article>span{font-size:.72rem}.room-management-bootstrap .rm-stats strong{font-size:1.5rem}.room-management-bootstrap .rm-attention{flex-direction:column;align-items:flex-start;gap:.5rem}.room-management-bootstrap .rm-panel-heading,.room-management-bootstrap .rm-filters{padding:.9rem}.room-management-bootstrap .rm-tabs{padding-inline:.9rem;gap:1rem}.room-management-bootstrap .rm-filter-select{flex:1 1 100%;max-width:100%}.room-management-bootstrap .rm-filters #rm-sort{width:100%}.room-management-bootstrap .rm-pagination nav{flex-wrap:wrap}.room-management-bootstrap .rm-grid .rm-table tbody{grid-template-columns:1fr}}
+.room-management-bootstrap .rm-search{position:relative;display:flex;align-items:center}.room-management-bootstrap .rm-search svg{position:static;transform:none;flex:0 0 17px}.room-management-bootstrap .rm-search .form-control{position:static;flex:1;width:0;min-width:0;padding:0;margin:0}
+.room-management-bootstrap .rm-filters .rm-search{display:block;position:relative;padding:0;height:42px}.room-management-bootstrap .rm-filters .rm-search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:17px;height:17px}.room-management-bootstrap .rm-filters .rm-search input.form-control{display:block;position:static;width:100%;height:40px;padding:0 .8rem 0 2.4rem;box-sizing:border-box}

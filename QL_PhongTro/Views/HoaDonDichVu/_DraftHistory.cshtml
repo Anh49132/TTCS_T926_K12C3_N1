@@ -1,0 +1,32 @@
+@model IReadOnlyList<QL_PhongTro.ViewModels.LichSuHoaDonNhapViewModel>
+@{ var vn = System.Globalization.CultureInfo.GetCultureInfo("vi-VN"); }
+<section class="mi-card" id="draft-history"><h2>Lịch sử sửa hóa đơn Nháp</h2>
+<p class="mi-muted">Mỗi lần lưu có thay đổi được ghi riêng, mới nhất ở trên. Lịch sử giữ nguyên sau phát hành hoặc hủy.</p>
+@if (Model.Count == 0) { <p>Chưa có lần sửa Nháp được ghi nhận.</p> }
+@foreach (var entry in Model)
+{
+    <details class="mb-3" open><summary><strong>@entry.NguoiSua</strong> · @entry.ThoiDiem.AddHours(7).ToString("dd/MM/yyyy HH:mm:ss") · Lần lưu #@entry.Id</summary>
+    @if (entry.Truoc is null || entry.Sau is null) { <p>Không đọc được nội dung bản ghi này. Nhật ký gốc vẫn được giữ nguyên.</p> }
+    else
+    {
+        <p>Tổng tiền: <strong>@entry.Truoc.TongTien.ToString("N0", vn) đ → @entry.Sau.TongTien.ToString("N0", vn) đ</strong></p>
+        @if(entry.Truoc.HanThanhToan != entry.Sau.HanThanhToan){<p>Hạn thanh toán: @(entry.Truoc.HanThanhToan?.ToString("dd/MM/yyyy") ?? "—") → @entry.Sau.HanThanhToan?.ToString("dd/MM/yyyy")</p>}
+        @foreach(var removed in entry.Truoc.Dong.Where(x=>!entry.Sau.Dong.Any(y=>y.SoThuTu==x.SoThuTu))){<p>Đã xóa khoản: <strong>@removed.TenKhoan</strong> · @removed.ThanhTien.ToString("N0",vn) đ</p>}
+        @foreach (var line in entry.Sau.Dong)
+        {
+            var old = entry.Truoc.Dong.SingleOrDefault(x => x.SoThuTu == line.SoThuTu);
+            if (old == line) { continue; }
+            <div class="border rounded p-2 mb-2">
+            <strong>@line.TenKhoan</strong> <span>@(line.LoaiKhoan == "GIAM_TRU" ? "(Giảm trừ)" : line.LoaiKhoan == "PHAT_SINH" ? "(Phát sinh)" : "")</span>
+            @if (old is null) { <p>Trước: chưa có khoản này.</p> }
+            @if (line.ChiSoDau.HasValue) {
+                <p>Chỉ số đầu: @(old?.ChiSoDau?.ToString("0.###", vn) ?? "—") → @line.ChiSoDau?.ToString("0.###", vn)<br />Chỉ số cuối: @(old?.ChiSoCuoi?.ToString("0.###", vn) ?? "—") → @line.ChiSoCuoi?.ToString("0.###", vn)<br />Sản lượng: @(old?.SoLuong.ToString("0.###", vn) ?? "—") → @line.SoLuong.ToString("0.###", vn)</p>
+            }
+            <p>Thành tiền: @(old is null ? "Chưa có" : old.ThanhTien.ToString("N0", vn) + " đ") → @line.ThanhTien.ToString("N0", vn) đ</p>
+            @if (!string.IsNullOrEmpty(line.GhiChu) || !string.IsNullOrEmpty(old?.GhiChu)) { <p style="overflow-wrap:anywhere">Ghi chú trước: @(old?.GhiChu ?? "—")<br />Ghi chú sau: @(line.GhiChu ?? "—")</p> }
+            </div>
+        }
+    }
+    </details>
+}
+</section>

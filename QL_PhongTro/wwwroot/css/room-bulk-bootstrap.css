@@ -1,0 +1,60 @@
+/* Bootstrap styling scoped to bulk creation, retaining preview and POST hooks. */
+.room-bulk-bootstrap{max-width:1440px;margin:0 auto;line-height:1.5}
+.room-bulk-bootstrap .rb-heading{gap:1rem;margin-bottom:.875rem;padding-bottom:.875rem}
+.room-bulk-bootstrap .rb-heading h1{font-size:clamp(1.5rem,2.3vw,2rem);line-height:1.25;letter-spacing:-.025em;margin-bottom:.3rem}
+.room-bulk-bootstrap .rb-heading p{font-size:.82rem;line-height:1.5;max-width:800px}
+.room-bulk-bootstrap .rb-tag{font-size:.73rem;border-radius:8px;padding:.55rem .75rem;background:#f7f2e8;border-color:#e9dfca;white-space:nowrap}
+.room-bulk-bootstrap .rb-layout{grid-template-columns:minmax(0,1fr) 310px;gap:1rem;align-items:start}
+.room-bulk-bootstrap .rb-main,.room-bulk-bootstrap .rb-preview{gap:1rem;min-width:0}
+.room-bulk-bootstrap .rb-card{padding:1rem;border:1px solid #e6e9eb;border-radius:13px;box-shadow:0 3px 12px #25282d03;min-width:0}
+.room-bulk-bootstrap .rb-card-heading{gap:.75rem;padding-bottom:.65rem;margin-bottom:.75rem;border-bottom:1px solid #eef0ed}
+.room-bulk-bootstrap .rb-icon{width:36px;height:36px;flex:0 0 36px;border-radius:9px;background:#bfa77a19;color:#92774c}
+.room-bulk-bootstrap .rb-icon svg{width:20px;height:20px;stroke:#92774c}
+.room-bulk-bootstrap .rb-card-heading h2{font-size:.95rem;line-height:1.4;margin:0 0 .2rem}
+.room-bulk-bootstrap .rb-card-heading p{font-size:.74rem;line-height:1.5;margin:0}
+.room-bulk-bootstrap .rb-card-heading>small{font-size:.66rem;white-space:nowrap}
+.room-bulk-bootstrap .rb-fields{gap:.75rem 1rem}
+.room-bulk-bootstrap .rb-fields>div{min-width:0}
+.room-bulk-bootstrap label{font-size:.77rem;line-height:1.5;margin-bottom:.3rem;color:#4c5660}
+.room-bulk-bootstrap .form-control,.room-bulk-bootstrap .form-select{height:44px;border:1px solid #e3e7e9;border-radius:9px;padding:.65rem .8rem;font-size:.8rem;line-height:1.4;background-color:#fafaf9;min-width:0}
+.room-bulk-bootstrap .form-select{padding-right:2rem}
+.room-bulk-bootstrap textarea.form-control{height:auto;min-height:88px;resize:vertical}
+.room-bulk-bootstrap .form-control:focus,.room-bulk-bootstrap .form-select:focus{border-color:#bfa77a;box-shadow:0 0 0 .18rem #bfa77a26;background-color:#fff;outline:0}
+.room-bulk-bootstrap input[readonly]{background:#f3f4f1;border-style:dashed;color:#969da4}
+.room-bulk-bootstrap .rb-unit input{padding-right:5.8rem}
+.room-bulk-bootstrap .rb-unit>span{top:0;height:44px;display:flex;align-items:center;font-size:.7rem}
+.room-bulk-bootstrap .rb-fields small,.room-bulk-bootstrap .rb-status small{font-size:.7rem;line-height:1.5;margin-top:.3rem}
+.room-bulk-bootstrap .rb-status{padding-top:.75rem;margin-top:.85rem;gap:1rem;align-items:center}
+.room-bulk-bootstrap .rb-status select{height:44px;border-radius:9px;font-size:.78rem;min-width:190px}
+.room-bulk-bootstrap .rb-additional summary{gap:.75rem}
+.room-bulk-bootstrap .rb-additional-title strong{font-size:.9rem;line-height:1.5}
+.room-bulk-bootstrap .rb-additional-title>span,.room-bulk-bootstrap .rb-additional summary p{font-size:.7rem;line-height:1.5}
+.room-bulk-bootstrap .rb-expand{font-size:.73rem}
+.room-bulk-bootstrap .rb-additional-body{padding-top:.85rem;margin-top:.75rem;border-top:1px solid #eef0ed}
+.room-bulk-bootstrap .rb-hint{font-size:.72rem;line-height:1.5;margin:.7rem 0 0}
+.room-bulk-bootstrap .rb-preview>.rb-card{border-top:3px solid #bfa77a}
+.room-bulk-bootstrap .rb-preview-heading{gap:.5rem;margin-bottom:.75rem}
+.room-bulk-bootstrap .rb-preview-heading h2{font-size:.9rem;line-height:1.5}
+.room-bulk-bootstrap .rb-preview-heading>span{font-size:.68rem}
+.room-bulk-bootstrap .rb-building-art{border-radius:9px;overflow:hidden}
+.room-bulk-bootstrap #rb-building-name{font-size:.95rem;line-height:1.5;margin:.75rem 0 .2rem}
+.room-bulk-bootstrap .rb-preview-description{font-size:.72rem;line-height:1.5}
+.room-bulk-bootstrap .rb-facts{padding-top:.75rem;margin-top:.75rem}
+.room-bulk-bootstrap .rb-facts>div{gap:.75rem;margin:.5rem 0;font-size:.73rem;line-height:1.5}
+.room-bulk-bootstrap .rb-facts dd{overflow-wrap:anywhere}
+.room-bulk-bootstrap .rb-preview h4{font-size:.68rem;line-height:1.5;margin-top:1rem}
+.room-bulk-bootstrap #rb-preview-empty,.room-bulk-bootstrap #rb-preview-limit{font-size:.7rem;line-height:1.5}
+.room-bulk-bootstrap #rb-room-list{gap:.4rem;max-height:240px;overflow:auto;padding:.25rem}
+.room-bulk-bootstrap #rb-room-list li{border-radius:6px;padding:.4rem;font-size:.72rem;background:#f8f8f5}
+.room-bulk-bootstrap .rb-note{padding:1rem;border-radius:12px;border:1px solid #e9dfca;background:#f7f2e8}
+.room-bulk-bootstrap .rb-note strong,.room-bulk-bootstrap .rb-note p{font-size:.73rem;line-height:1.5}
+.room-bulk-bootstrap .rb-footer{margin-top:.875rem;padding-top:.875rem;gap:1rem}
+.room-bulk-bootstrap .rb-footer .btn{min-height:42px;border-radius:9px;padding:.65rem 1rem;font-size:.8rem;font-weight:600;display:inline-flex;align-items:center;justify-content:center}
+.room-bulk-bootstrap .rb-continue label{font-size:.75rem;margin:0;gap:.5rem}
+.room-bulk-bootstrap .rb-continue input{width:16px;height:16px;accent-color:#bfa77a}
+.room-bulk-bootstrap .rb-continue small,.room-bulk-bootstrap .rb-actions>small{font-size:.68rem;line-height:1.5}
+.room-bulk-bootstrap .text-danger{font-size:.72rem;line-height:1.5}.room-bulk-bootstrap .text-danger:empty{display:none}
+@media(max-width:1100px){.room-bulk-bootstrap .rb-layout{grid-template-columns:minmax(0,1fr) 270px}.room-bulk-bootstrap .rb-status{flex-wrap:wrap}}
+@media(max-width:850px){.room-bulk-bootstrap .rb-layout{grid-template-columns:1fr}.room-bulk-bootstrap .rb-preview{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));align-items:start}}
+@media(max-width:600px){.room-bulk-bootstrap .rb-card{padding:1rem}.room-bulk-bootstrap .rb-fields,.room-bulk-bootstrap .rb-preview{grid-template-columns:1fr}.room-bulk-bootstrap .rb-heading{align-items:flex-start}.room-bulk-bootstrap .rb-tag{display:none}.room-bulk-bootstrap .rb-card-heading>small{display:none}.room-bulk-bootstrap .rb-status{align-items:stretch;flex-direction:column}.room-bulk-bootstrap .rb-status select{width:100%;min-width:0}.room-bulk-bootstrap .rb-additional summary{flex-wrap:wrap}.room-bulk-bootstrap .rb-expand{margin-left:auto}.room-bulk-bootstrap .rb-footer{flex-direction:column;align-items:stretch}.room-bulk-bootstrap .rb-actions{display:flex;flex-wrap:wrap;gap:.65rem}.room-bulk-bootstrap .rb-actions>small{flex-basis:100%}.room-bulk-bootstrap .rb-actions .btn{flex:1}.dashboard-header:has(.rc-breadcrumb) .account-label{display:none}.dashboard-header .rc-breadcrumb{font-size:.72rem;gap:.35rem;flex:1;min-width:0}.rc-breadcrumb svg{width:17px;height:17px}}
+.room-bulk-bootstrap .rb-state-trigger{min-height:44px;border-radius:9px;font-size:.78rem;padding:.65rem .8rem}.room-bulk-bootstrap .rb-state-menu{border-radius:9px;padding:.3rem}.room-bulk-bootstrap .rb-state-option{font-size:.75rem;border-radius:6px;min-height:34px}

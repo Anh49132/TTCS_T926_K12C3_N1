@@ -1,0 +1,40 @@
+@model QL_PhongTro.ViewModels.DichVuPhongViewModel
+@using System.Globalization
+@using QL_PhongTro.Models
+<div id="room-services" class="rc-services">
+    <div class="rc-services-heading"><h2>Phí dịch vụ</h2><a asp-controller="DichVu" asp-action="Create" asp-route-toaNhaId="@Model.ToaNhaId">＋ Thêm dịch vụ</a></div>
+    <p>Chọn dịch vụ và điều chỉnh đơn giá cho phòng.</p>
+    @if (TempData["Success"] is {} success) { <div class="alert alert-success" role="status">@success</div> }
+    @if (TempData["Error"] is {} error) { <div class="alert alert-danger" role="alert">@error</div> }
+    @if (Model.DichVus.Count == 0) { <p>Tòa nhà chưa có dịch vụ. Khai báo dịch vụ mới để thêm vào phòng.</p> }
+    <div class="rc-service-table" role="group" aria-label="Dịch vụ của phòng">
+        <div class="rc-service-table-head"><span>Dịch vụ áp dụng</span><span>Đơn giá</span><span>Cách tính</span></div>
+        @foreach (var item in Model.DichVus)
+        {
+            var priceForm = $"room-service-price-{item.Id}";
+            var stateForm = $"room-service-state-{item.Id}";
+            var serviceName = item.Ten.ToLowerInvariant();
+            var iconPath = serviceName.Contains("điện") ? "M13 2 4 14h7l-1 8L20 9h-7l1-7Z"
+                : serviceName.Contains("nước") ? "M10 4C8 8 4 11 4 15a6 6 0 0 0 12 0c0-4-4-7-6-11ZM17 3c0 2 4 5 4 8a3 3 0 0 1-3 3M8 15a2 2 0 0 0 2 2"
+                : serviceName.Contains("internet") ? "M2 8a16 16 0 0 1 20 0M5 12a11 11 0 0 1 14 0M8 16a6 6 0 0 1 8 0M12 20h.01"
+                : serviceName.Contains("vệ sinh") || serviceName.Contains("rác") ? "M4 6h16M9 6V3h6v3M6 6l1 15h10l1-15M10 10v7M14 10v7"
+                : "M5 5h14v14H5ZM8 9h8M8 13h8M8 16h4";
+            <div class="rc-service-row">
+                <div class="re-service-name"><span class="re-service-label"><input type="checkbox" checked="@(item.DaChon && !item.NgungTuKy.HasValue)" data-service-toggle data-state-form="@stateForm" aria-label="@(item.Ten + (item.DaChon ? " đang áp dụng" : " chưa chọn"))" /><svg viewBox="0 0 24 24" aria-hidden="true"><path d="@iconPath"/></svg><span>@item.Ten</span></span>
+                    @if (item.NgungTuKy is {} stop) { <small class="text-warning">Ngừng từ @stop.ToString("dd/MM/yyyy")</small> }
+                </div>
+                <div class="re-service-price">
+                    <label class="visually-hidden" for="@priceForm">Đơn giá riêng @item.Ten</label>
+                    <div class="rc-unit"><input id="@priceForm" form="@(item.DaChon ? priceForm+"-form" : stateForm)" name="donGiaRieng" type="number" min="0" step="1" value="@item.DonGiaRieng" placeholder="@(item.Gia?.DonGia.ToString("N0", CultureInfo.GetCultureInfo("vi-VN")) ?? "Chưa có giá")" /><span>đ</span></div>
+                </div>
+                <div class="room-service-actions">
+                    <span class="re-service-method">@(item.Gia is null ? "Chưa có cấu hình" : item.Gia.DonViTinh)</span>
+                    <div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    <p class="rc-service-help">Điện, nước tính theo cấu hình của tòa; các phí còn lại thu cùng tiền thuê hàng tháng.</p>
+    <div class="re-service-notice">ⓘ Giá riêng chỉ áp dụng cho phòng này. Giá trong hợp đồng và hóa đơn đã phát hành được giữ nguyên. Điều chỉnh đơn giá tại trang Dịch vụ &amp; đơn giá.</div>
+</div>

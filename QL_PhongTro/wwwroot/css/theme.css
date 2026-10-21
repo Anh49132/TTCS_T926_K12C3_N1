@@ -1,0 +1,57 @@
+:root {
+ --color-bg: #FFFFFF;
+ --color-bg-muted: #F5F5F4;
+ --color-sidebar: #E9EAEC;
+ --color-sidebar-text: #25282D;
+ --color-sidebar-muted: #656A73;
+ --color-sidebar-hover: #E9EAEC;
+ --color-sidebar-active: #BFA77A;
+ --color-sidebar-border: #E9EAEC;
+ --color-accent: #30343B;
+ --color-border: #E9EAEC;
+ --color-text: #25282D;
+ --color-text-muted: #656A73;
+ --color-primary: #30343B;
+ --color-primary-hover: #30343B;
+ --color-primary-text: #FFFFFF;
+ --color-danger: #A32D2D;
+ --color-success: #656A73;
+ --color-success-bg: #E9EAEC;
+ --color-danger-bg: #FCEBEB;
+ --badge-active-bg: #BFA77A;
+ --badge-active-text: #25282D;
+ --badge-empty-bg: #F9D9D0;
+ --badge-empty-text: #8A2E20;
+ --font-sans: "Be Vietnam Pro", "Inter", system-ui, sans-serif;
+
+ --badge-vacant-bg: var(--badge-empty-bg);
+ --badge-vacant-text: var(--badge-empty-text);
+ --badge-vacant-border: var(--badge-empty-bg);
+ --badge-occupied-bg: var(--badge-active-bg);
+ --badge-occupied-text: var(--badge-active-text);
+ --badge-occupied-border: var(--badge-active-bg);
+ --badge-reserved-bg: var(--color-sidebar-active);
+ --badge-reserved-text: var(--color-sidebar-text);
+ --badge-reserved-border: var(--color-border);
+ --badge-inactive-bg: var(--color-bg-muted);
+ --badge-inactive-text: var(--color-text-muted);
+ --badge-inactive-border: var(--color-border);
+ --color-overlay: #25282D80;
+ --color-shadow: #25282D1A;
+ --sidebar-width: 15rem;
+ --header-height: 3rem;
+ --bs-body-font-family: var(--font-sans);
+ --bs-body-font-size: 0.875rem;
+ --bs-body-color: var(--color-text);
+ --bs-body-bg: var(--color-bg-muted);
+ --bs-primary: var(--color-primary);
+ --bs-primary-rgb: 48, 52, 59;
+ --bs-success-rgb: 79,122,58;
+ --bs-danger-rgb: 163,45,45;
+ --bs-link-color: var(--color-text);
+ --bs-link-hover-color: var(--color-primary-hover);
+ --bs-border-color: var(--color-border);
+}
+
+/* Respect browser font preferences; rem scales from the root size. */
+html { font-size: 100%; }
