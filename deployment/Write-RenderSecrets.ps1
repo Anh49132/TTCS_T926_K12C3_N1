@@ -7,7 +7,7 @@ $taskStorage = (Get-Content -LiteralPath (Join-Path $taskRoot 'data/postgres-por
 $taskUri = [uri]$taskDb.ConnectionUri
 $taskUser = $taskUri.UserInfo.Split(':',2)
 function Quote-ConnectionValue([string]$Value) { return '"' + $Value.Replace('"','""') + '"' }
-$taskConnection = 'Host=' + (Quote-ConnectionValue $taskUri.DnsSafeHost) + ';Database=' + (Quote-ConnectionValue $taskUri.AbsolutePath.Trim('/')) + ';Username=' + (Quote-ConnectionValue ([uri]::UnescapeDataString($taskUser[0]))) + ';Password=' + (Quote-ConnectionValue ([uri]::UnescapeDataString($taskUser[1]))) + ';SSL Mode=VerifyFull;Include Error Detail=false;Maximum Pool Size=10'
+$taskConnection = 'Host=' + (Quote-ConnectionValue $taskUri.DnsSafeHost) + ';Database=' + (Quote-ConnectionValue $taskUri.AbsolutePath.Trim('/')) + ';Username=' + (Quote-ConnectionValue ([uri]::UnescapeDataString($taskUser[0]))) + ';Password=' + (Quote-ConnectionValue ([uri]::UnescapeDataString($taskUser[1]))) + ';SSL Mode=VerifyFull;GSS Encryption Mode=Disable;Include Error Detail=false;Maximum Pool Size=10'
 $taskBrevo = [Environment]::GetEnvironmentVariable('Brevo__ApiKey','User')
 if ([string]::IsNullOrWhiteSpace($taskBrevo)) { throw 'Brevo key not configured in User environment.' }
 $taskEnv = [ordered]@{

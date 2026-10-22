@@ -1489,3 +1489,12 @@ Gộp origin/feature/S4-07/ui-improvements (0784cf5) vào dev928b2e2. Chỉ xung
 <!-- Triển khai Render/Neon 23/10/2026: xem docs/trien-khai-render-neon.md;
 183 kiểm thử storage/image/email đạt; PostgreSQL synthetic write/concurrency/audit rollback đạt;
 2.889 file private được đối chiếu SHA256; source SQLite không đổi. -->
+
+## 23/10/2026 — NhàTốt online trên Render Free + Neon Free
+
+- URL thực tế được Render cấp: https://nhatot-buk7.onrender.com (không phải URL ngắn người dùng đề nghị). Service `srv-dbd4sdl9fdbs73afnmmg`, Singapore, compute free, branch `codex/render-neon`, runtime commit `5af86fd`.
+- Đã nhập bản sao 61 bảng/19.489 dòng vào main sau phê duyệt rõ ràng; đối chiếu từng giá trị/49 EF entity/3 dịch vụ đọc, giữ sequence và nguồn. 2.889 file tham chiếu/180.007.913 byte private đã đọc lại SHA256 khớp; không upload file mồ côi.
+- 183 kiểm thử ảnh/tài liệu/Brevo, 58 kiểm thử SQL/transaction/collection, 33 kiểm thử email/nhắc hạn và 7 Python schema đạt. PostgreSQL synthetic: commit/replay/concurrency/audit rollback/immutability/session/reorder đạt. Release linux-x64 publish đạt; guard không có secret/data riêng, đủ runtime DLL và Linux Skia native probe đạt.
+- Hai lượt deploy commit 5af86fd đều live. HTTPS công khai, đăng nhập/đăng ký, 302 khi chưa đăng nhập, 403, ảnh công khai khớp hash, ảnh private chặn truy cập và phục hồi sau thay instance đạt. Chưa thử đăng nhập với mật khẩu tài khoản thật, chưa gửi thư thật mới hoặc nghiệm thu thiết bị vật lý.
+- Hàng đợi email cũ giữ nguyên, chỉ xử lý notice/log mới theo ranh giới ID cấu hình. Render Free có thể ngủ; không cam kết tác vụ nền 24/7 hoặc backup PostgreSQL hằng ngày. Không thêm thẻ/nâng gói/tài nguyên trả phí.
+- Không commit DB/config/credential/data hoặc sửa project test. Giữ thay đổi AGENTS/README có sẵn. Chi tiết và các giới hạn: docs/trien-khai-render-neon.md.
