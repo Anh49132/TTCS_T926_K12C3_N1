@@ -4,7 +4,7 @@ using QL_PhongTro.Data;
 using QL_PhongTro.Models;
 namespace QL_PhongTro.Services;
 
-public sealed class InvoiceNotificationDispatcher(AppDbContext db, IQueuedInvoiceEmailSender sender, ITimeProvider clock)
+public sealed class InvoiceNotificationDispatcher(AppDbContext db, IQueuedInvoiceEmailSender sender, ITimeProvider clock, IConfiguration? configuration = null)
 {
     private const int MaxAttempts = 4;
 
@@ -16,8 +16,9 @@ public sealed class InvoiceNotificationDispatcher(AppDbContext db, IQueuedInvoic
     {
         if (!await IsInstalledAsync(db, cancellationToken)) return 0;
         var now = clock.UtcNow;
+        var boundary = configuration?.GetValue<int>("Deployment:EmailAfterInvoiceNoticeId") ?? 0;
         var publishedIds = db.HoaDons.Where(x => x.TrangThai == "DA_PHAT_HANH").Select(x => x.Id);
-        var candidates = await db.ThongBaoHoaDons.AsNoTracking().Where(x =>
+        var candidates = await db.ThongBaoHoaDons.AsNoTracking().Where(x => x.Id > boundary &&
             (x.LoaiThongBao == LoaiThongBaoHoaDon.HoaDonMoi
                 || x.LoaiThongBao == LoaiThongBaoHoaDon.SapDenHan
                 || x.LoaiThongBao == LoaiThongBaoHoaDon.QuaHan)

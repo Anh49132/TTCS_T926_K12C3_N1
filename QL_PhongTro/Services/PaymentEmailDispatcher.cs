@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using QL_PhongTro.Data;
 using QL_PhongTro.Models;
 namespace QL_PhongTro.Services;
-public sealed class PaymentEmailDispatcher(AppDbContext db,IPaymentEmailSender sender,ITimeProvider clock)
+public sealed class PaymentEmailDispatcher(AppDbContext db,IPaymentEmailSender sender,ITimeProvider clock,IConfiguration? configuration=null)
 {
     private async Task<(ThongBaoThanhToan Notice,string Invoice)?> Allowed(EmailGuiLog row,CancellationToken ct)
     {
@@ -35,7 +35,8 @@ public sealed class PaymentEmailDispatcher(AppDbContext db,IPaymentEmailSender s
         var exists=await db.Database.SqlQueryRaw<int>("SELECT COUNT(*) AS Value FROM sqlite_master WHERE type='table' AND name IN ('email_gui_log','thong_bao_thanh_toan')").SingleAsync(ct);
         if(exists!=2)return 0;
         var now=clock.UtcNow;
-        var scoped=db.EmailGuiLogs.Where(x=>x.LoaiThongBao.StartsWith(PaymentEmailQueue.Prefix));
+        var boundary=configuration?.GetValue<int>("Deployment:EmailAfterPaymentLogId")??0;
+        var scoped=db.EmailGuiLogs.Where(x=>x.Id>boundary && x.LoaiThongBao.StartsWith(PaymentEmailQueue.Prefix));
         await scoped.Where(x=>x.TrangThai=="DANG_GUI" && x.SoLanThu>=4 && x.NgayThuTiep<=now).ExecuteUpdateAsync(s=>s
             .SetProperty(x=>x.TrangThai,"THAT_BAI").SetProperty(x=>x.NgayThuTiep,(DateTime?)null).SetProperty(x=>x.LoiGanNhat,"Hết số lần thử gửi email thanh toán."),ct);
         var pending=scoped.Where(x=>x.SoLanThu<4 && ((x.TrangThai=="CHO_GUI" && (x.NgayThuTiep==null || x.NgayThuTiep<=now)) || (x.TrangThai=="DANG_GUI" && x.NgayThuTiep<=now)));

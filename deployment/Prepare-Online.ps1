@@ -20,7 +20,7 @@ if ($LASTEXITCODE -ne 0) {
 # Do not delete or overwrite local source data to make this check pass.
 $privateFiles = @(Get-ChildItem $publish -File -Recurse | Where-Object {
     $relative = $_.FullName.Substring($publish.Length).Replace('\', '/')
-    $_.Name -match '(?i)\.(sqlite3?|db)(-|\.|$)|\.bak$|\.lic$|^\.env|^access\.json$|^appsettings\.(?!json$).*\.json$' -or
+    $_.Name -match '(?i)\.(sqlite3?|db)(?!(?:\.dll|\.pdb|\.xml)$)(-|\.|$)|\.bak$|\.lic$|^\.env|^access\.json$|^appsettings\.(?!json$).*\.json$' -or
     $relative -match '(?i)/(App_Data|uploads|keys|email-pickup)/'
 })
 if ($privateFiles.Count -gt 0) {

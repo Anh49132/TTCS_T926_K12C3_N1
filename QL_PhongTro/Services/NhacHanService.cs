@@ -6,12 +6,13 @@ using QL_PhongTro.Models;
 
 namespace QL_PhongTro.Services;
 
-public sealed class NhacHanService(IServiceScopeFactory scopeFactory, ITimeProvider clock)
+public sealed class NhacHanService(IServiceScopeFactory scopeFactory, ITimeProvider clock, IConfiguration? configuration = null)
 {
     public async Task<NhacHanResult> ChayNhacHanAsync(DateOnly? ngayGiaLap = null, CancellationToken cancellationToken = default)
     {
         var result = new NhacHanResult();
         var ngayChay = ngayGiaLap ?? DateOnly.FromDateTime(clock.UtcNow.AddHours(7));
+        var boundary = configuration?.GetValue<int>("Deployment:ReminderAfterInvoiceId") ?? 0;
 
         using var scope = scopeFactory.CreateAsyncScope();
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -22,7 +23,7 @@ public sealed class NhacHanService(IServiceScopeFactory scopeFactory, ITimeProvi
         // 1. Nhắc sắp đến hạn (còn 2 ngày)
         var sapDenHan = await db.HoaDons
             .AsNoTracking()
-            .Where(h => h.TrangThai == "DA_PHAT_HANH"
+            .Where(h => h.Id > boundary && h.TrangThai == "DA_PHAT_HANH"
                 && h.HanThanhToan == ngayChay.AddDays(2)
                 && !db.ThongBaoHoaDons.Any(t => t.HoaDonId == h.Id && t.LoaiThongBao == LoaiThongBaoHoaDon.SapDenHan))
             .Select(h => new { h.Id, h.HopDongId, h.Thang, h.Nam, h.TongTien, h.HanThanhToan })
@@ -59,7 +60,7 @@ public sealed class NhacHanService(IServiceScopeFactory scopeFactory, ITimeProvi
         // 2. Nhắc quá hạn (ngày sau hạn thanh toán)
         var quaHan = await db.HoaDons
             .AsNoTracking()
-            .Where(h => h.TrangThai == "DA_PHAT_HANH"
+            .Where(h => h.Id > boundary && h.TrangThai == "DA_PHAT_HANH"
                 && h.HanThanhToan == ngayChay.AddDays(-1)
                 && !db.ThongBaoHoaDons.Any(t => t.HoaDonId == h.Id && t.LoaiThongBao == LoaiThongBaoHoaDon.QuaHan))
             .Select(h => new { h.Id, h.HopDongId, h.Thang, h.Nam, h.TongTien, h.HanThanhToan })

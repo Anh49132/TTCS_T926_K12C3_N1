@@ -20,7 +20,7 @@ public sealed class RepairEmailRow
     public string? Error {get;set;}
 }
 
-public sealed class RepairEmailDispatcher(AppDbContext db,IRepairEmailSender sender,ITimeProvider clock)
+public sealed class RepairEmailDispatcher(AppDbContext db,IRepairEmailSender sender,ITimeProvider clock,IConfiguration? configuration=null)
 {
     public const string SelectSql="""
         SELECT id AS Id,bao_hong_id AS ReportId,su_kien AS Event,nguoi_nhan_id AS Recipient,vai_tro_nhan AS Role,
@@ -41,8 +41,9 @@ public sealed class RepairEmailDispatcher(AppDbContext db,IRepairEmailSender sen
     {
         if(!await RepairEmailQueue.InstalledAsync(db,ct))return 0;
         var now=clock.UtcNow.ToString("O");
-        await db.Database.ExecuteSqlInterpolatedAsync($"UPDATE email_bao_hong SET trang_thai='THAT_BAI',khoa_xu_ly=NULL,khoa_den=NULL,loi='Hết số lần thử gửi email báo hỏng.' WHERE trang_thai='DANG_GUI' AND khoa_den<={now} AND so_lan_gui>=4",ct);
-        var rows=await db.Database.SqlQueryRaw<RepairEmailRow>(SelectSql+" WHERE so_lan_gui<4 AND ((trang_thai='CHO_GUI' AND (lan_gui_tiep IS NULL OR lan_gui_tiep<={0})) OR (trang_thai='DANG_GUI' AND khoa_den<={0})) ORDER BY id LIMIT 10",now).ToListAsync(ct);
+        var boundary=configuration?.GetValue<int>("Deployment:EmailAfterRepairId")??0;
+        await db.Database.ExecuteSqlInterpolatedAsync($"UPDATE email_bao_hong SET trang_thai='THAT_BAI',khoa_xu_ly=NULL,khoa_den=NULL,loi='Hết số lần thử gửi email báo hỏng.' WHERE id>{boundary} AND trang_thai='DANG_GUI' AND khoa_den<={now} AND so_lan_gui>=4",ct);
+        var rows=await db.Database.SqlQueryRaw<RepairEmailRow>(SelectSql+" WHERE id>{1} AND so_lan_gui<4 AND ((trang_thai='CHO_GUI' AND (lan_gui_tiep IS NULL OR lan_gui_tiep<={0})) OR (trang_thai='DANG_GUI' AND khoa_den<={0})) ORDER BY id LIMIT 10",now,boundary).ToListAsync(ct);
         var sent=0;
         foreach(var row in rows)
         {

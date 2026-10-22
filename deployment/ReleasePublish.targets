@@ -6,15 +6,15 @@
   <Target Name="ExcludeLocalDeploymentInputs" BeforeTargets="ResolveProjectStaticWebAssets;AssignTargetPaths">
     <ItemGroup>
       <Content Remove="@(Content)"
-        Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(Content.Identity)', '(?i)(^|[\\/])(App_Data|uploads|keys|email-pickup)([\\/]|$)|\.(sqlite3?|db)(-|\.|$)|\.bak$|\.lic$|(^|[\\/])\.env|(^|[\\/])access\.json$|(^|[\\/])appsettings\.(?!json$).*\.json$'))" />
+        Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(Content.Identity)', '(?i)(^|[\\/])(App_Data|uploads|keys|email-pickup)([\\/]|$)|\.(sqlite3?|db)(?!(?:\.dll|\.pdb|\.xml)$)(-|\.|$)|\.bak$|\.lic$|(^|[\\/])\.env|(^|[\\/])access\.json$|(^|[\\/])appsettings\.(?!json$).*\.json$'))" />
       <None Remove="@(None)"
-        Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(None.Identity)', '(?i)(^|[\\/])(App_Data|uploads|keys|email-pickup)([\\/]|$)|\.(sqlite3?|db)(-|\.|$)|\.bak$|\.lic$|(^|[\\/])\.env|(^|[\\/])access\.json$|(^|[\\/])appsettings\.(?!json$).*\.json$'))" />
+        Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(None.Identity)', '(?i)(^|[\\/])(App_Data|uploads|keys|email-pickup)([\\/]|$)|\.(sqlite3?|db)(?!(?:\.dll|\.pdb|\.xml)$)(-|\.|$)|\.bak$|\.lic$|(^|[\\/])\.env|(^|[\\/])access\.json$|(^|[\\/])appsettings\.(?!json$).*\.json$'))" />
     </ItemGroup>
   </Target>
   <Target Name="ExcludeLocalDeploymentData" AfterTargets="ComputeFilesToPublish">
     <ItemGroup>
       <ResolvedFileToPublish Remove="@(ResolvedFileToPublish)"
-        Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(ResolvedFileToPublish.RelativePath)', '(?i)(^|[\\/])(App_Data|uploads|keys|email-pickup)([\\/]|$)|\.(sqlite3?|db)(-|\.|$)|\.bak$|\.lic$|(^|[\\/])\.env|(^|[\\/])access\.json$|(^|[\\/])appsettings\.(?!json$).*\.json$'))" />
+        Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('%(ResolvedFileToPublish.RelativePath)', '(?i)(^|[\\/])(App_Data|uploads|keys|email-pickup)([\\/]|$)|\.(sqlite3?|db)(?!(?:\.dll|\.pdb|\.xml)$)(-|\.|$)|\.bak$|\.lic$|(^|[\\/])\.env|(^|[\\/])access\.json$|(^|[\\/])appsettings\.(?!json$).*\.json$'))" />
     </ItemGroup>
   </Target>
 </Project>

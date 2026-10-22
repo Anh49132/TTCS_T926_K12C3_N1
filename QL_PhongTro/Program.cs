@@ -317,7 +317,14 @@ builder.Services.AddAuthentication()
 
 
 var app = builder.Build();
-if (usePostgres) await PostgreSqlStartup.CheckAsync(connectionString);
+if (usePostgres)
+{
+    await PostgreSqlStartup.CheckAsync(connectionString);
+    using var imageProbe = new SkiaSharp.SKBitmap(1, 1);
+    using var imageBytes = imageProbe.Encode(SkiaSharp.SKEncodedImageFormat.Png, 90)
+        ?? throw new InvalidOperationException("Image engine failed its startup check.");
+    app.Logger.LogInformation("PostgreSQL schema and native image engine are ready.");
+}
 
 if (args.Contains("--retry-pending-room-image-deletes"))
 {
