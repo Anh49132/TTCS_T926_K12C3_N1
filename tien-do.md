@@ -1440,6 +1440,13 @@ Gộp origin/feature/S4-07/ui-improvements (0784cf5) vào dev928b2e2. Chỉ xung
 
 - 20/10/2026: Theo yêu cầu, bỏ liên kết Quay lại hợp đồng trên trang Gia hạn, giữ breadcrumb. Build/Razor 0 lỗi (cảnh báo cũ); khởi động lại demo cùng DB, không đổi nghiệp vụ/schema.
 
+## 21/10/2026 - Hop nhat dev vao main
+
+- Theo yeu cau push nhanh hien tai len main: hop nhat snapshot dev ad0f7cb, giu lich su main va cac commit rollback cu. Giai quyet xung dot bang ma nguon dev da doi chieu tree; khong force push.
+- run.bat: bo mat khau SMTP va thong tin tai khoan ghi cung; khong tu tat pickup khi chua cau hinh. Credential chi lay tu environment hoac .env.local, giu uu tien bien moi truong. Khong thay doi cau hinh local/DB. Bi mat da nam trong lich su Git van can duoc thu hoi/thay moi.
+- Build Debug thanh cong, 0 loi; con canh bao ImageSharp license va CS8601 da co. Nhom email 18/18 test dat, 0 skip. Ba luot chay run.bat voi dotnet gia lap dat: khong credential, cau hinh local va environment uu tien.
+- Khong gui email that, khong chay updater/initializer tren DB dang dung. Chua chay lai full suite. Cac ghi chu chua commit va file PowerPoint trong checkout goc duoc giu local, khong dua vao merge nay.
+
 ### 22/10/2026 — Chuẩn bị triển khai online
 
 - Yêu cầu: tự triển khai dự án đang có lên online. Chọn Railway cho ASP.NET Core .NET 10 và SQLite trên persistent volume; Sites hiện chạy Cloudflare Workers nên không hỗ trợ trực tiếp runtime này. Railway chưa kết nối; chưa tạo hosting/domain và chưa có URL online.
@@ -1498,3 +1505,10 @@ Gộp origin/feature/S4-07/ui-improvements (0784cf5) vào dev928b2e2. Chỉ xung
 - Hai lượt deploy commit 5af86fd đều live. HTTPS công khai, đăng nhập/đăng ký, 302 khi chưa đăng nhập, 403, ảnh công khai khớp hash, ảnh private chặn truy cập và phục hồi sau thay instance đạt. Chưa thử đăng nhập với mật khẩu tài khoản thật, chưa gửi thư thật mới hoặc nghiệm thu thiết bị vật lý.
 - Hàng đợi email cũ giữ nguyên, chỉ xử lý notice/log mới theo ranh giới ID cấu hình. Render Free có thể ngủ; không cam kết tác vụ nền 24/7 hoặc backup PostgreSQL hằng ngày. Không thêm thẻ/nâng gói/tài nguyên trả phí.
 - Không commit DB/config/credential/data hoặc sửa project test. Giữ thay đổi AGENTS/README có sẵn. Chi tiết và các giới hạn: docs/trien-khai-render-neon.md.
+
+## 23/10/2026 — Hợp nhất bản triển khai vào main
+
+- Theo yêu cầu trực tiếp đưa codex/render-neon lên main: lấy origin mới nhất, giữ toàn bộ lịch sử main và phần run.bat đã bỏ thông tin SMTP ghi cứng. Không force push.
+- Xung đột duy nhất ở tien-do.md được giải quyết bằng cách giữ cả ghi chép main 21/10 và các mốc triển khai 22–23/10. Không đổi mã ứng dụng so với nhánh deploy đã kiểm thử; không sửa project test hoặc CSDL.
+- Build Release ra data/main-merge-check đạt 0 lỗi, còn 2 CS8601 cũ trong AuthController. Kiểm tra conflict/whitespace và guard secret/data đạt. Các tệp review/output local không đưa vào commit.
+- Giữ cấu hình Render hiện tại; hợp nhất Git không thay nhánh deploy, không chạy initializer/updater hoặc gửi email thật.

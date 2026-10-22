@@ -30,15 +30,11 @@ if exist ".env.local" (
     )
 )
 
-rem Gmail SMTP defaults. Environment variables and .env.local take precedence.
-if not defined PasswordReset__PickupDirectory set "PasswordReset__PickupDirectory= "
+rem SMTP connection defaults. Credentials must come from environment or .env.local.
 if not defined PasswordReset__PublicBaseUrl set "PasswordReset__PublicBaseUrl=http://localhost:5247"
 if not defined PasswordReset__Host set "PasswordReset__Host=smtp.gmail.com"
 if not defined PasswordReset__Port set "PasswordReset__Port=587"
 if not defined PasswordReset__EnableSsl set "PasswordReset__EnableSsl=true"
-if not defined PasswordReset__Username set "PasswordReset__Username=aut0mail670@gmail.com"
-if not defined PasswordReset__Password set "PasswordReset__Password=yazt tjix atng dvzz"
-if not defined PasswordReset__From set "PasswordReset__From=aut0mail670@gmail.com"
 
 if not "%~1"=="" if /I not "%~1"=="--check-only" (
     echo Cach dung: run.bat [--check-only]
