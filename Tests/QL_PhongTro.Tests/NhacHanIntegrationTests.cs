@@ -100,16 +100,6 @@ public sealed class NhacHanIntegrationTests : IDisposable
     }
 
     [Fact]
-    public async Task ChayTuCommandLine_CreatesQuaHan_WhenDue1DayAgo()
-    {
-        SeedInvoice(new DateOnly(2026, 10, 10));
-        var result = await QL_PhongTro.Services.NhacHanService.ChayTuCommandLine(_dbPath, new DateOnly(2026, 10, 11));
-        Assert.Equal(0, result.SapDenHan);
-        Assert.Equal(1, result.QuaHan);
-        Assert.Equal(1, CountThongBao(_dbPath, 1, QL_PhongTro.Models.LoaiThongBaoHoaDon.QuaHan));
-    }
-
-    [Fact]
     public async Task ChayTuCommandLine_RunningTwice_DoesNotDuplicate()
     {
         SeedInvoice(new DateOnly(2026, 10, 10));
@@ -117,5 +107,74 @@ public sealed class NhacHanIntegrationTests : IDisposable
         var result = await QL_PhongTro.Services.NhacHanService.ChayTuCommandLine(_dbPath, new DateOnly(2026, 10, 8));
         Assert.Equal(0, result.SapDenHan);
         Assert.Equal(1, CountThongBao(_dbPath, 1, QL_PhongTro.Models.LoaiThongBaoHoaDon.SapDenHan));
+    }
+
+    [Fact]
+    public async Task ChayTuCommandLine_KhongNhucKhiDaThanhToanDu()
+    {
+        SeedInvoice(new DateOnly(2026, 10, 10), tongTien: 1_000_000);
+        Exec(_dbPath, """
+            INSERT INTO thanh_toan(id,hoa_don_id,so_tien,ngay_thanh_toan,trang_thai)
+            VALUES(1,1,1000000,'2026-10-01','DA_XAC_NHAN');
+            """);
+        var result = await QL_PhongTro.Services.NhacHanService.ChayTuCommandLine(_dbPath, new DateOnly(2026, 10, 8));
+        Assert.Equal(0, result.SapDenHan);
+        Assert.Equal(0, result.QuaHan);
+        Assert.Equal(0, CountThongBao(_dbPath, 1, QL_PhongTro.Models.LoaiThongBaoHoaDon.SapDenHan));
+    }
+
+    [Fact]
+    public async Task ChayTuCommandLine_KhongNhucKhiDaHuy()
+    {
+        SeedInvoice(new DateOnly(2026, 10, 10), trangThai: "DA_HUY");
+        var result = await QL_PhongTro.Services.NhacHanService.ChayTuCommandLine(_dbPath, new DateOnly(2026, 10, 8));
+        Assert.Equal(0, result.SapDenHan);
+        Assert.Equal(0, result.QuaHan);
+        Assert.Equal(0, CountThongBao(_dbPath, 1, QL_PhongTro.Models.LoaiThongBaoHoaDon.SapDenHan));
+    }
+
+    [Fact]
+    public async Task ChayTuCommandLine_NhucKhiThanhToanMotPhan()
+    {
+        SeedInvoice(new DateOnly(2026, 10, 10), tongTien: 2_000_000);
+        Exec(_dbPath, """
+            INSERT INTO thanh_toan(id,hoa_don_id,so_tien,ngay_thanh_toan,trang_thai)
+            VALUES(1,1,500000,'2026-10-01','DA_XAC_NHAN');
+            """);
+        var result = await QL_PhongTro.Services.NhacHanService.ChayTuCommandLine(_dbPath, new DateOnly(2026, 10, 8));
+        Assert.Equal(1, result.SapDenHan);
+        Assert.Equal(1, CountThongBao(_dbPath, 1, QL_PhongTro.Models.LoaiThongBaoHoaDon.SapDenHan));
+        // Kiểm tra số còn phải trả trong nội dung thông báo = 1.500.000
+        var noiDung = GetThongBaoNoiDung(_dbPath, 1, QL_PhongTro.Models.LoaiThongBaoHoaDon.SapDenHan);
+        Assert.Contains("1.500.000", noiDung);
+    }
+
+    [Fact]
+    public async Task ChayTuCommandLine_NhucCuoiThang()
+    {
+        // Hạn 31/10/2026, chạy ngày 29/10/2026 (còn 2 ngày) -> nhắc
+        SeedInvoice(new DateOnly(2026, 10, 31));
+        var result = await QL_PhongTro.Services.NhacHanService.ChayTuCommandLine(_dbPath, new DateOnly(2026, 10, 29));
+        Assert.Equal(1, result.SapDenHan);
+        Assert.Equal(1, CountThongBao(_dbPath, 1, QL_PhongTro.Models.LoaiThongBaoHoaDon.SapDenHan));
+    }
+
+    [Fact]
+    public async Task ChayTuCommandLine_NhucQuaNam()
+    {
+        // Hạn 01/01/2027, chạy ngày 30/12/2026 (còn 2 ngày) -> nhắc
+        SeedInvoice(new DateOnly(2027, 1, 1), tongTien: 3_000_000);
+        var result = await QL_PhongTro.Services.NhacHanService.ChayTuCommandLine(_dbPath, new DateOnly(2026, 12, 30));
+        Assert.Equal(1, result.SapDenHan);
+        Assert.Equal(1, CountThongBao(_dbPath, 1, QL_PhongTro.Models.LoaiThongBaoHoaDon.SapDenHan));
+    }
+
+    private static string GetThongBaoNoiDung(string dbPath, int hoaDonId, string loai)
+    {
+        using var conn = new SqliteConnection($"Data Source={dbPath};Foreign Keys=True;Pooling=False");
+        conn.Open();
+        using var cmd = conn.CreateCommand();
+        cmd.CommandText = $"SELECT NoiDung FROM thong_bao WHERE hoa_don_id={hoaDonId} AND loai_thong_bao='{loai}' ORDER BY id DESC LIMIT 1";
+        return Convert.ToString(cmd.ExecuteScalar()) ?? "";
     }
 }
