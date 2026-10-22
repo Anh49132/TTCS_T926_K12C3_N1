@@ -25,19 +25,19 @@ public partial class PhongTroController {
     else if(extension==".png"&&bytes.AsSpan().StartsWith(new byte[]{137,80,78,71,13,10,26,10}))mime="image/png";
     else if((extension==".jpg"||extension==".jpeg")&&bytes.Length>3&&bytes[0]==255&&bytes[1]==216&&bytes[2]==255)mime="image/jpeg";
     else error="Chỉ nhận PDF, PNG hoặc JPG đúng định dạng.";
-    if(mime?.StartsWith("image/")==true){try{var info=SixLabors.ImageSharp.Image.Identify(bytes);if(info.Width>12000||info.Height>12000||((long)info.Width*info.Height)>40000000)error="Ảnh quá lớn (tối đa 40 triệu điểm ảnh).";}catch(Exception ex)when(ex is SixLabors.ImageSharp.UnknownImageFormatException or SixLabors.ImageSharp.InvalidImageContentException){error="Ảnh không hợp lệ.";}}
+    if(mime?.StartsWith("image/")==true){try{using var image=QL_PhongTro.Services.RasterImage.Decode(bytes,extension,out _,maxPixels:40_000_000,maxDimension:12000,autoOrient:false);}catch(InvalidDataException ex){error=ex.Message;}}
     name=Path.GetFileName(tep.FileName.Replace('\\','/'));if(name.Length>150)name=name[..150];
    }
   }
   if(error!=null){TempData["RoomNoteError"]=error;return RedirectToAction(nameof(NhatKyPhong),new{phongId});}
-  await using var tx=await db.Database.BeginTransactionAsync(ct);
+  await using var tx=await db.Database.BeginProtectedTransactionAsync(ct);
   var normalizedKey=key.ToString();
   if(await db.GhiChuPhongs.AnyAsync(x=>x.KhoaChongTrung==normalizedKey,ct)){TempData["RoomNoteOk"]="Ghi chú đã được lưu.";return RedirectToAction(nameof(NhatKyPhong),new{phongId});}
   var now=clock?.UtcNow??DateTime.UtcNow;
   var note=new GhiChuPhong{PhongId=phongId,NguoiTaoId=accountId,TieuDe=tieuDe!,NoiDung=noiDung!,Ghim=ghim,NgayTao=now,KhoaChongTrung=normalizedKey,TenTep=name,LoaiTep=mime,NoiDungTep=bytes};
   try {
    db.GhiChuPhongs.Add(note);await db.SaveChangesAsync(ct);await tx.CommitAsync(ct);
-  } catch(Exception ex) when (ex is DbUpdateException or Microsoft.Data.Sqlite.SqliteException) {
+  } catch(Exception ex) when (ex is DbUpdateException or DbException) {
    await tx.RollbackAsync(CancellationToken.None);
    TempData["RoomNoteError"]="Không thể lưu ghi chú. Hãy tải lại trang và thử lại.";
    return RedirectToAction(nameof(NhatKyPhong),new{phongId});

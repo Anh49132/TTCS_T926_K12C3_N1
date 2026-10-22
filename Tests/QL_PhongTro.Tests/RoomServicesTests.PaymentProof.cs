@@ -1,3 +1,4 @@
+using SkiaSharp;
 using System.Net;
 using System.Net.Http.Headers;
 using System.Text.RegularExpressions;
@@ -5,8 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using QL_PhongTro.Services;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 using Xunit;
 
 namespace QL_PhongTro.Tests;
@@ -60,20 +59,8 @@ public sealed partial class RoomServicesTests
         using (var verify = Context())
             Assert.Empty(await verify.ThanhToans.ToListAsync());
 
-        byte[] png;
-        using (var image = new Image<Rgba32>(1, 1))
-        using (var stream = new MemoryStream())
-        {
-            await image.SaveAsPngAsync(stream);
-            png = stream.ToArray();
-        }
-        byte[] jpeg;
-        using (var image = new Image<Rgba32>(1, 1))
-        using (var stream = new MemoryStream())
-        {
-            await image.SaveAsJpegAsync(stream);
-            jpeg = stream.ToArray();
-        }
+        var png = TestImages.Encode(1, 1, SKEncodedImageFormat.Png);
+        var jpeg = TestImages.Encode(1, 1, SKEncodedImageFormat.Jpeg);
         var imageStore = new PaymentProofImageStore(Path.Combine(folder, "proof-validation"));
         foreach (var filename in new[] { "evidence.jpg", "evidence.jpeg" })
         {

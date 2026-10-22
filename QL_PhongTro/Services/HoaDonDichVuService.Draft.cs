@@ -12,7 +12,7 @@ public sealed partial class HoaDonDichVuService
     public async Task<int> TaoNhapThangAsync(int actor, int building, int contract, int year, int month, DateOnly? issueDate = null, DateOnly? dueDate = null)
     {
         await db.Database.OpenConnectionAsync();
-        await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var tx = await db.Database.UseTransactionAsync(sqlite);
         await KiemTraChuNhaAsync(actor, building);
         if (!await (from h in db.HopDongs join p in db.PhongTros on h.PhongId equals p.Id
@@ -34,7 +34,7 @@ public sealed partial class HoaDonDichVuService
     public async Task LuuNhapAsync(int actor, SuaHoaDonNhapViewModel input)
     {
         await db.Database.OpenConnectionAsync();
-        await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var tx = await db.Database.UseTransactionAsync(sqlite);
         var building = await (from existing in db.HoaDons.AsNoTracking()
             join contract in db.HopDongs on existing.HopDongId equals contract.Id

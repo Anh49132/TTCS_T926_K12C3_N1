@@ -22,7 +22,7 @@ public partial class HoaDonDichVuController
         catch (UnauthorizedAccessException) { return Forbid(); }
         catch (GhiThuValidationException ex) { TempData["DraftError"] = string.Join(" ", ex.Errors.Values.SelectMany(x => x)); }
         catch (InvalidOperationException ex) { TempData["DraftError"] = ex.Message; }
-        catch (Exception ex) when (ex is DbUpdateException or SqliteException)
+        catch (Exception ex) when (ex is DbUpdateException or DbException)
         { TempData["DraftError"] = "Không thể từ chối lúc này. Chưa có thay đổi nào được lưu; hãy tải lại hóa đơn."; }
         return RedirectToAction(nameof(Details), new { id });
     }
@@ -49,7 +49,7 @@ public partial class HoaDonDichVuController
         catch (UnauthorizedAccessException) { return Forbid(); }
         catch (GhiThuValidationException ex) { TempData["DraftError"] = string.Join(" ", ex.Errors.Values.SelectMany(x => x)); }
         catch (InvalidOperationException ex) { TempData["DraftError"] = ex.Message; }
-        catch (Exception ex) when (ex is DbUpdateException or SqliteException)
+        catch (Exception ex) when (ex is DbUpdateException or DbException)
         { TempData["DraftError"] = "Chưa thể xác nhận. Hãy tải lại hóa đơn; không có khoản thu mới được ghi thêm."; }
         return RedirectToAction(nameof(Details), new { id });
     }
@@ -62,7 +62,7 @@ public partial class HoaDonDichVuController
         catch (UnauthorizedAccessException) { return Forbid(); }
         catch (GhiThuValidationException ex) { return BadRequest(new { errors = ex.Errors }); }
         catch (InvalidOperationException ex) { return Conflict(new { errors = new Dictionary<string, string[]> { [""] = [ex.Message] } }); }
-        catch (Exception ex) when (ex is DbUpdateException or SqliteException)
+        catch (Exception ex) when (ex is DbUpdateException or DbException)
         { return Conflict(new { errors = new Dictionary<string, string[]> { [""] = ["Chưa thể hủy lần thu. Dữ liệu đã được giữ nguyên; hãy tải lại hóa đơn và thử lại."] } }); }
     }
     [HttpGet, Authorize(Roles = "CHU_NHA")]
@@ -86,7 +86,7 @@ public partial class HoaDonDichVuController
         catch (UnauthorizedAccessException) { return Forbid(); }
         catch (GhiThuValidationException ex) { return BadRequest(new { errors = ex.Errors }); }
         catch (InvalidOperationException ex) { return Conflict(new { errors = new Dictionary<string, string[]> { [""] = [ex.Message] } }); }
-        catch (Exception ex) when (ex is DbUpdateException or SqliteException)
+        catch (Exception ex) when (ex is DbUpdateException or DbException)
         { return Conflict(new { errors = new Dictionary<string, string[]> { [""] = ["Dữ liệu đang được cập nhật. Hãy thử lại cùng lần xác nhận để tránh ghi trùng."] } }); }
     }
 }

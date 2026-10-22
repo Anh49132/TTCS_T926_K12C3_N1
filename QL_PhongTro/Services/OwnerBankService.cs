@@ -7,9 +7,9 @@ using QL_PhongTro.ViewModels;
 namespace QL_PhongTro.Services;
 
 // Reuses the existing private upload validation and storage. Keys never leave the backend.
-public sealed class OwnerBankImageStore(string root)
+public sealed class OwnerBankImageStore(string root, DurableFiles? durable = null)
 {
-    private readonly BaoHongImageStore store = new(root);
+    private readonly BaoHongImageStore store = new(root, durable, "bank-qr");
     public async Task<PreparedBaoHongImage?> PrepareAsync(IFormFile? file, CancellationToken ct)
     {
         if (file is null) return null;
@@ -70,7 +70,7 @@ public sealed class OwnerBankService(AppDbContext db, OwnerBankImageStore images
         if (errors.Count != 0) throw new OwnerBankValidationException(errors);
 
         await db.Database.OpenConnectionAsync(ct);
-        await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var transaction = await db.Database.UseTransactionAsync(sqlite, ct);
         var current = await db.TaiKhoanNganHangs.SingleOrDefaultAsync(x => x.ChuNhaId == actor, ct);
         if ((current?.PhienBan ?? "") != (input.PhienBan ?? ""))

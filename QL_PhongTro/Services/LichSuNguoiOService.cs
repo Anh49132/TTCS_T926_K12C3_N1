@@ -18,7 +18,7 @@ public sealed class LichSuNguoiOService(AppDbContext db)
         DateOnly from, DateOnly to, DateOnly today, CancellationToken ct)
     {
         await db.Database.OpenConnectionAsync(ct);
-        await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: true);
+        await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: true);
         await using var transaction = await db.Database.UseTransactionAsync(sqlite, ct);
         if (await PhongAsync(actor, room, ct) == null) throw new UnauthorizedAccessException();
         if (to < from) throw new ArgumentException("Đến ngày không được trước từ ngày.");

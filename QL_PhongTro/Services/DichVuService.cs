@@ -29,7 +29,7 @@ public sealed partial class DichVuService(AppDbContext db, IOptions<DichVuMacDin
         if (close) await connection.OpenAsync();
         try
         {
-            using var command = connection.CreateCommand();
+            using var command = connection.CreatePortableCommand();
             command.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name IN ('dich_vu','cau_hinh_dich_vu','khoi_tao_dich_vu')";
             if (Convert.ToInt32(await command.ExecuteScalarAsync()) != 3) return false;
             command.CommandText = "SELECT COUNT(*) FROM pragma_table_info('cau_hinh_dich_vu') WHERE name='da_chot_gia'";
@@ -41,7 +41,7 @@ public sealed partial class DichVuService(AppDbContext db, IOptions<DichVuMacDin
     public async Task<int> ThemAsync(int accountId, TaoDichVuViewModel input)
     {
         Validator.ValidateObject(input, new ValidationContext(input), validateAllProperties: true);
-        await using var transaction = await db.Database.BeginTransactionAsync();
+        await using var transaction = await db.Database.BeginProtectedTransactionAsync();
         var buildingIds = (input.ToaNhaIds.Count > 0 ? input.ToaNhaIds : new List<int> { input.ToaNhaId!.Value }).Distinct().ToList();
         foreach (var buildingId in buildingIds)
             if (!await SoHuuToaNhaAsync(accountId, buildingId))

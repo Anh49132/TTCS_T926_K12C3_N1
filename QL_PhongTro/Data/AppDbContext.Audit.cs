@@ -76,7 +76,7 @@ public partial class AppDbContext
         }
         if (pending.Count == 0) return await base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         var owned = Database.CurrentTransaction is null;
-        await using var ownTransaction = owned ? await Database.BeginTransactionAsync(cancellationToken) : null;
+        await using var ownTransaction = owned ? await Database.BeginProtectedTransactionAsync(cancellationToken) : null;
         var transaction = Database.CurrentTransaction!;
         var savepoint = "audit_" + Guid.NewGuid().ToString("N");
         if (!owned) await transaction.CreateSavepointAsync(savepoint, cancellationToken);

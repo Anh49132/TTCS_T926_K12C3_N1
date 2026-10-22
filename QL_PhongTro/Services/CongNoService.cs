@@ -22,7 +22,7 @@ public sealed class CongNoService(AppDbContext db, ITimeProvider clock)
             .Select(x => new CongNoIndexViewModel.BuildingOption(x.Id, x.TenToaNha)).ToListAsync();
 
         // Keep the invoice/payment/offset queries in one read snapshot.
-        await using var transaction = await db.Database.BeginTransactionAsync();
+        await using var transaction = await db.Database.BeginProtectedTransactionAsync();
         var invoices = await (from bill in db.HoaDons.AsNoTracking()
             join contract in db.HopDongs.AsNoTracking() on bill.HopDongId equals contract.Id
             join room in db.PhongTros.AsNoTracking() on contract.PhongId equals room.Id

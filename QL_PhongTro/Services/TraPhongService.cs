@@ -77,7 +77,7 @@ public sealed class TraPhongService(AppDbContext db,ITimeProvider clock)
     public static string DauVanTay(TraPhongViewModel model)=>Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(new {model.Input.HopDongId,model.Input.NgayTra,model.ChamDut,model.PhienBanPhong,model.CongTo,model.HoaDon!.TuNgay,model.HoaDon.DenNgay,model.HoaDon.TongTien,model.HoaDon.ChiTiet}))));
     public async Task<int> LuuAsync(int actor,TraPhongInput input)
     {
-        await db.Database.OpenConnectionAsync();await using var sqlite=((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred:false);await using var tx=await db.Database.UseTransactionAsync(sqlite);
+        await db.Database.OpenConnectionAsync();await using var sqlite=db.Database.GetDbConnection().BeginPortableTransaction(deferred:false);await using var tx=await db.Database.UseTransactionAsync(sqlite);
         var model=await NhapAsync(actor,input,true);
         if(input.DauVanTay!=DauVanTay(model))throw new InvalidOperationException("Dữ liệu hợp đồng, giá hoặc chỉ số đã thay đổi. Hãy tính lại hóa đơn.");
         var bill=model.HoaDon!;bill.MaHoaDon="KC"+Guid.NewGuid().ToString("N")[..24];db.HoaDons.Add(bill);await db.SaveChangesAsync();

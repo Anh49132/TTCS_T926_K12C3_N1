@@ -39,7 +39,7 @@ public sealed partial class TatToanController
             await Service.HoanTatAsync(Actor,input);return RedirectToAction(nameof(KetQua),new {id=input.HopDongId});
         }
         catch(UnauthorizedAccessException){return Forbid();}
-        catch(Exception ex)when(ex is InvalidOperationException or OverflowException or DbUpdateException or SqliteException)
+        catch(Exception ex)when(ex is InvalidOperationException or OverflowException or DbUpdateException or DbException)
         {
             db.ChangeTracker.Clear();Response.StatusCode=409;
             ViewData["Message"]=ex is InvalidOperationException?ex.Message:"Không thể xác nhận. Mọi thay đổi đã được giữ nguyên; hãy tải lại để kiểm tra.";
@@ -64,7 +64,7 @@ public sealed partial class TatToanController
             await Service.HoanCocAsync(Actor,input);TempData["RefundSuccess"]="Đã ghi nhận tiền cọc thực tế đã hoàn. Bảng tất toán đã chốt được giữ nguyên.";
         }
         catch(UnauthorizedAccessException){return Forbid();}
-        catch(Exception ex)when(ex is InvalidOperationException or OverflowException or DbUpdateException or SqliteException)
+        catch(Exception ex)when(ex is InvalidOperationException or OverflowException or DbUpdateException or DbException)
         {db.ChangeTracker.Clear();TempData["RefundError"]=ex is InvalidOperationException?ex.Message:"Chưa ghi được hoàn cọc. Vui lòng tải lại và thử cùng phiên để tránh trùng.";}
         return RedirectToAction(nameof(KetQua),new {id=input.HopDongId});
     }

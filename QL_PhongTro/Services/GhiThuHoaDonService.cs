@@ -34,7 +34,7 @@ public sealed partial class GhiThuHoaDonService(AppDbContext db, ITimeProvider c
         if (db.Database.CurrentTransaction is not null) return await SummaryAsync(await OwnedAsync(actor, invoiceId, ct), ct);
         // One read snapshot for receipt states and cancellation history, even if another request cancels during a GET.
         await db.Database.OpenConnectionAsync(ct);
-        await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: true);
+        await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: true);
         await using var tx = await db.Database.UseTransactionAsync(sqlite, ct);
         var invoice = await OwnedAsync(actor, invoiceId, ct);
         var summary = await SummaryAsync(invoice, ct);
@@ -55,7 +55,7 @@ public sealed partial class GhiThuHoaDonService(AppDbContext db, ITimeProvider c
         var remaining = checked(invoice.TongTien - paid);
         // The optional deposit ledger is owned by S4-04. Never count an offset as cash collected.
         if (await db.Database.SqlQuery<int>($"SELECT COUNT(*) AS Value FROM sqlite_master WHERE type='table' AND name='giao_dich_coc'").SingleAsync(ct) != 0)
-            remaining = checked(remaining - await db.Database.SqlQuery<long>($"SELECT COALESCE(SUM(so_tien),0) AS Value FROM giao_dich_coc WHERE hoa_don_id={invoice.Id} AND loai_giao_dich='CAN_TRU' AND trang_thai='DA_XAC_NHAN'").SingleAsync(ct));
+            remaining = checked(remaining - await db.Database.SqlQuery<long>($"SELECT CAST(COALESCE(SUM(so_tien),0) AS BIGINT) AS Value FROM giao_dich_coc WHERE hoa_don_id={invoice.Id} AND loai_giao_dich='CAN_TRU' AND trang_thai='DA_XAC_NHAN'").SingleAsync(ct));
         var status = invoice.TrangThai == "DA_HUY" ? "DA_HUY" : invoice.TrangThai != "DA_PHAT_HANH" ? "NHAP" :
             remaining <= 0 ? "DA_THANH_TOAN" : paid > 0 || remaining < invoice.TongTien ? "THANH_TOAN_MOT_PHAN" : "CHUA_THANH_TOAN";
         var name = status switch { "DA_HUY" => "Đã hủy", "NHAP" => "Chưa phát hành", "DA_THANH_TOAN" => "Đã thanh toán",
@@ -74,7 +74,7 @@ public sealed partial class GhiThuHoaDonService(AppDbContext db, ITimeProvider c
         if (!await SanSangAsync(ct)) throw new InvalidOperationException("Chưa cài chức năng ghi thu. Cần nâng cấp CSDL bằng bước v26 trên bản sao trước.");
         await db.Database.OpenConnectionAsync(ct);
         // IMMEDIATE reserves the writer BEFORE reading balance, across requests/processes.
-        await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var tx = await db.Database.UseTransactionAsync(sqlite, ct);
         var invoice = await OwnedAsync(actorId, input.HoaDonId, ct);
         var actor = await db.TaiKhoans.AsNoTracking().SingleOrDefaultAsync(x => x.Id == actorId && x.DangHoatDong && !x.IsDeleted && x.VaiTro == "CHU_NHA", ct)

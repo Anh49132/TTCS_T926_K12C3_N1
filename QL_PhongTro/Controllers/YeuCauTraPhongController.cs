@@ -42,7 +42,7 @@ public sealed class YeuCauTraPhongController(AppDbContext db, ITimeProvider cloc
             return Redirect(Url.Action(nameof(Index), new { hopDongId }) + $"#request-{id}");
         }
         catch (UnauthorizedAccessException) { return Forbid(); }
-        catch (Exception ex) when (ex is InvalidOperationException or DbUpdateException or SqliteException)
+        catch (Exception ex) when (ex is InvalidOperationException or DbUpdateException or DbException)
         { TempData["Error"] = ex is InvalidOperationException ? ex.Message : "Không thể gửi yêu cầu. Có thể dữ liệu đã thay đổi; hãy tải lại để kiểm tra."; return RedirectToAction(nameof(Index), new { hopDongId }); }
     }
     [HttpPost, ValidateAntiForgeryToken]
@@ -58,7 +58,7 @@ public sealed class YeuCauTraPhongController(AppDbContext db, ITimeProvider cloc
             TempData["Success"] = thaoTac == "DA_TIEP_NHAN" ? "Đã tiếp nhận và ghi nhận ngày bàn giao. Chưa kết thúc hợp đồng hoặc tất toán cọc." : "Đã cập nhật yêu cầu trả phòng.";
         }
         catch (UnauthorizedAccessException) { return Forbid(); }
-        catch (Exception ex) when (ex is InvalidOperationException or DbUpdateException or SqliteException)
+        catch (Exception ex) when (ex is InvalidOperationException or DbUpdateException or DbException)
         { TempData["Error"] = ex is InvalidOperationException ? ex.Message : "Yêu cầu đã thay đổi hoặc không thể lưu. Hãy tải lại và kiểm tra."; }
         return Redirect(Url.Action(nameof(Index)) + $"#request-{id}");
     }

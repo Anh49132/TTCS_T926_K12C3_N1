@@ -2,9 +2,9 @@ using QL_PhongTro.ViewModels;
 
 namespace QL_PhongTro.Services;
 
-public sealed class PaymentProofImageStore(string root)
+public sealed class PaymentProofImageStore(string root, DurableFiles? durable = null)
 {
-    private readonly BaoHongImageStore store = new(root);
+    private readonly BaoHongImageStore store = new(root, durable, "proofs");
 
     public async Task<PreparedBaoHongImage?> PrepareAsync(IFormFile? file, CancellationToken ct)
     {

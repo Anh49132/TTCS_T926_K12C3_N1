@@ -48,7 +48,7 @@ public class CredentialValidationService(AppDbContext db, ITimeProvider timeProv
     {
         if (_db.Database.CurrentTransaction is not null) return await ValidateInTransactionAsync(request);
         await _db.Database.OpenConnectionAsync();
-        await using var sqlite = ((SqliteConnection)_db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        await using var sqlite = _db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var transaction = await _db.Database.UseTransactionAsync(sqlite);
         var result = await ValidateInTransactionAsync(request);
         await sqlite.CommitAsync();

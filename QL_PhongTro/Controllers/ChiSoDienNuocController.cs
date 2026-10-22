@@ -66,7 +66,7 @@ public sealed class ChiSoDienNuocController(ChiSoDienNuocService readings) : Con
             model.Loi=errors;model.Input=input;return View("Index",model);
         }
         catch(UnauthorizedAccessException){return Forbid();}
-        catch(Exception ex) when(ex is DbUpdateException or SqliteException)
+        catch(Exception ex) when(ex is DbUpdateException or DbException)
         {
             ModelState.Clear();var model=await readings.DanhSachAsync(actor,input.ToaNhaId,ct);
             model.Input=input;model.Loi=new(){["Phong"]=["Không thể lưu vì dữ liệu đã thay đổi hoặc lỗi ghi dữ liệu. Hãy tải lại trang."]};

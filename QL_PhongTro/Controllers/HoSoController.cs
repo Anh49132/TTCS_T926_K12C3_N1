@@ -126,7 +126,7 @@ public class HoSoController(AppDbContext db, GiayToImageStore images, HoSoAccess
         {
             await db.SaveChangesAsync();
         }
-        catch (DbUpdateException ex) when (ex.InnerException is Microsoft.Data.Sqlite.SqliteException { SqliteExtendedErrorCode: 787 })
+        catch (DbUpdateException ex) when (DatabaseErrors.IsForeignKey(ex.InnerException))
         {
             TempData["Error"] = "Không thể xóa hồ sơ đang được hợp đồng hoặc dữ liệu khác sử dụng.";
             return RedirectToAction(nameof(Index));

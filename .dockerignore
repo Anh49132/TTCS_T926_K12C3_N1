@@ -1,0 +1,22 @@
+# Only source required by the Render build may enter its context.
+**
+!QL_PhongTro/
+!QL_PhongTro/**
+!docs/
+!docs/sql/
+!docs/sql/**
+!deployment/
+!deployment/Render.Dockerfile
+!deployment/ReleasePublish.targets
+QL_PhongTro/**/bin/**
+QL_PhongTro/**/obj/**
+QL_PhongTro/App_Data/**
+QL_PhongTro/wwwroot/uploads/**
+QL_PhongTro/**/*.sqlite*
+QL_PhongTro/**/*.db*
+QL_PhongTro/**/*.bak*
+QL_PhongTro/**/*.lic
+QL_PhongTro/**/.env*
+QL_PhongTro/**/access.json
+QL_PhongTro/appsettings.*.json
+QL_PhongTro/Tests/**

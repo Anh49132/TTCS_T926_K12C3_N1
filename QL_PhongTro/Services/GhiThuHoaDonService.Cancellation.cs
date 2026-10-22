@@ -14,7 +14,7 @@ public sealed partial class GhiThuHoaDonService
     {
         if (!await HuySanSangAsync(ct)) throw new InvalidOperationException("Chưa cài chức năng hủy lần thu. Cần nâng cấp CSDL bằng bước v27 trên bản sao trước.");
         await db.Database.OpenConnectionAsync(ct);
-        await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var tx = await db.Database.UseTransactionAsync(sqlite, ct);
         var receipt = await db.ThanhToans.AsNoTracking().SingleOrDefaultAsync(x => x.Id == input.ThanhToanId, ct)
             ?? throw new UnauthorizedAccessException();

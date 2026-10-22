@@ -14,7 +14,7 @@ public partial class HoaDonDichVuController
         try { await invoices.HuyAsync(AccountId,model); TempData["DraftSuccess"]="Đã hủy hóa đơn và giữ nguyên bản cũ để tra cứu."; }
         catch (UnauthorizedAccessException) { return Forbid(); }
         catch (InvalidOperationException ex) { TempData["DraftError"]=ex.Message; }
-        catch (Exception ex) when (ex is DbUpdateException or Microsoft.Data.Sqlite.SqliteException) { TempData["DraftError"]="Chưa thể hủy. Dữ liệu đã thay đổi hoặc đang được xử lý; hãy tải lại trang."; }
+        catch (Exception ex) when (ex is DbUpdateException or DbException) { TempData["DraftError"]="Chưa thể hủy. Dữ liệu đã thay đổi hoặc đang được xử lý; hãy tải lại trang."; }
         return RedirectToAction(nameof(Details),new {id=model.Id});
     }
 
@@ -25,7 +25,7 @@ public partial class HoaDonDichVuController
         try { return RedirectToAction(nameof(Details),new { id=await invoices.TaoNhapThayTheAsync(AccountId,id,phienBan) }); }
         catch (UnauthorizedAccessException) { return Forbid(); }
         catch (InvalidOperationException ex) { TempData["DraftError"]=ex.Message; }
-        catch (Exception ex) when (ex is DbUpdateException or Microsoft.Data.Sqlite.SqliteException) { TempData["DraftError"]="Chưa tạo được bản thay thế. Hãy tải lại trang, kiểm tra hóa đơn hiện có."; }
+        catch (Exception ex) when (ex is DbUpdateException or DbException) { TempData["DraftError"]="Chưa tạo được bản thay thế. Hãy tải lại trang, kiểm tra hóa đơn hiện có."; }
         return RedirectToAction(nameof(Details),new {id});
     }
 }

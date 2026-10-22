@@ -45,7 +45,7 @@ public sealed class CheckoutRequestService(AppDbContext db, ITimeProvider clock)
     public async Task<int> SubmitAsync(int actor, int contract, DateOnly? day, string? reason)
     {
         await db.Database.OpenConnectionAsync();
-        await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var tx = await db.Database.UseTransactionAsync(sqlite);
         var c = await CheckAsync(actor, contract, false);
         if (day is null || day < Today || day < c.Start || day >= c.End) throw new InvalidOperationException("Ngày đề nghị phải từ hôm nay, nằm trong kỳ thuê và trước ngày hết hợp đồng.");
@@ -59,7 +59,7 @@ public sealed class CheckoutRequestService(AppDbContext db, ITimeProvider clock)
     public async Task ChangeAsync(int actor, int id, int version, string action, DateOnly? handover, string? response)
     {
         await db.Database.OpenConnectionAsync();
-        await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var tx = await db.Database.UseTransactionAsync(sqlite);
         var r = await db.YeuCauTraPhongs.SingleOrDefaultAsync(x => x.Id == id) ?? throw new UnauthorizedAccessException();
         var cancel = action == "DA_HUY"; var c = await CheckAsync(actor, r.HopDongId, !cancel);

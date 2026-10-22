@@ -1,9 +1,8 @@
+using SkiaSharp;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using Xunit;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 namespace QL_PhongTro.Tests;
 public sealed partial class PermissionTests
 {
@@ -49,14 +48,22 @@ public sealed partial class PermissionTests
     public async Task PersonalAvatarValidatesImageAndProtectsOwnershipAndDelete()
     {
         using var client=await Login("CHU_NHA");var form=await PersonalForm(client);
-        using var pixels=new Image<Rgba32>(12,20);using var stream=new MemoryStream();await pixels.SaveAsPngAsync(stream);
+        using var pixels=new SKBitmap(12,20);
+        for(var y=0;y<20;y++)for(var x=0;x<12;x++)pixels.SetPixel(x,y,y<4?SKColors.Red:y>=16?SKColors.Lime:SKColors.Blue);
+        using var encoded=pixels.Encode(SKEncodedImageFormat.Png,90);var png=encoded.ToArray();
         async Task<HttpResponseMessage> Upload(byte[] bytes,string name){
             using var body=new MultipartFormDataContent();body.Add(new StringContent(form["__RequestVerificationToken"]),"__RequestVerificationToken");
             body.Add(new ByteArrayContent(bytes),"image",name);return await client.PostAsync("/PersonalAccount/Avatar",body);
         }
-        Assert.Equal(HttpStatusCode.Redirect,(await Upload(stream.ToArray(),"photo.png")).StatusCode);
+        Assert.Equal(HttpStatusCode.Redirect,(await Upload(png,"photo.png")).StatusCode);
         var image=await client.GetAsync("/PersonalAccount/Avatar");Assert.Equal("image/png",image.Content.Headers.ContentType!.MediaType);Assert.True(image.Headers.CacheControl!.NoStore);
-        using(var decoded=Image.Load(await image.Content.ReadAsByteArrayAsync())){Assert.Equal(512,decoded.Width);Assert.Equal(512,decoded.Height);}
+        using(var decoded=SKBitmap.Decode(await image.Content.ReadAsByteArrayAsync())){
+            Assert.Equal(512,decoded.Width);Assert.Equal(512,decoded.Height);
+            foreach(var point in new[]{64,448}){
+                var color=decoded.GetPixel(point,point);
+                Assert.InRange(color.Red,0,5);Assert.InRange(color.Green,0,5);Assert.InRange(color.Blue,250,255);Assert.Equal(255,color.Alpha);
+            }
+        }
         Assert.Equal(HttpStatusCode.Forbidden,(await client.GetAsync("/PersonalAccount/Avatar?id="+accounts["ADMIN"])).StatusCode);
         Assert.Equal(HttpStatusCode.Redirect,(await Upload(Encoding.UTF8.GetBytes("<script>alert(1)</script>"),"bad.png")).StatusCode);
         Assert.Equal("image/png",(await client.GetAsync("/PersonalAccount/Avatar")).Content.Headers.ContentType!.MediaType);

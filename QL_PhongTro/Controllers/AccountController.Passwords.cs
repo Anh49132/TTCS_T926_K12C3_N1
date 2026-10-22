@@ -23,7 +23,7 @@ public partial class AccountController
     {
         if (!ModelState.IsValid) return View(model);
         if (!int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id)) return Challenge();
-        await using var transaction = await db.Database.BeginTransactionAsync();
+        await using var transaction = await db.Database.BeginProtectedTransactionAsync();
         var account = await db.TaiKhoans.AsNoTracking().SingleOrDefaultAsync(a => !a.IsDeleted && a.Id == id && a.DangHoatDong);
         if (account is null) return Forbid();
         var valid = false;

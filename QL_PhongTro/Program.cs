@@ -24,7 +24,8 @@ var builder = WebApplication.CreateBuilder(args);
 if (args.Contains("--check-email-config"))
 {
     var mail = builder.Configuration.GetSection("PasswordReset").Get<PasswordResetOptions>() ?? new();
-    Console.WriteLine("Email mode: " + (string.IsNullOrWhiteSpace(mail.PickupDirectory) ? "SMTP" : "PICKUP (local file only; no inbox delivery)"));
+    Console.WriteLine("Email mode: " + (string.IsNullOrWhiteSpace(mail.PickupDirectory) ? mail.Provider : "PICKUP (local file only; no inbox delivery)"));
+    Console.WriteLine("Brevo API key configured: " + !string.IsNullOrWhiteSpace(builder.Configuration["Brevo:ApiKey"]));
     if (!string.IsNullOrWhiteSpace(mail.PickupDirectory))
     {
         var pickupDirectory = Path.IsPathFullyQualified(mail.PickupDirectory)
@@ -39,6 +40,10 @@ if (args.Contains("--check-email-config"))
 }
 
 builder.Services.AddControllersWithViews();
+builder.Services.Configure<BrevoOptions>(builder.Configuration.GetSection("Brevo"));
+builder.Services.AddHttpClient<BrevoEmailTransport>(client => client.Timeout = TimeSpan.FromSeconds(15))
+    .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false })
+    .RedactLoggedHeaders(_ => true);
 builder.Services.Configure<GeminiOptions>(builder.Configuration.GetSection("Gemini"));
 builder.Services.AddHttpClient<IGeminiChatClient, GeminiChatClient>(client => client.Timeout = TimeSpan.FromSeconds(40));
 builder.Services.AddScoped<ChatDataTools>();
@@ -55,10 +60,11 @@ builder.Services.AddRateLimiter(options => {
     };
 });
 builder.Services.AddRazorPages();
+builder.Services.AddSingleton<DurableFiles>();
 builder.Services.AddSingleton<QL_PhongTro.Services.GiayToImageStore>();
 builder.Services.AddScoped<QL_PhongTro.Services.PersonalAvatarStore>();
 builder.Services.AddSingleton(sp => new QL_PhongTro.Services.RoomImageStore(
-    sp.GetRequiredService<IWebHostEnvironment>(), sp.GetRequiredService<IConfiguration>()));
+    sp.GetRequiredService<IWebHostEnvironment>(), sp.GetRequiredService<IConfiguration>(), sp.GetRequiredService<DurableFiles>()));
 builder.Services.AddScoped<QL_PhongTro.Services.HoSoAccess>();
 builder.Services.AddScoped<QL_PhongTro.Services.LichHenService>();
 builder.Services.AddScoped<QL_PhongTro.Services.TienDoChiSoService>();
@@ -67,6 +73,9 @@ builder.Services.AddScoped<IInvoiceEmailSender, InvoiceEmailSender>();
 builder.Services.AddScoped<HopDongPdfService>();
 
 var dataDir = Path.Combine(builder.Environment.ContentRootPath, "Data");
+var usePostgres = string.Equals(builder.Configuration["DatabaseProvider"], "PostgreSql", StringComparison.OrdinalIgnoreCase);
+if (usePostgres && args.Any(a => a.StartsWith("--", StringComparison.Ordinal)))
+    throw new InvalidOperationException("SQLite CLI commands cannot target PostgreSQL. Use the versioned deployment tool.");
 var configuredDatabasePath = builder.Configuration["DatabasePath"];
 var databasePath = string.IsNullOrWhiteSpace(configuredDatabasePath)
     ? Path.Combine(dataDir, "local-dev.sqlite")
@@ -92,7 +101,7 @@ if (args.Contains("--initialize-database"))
     LocalDatabaseInitializer.Create(databasePath, Path.Combine(dataDir, "permissions.seed.json"));
     return;
 }
-if (!File.Exists(databasePath))
+if (!usePostgres && !File.Exists(databasePath))
     throw new FileNotFoundException("Local SQLite database missing. Run --initialize-database explicitly with the same DatabasePath.", databasePath);
 if (args.Contains("--initialize-rental-requests"))
 {
@@ -170,17 +179,31 @@ if (args.Contains("--initialize-service-invoices"))
     DichVuSchemaInitializer.InitializeInvoices(databasePath);
     return;
 }
-var connectionString = new Microsoft.Data.Sqlite.SqliteConnectionStringBuilder
+var connectionString = usePostgres
+    ? PostgreSqlStartup.ConnectionString(builder.Configuration)
+    : new Microsoft.Data.Sqlite.SqliteConnectionStringBuilder
 {
     DataSource = databasePath, Mode = Microsoft.Data.Sqlite.SqliteOpenMode.ReadWrite, ForeignKeys = true
 }.ToString();
-builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlite(connectionString));
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    if (usePostgres) options.UseNpgsql(connectionString).AddInterceptors(new PostgreSqlCommandInterceptor());
+    else options.UseSqlite(connectionString);
+});
 
 // Isolate demo/real databases even when both run on localhost with the same key ring.
 var authScope = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(Path.GetFullPath(databasePath).ToUpperInvariant())))[..24];
 var dataProtection = builder.Services.AddDataProtection().SetApplicationName("QLPhongTro:" + authScope);
+if (usePostgres)
+{
+    if (!builder.Configuration.GetValue<bool>("ObjectStorage:Enabled") || string.IsNullOrWhiteSpace(configuredDatabasePath))
+        throw new InvalidOperationException("PostgreSQL online requires durable private storage and an explicit cache scope.");
+    builder.Services.AddSingleton<DurableKeyRepository>();
+    builder.Services.AddOptions<Microsoft.AspNetCore.DataProtection.KeyManagement.KeyManagementOptions>()
+        .Configure<DurableKeyRepository>((options, repository) => options.XmlRepository = repository);
+}
 var configuredKeyPath = builder.Configuration["DataProtectionKeysPath"];
-if (!string.IsNullOrWhiteSpace(configuredKeyPath))
+if (!usePostgres && !string.IsNullOrWhiteSpace(configuredKeyPath))
 {
     var keyPath = Path.GetFullPath(Path.IsPathRooted(configuredKeyPath)
         ? configuredKeyPath
@@ -199,6 +222,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.SlidingExpiration = true;
         options.Cookie.HttpOnly = true;
         options.Cookie.SameSite = SameSiteMode.Lax;
+        if (!builder.Environment.IsDevelopment()) options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
     });
 builder.Services.AddSingleton<RegistrationSettings>();
 builder.Services.AddHttpContextAccessor();
@@ -221,11 +245,14 @@ builder.Services.AddScoped<IQueuedInvoiceEmailSender, PasswordEmailSender>();
 builder.Services.AddScoped<InvoiceNotificationDispatcher>();
 builder.Services.AddScoped<IRepairEmailSender,PasswordEmailSender>();
 builder.Services.AddScoped<RepairEmailDispatcher>();
-builder.Services.AddHostedService<RepairEmailHostedService>();
+if (!builder.Configuration.GetValue<bool>("Deployment:DisableBackgroundJobs")) builder.Services.AddHostedService<RepairEmailHostedService>();
 builder.Services.AddScoped<IPaymentEmailSender,PasswordEmailSender>();
 builder.Services.AddScoped<PaymentEmailDispatcher>();
-builder.Services.AddHostedService<PaymentEmailHostedService>();
-builder.Services.AddHostedService<InvoiceNotificationHostedService>();
+if (!builder.Configuration.GetValue<bool>("Deployment:DisableBackgroundJobs"))
+{
+    builder.Services.AddHostedService<PaymentEmailHostedService>();
+    builder.Services.AddHostedService<InvoiceNotificationHostedService>();
+}
 builder.Services.AddScoped<PasswordResetService>();
 builder.Services.AddScoped<SessionVersionStore>();
 builder.Services.AddScoped<DichVuService>();
@@ -234,11 +261,11 @@ builder.Services.AddScoped<DichVuPhongService>();
 builder.Services.AddScoped<HoaDonDichVuService>();
 builder.Services.AddScoped<GhiThuHoaDonService>();
 builder.Services.AddScoped<IBaoCaoThanhToanService, BaoCaoThanhToanService>();
-builder.Services.AddSingleton(new PaymentProofImageStore(databasePath + ".payment-proofs"));
-builder.Services.AddSingleton(new OwnerBankImageStore(databasePath + ".bank-qr"));
+builder.Services.AddSingleton(sp => new PaymentProofImageStore(databasePath + ".payment-proofs", sp.GetRequiredService<DurableFiles>()));
+builder.Services.AddSingleton(sp => new OwnerBankImageStore(databasePath + ".bank-qr", sp.GetRequiredService<DurableFiles>()));
 builder.Services.AddScoped<OwnerBankService>();
 builder.Services.AddScoped<IPaymentProofService, PaymentProofService>();
-builder.Services.AddSingleton(new BaoHongImageStore(databasePath + ".repair-images"));
+builder.Services.AddSingleton(sp => new BaoHongImageStore(databasePath + ".repair-images", sp.GetRequiredService<DurableFiles>()));
 builder.Services.AddScoped<BaoHongService>();
 builder.Services.AddScoped<QuanLyBaoHongService>();
 builder.Services.AddScoped<BaoHongChiPhiService>();
@@ -246,10 +273,13 @@ builder.Services.AddScoped<ChuNhaBaoHongService>();
 builder.Services.AddScoped<ChiSoDienNuocService>();
 builder.Services.AddScoped<NhacHanService>();
 builder.Services.AddScoped<RoomImageDeletionService>();
-builder.Services.AddHostedService<RoomImageCleanupHostedService>();
+if (!builder.Configuration.GetValue<bool>("Deployment:DisableBackgroundJobs")) builder.Services.AddHostedService<RoomImageCleanupHostedService>();
 builder.Services.AddScoped<TinDangExpirationService>();
-builder.Services.AddHostedService<TinDangExpirationHostedService>();
-builder.Services.AddHostedService<NhacHanHostedService>();
+if (!builder.Configuration.GetValue<bool>("Deployment:DisableBackgroundJobs"))
+{
+    builder.Services.AddHostedService<TinDangExpirationHostedService>();
+    builder.Services.AddHostedService<NhacHanHostedService>();
+}
 builder.Services.AddScoped<BaoCaoService>();
 builder.Services.Configure<DichVuMacDinhOptions>(builder.Configuration.GetSection("DichVuMacDinh"));
 
@@ -287,6 +317,7 @@ builder.Services.AddAuthentication()
 
 
 var app = builder.Build();
+if (usePostgres) await PostgreSqlStartup.CheckAsync(connectionString);
 
 if (args.Contains("--retry-pending-room-image-deletes"))
 {
@@ -318,7 +349,32 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
+// Render terminates TLS at its proxy. Trust only the forwarded scheme there;
+// never accept an untrusted forwarded host for links or authorization.
+if (builder.Configuration.GetValue<bool>("Deployment:RenderProxy"))
+{
+    app.Use((context, next) =>
+    {
+        if (context.Request.Headers["X-Forwarded-Proto"] == "https") context.Request.Scheme = "https";
+        return next(context);
+    });
+}
 app.UseHttpsRedirection();
+if (usePostgres)
+{
+    app.Use(async (context, next) =>
+    {
+        if (context.Request.Path.StartsWithSegments("/uploads/rooms") && context.Request.Method is "GET" or "HEAD")
+        {
+            var path = app.Services.GetRequiredService<RoomImageStore>().FetchPublicImage(context.Request.Path.Value!);
+            if (path is null || !File.Exists(path)) { context.Response.StatusCode = 404; return; }
+            context.Response.ContentType = Path.GetExtension(path) == ".png" ? "image/png" : "image/jpeg";
+            if (context.Request.Method == "GET") await context.Response.SendFileAsync(path, context.RequestAborted);
+            return;
+        }
+        await next(context);
+    });
+}
 app.UseStaticFiles();
 var configuredRoomImagesPath = builder.Configuration["RoomImagesPath"];
 if (!string.IsNullOrWhiteSpace(configuredRoomImagesPath))
@@ -350,8 +406,12 @@ app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Inde
 
 
 
-DatabaseUpdates.Check(databasePath);
-AccountReuseSchema.Ensure(databasePath);
+if (!usePostgres)
+{
+    DatabaseUpdates.Check(databasePath);
+    AccountReuseSchema.Ensure(databasePath);
+}
+app.MapGet("/healthz", () => Results.Ok(new { status = "ready" })).AllowAnonymous();
 
 app.MapRazorPages();
 await TimTinWarmup.RunAsync(app.Services);

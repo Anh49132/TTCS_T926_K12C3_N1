@@ -114,7 +114,7 @@ public sealed partial class RoomServicesTests
         await Login(tenant, "tenant");
         var pendingPage = WebUtility.HtmlDecode(await tenant.GetStringAsync($"/ThongBao/HoaDon/{invoiceId}"));
         Assert.Contains("Chờ xác nhận", pendingPage);
-        Assert.Contains("Hủy báo cáo", pendingPage);
+        Assert.Contains("Hủy báo thanh toán", pendingPage);
         Assert.DoesNotContain("name=\"soTien\"", pendingPage);
 
         var cancelled = await Post(tenant, "/ThongBao/HuyBaoCaoThanhToan",
@@ -170,7 +170,7 @@ public sealed partial class RoomServicesTests
         using var tenant = factory.CreateClient(new() { AllowAutoRedirect = false });
         await Login(tenant, "tenant");
         var confirmedPage = WebUtility.HtmlDecode(await tenant.GetStringAsync($"/ThongBao/HoaDon/{invoiceId}"));
-        Assert.DoesNotContain("Hủy báo cáo", confirmedPage);
+        Assert.DoesNotContain("Hủy báo thanh toán", confirmedPage);
 
         var rejected = await Post(tenant, "/ThongBao/HuyBaoCaoThanhToan",
             new() { ["hoaDonId"] = invoiceId.ToString() });

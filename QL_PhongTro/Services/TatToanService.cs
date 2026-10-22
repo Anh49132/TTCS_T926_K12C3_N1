@@ -50,7 +50,7 @@ public sealed partial class TatToanService(AppDbContext db, ITimeProvider clock)
 
     public async Task<TatToanViewModel> XemAsync(int actor, int contract)
     {
-        await using var read=await db.Database.BeginTransactionAsync();
+        await using var read=await db.Database.BeginProtectedTransactionAsync();
         var model = await ThongTinAsync(actor, contract, false);
         model.Bang = await db.BangTatToans.AsNoTracking().Include(x => x.KhauTru).SingleOrDefaultAsync(x => x.HopDongId == contract)
             ?? throw new InvalidOperationException("Chủ nhà chưa lưu bảng tất toán cho hợp đồng này.");
@@ -178,7 +178,7 @@ public sealed partial class TatToanService(AppDbContext db, ITimeProvider clock)
     public async Task<int> LuuAsync(int actor,TatToanInput input)
     {
         await db.Database.OpenConnectionAsync();
-        await using var sqlite=((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred:false);
+        await using var sqlite=db.Database.GetDbConnection().BeginPortableTransaction(deferred:false);
         await using var tx=await db.Database.UseTransactionAsync(sqlite);
         var model=await NhapAsync(actor,input.HopDongId,input,true);
         var saved=await db.BangTatToans.Include(x=>x.KhauTru).SingleOrDefaultAsync(x=>x.HopDongId==input.HopDongId);

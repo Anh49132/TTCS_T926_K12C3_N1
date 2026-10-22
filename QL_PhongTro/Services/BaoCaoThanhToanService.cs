@@ -24,7 +24,7 @@ public sealed class BaoCaoThanhToanService(AppDbContext db, PaymentProofImageSto
     public async Task<HuyBaoCaoThanhToanResult> HuyAsync(int actorId, int invoiceId, CancellationToken cancellationToken = default)
     {
         await db.Database.OpenConnectionAsync(cancellationToken);
-        await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var transaction = await db.Database.UseTransactionAsync(sqlite, cancellationToken);
 
         var invoice = await (from bill in db.HoaDons.AsNoTracking()
@@ -71,7 +71,7 @@ public sealed class BaoCaoThanhToanService(AppDbContext db, PaymentProofImageSto
         IFormFile? proofImage, string? note, CancellationToken cancellationToken = default)
     {
         await db.Database.OpenConnectionAsync(cancellationToken);
-        await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var transaction = await db.Database.UseTransactionAsync(sqlite, cancellationToken);
         var invoice = await (from bill in db.HoaDons
             join contract in db.HopDongs on bill.HopDongId equals contract.Id
@@ -109,7 +109,7 @@ public sealed class BaoCaoThanhToanService(AppDbContext db, PaymentProofImageSto
 
         if (errors.Count != 0) throw new GhiThuValidationException(errors);
 
-        var imageStore = proofImages ?? new PaymentProofImageStore(db.Database.GetDbConnection().DataSource + ".payment-proofs");
+        var imageStore = proofImages ?? new PaymentProofImageStore(db.FileStoragePath + ".payment-proofs");
         var preparedImage = await imageStore.PrepareAsync(proofImage, cancellationToken);
         var imageKey = preparedImage is null ? null : Guid.NewGuid().ToString("N");
         var report = new ThanhToanHoaDon

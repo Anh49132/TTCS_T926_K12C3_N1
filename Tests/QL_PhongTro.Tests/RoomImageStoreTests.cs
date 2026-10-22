@@ -1,9 +1,5 @@
+using SkiaSharp;
 using Microsoft.AspNetCore.Http;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Jpeg;
-using SixLabors.ImageSharp.Formats.Png;
-using SixLabors.ImageSharp.Metadata.Profiles.Exif;
-using SixLabors.ImageSharp.PixelFormats;
 using Xunit;
 
 namespace QL_PhongTro.Tests;
@@ -25,7 +21,7 @@ public sealed class RoomImageStoreTests : IDisposable
         })
         {
             var prepared = await store.PrepareAsync(File(name, bytes));
-            using var thumbnail = await Image.LoadAsync(new MemoryStream(prepared.ThumbnailBytes));
+            using var thumbnail = SKBitmap.Decode(prepared.ThumbnailBytes);
             Assert.Equal(400, thumbnail.Width);
             Assert.Equal(expectedHeight, thumbnail.Height);
         }
@@ -35,14 +31,14 @@ public sealed class RoomImageStoreTests : IDisposable
     public async Task KeepsSmallImageDimensionsAndCorrectsPhoneOrientation()
     {
         var small = await store.PrepareAsync(File("small.jpg", EncodeJpeg(240, 320)));
-        using (var image = await Image.LoadAsync(new MemoryStream(small.ThumbnailBytes)))
+        using (var image = SKBitmap.Decode(small.ThumbnailBytes))
         {
             Assert.Equal(240, image.Width);
             Assert.Equal(320, image.Height);
         }
 
         var phone = await store.PrepareAsync(File("phone.jpg", EncodeJpeg(300, 500, 6)));
-        using var oriented = await Image.LoadAsync(new MemoryStream(phone.ThumbnailBytes));
+        using var oriented = SKBitmap.Decode(phone.ThumbnailBytes);
         Assert.Equal(400, oriented.Width);
         Assert.Equal(240, oriented.Height);
     }
@@ -99,22 +95,10 @@ public sealed class RoomImageStoreTests : IDisposable
 
     private static byte[] EncodeJpeg(int width, int height, ushort? orientation = null)
     {
-        using var image = new Image<Rgba32>(Configuration.Default, width, height, new Rgba32(100, 149, 237));
-        if (orientation is not null)
-        {
-            image.Metadata.ExifProfile = new ExifProfile();
-            image.Metadata.ExifProfile.SetValue(ExifTag.Orientation, orientation.Value);
-        }
-        using var output = new MemoryStream();
-        image.Save(output, new JpegEncoder { Quality = 85 });
-        return output.ToArray();
+        var jpeg = TestImages.Encode(width, height, SKEncodedImageFormat.Jpeg);
+        return orientation is null ? jpeg : TestImages.WithOrientation(jpeg, orientation.Value);
     }
 
-    private static byte[] EncodePng(int width, int height)
-    {
-        using var image = new Image<Rgba32>(Configuration.Default, width, height, new Rgba32(100, 149, 237));
-        using var output = new MemoryStream();
-        image.Save(output, new PngEncoder());
-        return output.ToArray();
-    }
+    private static byte[] EncodePng(int width, int height) =>
+        TestImages.Encode(width, height, SKEncodedImageFormat.Png);
 }

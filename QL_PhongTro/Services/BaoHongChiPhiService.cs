@@ -61,7 +61,7 @@ public sealed class BaoHongChiPhiService(AppDbContext db, ITimeProvider clock)
         if (!Guid.TryParseExact(input.KhoaChongTrung, "N", out _) || input.KhoaChongTrung != input.KhoaChongTrung.ToLowerInvariant())
             throw new BaoHongValidationException("", "Phiên gửi không hợp lệ. Hãy tải lại trang.");
         await db.Database.OpenConnectionAsync(ct);
-        await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var tx = await db.Database.UseTransactionAsync(sqlite, ct);
         var actor = await db.TaiKhoans.AsNoTracking().SingleOrDefaultAsync(x => x.Id == managerId && x.VaiTro == "QUAN_LY" &&
             x.DangHoatDong && !x.IsDeleted && x.EmailConfirmed && !x.MustChangePassword, ct);

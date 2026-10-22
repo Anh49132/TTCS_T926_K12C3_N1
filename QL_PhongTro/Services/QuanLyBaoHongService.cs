@@ -122,7 +122,7 @@ public sealed class QuanLyBaoHongService(AppDbContext db, ITimeProvider clock, B
         string? target, int? version, string key, CancellationToken ct)
     {
         await db.Database.OpenConnectionAsync(ct);
-        await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var tx = await db.Database.UseTransactionAsync(sqlite, ct);
         // Recheck live role, module permission and current assignment inside the writer transaction.
         var actor = (await ActorAsync(managerId, true, ct)).Actor;

@@ -8,7 +8,7 @@ public sealed partial class TatToanService
     public async Task HoanCocAsync(int actor,HoanCocTatToanInput input)
     {
         await db.Database.OpenConnectionAsync();
-        await using var sqlite=((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred:false);
+        await using var sqlite=db.Database.GetDbConnection().BeginPortableTransaction(deferred:false);
         await using var tx=await db.Database.UseTransactionAsync(sqlite);
         await KiemTraQuyenAsync(actor,input.HopDongId,true);
         if(!input.DaHoan || !Guid.TryParseExact(input.KhoaChongTrung,"N",out _) || input.SoTien is null || input.SoTien<=0 || input.SoTien>long.MaxValue

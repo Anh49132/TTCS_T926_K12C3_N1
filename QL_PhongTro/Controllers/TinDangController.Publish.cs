@@ -15,7 +15,7 @@ public partial class TinDangController
         try
         {
             await db.Database.OpenConnectionAsync();
-            await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+            await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
             await using var transaction = await db.Database.UseTransactionAsync(sqlite);
             var listing = await db.TinDangs.SingleOrDefaultAsync(x => x.Id == id);
             if (listing is null) return NotFound();
@@ -52,11 +52,11 @@ public partial class TinDangController
         {
             TempData["TinDangError"] = "Không thể đăng tin. Dữ liệu chưa được thay đổi; hãy tải lại và thử lại.";
         }
-        catch (SqliteException error) when (error.SqliteErrorCode is 5 or 6)
+        catch (DbException error) when (DatabaseErrors.IsBusy(error))
         {
             TempData["TinDangError"] = "Dữ liệu đang được cập nhật. Hãy tải lại và thử lại.";
         }
-        catch (SqliteException error) when (error.SqliteErrorCode == 19)
+        catch (DbException error) when (DatabaseErrors.IsConstraint(error))
         {
             TempData["TinDangError"] = "Không thể lưu tin hoặc nhật ký. Dữ liệu chưa được thay đổi; hãy tải lại và thử lại.";
         }

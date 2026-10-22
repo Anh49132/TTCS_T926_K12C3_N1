@@ -60,7 +60,7 @@ public sealed partial class ChiSoDienNuocService(AppDbContext db, ITimeProvider 
         bool hasInvoices;
         try
         {
-            using var command = connection.CreateCommand();
+            using var command = connection.CreatePortableCommand();
             command.Transaction = db.Database.CurrentTransaction?.GetDbTransaction();
             command.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name IN ('hoa_don','chi_tiet_hoa_don')";
             hasInvoices = Convert.ToInt32(await command.ExecuteScalarAsync(ct)) == 2;
@@ -140,7 +140,7 @@ public sealed partial class ChiSoDienNuocService(AppDbContext db, ITimeProvider 
     {
         input.CanhBaos.Clear();
         await db.Database.OpenConnectionAsync(ct);
-        await using var sqlite=((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred:false);
+        await using var sqlite=db.Database.GetDbConnection().BeginPortableTransaction(deferred:false);
         await using var tx=await db.Database.UseTransactionAsync(sqlite,ct);
         var model=await DanhSachAsync(actor,input.ToaNhaId,ct);
         var room=model.Phongs.SingleOrDefault(x=>x.PhongId==input.PhongId);

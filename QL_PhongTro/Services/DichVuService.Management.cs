@@ -15,7 +15,7 @@ public sealed partial class DichVuService
 
     public async Task KhoiTaoMacDinhAsync(int accountId, int buildingId)
     {
-        await using var tx = await db.Database.BeginTransactionAsync();
+        await using var tx = await db.Database.BeginProtectedTransactionAsync();
         if (!await SoHuuToaNhaAsync(accountId, buildingId)) throw new UnauthorizedAccessException();
         if (await db.KhoiTaoDichVus.AnyAsync(x => x.ToaNhaId == buildingId)) return;
         var configured = defaults?.Value.DanhSach;
@@ -71,7 +71,7 @@ public sealed partial class DichVuService
 
     public async Task SuaGiaBanDauAsync(int accountId, int buildingId, int serviceId, long price, long expectedPrice)
     {
-        await using var tx = await db.Database.BeginTransactionAsync();
+        await using var tx = await db.Database.BeginProtectedTransactionAsync();
         var versions = await EditableAsync(accountId, buildingId, serviceId);
         var initial = versions[0];
         if (initial.DichVu.MaDichVu is "DIEN" or "NUOC")
@@ -89,7 +89,7 @@ public sealed partial class DichVuService
 
     public async Task DoiGiaAsync(int accountId, int buildingId, int serviceId, long price, DateOnly effectiveDate, int expectedVersion)
     {
-        await using var tx = await db.Database.BeginTransactionAsync();
+        await using var tx = await db.Database.BeginProtectedTransactionAsync();
         var versions = await EditableAsync(accountId, buildingId, serviceId);
         if (versions[0].DichVu.MaDichVu is "DIEN" or "NUOC")
             throw new InvalidOperationException("Hãy dùng màn hình Cấu hình điện nước để tạo hoặc sửa cấu hình cho kỳ kế tiếp.");
@@ -107,7 +107,7 @@ public sealed partial class DichVuService
 
     public async Task DoiTrangThaiAsync(int accountId, int buildingId, int serviceId, bool active, DateOnly effectiveDate, int expectedVersion)
     {
-        await using var tx = await db.Database.BeginTransactionAsync();
+        await using var tx = await db.Database.BeginProtectedTransactionAsync();
         var versions = await EditableAsync(accountId, buildingId, serviceId);
         var previous = versions.Last();
         if (previous.Id != expectedVersion) throw new InvalidOperationException("Dịch vụ vừa thay đổi. Hãy tải lại trang.");
@@ -159,7 +159,7 @@ public sealed partial class DichVuService
 
     public async Task XoaAsync(int accountId, int buildingId, int serviceId)
     {
-        await using var tx = await db.Database.BeginTransactionAsync();
+        await using var tx = await db.Database.BeginProtectedTransactionAsync();
         var versions = await EditableAsync(accountId, buildingId, serviceId);
         var reason = await new DichVuThamChieu(db).LyDoKhongDuocXoaAsync(buildingId, serviceId);
         if (reason is not null) throw new InvalidOperationException(reason);

@@ -44,7 +44,7 @@ public sealed class BaoHongController(BaoHongService service, BaoHongImageStore 
         catch (BaoHongValidationException ex) { ModelState.AddModelError(ex.Field.Length == 0 ? "" : "Input." + ex.Field, ex.Message); }
         catch (IOException)
         { ModelState.AddModelError("Input.Images", "Không lưu được ảnh. Báo hỏng chưa được gửi; hãy chọn lại ảnh và thử lại."); }
-        catch (Exception ex) when (ex is SqliteException or DbUpdateException)
+        catch (Exception ex) when (ex is DbException or DbUpdateException)
         { ModelState.AddModelError("", "Chưa xác nhận được kết quả gửi. Hãy thử lại cùng biểu mẫu hoặc kiểm tra danh sách trước khi tạo yêu cầu mới."); }
         if (input.Images.Count > 0) ModelState.AddModelError("Input.Images", "Hãy chọn lại ảnh trước khi gửi lại biểu mẫu.");
         try { return View(new TaoBaoHongViewModel { Input = input, Phongs = await service.PhongsAsync(ActorId, ct) }); }

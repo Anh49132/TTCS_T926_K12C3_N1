@@ -12,7 +12,7 @@ public sealed partial class TatToanService
     public async Task<TatToanViewModel> KiemTraChotAsync(int actor,int contract)
     {
         if(db.Database.CurrentTransaction is not null)return await KiemTraChotCoreAsync(actor,contract);
-        await using var read=await db.Database.BeginTransactionAsync();
+        await using var read=await db.Database.BeginProtectedTransactionAsync();
         var model=await KiemTraChotCoreAsync(actor,contract);await read.CommitAsync();return model;
     }
 
@@ -66,7 +66,7 @@ public sealed partial class TatToanService
     public async Task HoanTatAsync(int actor,XacNhanTatToanInput input)
     {
         await db.Database.OpenConnectionAsync();
-        await using var sqlite=((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred:false);
+        await using var sqlite=db.Database.GetDbConnection().BeginPortableTransaction(deferred:false);
         await using var tx=await db.Database.UseTransactionAsync(sqlite);
         var model=await KiemTraChotCoreAsync(actor,input.HopDongId);
         if(!input.DaKiemTra || !input.DongY)throw new InvalidOperationException("Cần xác nhận đã kiểm tra và hai bên đã đối chiếu số liệu.");

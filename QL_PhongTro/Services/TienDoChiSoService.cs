@@ -206,7 +206,7 @@ public sealed class TienDoChiSoService(AppDbContext db)
         if (close) await connection.OpenAsync(ct);
         try
         {
-            using var command = connection.CreateCommand();
+            using var command = connection.CreatePortableCommand();
             command.Transaction = db.Database.CurrentTransaction?.GetDbTransaction();
             command.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='chi_so_dien_nuoc'";
             return Convert.ToInt32(await command.ExecuteScalarAsync(ct)) == 1;

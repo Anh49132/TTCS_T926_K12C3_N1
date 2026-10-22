@@ -1,3 +1,4 @@
+using SkiaSharp;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -11,10 +12,6 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Data.Sqlite;
 using Microsoft.Extensions.Logging;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Jpeg;
-using SixLabors.ImageSharp.Formats.Png;
-using SixLabors.ImageSharp.PixelFormats;
 using Xunit;
 
 namespace QL_PhongTro.Tests;
@@ -49,7 +46,7 @@ public sealed partial class PermissionTests
         var thumbnail = await guest.GetByteArrayAsync(thumbnailPath);
         Assert.Equal(EncodeJpeg(1200, 800).Length, original.Length);
         Assert.True(thumbnail.Length < original.Length);
-        using var thumbImage = await Image.LoadAsync(new MemoryStream(thumbnail));
+        using var thumbImage = SKBitmap.Decode(thumbnail);
         Assert.Equal(400, thumbImage.Width);
         Assert.Equal(267, thumbImage.Height);
 
@@ -136,7 +133,7 @@ public sealed partial class PermissionTests
         Assert.Contains("1/8 ảnh", edit);
 
         using var guest = Client();
-        var index = WebUtility.HtmlDecode(await guest.GetStringAsync("/TinDang"));
+        var index = WebUtility.HtmlDecode(await guest.GetStringAsync("/TimTin"));
         using var saved = JsonDocument.Parse(await upload.Content.ReadAsStringAsync());
         var thumbnail = saved.RootElement.GetProperty("thumbnailPath").GetString();
         Assert.Contains($"src=\"{thumbnail}\"", index);
@@ -228,7 +225,7 @@ public sealed partial class PermissionTests
         Assert.Equal(imageIds.Order().ToArray(), ReadImageIds(roomId).Order().ToArray());
 
         using var guest = Client();
-        var list = WebUtility.HtmlDecode(await guest.GetStringAsync("/TinDang"));
+        var list = WebUtility.HtmlDecode(await guest.GetStringAsync("/TimTin"));
         var leadingThumbnail = Scalar("SELECT duong_dan_anh_nho FROM anh_phong WHERE id=$id", ("$id", secondTabOrder[0]))?.ToString();
         Assert.Contains($"src=\"{leadingThumbnail}\"", list);
         using var detailResponse = await guest.GetAsync($"/api/tin-dang/{listingId}");
@@ -332,7 +329,7 @@ public sealed partial class PermissionTests
         Assert.Equal(2L, Scalar("SELECT thu_tu FROM anh_phong WHERE id=$id", ("$id", uploads[2].Id)));
 
         using var guest = Client();
-        var listingIndex = WebUtility.HtmlDecode(await guest.GetStringAsync("/TinDang"));
+        var listingIndex = WebUtility.HtmlDecode(await guest.GetStringAsync("/TimTin"));
         Assert.DoesNotContain(uploads[0].Thumbnail, listingIndex);
         Assert.Contains($"src=\"{uploads[1].Thumbnail}\"", listingIndex);
         using var detailResponse = await guest.GetAsync($"/api/tin-dang/{listingId}");
@@ -351,7 +348,7 @@ public sealed partial class PermissionTests
         using var deleteLast = await DeleteImage(owner, roomId, uploads[2].Id, token);
         Assert.Equal(HttpStatusCode.OK, deleteLast.StatusCode);
         Assert.Equal(0L, Scalar("SELECT COUNT(*) FROM anh_phong WHERE phong_id=$room", ("$room", roomId)));
-        var emptyIndex = await guest.GetStringAsync("/TinDang");
+        var emptyIndex = await guest.GetStringAsync("/TimTin");
         Assert.Contains("room-placeholder.svg", emptyIndex);
 
         for (var indexUpload = 0; indexUpload < 8; indexUpload++)
@@ -457,19 +454,9 @@ public sealed partial class PermissionTests
         if (Directory.Exists(directory)) Directory.Delete(directory, recursive: true);
     }
 
-    private static byte[] EncodeJpeg(int width, int height)
-    {
-        using var image = new Image<Rgba32>(Configuration.Default, width, height, new Rgba32(210, 160, 90));
-        using var output = new MemoryStream();
-        image.Save(output, new JpegEncoder { Quality = 90 });
-        return output.ToArray();
-    }
+    private static byte[] EncodeJpeg(int width, int height) =>
+        TestImages.Encode(width, height, SKEncodedImageFormat.Jpeg, new SKColor(210, 160, 90));
 
-    private static byte[] EncodePng(int width, int height)
-    {
-        using var image = new Image<Rgba32>(Configuration.Default, width, height, new Rgba32(70, 130, 120));
-        using var output = new MemoryStream();
-        image.Save(output, new PngEncoder());
-        return output.ToArray();
-    }
+    private static byte[] EncodePng(int width, int height) =>
+        TestImages.Encode(width, height, SKEncodedImageFormat.Png, new SKColor(70, 130, 120));
 }

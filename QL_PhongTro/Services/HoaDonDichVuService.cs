@@ -16,7 +16,7 @@ public sealed partial class HoaDonDichVuService(AppDbContext db, DichVuService s
         if (close) await connection.OpenAsync();
         try
         {
-            using var command = connection.CreateCommand();
+            using var command = connection.CreatePortableCommand();
             command.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name IN ('hoa_don','chi_tiet_hoa_don','hop_dong','ky_hop_dong','hop_dong_dich_vu')";
             return Convert.ToInt32(await command.ExecuteScalarAsync()) == 5 && await services.SanSangAsync();
         }
@@ -101,7 +101,7 @@ public sealed partial class HoaDonDichVuService(AppDbContext db, DichVuService s
         if (chosen.Select(x => x.DichVuId).Distinct().Count() != chosen.Count)
             throw new InvalidOperationException("Một dịch vụ chỉ được chọn một lần.");
         await db.Database.OpenConnectionAsync();
-        await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var transaction = await db.Database.UseTransactionAsync(sqlite);
         if (!await services.SoHuuToaNhaAsync(accountId, input.ToaNhaId)) throw new UnauthorizedAccessException();
         var occupancy = await LaySoNguoiAsync(accountId, input.HopDongId!.Value, input.ToaNhaId, input.NgayApDung!.Value);
@@ -208,7 +208,7 @@ public sealed partial class HoaDonDichVuService(AppDbContext db, DichVuService s
     // Integration point for the contract module: freezes agreed information and creates a reliable reference.
     public async Task GanVaoHopDongAsync(int accountId, int contractId, int serviceId, DateOnly date)
     {
-        await using var transaction = await db.Database.BeginTransactionAsync();
+        await using var transaction = await db.Database.BeginProtectedTransactionAsync();
         var context = await (from h in db.HopDongs
                              join p in db.PhongTros on h.PhongId equals p.Id
                              where h.Id == contractId

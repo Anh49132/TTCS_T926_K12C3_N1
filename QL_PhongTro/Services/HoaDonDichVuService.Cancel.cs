@@ -35,7 +35,7 @@ public sealed partial class HoaDonDichVuService
             try {
                 if (await db.Database.SqlQueryRaw<int>(query, id).SingleAsync() != 0)
                     return "Hóa đơn có khoản thanh toán hoặc cấn cọc đang hiệu lực/chờ xử lý. Hãy xử lý khoản tiền trước khi hủy.";
-            } catch (SqliteException) { return "Schema thanh toán/cọc chưa tương thích. Cần kiểm tra trước khi hủy hóa đơn."; }
+            } catch (DbException) { return "Schema thanh toán/cọc chưa tương thích. Cần kiểm tra trước khi hủy hóa đơn."; }
         }
         if (await db.ThongBaoHoaDons.AnyAsync(x => x.HoaDonId == id && x.TrangThaiEmail == "DANG_GUI"))
             return "Email hóa đơn đang được gửi. Hãy đợi xử lý xong rồi tải lại trang để hủy.";
@@ -54,7 +54,7 @@ public sealed partial class HoaDonDichVuService
     public async Task HuyAsync(int actor, HuyHoaDonViewModel input)
     {
         await db.Database.OpenConnectionAsync();
-        await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var tx = await db.Database.UseTransactionAsync(sqlite);
         var bill = await OwnedInvoiceAsync(actor, input.Id);
         if (bill.TrangThai != "DA_PHAT_HANH") throw new InvalidOperationException("Chỉ hủy hóa đơn đã phát hành. Hãy tải lại trang.");
@@ -74,7 +74,7 @@ public sealed partial class HoaDonDichVuService
     public async Task<int> TaoNhapThayTheAsync(int actor, int id, int version)
     {
         await db.Database.OpenConnectionAsync();
-        await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var tx = await db.Database.UseTransactionAsync(sqlite);
         var old = await OwnedInvoiceAsync(actor, id);
         if(await db.HopDongs.AnyAsync(x=>x.Id==old.HopDongId && x.TrangThai=="DA_KET_THUC"))throw new InvalidOperationException("Hợp đồng đã kết thúc, không được tạo hóa đơn thay thế.");

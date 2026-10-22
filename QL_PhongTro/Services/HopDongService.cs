@@ -22,11 +22,11 @@ public class HopDongService(AppDbContext db)
         var codes = await db.HopDongs.Where(h => h.MaHopDong.StartsWith(prefix)).Select(h => h.MaHopDong).ToListAsync(ct);
         var max = codes.Where(c => c.Length == prefix.Length + 4 && c[prefix.Length..].All(char.IsAsciiDigit))
             .Select(c => int.Parse(c[prefix.Length..])).DefaultIfEmpty(0).Max();
-        await db.Database.ExecuteSqlInterpolatedAsync($"INSERT INTO hop_dong_so_ma(nam,so_cuoi) VALUES({year},{max}) ON CONFLICT(nam) DO UPDATE SET so_cuoi=MAX(so_cuoi,{max})", ct);
+        await db.Database.ExecuteSqlInterpolatedAsync($"INSERT INTO hop_dong_so_ma(nam,so_cuoi) VALUES({year},{max}) ON CONFLICT(nam) DO UPDATE SET so_cuoi=CASE WHEN hop_dong_so_ma.so_cuoi>{max} THEN hop_dong_so_ma.so_cuoi ELSE {max} END", ct);
         if (await db.Database.ExecuteSqlInterpolatedAsync($"UPDATE hop_dong_so_ma SET so_cuoi=so_cuoi+1 WHERE nam={year} AND so_cuoi<9999", ct) != 1)
             throw new ArgumentException("Đã hết dải mã hợp đồng trong năm. Không thể lưu thêm hợp đồng.");
         var connection = db.Database.GetDbConnection();
-        using var command = connection.CreateCommand();
+        using var command = connection.CreatePortableCommand();
         command.Transaction = db.Database.CurrentTransaction!.GetDbTransaction();
         command.CommandText = "SELECT so_cuoi FROM hop_dong_so_ma WHERE nam=$year";
         var parameter = command.CreateParameter(); parameter.ParameterName = "$year"; parameter.Value = year;

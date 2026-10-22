@@ -30,7 +30,7 @@ public sealed class OwnerBankController(OwnerBankService service, OwnerBankImage
         catch (UnauthorizedAccessException) { return Forbid(); }
         catch (OwnerBankValidationException ex) { return BadRequest(new { errors = ex.Errors }); }
         catch (InvalidOperationException ex) { return Conflict(new { errors = new Dictionary<string, string[]> { [""] = [ex.Message] } }); }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or DbUpdateException or SqliteException)
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or DbUpdateException or DbException)
         { return Conflict(new { errors = new Dictionary<string, string[]> { [""] = ["Không thể lưu thông tin. Dữ liệu cũ được giữ nguyên; vui lòng thử lại và chọn lại ảnh."] } }); }
     }
     [HttpGet("cua-toi/qr"), Authorize(Roles = "CHU_NHA")]

@@ -1,16 +1,16 @@
 using System.Security.Cryptography;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats;
+using SkiaSharp;
 namespace QL_PhongTro.Services;
 
 public sealed record PreparedBaoHongImage(byte[] Bytes, string ContentType, string Hash);
 
 // Private, database-scoped storage; never expose this directory as static files.
-public sealed class BaoHongImageStore(string root)
+public sealed class BaoHongImageStore(string root, DurableFiles? durable = null, string prefix = "repairs")
 {
     public const int MaxBytes = 5 * 1024 * 1024;
     public const int MaxImages = 3;
     private readonly string directory = Path.GetFullPath(root);
+    private FileScope? Remote => durable is { Enabled: true } ? durable.Scope(directory, prefix) : null;
     public async Task<List<PreparedBaoHongImage>> PrepareAsync(IReadOnlyList<IFormFile> files, CancellationToken ct)
     {
         if (files.Count > MaxImages) throw Error("Chỉ được đính kèm tối đa 3 ảnh.");
@@ -32,32 +32,29 @@ public sealed class BaoHongImageStore(string root)
             bytes.Position = 0;
             try
             {
-                var info = await Image.IdentifyAsync(bytes, ct);
-                var format = info.Metadata.DecodedImageFormat?.Name;
-                if (format is not ("JPEG" or "PNG") || (format == "PNG") != (extension == ".png")) throw Error("Nội dung ảnh không khớp định dạng JPG/PNG.");
-                if ((long)info.Width * info.Height > 50_000_000) throw Error("Ảnh vượt giới hạn an toàn 50 megapixel. Hãy giảm độ phân giải.");
-                bytes.Position = 0;
-                using var decoded = await Image.LoadAsync(new DecoderOptions { MaxFrames = 1 }, bytes, ct);
                 var data = bytes.ToArray();
-                result.Add(new(data, format == "PNG" ? "image/png" : "image/jpeg", Convert.ToHexString(SHA256.HashData(data))));
+                using var decoded = RasterImage.Decode(data, extension, out var format, autoOrient: false);
+                ct.ThrowIfCancellationRequested();
+                result.Add(new(data, format == SKEncodedImageFormat.Png ? "image/png" : "image/jpeg", Convert.ToHexString(SHA256.HashData(data))));
             }
-            catch (Exception ex) when (ex is UnknownImageFormatException or InvalidImageContentException or NotSupportedException)
-            { throw Error("Tệp bị hỏng hoặc không phải ảnh JPG/PNG hợp lệ."); }
+            catch (InvalidDataException ex)
+            { throw Error(ex.Message); }
         }
         return result;
     }
     public string FilePath(string key)
     {
         if (!Guid.TryParseExact(key, "N", out _)) throw new InvalidDataException("Invalid image key.");
-        return Path.Combine(directory, key);
+        return Remote?.Ensure(key) ?? Path.Combine(directory, key);
     }
     public async Task SaveAsync(string key, byte[] bytes, CancellationToken ct)
     {
         Directory.CreateDirectory(directory);
+        if (Remote is {} remote) { await remote.WriteAsync(key, bytes, ct); return; }
         await using var stream = new FileStream(FilePath(key), FileMode.CreateNew, FileAccess.Write, FileShare.None);
         await stream.WriteAsync(bytes, ct);
         await stream.FlushAsync(ct);
     }
-    public void Delete(string key) { try { File.Delete(FilePath(key)); } catch (DirectoryNotFoundException) { } }
+    public void Delete(string key) { try { if (Remote is {} remote) remote.Delete(key); else File.Delete(FilePath(key)); } catch (DirectoryNotFoundException) { } }
     private static BaoHongValidationException Error(string message) => new("Images", message);
 }

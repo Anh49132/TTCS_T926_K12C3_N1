@@ -5,14 +5,18 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="AWSSDK.S3" Version="4.0.104.5" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.12" />
     <PackageReference Include="QuestPDF" Version="2026.9.1" />
-    <PackageReference Include="SixLabors.ImageSharp" Version="4.1.2" />
+    <PackageReference Include="SkiaSharp" Version="4.153.1" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="4.153.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.12" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.2" />
   </ItemGroup>
   <ItemGroup>
+    <None Update="ThirdPartyNotices\**" CopyToPublishDirectory="PreserveNewest" />
     <EmbeddedResource Include="..\docs\sql\S2-01-dich-vu-phong.sql" LogicalName="S2-01-dich-vu-phong.sql" />
     <EmbeddedResource Include="..\docs\sql\S2-01-ngung-dich-vu-phong.sql" LogicalName="S2-01-ngung-dich-vu-phong.sql" />
     <EmbeddedResource Include="..\docs\sql\S2-01-gia-rieng-dich-vu-phong.sql" LogicalName="S2-01-gia-rieng-dich-vu-phong.sql" />

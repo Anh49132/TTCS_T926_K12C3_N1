@@ -1,3 +1,4 @@
+using SkiaSharp;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using QL_PhongTro.Data;
@@ -5,8 +6,6 @@ using QL_PhongTro.Services;
 using QL_PhongTro.ViewModels;
 using Xunit;
 using Microsoft.AspNetCore.Http;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 namespace QL_PhongTro.Tests;
 
 public sealed partial class BaoHongTests
@@ -152,10 +151,7 @@ public sealed partial class BaoHongTests
     }
     private static IFormFile Photo(string name = "photo.png", int? size = null)
     {
-        using var image = new Image<Rgb24>(2, 2);
-        using var stream = new MemoryStream();
-        if (name.EndsWith(".jpg") || name.EndsWith(".jpeg")) image.SaveAsJpeg(stream); else image.SaveAsPng(stream);
-        var bytes = stream.ToArray();
+        var bytes = TestImages.Encode(2, 2, name.EndsWith(".jpg") || name.EndsWith(".jpeg") ? SKEncodedImageFormat.Jpeg : SKEncodedImageFormat.Png);
         if (size.HasValue) Array.Resize(ref bytes, size.Value);
         return new FormFile(new MemoryStream(bytes), 0, bytes.Length, "Input.Images", name);
     }

@@ -6,6 +6,7 @@ namespace QL_PhongTro.Services;
 
 public sealed class PasswordResetOptions
 {
+    public string Provider { get; set; } = "Smtp";
     public string PublicBaseUrl { get; set; } = "";
     public string Host { get; set; } = "";
     public int Port { get; set; } = 587;
@@ -54,11 +55,11 @@ public interface IPaymentEmailSender
     Task SendPaymentAsync(string email,string subject,string body,string path);
 }
 
-public enum EmailDeliveryMode { Pickup, Smtp }
+public enum EmailDeliveryMode { Pickup, Smtp, Brevo }
 
 public sealed record EmailDeliveryResult(EmailDeliveryMode Mode, string? PickupDirectory = null, string? PickupFilePath = null);
 
-public sealed class PasswordEmailSender(IOptions<PasswordResetOptions> options, IWebHostEnvironment environment) : IPasswordEmailSender, ITemporaryPasswordEmailSender, IRegistrationEmailSender, IAppointmentEmailSender, IQueuedInvoiceEmailSender, IRepairEmailSender, IPaymentEmailSender
+public sealed class PasswordEmailSender(IOptions<PasswordResetOptions> options, IWebHostEnvironment environment, BrevoEmailTransport? brevo = null) : IPasswordEmailSender, ITemporaryPasswordEmailSender, IRegistrationEmailSender, IAppointmentEmailSender, IQueuedInvoiceEmailSender, IRepairEmailSender, IPaymentEmailSender
 {
     public Task SendPaymentAsync(string email,string subject,string body,string path)
     {
@@ -179,6 +180,13 @@ public sealed class PasswordEmailSender(IOptions<PasswordResetOptions> options, 
             return new EmailDeliveryResult(EmailDeliveryMode.Pickup, pickupDirectory, filePath);
         }
 
+        if (settings.Provider.Equals("Brevo", StringComparison.OrdinalIgnoreCase))
+        {
+            if (brevo is null) throw new InvalidOperationException("Thiếu dịch vụ gửi email Brevo.");
+            return await brevo.SendAsync(message);
+        }
+        if (!settings.Provider.Equals("Smtp", StringComparison.OrdinalIgnoreCase))
+            throw new InvalidOperationException("Nhà cung cấp email không hợp lệ.");
         if (string.IsNullOrWhiteSpace(settings.Host))
         {
             throw new InvalidOperationException("Missing SMTP host.");

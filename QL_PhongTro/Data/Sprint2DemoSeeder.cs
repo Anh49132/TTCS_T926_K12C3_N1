@@ -5,8 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using QL_PhongTro.Models;
 using QL_PhongTro.Services;
 using QL_PhongTro.ViewModels;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
+using SkiaSharp;
 
 namespace QL_PhongTro.Data;
 
@@ -194,10 +193,11 @@ public static class Sprint2DemoSeeder
         Directory.CreateDirectory(samples);
         for (var i = 1; i <= 10; i++)
         {
-            using var image = new Image<Rgba32>(1200, 800, new Rgba32((byte)(25 + i * 20), (byte)(220 - i * 15), (byte)(60 + i * 12)));
+            using var image = new SKBitmap(1200, 800);
+            image.Erase(new SKColor((byte)(25 + i * 20), (byte)(220 - i * 15), (byte)(60 + i * 12)));
             var path = Path.Combine(samples, $"room-{i:00}.png");
-            await image.SaveAsPngAsync(path);
-            if (i == 1) await image.SaveAsJpegAsync(Path.Combine(samples, "room-jpg.jpg"));
+            await File.WriteAllBytesAsync(path, RasterImage.Encode(image, SKEncodedImageFormat.Png));
+            if (i == 1) await File.WriteAllBytesAsync(Path.Combine(samples, "room-jpg.jpg"), RasterImage.Encode(image, SKEncodedImageFormat.Jpeg));
             if (i == 9) File.Copy(path, Path.Combine(samples, "09-ninth-image.png"));
         }
         File.Copy(Path.Combine(samples, "room-01.png"), Path.Combine(samples, "valid-small.png"));

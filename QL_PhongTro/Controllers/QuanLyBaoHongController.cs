@@ -84,7 +84,7 @@ public sealed class QuanLyBaoHongController(QuanLyBaoHongService service, BaoHon
         catch (ArgumentException) { return BadRequest("Điều kiện lọc báo hỏng không hợp lệ."); }
         catch (BaoHongValidationException ex) { ModelState.AddModelError(ex.Field.Length == 0 ? "" : "ChiPhiInput." + ex.Field, ex.Message); }
         catch (ChiPhiConflictException ex) { Response.StatusCode = 409; ModelState.AddModelError("", ex.Message); }
-        catch (Exception ex) when (ex is SqliteException or DbUpdateException)
+        catch (Exception ex) when (ex is DbException or DbUpdateException)
         { ModelState.AddModelError("", "Chưa xác nhận được kết quả lưu. Hãy kiểm tra lịch sử hoặc thử lại cùng biểu mẫu."); }
         try
         {
@@ -164,7 +164,7 @@ public sealed class QuanLyBaoHongController(QuanLyBaoHongService service, BaoHon
         catch (ArgumentException) { return BadRequest("Điều kiện lọc báo hỏng không hợp lệ."); }
         catch (BaoHongValidationException ex) { ModelState.AddModelError(ex.Field.Length == 0 ? "" : prefix + "." + ex.Field, ex.Message); }
         catch (BaoHongConflictException ex) { Response.StatusCode = 409; ModelState.AddModelError("", ex.Message); }
-        catch (Exception ex) when (ex is SqliteException or DbUpdateException)
+        catch (Exception ex) when (ex is DbException or DbUpdateException)
         { ModelState.AddModelError("", "Chưa xác nhận được kết quả lưu. Hãy kiểm tra lịch sử hoặc thử lại cùng biểu mẫu."); }
         try
         {

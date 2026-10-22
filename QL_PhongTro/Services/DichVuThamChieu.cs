@@ -17,7 +17,7 @@ public sealed class DichVuThamChieu(AppDbContext db)
         if (close) await connection.OpenAsync();
         try
         {
-            using var command = connection.CreateCommand();
+            using var command = connection.CreatePortableCommand();
             command.Transaction = db.Database.CurrentTransaction?.GetDbTransaction();
             command.CommandText = "SELECT name FROM sqlite_master WHERE type='table'";
             var tables = new HashSet<string>();
@@ -78,7 +78,7 @@ public sealed class DichVuThamChieu(AppDbContext db)
             }
             return null;
         }
-        catch (Microsoft.Data.Sqlite.SqliteException)
+        catch (DbException)
         {
             return "Schema hợp đồng/hóa đơn chưa tương thích; chưa thể xác minh an toàn để xóa hoặc ghi đè giá.";
         }

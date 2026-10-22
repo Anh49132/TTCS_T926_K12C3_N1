@@ -350,7 +350,7 @@ public partial class PhongTroController(AppDbContext db, DichVuPhongService room
             NgayTao = DateTime.UtcNow
         };
 
-        await using var createTransaction = await db.Database.BeginTransactionAsync();
+        await using var createTransaction = await db.Database.BeginProtectedTransactionAsync();
         var storedImages = new List<StoredRoomImage>();
         db.PhongTros.Add(room);
         if (!model.DichVuDaChon) await roomServices.GanMacDinhChoPhongMoiAsync([room]);
@@ -824,7 +824,7 @@ public partial class PhongTroController(AppDbContext db, DichVuPhongService room
         }
 
         await db.Database.OpenConnectionAsync(cancellationToken);
-        using var sqliteTransaction = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        using var sqliteTransaction = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var transaction = await db.Database.UseTransactionAsync(sqliteTransaction);
         StoredRoomImage? stored = null;
         try
@@ -885,8 +885,8 @@ public partial class PhongTroController(AppDbContext db, DichVuPhongService room
             return BadRequest(new { message = "Danh sách thứ tự ảnh không hợp lệ. Vui lòng tải lại trang." });
 
         await db.Database.OpenConnectionAsync(cancellationToken);
-        var connection = (SqliteConnection)db.Database.GetDbConnection();
-        using var sqliteTransaction = connection.BeginTransaction(deferred: false);
+        var connection = db.Database.GetDbConnection();
+        using var sqliteTransaction = connection.BeginPortableTransaction(deferred: false);
         await using var transaction = await db.Database.UseTransactionAsync(sqliteTransaction);
 
         var roomIsOwned = await db.PhongTros.AsNoTracking().AnyAsync(room => room.Id == id
@@ -904,7 +904,14 @@ public partial class PhongTroController(AppDbContext db, DichVuPhongService room
             || !submittedIds.SetEquals(currentImages.Select(image => image.Id)))
             return Conflict(new { message = "Danh sách ảnh đã thay đổi ở một tab khác. Tải lại trang rồi thử lại." });
 
-        await using var command = connection.CreateCommand();
+        if (connection is Npgsql.NpgsqlConnection)
+        {
+            await PostgreSqlImageOrdering.ApplyAsync(connection, sqliteTransaction, id, imageIds, cancellationToken);
+            await transaction!.CommitAsync(cancellationToken);
+            return Ok(new { imageIds });
+        }
+
+        await using var command = connection.CreatePortableCommand();
         command.Transaction = sqliteTransaction;
         try
         {
@@ -1034,11 +1041,7 @@ public partial class PhongTroController(AppDbContext db, DichVuPhongService room
     }
 
     private static bool IsRoomCodeConflict(DbUpdateException exception) =>
-        exception.GetBaseException() is SqliteException
-        {
-            SqliteErrorCode: 19,
-            SqliteExtendedErrorCode: 2067
-        };
+        DatabaseErrors.IsUnique(exception);
 
     private static IReadOnlyList<SelectListItem> GetStatusOptions() =>
         Enum.GetValues<TrangThaiPhong>()

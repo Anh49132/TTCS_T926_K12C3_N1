@@ -173,7 +173,7 @@ public sealed partial class HoaDonDichVuService
         var timer = Stopwatch.StartNew();
         var started = (clock ?? new SystemTimeProvider()).UtcNow;
         await db.Database.OpenConnectionAsync();
-        await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var tx = await db.Database.UseTransactionAsync(sqlite);
         var model = await XemThangAsync(actor, building, year, month, issueDate, dueDate);
         if (!model.SanSang) throw new InvalidOperationException("Chức năng hóa đơn chưa được thiết lập.");

@@ -22,8 +22,8 @@ public sealed class RoomImageDeletionService(AppDbContext db, RoomImageStore ima
     public async Task<RoomImageDeleteOutcome> DeleteOwnedImageAsync(int roomId, int imageId, int ownerId, CancellationToken cancellationToken = default)
     {
         await db.Database.OpenConnectionAsync(cancellationToken);
-        var connection = (SqliteConnection)db.Database.GetDbConnection();
-        using var sqliteTransaction = connection.BeginTransaction(deferred: false);
+        var connection = db.Database.GetDbConnection();
+        using var sqliteTransaction = connection.BeginPortableTransaction(deferred: false);
         await using var transaction = await db.Database.UseTransactionAsync(sqliteTransaction);
 
         var roomIsOwned = await db.PhongTros.AsNoTracking().AnyAsync(room => room.Id == roomId
@@ -81,8 +81,8 @@ public sealed class RoomImageDeletionService(AppDbContext db, RoomImageStore ima
         foreach (var image in pending)
         {
             await db.Database.OpenConnectionAsync(cancellationToken);
-            var connection = (SqliteConnection)db.Database.GetDbConnection();
-            using var sqliteTransaction = connection.BeginTransaction(deferred: false);
+            var connection = db.Database.GetDbConnection();
+            using var sqliteTransaction = connection.BeginPortableTransaction(deferred: false);
             await using var transaction = await db.Database.UseTransactionAsync(sqliteTransaction);
             var current = await db.AnhPhongs.AsNoTracking().SingleOrDefaultAsync(item => item.Id == image.Id, cancellationToken);
             if (current is null)
@@ -133,9 +133,9 @@ public sealed class RoomImageDeletionService(AppDbContext db, RoomImageStore ima
             .Select((image, index) => new RoomImageDto(image.Id, index + 1, image.DuongDan, image.DuongDanAnhNho))
             .ToList();
 
-    private static async Task MarkPendingAsync(SqliteConnection connection, SqliteTransaction transaction, int imageId, string? error, CancellationToken cancellationToken)
+    private static async Task MarkPendingAsync(DbConnection connection, DbTransaction transaction, int imageId, string? error, CancellationToken cancellationToken)
     {
-        await using var command = connection.CreateCommand();
+        await using var command = connection.CreatePortableCommand();
         command.Transaction = transaction;
         command.CommandText = """
             UPDATE anh_phong
@@ -148,10 +148,10 @@ public sealed class RoomImageDeletionService(AppDbContext db, RoomImageStore ima
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
-    private static async Task DeleteRowAndReorderAsync(SqliteConnection connection, SqliteTransaction transaction,
+    private static async Task DeleteRowAndReorderAsync(DbConnection connection, DbTransaction transaction,
         int roomId, int imageId, IReadOnlyList<int> remainingIds, CancellationToken cancellationToken)
     {
-        await using var command = connection.CreateCommand();
+        await using var command = connection.CreatePortableCommand();
         command.Transaction = transaction;
         command.CommandText = "DELETE FROM anh_phong WHERE id=$imageId AND phong_id=$roomId";
         command.Parameters.AddWithValue("$imageId", imageId);
@@ -159,6 +159,11 @@ public sealed class RoomImageDeletionService(AppDbContext db, RoomImageStore ima
         await command.ExecuteNonQueryAsync(cancellationToken);
 
         command.Parameters.Clear();
+        if (connection is Npgsql.NpgsqlConnection)
+        {
+            await PostgreSqlImageOrdering.ApplyAsync(connection, transaction, roomId, remainingIds, cancellationToken);
+            return;
+        }
         try
         {
             command.CommandText = "PRAGMA ignore_check_constraints=ON";

@@ -215,7 +215,7 @@ public class HopDongCuaToiController(AppDbContext db, HopDongPdfService pdfServi
         try
         {
             if (openedHere) await connection.OpenAsync();
-            await using var command = connection.CreateCommand();
+            await using var command = connection.CreatePortableCommand();
             command.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = 'hop_dong_dich_vu'";
             if (Convert.ToInt32(await command.ExecuteScalarAsync()) == 0)
                 return [];
@@ -268,7 +268,7 @@ public class HopDongCuaToiController(AppDbContext db, HopDongPdfService pdfServi
         try
         {
             if (openedHere) await connection.OpenAsync();
-            await using var command = connection.CreateCommand();
+            await using var command = connection.CreatePortableCommand();
             command.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name IN ('hop_dong', 'ky_hop_dong', 'nguoi_o_ghep')";
             return Convert.ToInt32(await command.ExecuteScalarAsync()) == ContractTables.Length;
         }

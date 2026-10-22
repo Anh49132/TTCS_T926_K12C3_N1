@@ -59,7 +59,7 @@ public sealed partial class DichVuService
 
     public async Task LuuCauHinhDienNuocAsync(int accountId, CauHinhDienNuocViewModel input)
     {
-        await using var tx = await db.Database.BeginTransactionAsync();
+        await using var tx = await db.Database.BeginProtectedTransactionAsync();
         if (!await SoHuuToaNhaAsync(accountId, input.ToaNhaId)) throw new UnauthorizedAccessException();
         var utcNow = time?.UtcNow ?? DateTime.UtcNow;
         var today = DateOnly.FromDateTime(utcNow.AddHours(7));
@@ -133,7 +133,7 @@ public sealed partial class DichVuService
     private async Task<bool> DaThamChieuAsync(int configId)
     {
         // These optional tables need not exist in a services-only database.
-        using var command = db.Database.GetDbConnection().CreateCommand();
+        using var command = db.Database.GetDbConnection().CreatePortableCommand();
         command.Transaction = db.Database.CurrentTransaction?.GetDbTransaction();
         command.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name IN ('chi_tiet_hoa_don','hop_dong_dich_vu')";
         var tables = new List<string>();

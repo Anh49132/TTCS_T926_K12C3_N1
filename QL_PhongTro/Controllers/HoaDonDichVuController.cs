@@ -81,7 +81,7 @@ public partial class HoaDonDichVuController(AppDbContext db, DichVuService servi
         catch (InvalidOperationException ex) { TempData["MonthlyError"] = ex.Message; }
         catch (OverflowException) { TempData["MonthlyError"] = "Số tiền vượt giới hạn. Hãy kiểm tra chỉ số và đơn giá."; }
         catch (DbUpdateException) { TempData["MonthlyError"] = "Dữ liệu đã thay đổi. Hãy kiểm tra lại kỳ hóa đơn."; }
-        catch (Microsoft.Data.Sqlite.SqliteException) { TempData["MonthlyError"] = "Chưa thể phát hành hóa đơn. Hãy kiểm tra thiết lập hoặc thử lại."; }
+        catch (DbException) { TempData["MonthlyError"] = "Chưa thể phát hành hóa đơn. Hãy kiểm tra thiết lập hoặc thử lại."; }
         return RedirectToAction(nameof(Monthly), new { toaNhaId, nam, thang, ngayPhatHanh = ngayPhatHanh?.ToString("yyyy-MM-dd"), hanThanhToan = hanThanhToan?.ToString("yyyy-MM-dd") });
     }
 
@@ -227,7 +227,7 @@ public partial class HoaDonDichVuController(AppDbContext db, DichVuService servi
         catch (ValidationException ex) { ModelState.AddModelError("", ex.Message); }
         catch (OverflowException) { ModelState.AddModelError("", "Số tiền vượt giới hạn cho phép. Hãy kiểm tra đơn giá và chỉ số."); }
         catch (DbUpdateException) { ModelState.AddModelError("", "Chưa phát hành được hóa đơn: dữ liệu vừa thay đổi hoặc đã có hóa đơn cho kỳ này. Hãy tải lại."); }
-        catch (Microsoft.Data.Sqlite.SqliteException) { ModelState.AddModelError("", "Dữ liệu đang được cập nhật. Hãy tải lại bản xem trước và thử phát hành lại."); }
+        catch (DbException) { ModelState.AddModelError("", "Dữ liệu đang được cập nhật. Hãy tải lại bản xem trước và thử phát hành lại."); }
         // Display refreshed prices but require a new GET before a stale price submission can be accepted.
         await FillAsync(model);
         return View("Index", model);
@@ -265,7 +265,7 @@ public partial class HoaDonDichVuController(AppDbContext db, DichVuService servi
         if (!ModelState.IsValid) return BadRequest();
         try { return RedirectToAction(nameof(Details), new { id = await invoices.TaoNhapThangAsync(AccountId, toaNhaId, hopDongId, nam, thang, ngayPhatHanh, hanThanhToan) }); }
         catch (UnauthorizedAccessException) { return Forbid(); }
-        catch (Exception ex) when (ex is InvalidOperationException or OverflowException or DbUpdateException or Microsoft.Data.Sqlite.SqliteException)
+        catch (Exception ex) when (ex is InvalidOperationException or OverflowException or DbUpdateException or DbException)
         { TempData["MonthlyError"] = "Chưa tạo được bản nháp. Hãy kiểm tra dữ liệu và tải lại kỳ hóa đơn."; }
         return RedirectToAction(nameof(Monthly), new { toaNhaId, nam, thang });
     }
@@ -277,7 +277,7 @@ public partial class HoaDonDichVuController(AppDbContext db, DichVuService servi
         try { await invoices.PhatHanhNhapAsync(AccountId, model); TempData["DraftSuccess"] = "Đã phát hành hóa đơn và tạo thông báo cho khách. Nội dung hóa đơn đã được khóa."; }
         catch (UnauthorizedAccessException) { return Forbid(); }
         catch (InvalidOperationException ex) { TempData["DraftError"] = ex.Message; }
-        catch (Exception ex) when (ex is DbUpdateException or Microsoft.Data.Sqlite.SqliteException or OverflowException)
+        catch (Exception ex) when (ex is DbUpdateException or DbException or OverflowException)
         { TempData["DraftError"] = "Phát hành không thành công. Hãy tải lại hóa đơn và kiểm tra dữ liệu; chưa tạo thông báo mới."; }
         return RedirectToAction(nameof(Details), new { id = model.Id });
     }
@@ -307,7 +307,7 @@ public partial class HoaDonDichVuController(AppDbContext db, DichVuService servi
             try { await invoices.PhatHanhNhieuNhapAsync(AccountId, toaNhaId, nam, thang,
                 selectedInvoiceIds.ToDictionary(id => id, id => versions[id]), ngayPhatHanh, hanThanhToan, xacNhan, published); }
             catch (InvalidOperationException ex) { failure = ex.Message; }
-            catch (Exception ex) when(ex is DbUpdateException or Microsoft.Data.Sqlite.SqliteException or OverflowException)
+            catch (Exception ex) when(ex is DbUpdateException or DbException or OverflowException)
             { failure = "Toàn bộ đợt phát hành đã được hoàn tác. Hãy kiểm tra lại dữ liệu."; }
             watch.Stop();
             var run = new KetQuaPhatHanhThang(rows.Select(r => new KetQuaPhongHoaDon(r.Bill.HopDongId,r.MaPhong,
@@ -322,7 +322,7 @@ public partial class HoaDonDichVuController(AppDbContext db, DichVuService servi
         }
         catch (UnauthorizedAccessException) { return Forbid(); }
         catch (InvalidOperationException ex) { TempData["MonthlyError"] = "Chưa phát hành hóa đơn nào trong lần này. " + ex.Message; }
-        catch (Exception ex) when (ex is DbUpdateException or Microsoft.Data.Sqlite.SqliteException or OverflowException)
+        catch (Exception ex) when (ex is DbUpdateException or DbException or OverflowException)
         { TempData["MonthlyError"] = "Phát hành không thành công; toàn bộ thay đổi đã được hoàn tác. Hãy kiểm tra lại danh sách."; }
         return RedirectToAction(nameof(Monthly), new { toaNhaId, nam, thang,
             ngayPhatHanh = ngayPhatHanh.ToString("yyyy-MM-dd"), hanThanhToan = hanThanhToan.ToString("yyyy-MM-dd") });
@@ -335,7 +335,7 @@ public partial class HoaDonDichVuController(AppDbContext db, DichVuService servi
         try { await invoices.LuuNhapAsync(AccountId, model); TempData["DraftSuccess"] = "Đã lưu bản nháp và tính lại tổng tiền. Chưa gửi thông báo cho khách."; }
         catch (UnauthorizedAccessException) { return Forbid(); }
         catch (InvalidOperationException ex) { TempData["DraftError"] = ex.Message; }
-        catch (Exception ex) when (ex is OverflowException or DbUpdateException or Microsoft.Data.Sqlite.SqliteException)
+        catch (Exception ex) when (ex is OverflowException or DbUpdateException or DbException)
         { TempData["DraftError"] = "Chưa lưu được hóa đơn. Số tiền vượt giới hạn hoặc dữ liệu đang thay đổi; hãy tải lại."; }
         return RedirectToAction(nameof(Details), new { id = model.Id });
     }

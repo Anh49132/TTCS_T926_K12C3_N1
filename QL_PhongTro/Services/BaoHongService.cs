@@ -14,7 +14,7 @@ public sealed class BaoHongValidationException(string field, string message) : E
 
 public sealed class BaoHongService(AppDbContext db, ITimeProvider clock, BaoHongImageStore? imageStore = null)
 {
-    private readonly BaoHongImageStore images = imageStore ?? new BaoHongImageStore(db.Database.GetDbConnection().DataSource + ".repair-images");
+    private readonly BaoHongImageStore images = imageStore ?? new BaoHongImageStore(db.FileStoragePath + ".repair-images");
     public static string TenTrangThai(string status) => status switch
     { "MOI" => "Mới", "DANG_XU_LY" => "Đang xử lý", "HOAN_THANH" => "Hoàn thành", "TU_CHOI" => "Từ chối", _ => status };
     private async Task<TaiKhoan> ActorAsync(int actorId, bool write, CancellationToken ct)
@@ -108,7 +108,7 @@ public sealed class BaoHongService(AppDbContext db, ITimeProvider clock, BaoHong
         await ActorAsync(actorId, true, ct);
         var prepared = await images.PrepareAsync(input.Images, ct);
         await db.Database.OpenConnectionAsync(ct);
-        await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var tx = await db.Database.UseTransactionAsync(sqlite, ct);
         var actor = await ActorAsync(actorId, true, ct);
         var existing = await db.BaoHongs.AsNoTracking().SingleOrDefaultAsync(x => x.KhoaChongTrung == input.KhoaChongTrung, ct);
@@ -128,7 +128,7 @@ public sealed class BaoHongService(AppDbContext db, ITimeProvider clock, BaoHong
         if (contract is null) throw new BaoHongValidationException("HopDongId", "Phòng không thuộc hợp đồng còn hiệu lực của bạn tại thời điểm gửi. Hãy chọn lại phòng.");
         var profileId = await db.KhachThues.Where(x => x.TaiKhoanId == actorId).Select(x => x.Id).SingleAsync(ct);
         var month = today.ToString("yyyyMM", CultureInfo.InvariantCulture);
-        using var counter = sqlite.Connection!.CreateCommand(); counter.Transaction = sqlite;
+        using var counter = sqlite.Connection!.CreatePortableCommand(); counter.Transaction = sqlite;
         counter.CommandText = """
             INSERT INTO bao_hong_so_ma(thang,so_cuoi) VALUES($month,1)
             ON CONFLICT(thang) DO UPDATE SET so_cuoi=so_cuoi+1 WHERE so_cuoi<9999

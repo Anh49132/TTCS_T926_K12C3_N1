@@ -52,7 +52,7 @@ public class YeuCauThueService(AppDbContext db, ITimeProvider clock)
     public async Task<bool> IsInstalled()
     {
         await db.Database.OpenConnectionAsync();
-        using var cmd = db.Database.GetDbConnection().CreateCommand();
+        using var cmd = db.Database.GetDbConnection().CreatePortableCommand();
         cmd.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name IN ('tin_dang','yeu_cau_thue','rental_request_counter','rental_request_schema')";
         return Convert.ToInt32(await cmd.ExecuteScalarAsync()) == 4;
     }
@@ -63,7 +63,7 @@ public class YeuCauThueService(AppDbContext db, ITimeProvider clock)
             throw new DesiredDateException(dateError);
         // Serialize counter allocation and profile creation across all web processes.
         await db.Database.OpenConnectionAsync();
-        using var tx = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        using var tx = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var efTransaction = await db.Database.UseTransactionAsync(tx);
         var account = await db.TaiKhoans.AsNoTracking().SingleOrDefaultAsync(a => a.Id == accountId
             && a.VaiTro == "KHACH_THUE" && a.DangHoatDong && !a.IsDeleted && a.EmailConfirmed && !a.MustChangePassword);
@@ -88,7 +88,7 @@ public class YeuCauThueService(AppDbContext db, ITimeProvider clock)
         var vietnam = TimeZoneInfo.FindSystemTimeZoneById("Asia/Ho_Chi_Minh");
         var month = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(clock.UtcNow, DateTimeKind.Utc), vietnam)
             .ToString("yyyyMM", CultureInfo.InvariantCulture);
-        using var cmd = tx.Connection!.CreateCommand();
+        using var cmd = tx.Connection!.CreatePortableCommand();
         cmd.Transaction = tx;
         cmd.CommandText = """
             INSERT INTO rental_request_counter(thang,so_cuoi) VALUES($month,1)

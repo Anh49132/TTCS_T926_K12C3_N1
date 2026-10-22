@@ -1,4 +1,4 @@
-﻿using System.Security.Claims;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -267,7 +267,7 @@ public class LichHenController(
         {
             TempData["LichHenError"] = ex.Message;
         }
-        catch (Microsoft.Data.Sqlite.SqliteException)
+        catch (DbException)
         {
             TempData["LichHenError"] = "Không thể hủy giữ chỗ do lỗi ghi dữ liệu. Không có thay đổi nào được lưu; vui lòng tải lại trang và thử lại.";
         }

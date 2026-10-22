@@ -17,7 +17,7 @@ public sealed class NhacHanService(IServiceScopeFactory scopeFactory, ITimeProvi
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         if (!await InvoiceNotificationDispatcher.IsInstalledAsync(db, cancellationToken)) return result;
         await db.Database.OpenConnectionAsync(cancellationToken);
-        await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var transaction = await db.Database.UseTransactionAsync(sqlite, cancellationToken);
         // 1. Nhắc sắp đến hạn (còn 2 ngày)
         var sapDenHan = await db.HoaDons

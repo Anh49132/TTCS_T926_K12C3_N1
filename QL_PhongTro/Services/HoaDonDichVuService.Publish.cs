@@ -9,7 +9,7 @@ public sealed partial class HoaDonDichVuService
     public async Task PhatHanhNhapAsync(int actor, PhatHanhNhapViewModel input)
     {
         await db.Database.OpenConnectionAsync();
-        await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var tx = await db.Database.UseTransactionAsync(sqlite);
         await PhatHanhNhapCoreAsync(actor, input);
         await sqlite.CommitAsync();
@@ -23,7 +23,7 @@ public sealed partial class HoaDonDichVuService
             throw new InvalidOperationException("Hãy xác nhận từ 1 đến 50 hóa đơn Nháp mỗi lần.");
         NgayHoaDon(issue, due);
         await db.Database.OpenConnectionAsync();
-        await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var tx = await db.Database.UseTransactionAsync(sqlite);
         await KiemTraChuNhaAsync(actor, building);
         var ids = versions.Keys.ToList();

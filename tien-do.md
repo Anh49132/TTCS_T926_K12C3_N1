@@ -1,3 +1,16 @@
+### 20/10/2026 – Xuất gói dữ liệu chuyển máy
+- Xuất snapshot SQLite v42 cùng ảnh phòng/giấy tờ tham chiếu và các thư mục tệp riêng cạnh DB; thêm tài khoản test ban đầu, hướng dẫn và Import-Data.ps1. Không đóng gói .env.local, SMTP/Gemini, khóa cookie, log/email local hoặc backup cũ.
+- Gói local `data/exports/NhaTot-Data-20261020-140029-d96c88.zip` (~169,5 MiB), checksum SHA-256 từng tệp và toàn ZIP đã kiểm. Thử nhập trong đường dẫn có dấu cách đạt: DB byte-identical, integrity/FK tốt, ảnh tham chiếu đủ, cấu hình có sẵn được giữ và backup; không tự nâng DB/chạy server. DB gốc không thay đổi, gói không đưa Git.
+
+### 20/10/2026 – Nâng DB nghiệm thu v41 lên v42 theo xác nhận người dùng
+- Đã sao lưu riêng rồi chạy updater/check đúng DB `data/acceptance-20261019/nhatot.sqlite`. Thêm bảng login_failed_attempt; đối chiếu hash dữ liệu giữ nguyên 59 bảng/19.382 dòng cũ (không tính bảng phiên bản và sqlite_sequence).
+- Integrity OK, 0 lỗi FK, schema check đạt; chạy updater lại không đổi dữ liệu. Backup và báo cáo local trong `data/db-upgrade-v42/20261020-080102-b26a6a45/`, không đưa Git. Server giữ tắt để người dùng tự chạy run.bat.
+
+### 20/10/2026 – Rà soát tổng thể
+- Chạy toàn bộ 1.249 test: 1.234 đạt, 15 assertion lỗi do kỳ vọng cũ về route/UI/phân trang/quyền/schema; các bước sau assertion lỗi chưa được thực thi.
+- Xác nhận 6 vấn đề: DB thật v41 lệch mã v42, refresh token xoay mới nhưng không trả cho client, bí mật SMTP trong run.bat được Git theo dõi, làm tròn tiền phòng ngày sai ở điểm 0,5đ, placeholder tài chính Chi tiết tòa nhà và chuỗi lỗi ảnh giấy tờ sai mã hóa.
+- DB thật integrity/FK đạt, không thấy lệch tổng hóa đơn/thu vượt/cọc âm/chỉ số sai/tin hiển thị phòng không trống qua các truy vấn đã chạy. Chỉ nâng bản sao QA để tái hiện, server QA đã tắt; không sửa mã chức năng hay nâng DB thật. [Báo cáo](docs/review-20261020.md).
+
 ### 19/10/2026 – Thông tin chủ nhà trên tin công khai
 - Thẻ tìm phòng và chi tiết tin hiển thị tên, số điện thoại chủ sở hữu tòa nhà, có liên kết gọi điện; không lấy nhầm liên hệ quản lý đăng tin. Thông tin lấy từ tài khoản hiện tại, không sửa DB/schema. Có thông báo khi chưa có số liên hệ.
 - Build và 4 kiểm thử HTTP công khai đạt, gồm trường hợp quản lý đăng thay chủ nhà; kiểm chứng trên DB tạm, server để tắt. Kết quả local: data/listing-contact-tests/listing-contact.trx.
@@ -1426,3 +1439,53 @@ Gộp origin/feature/S4-07/ui-improvements (0784cf5) vào dev928b2e2. Chỉ xung
 - 20/10/2026: Thêm breadcrumb trang Gia hạn hợp đồng theo ảnh: Hợp đồng & người ở ghép / mã hợp đồng / Gia hạn hợp đồng, hai mục trước có liên kết về danh sách/chi tiết. CSS riêng trang gia hạn cho breadcrumb cuộn trong vùng riêng khi màn hình hẹp. Build/Razor 0 lỗi (cảnh báo cũ), diff --check đạt; đã mở lại trang demo /HopDong/GiaHan/1 và kiểm tra ảnh thực tế trong trình duyệt tích hợp. Không đổi nghiệp vụ/DB, không gửi form gia hạn; server demo đã khởi động lại.
 
 - 20/10/2026: Theo yêu cầu, bỏ liên kết Quay lại hợp đồng trên trang Gia hạn, giữ breadcrumb. Build/Razor 0 lỗi (cảnh báo cũ); khởi động lại demo cùng DB, không đổi nghiệp vụ/schema.
+
+### 22/10/2026 — Chuẩn bị triển khai online
+
+- Yêu cầu: tự triển khai dự án đang có lên online. Chọn Railway cho ASP.NET Core .NET 10 và SQLite trên persistent volume; Sites hiện chạy Cloudflare Workers nên không hỗ trợ trực tiếp runtime này. Railway chưa kết nối; chưa tạo hosting/domain và chưa có URL online.
+- Thêm deployment/Prepare-Online.ps1, ReleasePublish.targets, Dockerfile runtime, start.sh và railway.json: publish Release vào data/online/<thư-mục-mới>, loại dữ liệu/cấu hình local và kiểm tra lại trước đóng gói, một replica, volume /data, kiểm tra schema trước khởi động, không initialize/update DB. Cấu hình mới cho yêu cầu online, không khôi phục staging/Compose cũ.
+- Chạy publish Release --no-restore --no-self-contained: thất bại do thiếu license Six Labors (ImageSharp 4.1.2). Không đổi dependency hoặc dùng Debug để vượt lỗi. Chưa có gói Release hoàn chỉnh; cần license hợp lệ và kết nối Railway trước khi deploy. SMTP thật cần cấu hình qua secret hosting.
+- DB đang cấu hình trong .env.local: kiểm tra chỉ đọc schema v42, quick_check ok, 0 vi phạm FK. Không copy/nâng cấp/sửa DB, không reset tài khoản. Kiểm tra cú pháp PowerShell/JSON/XML và git diff --check đạt; kiểm chứng target lọc publish bằng MSBuild: loại 7/7 đường dẫn nhạy cảm giả, giữ 2/2 file ứng dụng. Chưa chạy Docker/shell/Linux, URL HTTPS hoặc SMTP; máy chưa có Docker/Bash.
+- Bàn giao: docs/trien-khai-online.md. Giữ thay đổi sẵn có của tien-do.md, docs/review-20261020.md và output/; không stage/commit, không sửa test csproj.
+- 22/10/2026: Người dùng chốt triển khai chỉ dùng miễn phí. Đã ghi giới hạn Free/Trial, không nâng gói/thêm thanh toán/nạp credit/mua license hoặc bật API tính phí trong docs/trien-khai-online.md. Kiểm tra lại: Railway chưa được kết nối, không có biến Railway/SixLabors hoặc file license trong mã nguồn; browser automation lỗi khởi tạo nên không kiểm tra được phiên đăng nhập. Chưa tạo dịch vụ hoặc URL, chưa phát sinh chi phí hosting; chờ kết nối Railway và license Community hợp lệ. Không build lại khi điều kiện license chưa thay đổi, không sửa dữ liệu.
+
+### 22/10/2026 — Thay ImageSharp bằng SkiaSharp và kiểm tra Railway Trial
+
+- Theo yêu cầu trực tiếp: bỏ ImageSharp 4.1.2, dùng SkiaSharp 4.153.1 (MIT) và native Linux cùng phiên bản; không đăng ký/mua license. Chuyển bộ xử lý ảnh, tạo demo và fixture; giữ resize/thumbnail, EXIF, kiểm tra định dạng/dung lượng/độ phân giải, file private và quyền hiện có. Kèm MIT/native notices vào publish; không đổi schema hoặc tài khoản.
+- 155 ca liên quan khác nhau đạt qua các lượt (21 unit ảnh + 134 workflow/quyền). Ba test ảnh dùng URL danh sách cũ /TinDang được đổi sang /TimTin và đạt khi chạy lại; assertion nội dung crop avatar dùng dung sai nội suy. TRX và diễn giải từng lượt tại data/skia-verification, chi tiết docs/trien-khai-online.md. Không phải full suite; chưa UI/SMTP/Linux container. Testhost trong sandbox treo; chạy ngoài sandbox trên CSDL tạm đạt.
+- Build Release đạt, còn 2 CS8601 có sẵn. Publish linux-x64 sạch tại data/online/20261022-191934-1a1177e9: 866 file/61,47 MiB, có libSkiaSharp.so và notices, không ImageSharp/DB/private config/upload hay endpoint upload local. Sửa target loại Content/None trước static-web-assets discovery sau khi guard chặn lượt publish đầu; không upload gói lỗi. PowerShell parse và diff --check đạt.
+- SHA256 SQLite nguồn trước/sau giống hệt; không copy/nâng/sửa DB hoặc reset mật khẩu. Giữ thay đổi có sẵn, không sửa test csproj, không stage/commit.
+- Railway plugin đã kết nối; dashboard sau đăng nhập xác nhận Trial còn $5.00/30 ngày. Nền tảng đang sự cố, build Free/Trial chưa mở lại; create-project bị từ chối upstream paused, list xác nhận vẫn 0 project. Chưa tạo service/volume/domain, chưa gửi DB/secret, chưa có URL online và không nâng gói/phát sinh phí.
+- Railway Free/Trial chặn SMTP; đã viết hướng dẫn riêng trong docs/trien-khai-online.md cho email HTTPS API miễn phí sau build. Chưa tự chọn tài khoản hoặc tích hợp transport khi chưa có nhà cung cấp/secret. Cần Railway khôi phục Free/Trial và cấu hình email trước triển khai/kiểm chứng hoàn chỉnh.
+
+### 22/10/2026 — Tích hợp Brevo HTTPS API
+
+- Theo lựa chọn Brevo của người dùng: thêm transport HttpClient, không thêm package; endpoint cố định/không redirect/timeout 15 giây/header redacted, lỗi không kèm key/body/người nhận, không tự retry, chỉ thành công HTTP201 có messageId. Nối cả hai sender cho toàn bộ email nghiệp vụ; giữ SMTP/pickup cũ và cấm pickup Production. Sửa startup và lệnh check-email-config để nhận Brevo; kiểm tra key chỉ có/không.
+- 15/15 test email liên quan đạt, Release build đạt (2 CS8601 cũ); TRX data/brevo-verification/brevo.trx. CSDL giả/HTTP giả, chưa gửi email thật. Không sửa schema/DB nguồn/mật khẩu/project test hoặc stage/commit.
+- Key người dùng báo đã lưu chưa thấy trong Process/User/Machine (cả Brevo__ApiKey lẫn tên người dùng báo Brevo_ApiKey). Thêm deployment/Set-BrevoKey.ps1 để nhập bằng ô ẩn và lưu đúng tên User variable, không ghi file/log. Hướng dẫn cấu hình Brevo tại docs/trien-khai-online.md. Còn xác minh key/scope/hạn mức/sender/inbox thực tế và tiếp tục Railway Free/Trial khi nền tảng khôi phục.
+
+- Publish Brevo Release linux-x64 đạt tại data/online/20261022-193959-6891a421; script nhập key parse 0 lỗi, nguồn SQLite giữ nguyên SHA256. Chưa gửi email thật hoặc upload Railway.
+- 22/10/2026: Người dùng xác nhận Brevo Free và cho phép gửi một thư thử tới hộp thư do người dùng chỉ định. Đọc key từ User environment Brevo__ApiKey trong bộ nhớ; POST HTTPS /v3/smtp/email trả HTTP 201 và messageId, đúng 1 request, không retry. Brevo đã tiếp nhận; chưa xác nhận thư vào inbox. GET /v3/account trước đó trả 403 do thiếu scope đọc tài khoản, không phải lỗi quyền gửi. Không lưu key/nội dung phản hồi/địa chỉ email vào tài liệu, không đổi gói/thanh toán/DB.
+- 22/10/2026: Người dùng xác nhận đã nhận thư thử trong hộp thư; nghiệm thu gửi/nhận thực tế Brevo HTTPS API đạt. Kiểm tra lại trạng thái Railway: bản tin 19:30 UTC+7 vẫn chưa mở build Hobby/Free/Trial. Không thử tạo project lặp khi nền tảng còn tạm dừng, không nâng gói/thêm thanh toán. Gói Release Brevo đã sẵn sàng, còn chờ Railway khôi phục để chuyển dữ liệu và kiểm chứng online.
+- 22/10/2026 20:31 UTC+7: Theo yêu cầu tiếp tục, Railway plugin vẫn kết nối được nhưng create-project trả Deploys have been paused due to an upstream issue. Trạng thái công khai cập nhật 20:16 UTC+7 vẫn chỉ mở build Pro/Enterprise, chưa Hobby/Free/Trial; hẹn thông báo tiếp trước 21:00 UTC+7, không phải ETA phục hồi. Không tạo được project/tài nguyên, không gửi DB/secret, không phát sinh phí. Bản Release và Brevo đã sẵn sàng.
+
+### 22/10/2026 — Bắt đầu phương án tự triển khai Render + Neon miễn phí
+
+- Người dùng yêu cầu tự triển khai sau khi được giới thiệu Render Free + Neon PostgreSQL Free. Railway vẫn tạm dừng Free/Trial. Tìm thấy tích hợp Render/Neon nhưng chưa cài/kết nối; chưa có quyền truy cập tài khoản để kiểm tra gói hoặc tạo tài nguyên. Đã yêu cầu kết nối qua luồng đăng nhập dịch vụ, không xin key/mật khẩu trong chat.
+- Thêm deployment/Inspect-PostgresPort.py và chạy inventory chỉ đọc trên DB cấu hình hiện có: v42, 61 bảng/19.489 dòng/51 index/60 trigger, integrity đạt/0 vi phạm FK, SHA256 nguồn giữ nguyên. Không xuất dữ liệu từng dòng hoặc credential. Báo cáo ignored tại data/postgres-port/20261022T160514Z-fd6cd2a0/inventory.json.
+- Rà mã: nhiều cast/exception SQL riêng SQLite, BEGIN IMMEDIATE trong tài chính/giữ phòng và thư mục private phụ thuộc DataSource; phải chuyển cả transaction/trigger và lưu trữ file trước public. Docker CLI hiện có nhưng Linux engine chưa chạy. Chưa đổi provider/schema/DB nguồn hoặc tạo PostgreSQL đích, chưa có URL Render.
+- Bàn giao điều kiện và phạm vi chuyển đầy đủ: docs/trien-khai-render-neon.md. Không stage/commit hoặc nâng gói/thêm thẻ/phát sinh phí. Brevo và bản Release Railway vẫn giữ trạng thái đã kiểm chứng.
+
+### 23/10/2026 — Render/Neon: kết nối, nhập thử giữ dữ liệu và port API nền
+
+- Người dùng chọn My Workspace trên Render, compute chỉ Free. Neon organization đã xác minh Free; project nhatot ở Singapore, PG17, compute cố định 0,25 CU. Có main trống và codex-migration-test riêng. Chưa tạo Render service/URL, không nâng gói/thêm thanh toán.
+- Người dùng cho phép rõ ràng chuyển bản sao 61 bảng/19.489 dòng gồm tài khoản/hash, hồ sơ và tài chính lên nhánh Neon thử để đối chiếu rồi rollback, sau auto-review chặn lần xuất đầu. Không dùng quyền này để gửi email tồn đọng hoặc public file riêng.
+- Kiểm kê có 61 bảng, 51 index tường minh, 60 trigger và 1 view nghiệp vụ. Đã thêm công cụ PostgresPort chỉ rehearsal/rollback, xuất metadata EF không chạy web/initializer, backup SQLite qua API mới, TLS VerifyFull, pin host/nhánh thử, lỗi redacted. SQL ứng viên v1 tại deployment/postgres/v1; không áp dụng vào DB đang dùng.
+- Nhập thử 19.489 dòng đối chiếu giá trị từng dòng đạt; 49 entity EF khớp mọi scalar với SQLite. Dashboard tài chính, 20 yêu cầu lịch hẹn và 20 hóa đơn qua GhiThu khớp. Rollback toàn bộ lượt thử, SQLite nguồn không đổi. DateTime giữ TEXT do 85 giá trị có phần lẻ 100 ns; converter khớp cả xử lý offset SQLite .NET 10. DateOnly nhập ISO nghiêm ngặt, bool integer, decimal numeric.
+- Thêm provider Npgsql EF 10.0.3 và mapping có điều kiện. Thay cast transaction runtime bằng API chung; SQLite vẫn IMMEDIATE/deferred như cũ. PG writer dùng advisory transaction lock + ReadCommitted; chứng minh EF và ADO trên hai kết nối chặn nhau rồi nhả khi rollback, có xử lý PID proxy Neon pooler trong kiểm chứng. Adapter ADO/EF giữ parameter hóa/alias/UTC, phân loại lỗi theo SQLSTATE, không bỏ constraint. PG reorder ảnh dùng UPDATE và unique deferrable, không tắt CHECK 1..8.
+- Build Release thành công. 7 ca Python schema đạt. Hồi quy C# tổng hợp ba lượt: 561 ca khác nhau đạt, không còn ca thất bại cuối cùng; gồm 26 ca lượt cuối. Sửa kỳ vọng test cũ v40 -> v42 và nhãn Hủy báo thanh toán; không sửa UI/schema nguồn hoặc project test. TRX ở data/postgres-port/tests (ignored). Không phải full suite PostgreSQL/Linux/UI.
+- Object Storage được hỗ trợ trên nhánh thử; tạo bucket private nhatot-private, chưa tạo credential/upload file. Kiểm kê local 270.694.929 byte gồm cả file mồ côi; 2.889 file đang tham chiếu đều đủ (2.880 ảnh phòng/thumbnail, 2 giấy tờ, 2 báo hỏng, 1 chứng từ, 1 QR, 3 avatar). Không đưa 224 ảnh giấy tờ không được tham chiếu lên hosting.
+- Chưa hoàn tất triển khai: Program.cs vẫn UseSqlite; còn tách file scope/S3, key ring bền vững, schema startup PG, sequence/cutover/restore, kiểm thử ghi đồng thời và trigger trên fixture PG, Docker Render, publish source/secret và xác minh URL. Không public bản PostgreSQL chưa kiểm chứng. Chi tiết: docs/trien-khai-render-neon.md.
+<!-- Triển khai Render/Neon 23/10/2026: xem docs/trien-khai-render-neon.md;
+183 kiểm thử storage/image/email đạt; PostgreSQL synthetic write/concurrency/audit rollback đạt;
+2.889 file private được đối chiếu SHA256; source SQLite không đổi. -->

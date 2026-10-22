@@ -26,7 +26,7 @@ public class HoSoAccess(AppDbContext db)
         try
         {
             if (openedHere) await connection.OpenAsync();
-            using var command = connection.CreateCommand();
+            using var command = connection.CreatePortableCommand();
             command.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='nguoi_o_ghep'";
             var hasRoommates = Convert.ToInt64(await command.ExecuteScalarAsync()) > 0;
             // Signed contracts remain a relationship after the tenancy ends.
@@ -57,7 +57,7 @@ public class HoSoAccess(AppDbContext db)
             while (await reader.ReadAsync()) ids.Add(reader.GetInt32(0));
             return ids;
         }
-        catch (SqliteException ex) when (ex.SqliteErrorCode == 1) { return []; }
+        catch (DbException ex) when (DatabaseErrors.IsMissingSchema(ex)) { return []; }
         finally { if (openedHere) await connection.CloseAsync(); }
     }
 }

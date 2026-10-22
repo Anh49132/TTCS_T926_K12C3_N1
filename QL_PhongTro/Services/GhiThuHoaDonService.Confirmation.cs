@@ -12,7 +12,7 @@ public sealed partial class GhiThuHoaDonService
         if (!Guid.TryParseExact(key, "N", out _))
             throw new GhiThuValidationException(new() { [""] = ["Phiên xác nhận không hợp lệ. Hãy tải lại hóa đơn."] });
         await db.Database.OpenConnectionAsync(ct);
-        await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var tx = await db.Database.UseTransactionAsync(sqlite, ct);
         var report = await db.ThanhToans.SingleOrDefaultAsync(x => x.Id == paymentId, ct)
             ?? throw new UnauthorizedAccessException();
@@ -55,7 +55,7 @@ public sealed partial class GhiThuHoaDonService
         if (string.IsNullOrWhiteSpace(reason) || reason.Length > 500)
             throw new GhiThuValidationException(new() { ["LyDo"] = ["Nhập lý do từ chối từ 1 đến 500 ký tự."] });
         await db.Database.OpenConnectionAsync(ct);
-        await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var tx = await db.Database.UseTransactionAsync(sqlite, ct);
         var report = await db.ThanhToans.SingleOrDefaultAsync(x => x.Id == paymentId, ct) ?? throw new UnauthorizedAccessException();
         await OwnedAsync(actorId, report.HoaDonId, ct);

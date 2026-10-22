@@ -24,7 +24,7 @@ public class AuthService(AppDbContext db, TokenService tokenService, JwtSettings
     public async Task<(bool success, LoginResponse? response, string? error)> LoginAsync(LoginRequest request)
     {
         // Serialize credential verification/token persistence with password reset (from dev).
-        await using var transaction = await _db.Database.BeginTransactionAsync();
+        await using var transaction = await _db.Database.BeginProtectedTransactionAsync();
         var validation = await _credentialValidator.ValidateAsync(request);
         if (!validation.Success)
         {
@@ -67,7 +67,7 @@ public class AuthService(AppDbContext db, TokenService tokenService, JwtSettings
 
     public async Task<(bool success, RefreshTokenResponse? response, string? error)> RefreshTokenAsync(string refreshToken)
     {
-        await using var transaction = await _db.Database.BeginTransactionAsync();
+        await using var transaction = await _db.Database.BeginProtectedTransactionAsync();
         var tokenHash = ComputeHash(refreshToken);
         var now = _timeProvider.UtcNow;
         var user = await _db.TaiKhoans

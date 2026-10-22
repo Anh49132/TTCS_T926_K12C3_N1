@@ -10,7 +10,7 @@ public partial class LichHenService
     public async Task<bool> HuyDaDuyetAsync(int id, int actor, HuyYeuCauDaDuyetInput input, CancellationToken ct)
     {
         await db.Database.OpenConnectionAsync(ct);
-        using var tx = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        using var tx = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var efTransaction = await db.Database.UseTransactionAsync(tx, ct);
         var request = await LoadAsync(id, ct, tx) ?? throw new KeyNotFoundException("Yêu cầu không tồn tại.");
         if (!await CoQuyenXuLyAsync(actor, request, ct) || !await db.TaiKhoans.AnyAsync(
@@ -20,7 +20,7 @@ public partial class LichHenService
         if (!input.XacNhan || reason.Length is < 5 or > 500 || input.PhienBan is null || input.PhienBanPhong is null)
             throw new InvalidOperationException("Nhập lý do từ 5 đến 500 ký tự và xác nhận hủy giữ chỗ.");
 
-        using var command = tx.Connection!.CreateCommand();
+        using var command = tx.Connection!.CreatePortableCommand();
         command.Transaction = tx;
         command.Parameters.AddWithValue("$request", id);
         command.Parameters.AddWithValue("$room", request.PhongId);

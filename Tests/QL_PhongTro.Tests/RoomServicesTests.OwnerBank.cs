@@ -1,3 +1,4 @@
+using SkiaSharp;
 using System.Net;
 using System.Text.Json;
 using Microsoft.AspNetCore.Http;
@@ -7,8 +8,6 @@ using QL_PhongTro.Data;
 using QL_PhongTro.Models;
 using QL_PhongTro.Services;
 using QL_PhongTro.ViewModels;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.PixelFormats;
 using Xunit;
 
 namespace QL_PhongTro.Tests;
@@ -17,12 +16,7 @@ public sealed partial class RoomServicesTests
 {
     private OwnerBankImageStore BankImages => new(path + ".bank-qr");
     private OwnerBankService BankService(AppDbContext db) => new(db, BankImages, CollectionClock());
-    private static async Task<byte[]> BankPng()
-    {
-        using var image = new Image<Rgba32>(2, 2);
-        using var stream = new MemoryStream();
-        await image.SaveAsPngAsync(stream); return stream.ToArray();
-    }
+    private static Task<byte[]> BankPng() => Task.FromResult(TestImages.Encode(2, 2, SKEncodedImageFormat.Png));
     private static IFormFile BankFile(byte[] bytes, string filename = "qr.png") =>
         new FormFile(new MemoryStream(bytes), 0, bytes.Length, "AnhQr", filename);
     private static OwnerBankInput BankInput(string? version = null, IFormFile? file = null) => new()

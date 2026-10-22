@@ -12,7 +12,7 @@ public interface IInvoiceEmailSender
     Task<EmailDeliveryResult> SendOverdueAsync(string email, string name, string invoiceCode, int month, int year, long totalAmount, long remainingAmount, DateOnly dueDate, string detailUrl);
 }
 
-public sealed class InvoiceEmailSender(IOptions<PasswordResetOptions> options, IWebHostEnvironment environment) : IInvoiceEmailSender
+public sealed class InvoiceEmailSender(IOptions<PasswordResetOptions> options, IWebHostEnvironment environment, BrevoEmailTransport? brevo = null) : IInvoiceEmailSender
 {
     public Task<EmailDeliveryResult> SendInvoiceIssuedAsync(string email, string name, string invoiceCode, int month, int year, long totalAmount, DateOnly dueDate, string detailUrl)
     {
@@ -91,6 +91,13 @@ public sealed class InvoiceEmailSender(IOptions<PasswordResetOptions> options, I
             return new EmailDeliveryResult(EmailDeliveryMode.Pickup, pickupDirectory, filePath);
         }
 
+        if (settings.Provider.Equals("Brevo", StringComparison.OrdinalIgnoreCase))
+        {
+            if (brevo is null) throw new InvalidOperationException("Thiếu dịch vụ gửi email Brevo.");
+            return await brevo.SendAsync(message);
+        }
+        if (!settings.Provider.Equals("Smtp", StringComparison.OrdinalIgnoreCase))
+            throw new InvalidOperationException("Nhà cung cấp email không hợp lệ.");
         if (string.IsNullOrWhiteSpace(settings.Host))
         {
             throw new InvalidOperationException("Missing SMTP host.");

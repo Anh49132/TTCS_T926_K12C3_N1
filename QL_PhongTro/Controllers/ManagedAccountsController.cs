@@ -64,7 +64,7 @@ public sealed class ManagedAccountsController(AppDbContext db, ITemporaryPasswor
         };
         db.TaiKhoans.Add(account);
         try { await db.SaveChangesAsync(); }
-        catch (DbUpdateException ex) when (ex.InnerException is SqliteException { SqliteErrorCode: 19 })
+        catch (DbUpdateException ex) when (DatabaseErrors.IsConstraint(ex.InnerException))
         {
             ModelState.AddModelError("", "Email hoặc số điện thoại đã được sử dụng. Vui lòng kiểm tra lại.");
             return View(model);
@@ -87,7 +87,7 @@ public sealed class ManagedAccountsController(AppDbContext db, ITemporaryPasswor
     [HttpPost, ModuleAccess("TAI_KHOAN", write: true)]
     public async Task<IActionResult> ChangeRole(ChangeAccountRoleViewModel model)
     {
-        await using var tx = await db.Database.BeginTransactionAsync();
+        await using var tx = await db.Database.BeginProtectedTransactionAsync();
         var account = await db.TaiKhoans.SingleOrDefaultAsync(a => !a.IsDeleted && a.Id == model.Id);
         if (account is null) return NotFound();
         model.HoTen = account.HoTen;
@@ -120,7 +120,7 @@ public sealed class ManagedAccountsController(AppDbContext db, ITemporaryPasswor
     [HttpPost, ModuleAccess("TAI_KHOAN", write: true)]
     public async Task<IActionResult> Resend(int id)
     {
-        await using var tx = await db.Database.BeginTransactionAsync();
+        await using var tx = await db.Database.BeginProtectedTransactionAsync();
         var account = await db.TaiKhoans.SingleOrDefaultAsync(a => !a.IsDeleted && a.Id == id && a.MustChangePassword && a.DangHoatDong);
         if (account is null || account.VaiTro is not ("CHU_NHA" or "QUAN_LY" or "ADMIN")) return NotFound();
         var password = TemporaryPassword();
@@ -140,7 +140,7 @@ public sealed class ManagedAccountsController(AppDbContext db, ITemporaryPasswor
     {
         if (!active && !confirmed) return BadRequest("Cần xác nhận khoá tài khoản.");
         if (User.FindFirstValue(ClaimTypes.NameIdentifier) == id.ToString()) return BadRequest("Không được tự khoá tài khoản.");
-        await using var tx = await db.Database.BeginTransactionAsync();
+        await using var tx = await db.Database.BeginProtectedTransactionAsync();
         var account = await db.TaiKhoans.SingleOrDefaultAsync(a => !a.IsDeleted && a.Id == id);
         if (account is null) return NotFound();
         if (account.VaiTro is not ("CHU_NHA" or "QUAN_LY" or "KHACH_THUE" or "ADMIN")) return Forbid();
@@ -160,7 +160,7 @@ public sealed class ManagedAccountsController(AppDbContext db, ITemporaryPasswor
     {
         if (!confirmed) return BadRequest("Cần xác nhận xóa tài khoản.");
         if (User.FindFirstValue(ClaimTypes.NameIdentifier) == id.ToString()) return BadRequest("Không được tự xóa tài khoản.");
-        await using var tx = await db.Database.BeginTransactionAsync();
+        await using var tx = await db.Database.BeginProtectedTransactionAsync();
         var account = await db.TaiKhoans.SingleOrDefaultAsync(a => !a.IsDeleted && a.Id == id && a.VaiTro != "ADMIN");
         if (account is null) return NotFound();
         account.DangHoatDong = false; account.IsDeleted = true; account.RefreshTokenHash = null; account.RefreshTokenExpiry = null;

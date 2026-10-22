@@ -18,7 +18,7 @@ public sealed partial class ChiSoDienNuocService
         input.CanhBaos.Clear();
         var meter = await db.ChiSoDienNuocs.AsNoTracking().Where(x => x.HopDongId == room.HopDongId && x.DenNgay < first).ToListAsync(ct);
         var connection = db.Database.GetDbConnection();
-        using var command = connection.CreateCommand();
+        using var command = connection.CreatePortableCommand();
         command.Transaction = db.Database.CurrentTransaction?.GetDbTransaction();
         command.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name IN ('hoa_don','chi_tiet_hoa_don')";
         var hasInvoices = Convert.ToInt32(await command.ExecuteScalarAsync(ct)) == 2;

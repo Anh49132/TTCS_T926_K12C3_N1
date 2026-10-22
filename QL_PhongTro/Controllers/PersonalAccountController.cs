@@ -27,7 +27,7 @@ public sealed class PersonalAccountController(AppDbContext db,PersonalAvatarStor
     [HttpPost,ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(PersonalAccountViewModel model)
     {
-        await using var tx=await db.Database.BeginTransactionAsync();
+        await using var tx=await db.Database.BeginProtectedTransactionAsync();
         var account=await Current();if(account is null)return Forbid();Display(model,account);
         model.HoTen=(model.HoTen??"").Trim();model.SoDienThoai=(model.SoDienThoai??"").Trim();
         if(string.IsNullOrWhiteSpace(model.HoTen))ModelState.AddModelError(nameof(model.HoTen),"Nhập họ tên.");
@@ -39,7 +39,7 @@ public sealed class PersonalAccountController(AppDbContext db,PersonalAvatarStor
         var profile=await db.KhachThues.SingleOrDefaultAsync(x=>x.TaiKhoanId==Actor);
         if(profile is not null){profile.HoTen=model.HoTen;profile.SoDienThoai=model.SoDienThoai;}
         try {await db.SaveChangesAsync();await tx.CommitAsync();}
-        catch(Exception ex) when(ex is DbUpdateException or SqliteException)
+        catch(Exception ex) when(ex is DbUpdateException or DbException)
         { ModelState.AddModelError("","Chưa lưu được thông tin. Số điện thoại có thể đã được dùng hoặc dữ liệu đã đổi. Hãy tải lại trang.");return View(model); }
         TempData["PersonalSuccess"]="Đã cập nhật thông tin tài khoản.";
         return RedirectToAction(nameof(Edit));

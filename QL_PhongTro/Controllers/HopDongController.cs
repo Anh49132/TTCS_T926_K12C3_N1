@@ -13,10 +13,10 @@ namespace QL_PhongTro.Controllers;
 
 [Authorize, ModuleAccess("HOP_DONG")]
 [ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-public class HopDongController(AppDbContext db, ITimeProvider? clock = null, PermissionService? permissions = null) : Controller
+public class HopDongController(AppDbContext db, ITimeProvider? clock = null, PermissionService? permissions = null, DurableFiles? durable = null) : Controller
 {
     private int AccountId => int.TryParse(User.FindFirstValue(ClaimTypes.NameIdentifier), out var id) ? id : 0;
-    private ContractDocumentStore Documents => new(db.Database.GetDbConnection().DataSource);
+    private ContractDocumentStore Documents => new(db.FileStoragePath, durable);
 
     [HttpGet]
     public async Task<IActionResult> TaiLieu(int id, string fileId, CancellationToken ct)
@@ -203,7 +203,7 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
         bool luuNhap = vm.Intent == "NHAP";
         // BEGIN IMMEDIATE serializes writers before checking overlaps and allocating a code.
         await db.Database.OpenConnectionAsync(ct);
-        await using var sqliteTransaction = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        await using var sqliteTransaction = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var transaction = await db.Database.UseTransactionAsync(sqliteTransaction, ct);
         vm.YeuCaus = await Approved(ct);
         vm.DaChon = vm.YeuCaus.SingleOrDefault(x => x.Id == vm.YeuCauId);
@@ -294,7 +294,7 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
                 TempData["ContractWarning"] = result.SoNhap > 0 ? "Đã tạo hóa đơn kỳ đầu ở trạng thái nháp. Kiểm tra và phát hành tại mục Hóa đơn."
                     : "Hợp đồng đã lưu. Chưa tạo được hóa đơn kỳ đầu vì chưa đủ dữ liệu (ví dụ chỉ số cuối kỳ). Bổ sung và lập hóa đơn tại mục Hóa đơn.";
             }
-            catch (Exception ex) when (ex is InvalidOperationException or DbUpdateException or SqliteException or UnauthorizedAccessException)
+            catch (Exception ex) when (ex is InvalidOperationException or DbUpdateException or DbException or UnauthorizedAccessException)
             { TempData["ContractWarning"] = "Hợp đồng đã lưu. Chưa tạo được hóa đơn kỳ đầu; hãy kiểm tra tại mục Hóa đơn."; }
         }
         if (luuNhap)
@@ -305,7 +305,7 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
         TempData["ContractSuccess"] = $"Đã tạo hợp đồng {code}, ghi chỉ số điện nước đầu kỳ. Phòng {y.Phong} — {y.ToaNha}: Đang thuê.";
         return RedirectToAction(nameof(Details), new { id = contract.Id });
         }
-        catch (Exception ex) when (ex is DbUpdateException or SqliteException or IOException or UnauthorizedAccessException)
+        catch (Exception ex) when (ex is DbUpdateException or DbException or IOException or UnauthorizedAccessException)
         {
             await sqliteTransaction.RollbackAsync(ct);
             db.ChangeTracker.Clear();
@@ -328,7 +328,7 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
         {
             // BEGIN IMMEDIATE serializes writers so two owners cannot activate one room at once.
             await db.Database.OpenConnectionAsync(ct);
-            await using var sqliteTransaction = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+            await using var sqliteTransaction = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
             await using var transaction = await db.Database.UseTransactionAsync(sqliteTransaction, ct);
             if (!await OwnContract(id, ct)) return Forbid();
             var hopDong = await db.HopDongs.SingleAsync(h => h.Id == id, ct);
@@ -371,7 +371,7 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
             TempData["ContractSuccess"] = $"Hợp đồng {hopDong.MaHopDong} đã hiệu lực. Phòng {room.MaPhong}: Đang thuê; tin đăng: Đã cho thuê.";
             return RedirectToAction(nameof(Details), new { id });
         }
-        catch (Exception ex) when (ex is DbUpdateException or SqliteException or InvalidOperationException)
+        catch (Exception ex) when (ex is DbUpdateException or DbException or InvalidOperationException)
         {
             db.ChangeTracker.Clear();
             var message = ex is InvalidOperationException && shouldSimulate
@@ -565,7 +565,7 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
         try
         {
             await db.Database.OpenConnectionAsync(ct);
-            await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+            await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
             await using var transaction = await db.Database.UseTransactionAsync(sqlite, ct);
             if (!await OwnContract(id, ct)) return Forbid();
 
@@ -630,7 +630,7 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
             TempData["ContractSuccess"] = $"Đã gia hạn hợp đồng {contract.MaHopDong} đến ngày {end:dd/MM/yyyy}.";
             return RedirectToAction(nameof(Details), new { id });
         }
-        catch (Exception ex) when (ex is DbUpdateException or SqliteException)
+        catch (Exception ex) when (ex is DbUpdateException or DbException)
         {
             db.ChangeTracker.Clear();
             ModelState.AddModelError("", "Không thể lưu kỳ gia hạn do lỗi cơ sở dữ liệu. Không có thay đổi nào được lưu; vui lòng tải lại và thử lại.");
@@ -656,7 +656,7 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
         try
         {
             await db.Database.OpenConnectionAsync(ct);
-            await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+            await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
             await using var transaction = await db.Database.UseTransactionAsync(sqlite, ct);
             if (!await OwnContract(id, ct)) return Forbid();
             var h = await db.HopDongs.SingleAsync(x => x.Id == id, ct);
@@ -672,7 +672,7 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
             if (!ModelState.IsValid) return await Invalid();
             var day = input.NgayRa!.Value;
             var next = new DateOnly(day.Year, day.Month, 1).AddMonths(1);
-            using var probe = db.Database.GetDbConnection().CreateCommand();
+            using var probe = db.Database.GetDbConnection().CreatePortableCommand();
             probe.Transaction = sqlite;
             probe.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name='hoa_don'";
             var invoicesReady = Convert.ToInt32(await probe.ExecuteScalarAsync(ct)) == 1;
@@ -689,7 +689,7 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
                     + " đã lập được giữ nguyên. Số người giảm chỉ áp dụng cho hóa đơn chưa lập; hãy kiểm tra các hóa đơn này.";
             return RedirectToAction(nameof(Details), new { id, tab = "people" });
         }
-        catch (Exception ex) when (ex is DbUpdateException or SqliteException)
+        catch (Exception ex) when (ex is DbUpdateException or DbException)
         {
             db.ChangeTracker.Clear();
             ModelState.AddModelError("", "Không thể ghi nhận chuyển đi. Không có thay đổi nào được lưu. Vui lòng tải lại và thử lại.");
@@ -758,7 +758,7 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
         try
         {
             await db.Database.OpenConnectionAsync(ct);
-            await using var sqlite = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+            await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
             await using var transaction = await db.Database.UseTransactionAsync(sqlite, ct);
             if (!await OwnContract(id, ct)) return Forbid();
             var h = await db.HopDongs.SingleAsync(x => x.Id == id, ct);
@@ -837,7 +837,7 @@ public class HopDongController(AppDbContext db, ITimeProvider? clock = null, Per
             TempData["ContractSuccess"] = "Đã thêm người ở ghép. Người đứng tên tiếp tục chịu trách nhiệm thanh toán và nhận lại tiền cọc.";
             return RedirectToAction(nameof(Details), new { id, tab = "people" });
         }
-        catch (Exception ex) when (ex is DbUpdateException or SqliteException)
+        catch (Exception ex) when (ex is DbUpdateException or DbException)
         {
             db.ChangeTracker.Clear();
             ModelState.AddModelError("", "Không thể lưu do dữ liệu đang thay đổi. Vui lòng tải lại trang và thử lại.");

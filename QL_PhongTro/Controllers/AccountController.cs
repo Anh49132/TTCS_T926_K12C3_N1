@@ -212,7 +212,7 @@ public partial class AccountController(AppDbContext db, RegistrationSettings set
         db.TaiKhoans.Add(user);
         db.SelfRegisteringAccount = user;
         try { await db.SaveChangesAsync(); }
-        catch (DbUpdateException ex) when (ex.InnerException is Microsoft.Data.Sqlite.SqliteException { SqliteErrorCode: 19 })
+        catch (DbUpdateException ex) when (DatabaseErrors.IsConstraint(ex.InnerException))
         {
             ModelState.AddModelError("", "Email hoặc số điện thoại đã được sử dụng.");
             return View(model);
@@ -233,7 +233,7 @@ public partial class AccountController(AppDbContext db, RegistrationSettings set
     public async Task<IActionResult> ConfirmEmail(EmailConfirmationViewModel model)
     {
         if (!ModelState.IsValid) return View(model);
-        await using var tx = await db.Database.BeginTransactionAsync();
+        await using var tx = await db.Database.BeginProtectedTransactionAsync();
         var email = model.Email.Trim().ToLowerInvariant();
         var hash = Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(model.Code?.Trim() ?? "")));
         var account = await db.TaiKhoans.SingleOrDefaultAsync(a => !a.IsDeleted && a.Email.Trim().ToLower() == email && !a.EmailConfirmed && a.DangHoatDong);

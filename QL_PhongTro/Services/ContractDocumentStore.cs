@@ -6,14 +6,15 @@ public sealed record ContractFile(string Id, string Name, string ContentType, lo
 public sealed record ContractDocuments(string Template, string Terms, List<ContractFile> Files);
 
 // Private storage belongs to the selected database, including isolated demo databases.
-public sealed class ContractDocumentStore(string databasePath)
+public sealed class ContractDocumentStore(string databasePath, DurableFiles? durable = null)
 {
     private string Root => Path.Combine(Path.GetDirectoryName(Path.GetFullPath(databasePath))!,
         Path.GetFileName(databasePath) + ".contract-documents");
     private string Folder(int id) => Path.Combine(Root, id.ToString(System.Globalization.CultureInfo.InvariantCulture));
+    private FileScope? Remote => durable is { Enabled: true } ? durable.Scope(Root, "contracts") : null;
     public async Task<ContractDocuments> ReadAsync(int id, CancellationToken ct = default)
     {
-        var path = Path.Combine(Folder(id), "manifest.json");
+        var path = Remote?.Ensure(id + "/manifest.json", refresh: true) ?? Path.Combine(Folder(id), "manifest.json");
         return File.Exists(path) ? JsonSerializer.Deserialize<ContractDocuments>(await File.ReadAllTextAsync(path, ct))!
             : new("Chưa ghi nhận mẫu hợp đồng", "", []);
     }
@@ -52,9 +53,10 @@ public sealed class ContractDocumentStore(string databasePath)
         var error = await ValidateAsync(files, ct);
         if (error.Length > 0) throw new InvalidOperationException(error);
         var folder = Folder(id);
-        var exists = Directory.Exists(folder);
+        var read = await ReadAsync(id, ct);
+        var exists = File.Exists(Path.Combine(folder, "manifest.json"));
         if (exists && !editableDraft) throw new IOException("Tài liệu hợp đồng đã tồn tại.");
-        var previous = exists ? await ReadAsync(id, ct) : new ContractDocuments("Mẫu hợp đồng tiêu chuẩn của hệ thống", "", []);
+        var previous = exists ? read : new ContractDocuments("Mẫu hợp đồng tiêu chuẩn của hệ thống", "", []);
         if (previous.Files.Count + files.Count > 5) throw new IOException("Chỉ đính kèm tối đa 5 tệp, bao gồm tài liệu đã lưu.");
         var staging = folder + ".pending-" + Guid.NewGuid().ToString("N");
         var backup = folder + ".before-" + Guid.NewGuid().ToString("N");
@@ -65,7 +67,7 @@ public sealed class ContractDocumentStore(string databasePath)
             foreach (var file in previous.Files)
             {
                 if (file.Id.Length != 32 || !file.Id.All(char.IsAsciiHexDigit)) throw new IOException("Khóa tài liệu không hợp lệ.");
-                File.Copy(Path.Combine(folder, file.Id), Path.Combine(staging, file.Id));
+                File.Copy(FilePath(id, file.Id), Path.Combine(staging, file.Id));
             }
             foreach (var file in files)
             {
@@ -77,15 +79,35 @@ public sealed class ContractDocumentStore(string databasePath)
             }
             await File.WriteAllTextAsync(Path.Combine(staging, "manifest.json"),
                 JsonSerializer.Serialize(new ContractDocuments(previous.Template, terms.Trim(), saved)), ct);
-            if (exists) Directory.Move(folder, backup);
-            try { Directory.Move(staging, folder); }
-            catch { if (exists) Directory.Move(backup, folder); throw; }
-            return new DocumentWrite(folder, exists ? backup : null);
+            Action? rollbackRemote = null;
+            if (Remote is {} remote)
+            {
+                // New attachments have immutable keys. Publish the manifest last.
+                foreach (var file in saved.Where(f => !previous.Files.Any(p => p.Id == f.Id)))
+                    await durable!.WriteAsync("contracts/" + id + "/" + file.Id, await File.ReadAllBytesAsync(Path.Combine(staging, file.Id), ct), ct);
+                rollbackRemote = () =>
+                {
+                    if (exists) durable!.WriteAsync("contracts/" + id + "/manifest.json", System.Text.Encoding.UTF8.GetBytes(JsonSerializer.Serialize(previous))).GetAwaiter().GetResult();
+                    else durable!.DeleteAsync("contracts/" + id + "/manifest.json").GetAwaiter().GetResult();
+                };
+                try { await durable!.WriteAsync("contracts/" + id + "/manifest.json", await File.ReadAllBytesAsync(Path.Combine(staging, "manifest.json"), ct), ct); }
+                catch { rollbackRemote(); throw; }
+            }
+            // A remote cache write can create the local folder for a new manifest.
+            var folderExists = Directory.Exists(folder);
+            try
+            {
+                if (folderExists) Directory.Move(folder, backup);
+                try { Directory.Move(staging, folder); }
+                catch { if (folderExists) Directory.Move(backup, folder); throw; }
+            }
+            catch { rollbackRemote?.Invoke(); throw; }
+            return new DocumentWrite(folder, folderExists ? backup : null, rollbackRemote);
         }
         catch { if (Directory.Exists(staging)) Directory.Delete(staging, true); throw; }
     }
 
-    public sealed class DocumentWrite(string folder, string? backup) : IDisposable
+    public sealed class DocumentWrite(string folder, string? backup, Action? rollbackRemote = null) : IDisposable
     {
         private bool completed;
         public void Complete()
@@ -102,11 +124,22 @@ public sealed class ContractDocumentStore(string databasePath)
         public void Dispose()
         {
             if (completed) return;
+            rollbackRemote?.Invoke();
             if (Directory.Exists(folder)) Directory.Delete(folder, true);
             if (backup is not null) Directory.Move(backup, folder);
             completed = true;
         }
     }
-    public void Delete(int id) { if (Directory.Exists(Folder(id))) Directory.Delete(Folder(id), true); }
-    public string FilePath(int id, string fileId) => Path.Combine(Folder(id), fileId);
+    public void Delete(int id)
+    {
+        if (Remote is {} remote)
+            foreach (var path in remote.Enumerate().Where(p => p.StartsWith(Folder(id) + Path.DirectorySeparatorChar, StringComparison.Ordinal)))
+                remote.Delete(Path.GetRelativePath(Root, path).Replace('\\', '/'));
+        if (Directory.Exists(Folder(id))) Directory.Delete(Folder(id), true);
+    }
+    public string FilePath(int id, string fileId)
+    {
+        if (id <= 0 || !Guid.TryParseExact(fileId, "N", out _)) throw new InvalidDataException();
+        return Remote?.Ensure(id + "/" + fileId) ?? Path.Combine(Folder(id), fileId);
+    }
 }

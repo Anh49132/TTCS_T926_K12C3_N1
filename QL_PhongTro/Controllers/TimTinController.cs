@@ -47,7 +47,7 @@ public class TimTinController(AppDbContext db, TinDangExpirationService expirati
         await db.Database.OpenConnectionAsync(cancellationToken);
         try
         {
-            using var command = db.Database.GetDbConnection().CreateCommand();
+            using var command = db.Database.GetDbConnection().CreatePortableCommand();
             command.CommandText = "SELECT COUNT(*) FROM sqlite_master WHERE type = 'table' AND name = 'tin_dang'";
             model.SchemaReady = Convert.ToInt64(await command.ExecuteScalarAsync(cancellationToken)) == 1;
         }

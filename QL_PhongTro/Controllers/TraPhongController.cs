@@ -51,7 +51,7 @@ public sealed class TraPhongController(AppDbContext db,ITimeProvider clock):Cont
     public async Task<IActionResult> Luu([Bind(Prefix="Input")]TraPhongInput input)
     {
         try{await Service.KiemTraQuyenAsync(Actor,input.HopDongId);if(!ModelState.IsValid)return await Loi(input);var id=await Service.LuuAsync(Actor,input);return RedirectToAction(nameof(ChiTiet),new {id});}
-        catch(UnauthorizedAccessException){return Forbid();}catch(Exception ex)when(ex is InvalidOperationException or OverflowException or DbUpdateException or SqliteException){db.ChangeTracker.Clear();ModelState.AddModelError("",ex is InvalidOperationException?ex.Message:"Không thể lưu. Vui lòng kiểm tra dữ liệu và thử lại.");return await Loi(input);}
+        catch(UnauthorizedAccessException){return Forbid();}catch(Exception ex)when(ex is InvalidOperationException or OverflowException or DbUpdateException or DbException){db.ChangeTracker.Clear();ModelState.AddModelError("",ex is InvalidOperationException?ex.Message:"Không thể lưu. Vui lòng kiểm tra dữ liệu và thử lại.");return await Loi(input);}
     }
     [HttpPost,ValidateAntiForgeryToken,ModuleAccess("TAI_CHINH",write:true)]
     public async Task<IActionResult> UocTinh([Bind(Prefix="Input")]TraPhongInput input)

@@ -62,7 +62,7 @@ public sealed partial class TatToanController(AppDbContext db,ITimeProvider cloc
             return RedirectToAction(nameof(ChiTiet),new { id=input.HopDongId });
         }
         catch(UnauthorizedAccessException) { return Forbid(); }
-        catch(Exception ex)when(ex is InvalidOperationException or DbUpdateException or SqliteException or OverflowException)
+        catch(Exception ex)when(ex is InvalidOperationException or DbUpdateException or DbException or OverflowException)
         {
             db.ChangeTracker.Clear();
             ModelState.AddModelError("",ex is InvalidOperationException?ex.Message:"Không thể lưu do dữ liệu đang thay đổi hoặc số tiền vượt giới hạn. Không có thay đổi nào được lưu.");

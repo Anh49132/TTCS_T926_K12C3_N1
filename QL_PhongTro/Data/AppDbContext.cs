@@ -3,8 +3,11 @@ using QL_PhongTro.Models;
 
 namespace QL_PhongTro.Data;
 
-public partial class AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor? httpContext = null) : DbContext(options)
+public partial class AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor? httpContext = null, IConfiguration? configuration = null) : DbContext(options)
 {
+    public string FileStoragePath => Database.IsNpgsql()
+        ? configuration?["DatabasePath"] ?? throw new InvalidOperationException("File cache scope is required.")
+        : Database.GetDbConnection().DataSource;
     public DbSet<TaiKhoanNganHang> TaiKhoanNganHangs => Set<TaiKhoanNganHang>();
     public DbSet<YeuCauTraPhong> YeuCauTraPhongs => Set<YeuCauTraPhong>();
     public DbSet<ThongBaoTraPhong> ThongBaoTraPhongs => Set<ThongBaoTraPhong>();
@@ -356,5 +359,6 @@ public partial class AppDbContext(DbContextOptions<AppDbContext> options, IHttpC
         requestNotice.HasIndex(e => new { e.NguoiNhanId, e.DaDoc, e.NgayTao }).HasDatabaseName("ix_yeu_cau_thue_thong_bao_nguoi");
         requestNotice.HasOne<TaiKhoan>().WithMany().HasForeignKey(e => e.NguoiNhanId).OnDelete(DeleteBehavior.Restrict);
 
+        ConfigurePostgreSqlModel(modelBuilder);
     }
 }

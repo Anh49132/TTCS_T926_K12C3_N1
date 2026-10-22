@@ -90,7 +90,7 @@ public partial class LichHenService(AppDbContext db, ITimeProvider clock)
     private const string DocSql = """
         SELECT r.id, r.ma_yeu_cau, r.loai_yeu_cau, r.trang_thai, r.ngay_tao, r.lich_hen,
                r.ly_do_tu_choi, r.nguoi_xu_ly_id, r.ngay_xu_ly, r.phien_ban,
-               r.ngay_mong_muon, r.so_nguoi_du_kien, r.loi_nhan,
+               CAST(r.ngay_mong_muon AS TEXT), r.so_nguoi_du_kien, r.loi_nhan,
                p.id, p.ma_phong, b.ten_toa_nha, b.dia_chi, b.chu_nha_id, c.ho_ten AS ten_chu_nha,
                k.id AS khach_thue_id, k.tai_khoan_id, k.ho_ten AS ten_khach, t.so_dien_thoai,
                (SELECT h.ghi_chu_tu_choi FROM yeu_cau_thue_lich_su h
@@ -99,8 +99,8 @@ public partial class LichHenService(AppDbContext db, ITimeProvider clock)
                (SELECT h.lich_hen_cu FROM yeu_cau_thue_lich_su h
                 WHERE h.yeu_cau_thue_id = r.id AND h.hanh_dong = $hanhDongDoiLich AND h.lich_hen_cu IS NOT NULL
                 ORDER BY h.id DESC LIMIT 1) AS lich_hen_cu,
-               EXISTS (SELECT 1 FROM yeu_cau_thue_lich_su h
-                       WHERE h.yeu_cau_thue_id = r.id AND h.hanh_dong = $hanhDongDoiLich) AS da_doi_lich,
+               CASE WHEN EXISTS (SELECT 1 FROM yeu_cau_thue_lich_su h
+                       WHERE h.yeu_cau_thue_id = r.id AND h.hanh_dong = $hanhDongDoiLich) THEN 1 ELSE 0 END AS da_doi_lich,
                p.trang_thai AS trang_thai_phong, p.phien_ban AS phien_ban_phong
         FROM yeu_cau_thue r
         JOIN tin_dang d ON d.id = r.tin_dang_id
@@ -134,15 +134,15 @@ public partial class LichHenService(AppDbContext db, ITimeProvider clock)
     public async Task<bool> CoBangYeuCauAsync(CancellationToken ct)
     {
         await db.Database.OpenConnectionAsync();
-        using var cmd = ((SqliteConnection)db.Database.GetDbConnection()).CreateCommand();
+        using var cmd = db.Database.GetDbConnection().CreatePortableCommand();
         cmd.CommandText = "SELECT 1 FROM sqlite_master WHERE type='table' AND name='yeu_cau_thue';";
         return await cmd.ExecuteScalarAsync(ct) is not null;
     }
 
-    private async Task<LichHenYeuCau?> LoadAsync(int id, CancellationToken ct, SqliteTransaction? transaction = null)
+    private async Task<LichHenYeuCau?> LoadAsync(int id, CancellationToken ct, DbTransaction? transaction = null)
     {
         await db.Database.OpenConnectionAsync();
-        using var cmd = ((SqliteConnection)db.Database.GetDbConnection()).CreateCommand();
+        using var cmd = db.Database.GetDbConnection().CreatePortableCommand();
         cmd.Transaction = transaction;
         cmd.CommandText = DocSql;
         cmd.Parameters.AddWithValue("$id", id);
@@ -183,7 +183,7 @@ public partial class LichHenService(AppDbContext db, ITimeProvider clock)
                 PhienBanPhong = reader.GetInt32(27)
             };
         }
-        catch (SqliteException ex) when (ex.SqliteErrorCode == 1)
+        catch (DbException ex) when (DatabaseErrors.IsMissingSchema(ex))
         {
             // "no such table": CSDL chưa có yeu_cau_thue. Xem như chưa có yêu cầu nào để mọi
             // action đã bắt KeyNotFoundException trả về NotFound thay vì lỗi 500.
@@ -252,7 +252,7 @@ public partial class LichHenService(AppDbContext db, ITimeProvider clock)
     public async Task<List<LichTrung>> TimLichTrungAsync(int phongId, DateTime lichHenUtc, int yeuCauIdHienTai, CancellationToken ct)
     {
         await db.Database.OpenConnectionAsync();
-        using var cmd = ((SqliteConnection)db.Database.GetDbConnection()).CreateCommand();
+        using var cmd = db.Database.GetDbConnection().CreatePortableCommand();
         cmd.CommandText = LichTrungSql;
         cmd.Parameters.AddWithValue("$phongId", phongId);
         cmd.Parameters.AddWithValue("$yeuCauId", yeuCauIdHienTai);
@@ -291,8 +291,8 @@ public partial class LichHenService(AppDbContext db, ITimeProvider clock)
         if (lichHenUtc <= now) throw new InvalidOperationException("Lịch hẹn phải nằm trong tương lai.");
 
         await db.Database.OpenConnectionAsync();
-        using var tx = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
-        using (var update = tx.Connection!.CreateCommand())
+        using var tx = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
+        using (var update = tx.Connection!.CreatePortableCommand())
         {
             update.Transaction = tx;
             update.CommandText = """
@@ -341,8 +341,8 @@ public partial class LichHenService(AppDbContext db, ITimeProvider clock)
         if (lichHenMoiUtc <= now) throw new InvalidOperationException("Ngày giờ mới phải sau thời điểm hiện tại.");
 
         await db.Database.OpenConnectionAsync();
-        using var tx = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
-        using (var update = tx.Connection!.CreateCommand())
+        using var tx = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
+        using (var update = tx.Connection!.CreatePortableCommand())
         {
             update.Transaction = tx;
             update.CommandText = """
@@ -399,10 +399,10 @@ public partial class LichHenService(AppDbContext db, ITimeProvider clock)
         var now = UtcHienTai();
 
         await db.Database.OpenConnectionAsync();
-        using var tx = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        using var tx = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         if (sauKhiXem)
         {
-            using var check = tx.Connection!.CreateCommand();
+            using var check = tx.Connection!.CreatePortableCommand();
             check.Transaction = tx;
             check.CommandText = """
                 SELECT CASE WHEN p.so_nguoi_toi_da < $people THEN 'CAPACITY'
@@ -416,7 +416,7 @@ public partial class LichHenService(AppDbContext db, ITimeProvider clock)
             if (await check.ExecuteScalarAsync(ct) is not string result || result != "OK")
                 throw new InvalidOperationException("Phòng không còn đủ điều kiện giữ chỗ: kiểm tra sức chứa, hợp đồng và yêu cầu đã duyệt khác.");
         }
-        using (var update = tx.Connection!.CreateCommand())
+        using (var update = tx.Connection!.CreatePortableCommand())
         {
             update.Transaction = tx;
             update.CommandText = """
@@ -442,7 +442,7 @@ public partial class LichHenService(AppDbContext db, ITimeProvider clock)
                 throw new LichHenConflictException("Yêu cầu hoặc phòng vừa được cập nhật bởi người khác. Vui lòng tải lại trang.");
         }
 
-        using (var listingUpdate = tx.Connection!.CreateCommand())
+        using (var listingUpdate = tx.Connection!.CreatePortableCommand())
         {
             listingUpdate.Transaction = tx;
             listingUpdate.CommandText = "UPDATE tin_dang SET trang_thai='DA_CHO_THUE' WHERE phong_id=$room AND trang_thai='DANG_HIEN_THI'";
@@ -480,8 +480,8 @@ public partial class LichHenService(AppDbContext db, ITimeProvider clock)
         var now = UtcHienTai();
 
         await db.Database.OpenConnectionAsync();
-        using var tx = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
-        using (var update = tx.Connection!.CreateCommand())
+        using var tx = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
+        using (var update = tx.Connection!.CreatePortableCommand())
         {
             update.Transaction = tx;
             update.CommandText = """
@@ -548,8 +548,8 @@ public partial class LichHenService(AppDbContext db, ITimeProvider clock)
 
         var now = UtcHienTai();
         await db.Database.OpenConnectionAsync();
-        using var tx = ((SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
-        using (var update = tx.Connection!.CreateCommand())
+        using var tx = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
+        using (var update = tx.Connection!.CreatePortableCommand())
         {
             update.Transaction = tx;
             update.CommandText = """
@@ -593,7 +593,7 @@ public partial class LichHenService(AppDbContext db, ITimeProvider clock)
             throw new UnauthorizedAccessException("Bạn không có quyền xem lịch sử yêu cầu này.");
 
         await db.Database.OpenConnectionAsync();
-        using var cmd = ((SqliteConnection)db.Database.GetDbConnection()).CreateCommand();
+        using var cmd = db.Database.GetDbConnection().CreatePortableCommand();
         cmd.CommandText = """
             SELECT trang_thai_cu, trang_thai_moi, hanh_dong, ten_nguoi_thuc_hien,
                    vai_tro_luc_thuc_hien, lich_hen_cu, lich_hen_moi, ly_do_tu_choi,
@@ -622,7 +622,7 @@ public partial class LichHenService(AppDbContext db, ITimeProvider clock)
                     ThoiDiem = DocUtc(reader.GetString(9)) ?? default
                 });
         }
-        catch (SqliteException ex) when (ex.SqliteErrorCode == 1)
+        catch (DbException ex) when (DatabaseErrors.IsMissingSchema(ex))
         {
             // Bảng lịch sử thuộc S2-08 nên trên dev luôn có; nếu thiếu thì coi như chưa có lịch sử.
             danhSach.Clear();
@@ -648,9 +648,9 @@ public partial class LichHenService(AppDbContext db, ITimeProvider clock)
         ThoiDiem = yeuCau.NgayTao
     };
 
-    private static async Task<(string? Ten, string? VaiTro)> DocNguoiThucHienAsync(SqliteTransaction tx, int accountId, CancellationToken ct)
+    private static async Task<(string? Ten, string? VaiTro)> DocNguoiThucHienAsync(DbTransaction tx, int accountId, CancellationToken ct)
     {
-        using var cmd = tx.Connection!.CreateCommand();
+        using var cmd = tx.Connection!.CreatePortableCommand();
         cmd.Transaction = tx;
         cmd.CommandText = "SELECT ho_ten, vai_tro FROM tai_khoan WHERE id = $id;";
         cmd.Parameters.AddWithValue("$id", accountId);
@@ -659,11 +659,11 @@ public partial class LichHenService(AppDbContext db, ITimeProvider clock)
         return (reader.IsDBNull(0) ? null : reader.GetString(0), reader.IsDBNull(1) ? null : reader.GetString(1));
     }
 
-    private static async Task GhiLichSuAsync(SqliteTransaction tx, int yeuCauId, string? trangThaiCu, string trangThaiMoi,
+    private static async Task GhiLichSuAsync(DbTransaction tx, int yeuCauId, string? trangThaiCu, string trangThaiMoi,
         string hanhDong, int? nguoiThucHienId, string? ten, string? vaiTro, DateTime? lichHenCu, DateTime? lichHenMoi,
         string? lyDoTuChoi, string? ghiChuTuChoi, DateTime thoiDiem, CancellationToken ct)
     {
-        using var cmd = tx.Connection!.CreateCommand();
+        using var cmd = tx.Connection!.CreatePortableCommand();
         cmd.Transaction = tx;
         cmd.CommandText = """
             INSERT INTO yeu_cau_thue_lich_su
@@ -688,10 +688,10 @@ public partial class LichHenService(AppDbContext db, ITimeProvider clock)
         await cmd.ExecuteNonQueryAsync(ct);
     }
 
-    private static async Task GhiNhatKyPhongAsync(SqliteTransaction tx, int phongId, string trangThaiCu,
+    private static async Task GhiNhatKyPhongAsync(DbTransaction tx, int phongId, string trangThaiCu,
         string trangThaiMoi, int nguoiThucHienId, string? ten, string? vaiTro, DateTime thoiDiem, CancellationToken ct)
     {
-        using var cmd = tx.Connection!.CreateCommand();
+        using var cmd = tx.Connection!.CreatePortableCommand();
         cmd.Transaction = tx;
         cmd.CommandText = """
             INSERT INTO nhat_ky_hoat_dong
@@ -719,11 +719,11 @@ public partial class LichHenService(AppDbContext db, ITimeProvider clock)
 
     // A profile without a linked account means the tenant cannot be reached; the
     // scheduling decision still stands, so the notification is skipped, not fatal.
-    private static async Task GhiThongBaoAsync(SqliteTransaction tx, LichHenYeuCau yeuCau, string loai,
+    private static async Task GhiThongBaoAsync(DbTransaction tx, LichHenYeuCau yeuCau, string loai,
         string tieuDe, string noiDung, DateTime ngayTao, CancellationToken ct, int? nguoiNhanId = null)
     {
         if ((nguoiNhanId ?? yeuCau.TaiKhoanKhachId) is not { } nguoiNhan) return;
-        using var cmd = tx.Connection!.CreateCommand();
+        using var cmd = tx.Connection!.CreatePortableCommand();
         cmd.Transaction = tx;
         cmd.CommandText = """
             INSERT INTO yeu_cau_thue_thong_bao

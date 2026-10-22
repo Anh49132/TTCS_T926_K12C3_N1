@@ -176,7 +176,7 @@ public partial class TinDangController(AppDbContext db, YeuCauThueService reques
     public async Task<IActionResult> Tao(TaoTinDangViewModel form, string? intent)
     {
         await db.Database.OpenConnectionAsync();
-        await using var sqlite = ((Microsoft.Data.Sqlite.SqliteConnection)db.Database.GetDbConnection()).BeginTransaction(deferred: false);
+        await using var sqlite = db.Database.GetDbConnection().BeginPortableTransaction(deferred: false);
         await using var transaction = await db.Database.UseTransactionAsync(sqlite);
         var source = await TaoModelAsync(form.PhongId);
         if (source is null) return NotFound();
@@ -271,7 +271,7 @@ public partial class TinDangController(AppDbContext db, YeuCauThueService reques
         var room = await db.PhongTros.SingleAsync(x => x.Id == listing.PhongId);
         var building = await db.ToaNhas.SingleAsync(x => x.Id == room.ToaNhaId);
         if (building.ChuNhaId != AccountId && !(User.IsInRole("QUAN_LY") && building.QuanLyId == AccountId)) return Forbid();
-        await using var transaction = await db.Database.BeginTransactionAsync();
+        await using var transaction = await db.Database.BeginProtectedTransactionAsync();
         string? error = listing.TrangThai != trangThaiDaXem ? "Tin đã thay đổi. Hãy tải lại danh sách." : null;
         if (trangThai == "NHAP" && listing.TrangThai == "DANG_HIEN_THI") error = "Hãy tạm ẩn tin công khai trước khi chuyển về bản nháp.";
         if (trangThai == "DANG_HIEN_THI")

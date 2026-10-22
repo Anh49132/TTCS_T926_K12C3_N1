@@ -12,9 +12,9 @@ public sealed class PasswordResetService(AppDbContext db, ITimeProvider clock, I
     IOptions<PasswordResetOptions> options, IWebHostEnvironment environment)
 {
     public const string AcceptedMessage = "Nếu email thuộc tài khoản Khách thuê đang hoạt động, bạn sẽ nhận được liên kết đặt lại mật khẩu có hiệu lực trong 30 phút.";
-    private SqliteConnection Open()
+    private DbConnection Open()
     {
-        var c = new SqliteConnection(db.Database.GetConnectionString()); c.Open(); return c;
+        var c = db.Database.GetDbConnection().CreateRelatedConnection(); c.Open(); return c;
     }
     private static string Hash(string token) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(token)));
     private static bool TokenShape(string? token) => token is { Length: 43 } && token.All(c => char.IsAsciiLetterOrDigit(c) || c is '-' or '_');
@@ -29,8 +29,8 @@ public sealed class PasswordResetService(AppDbContext db, ITimeProvider clock, I
             throw new InvalidOperationException("Configure a trusted PublicBaseUrl (HTTPS in production).");
         var token = WebEncoders.Base64UrlEncode(RandomNumberGenerator.GetBytes(32));
         using var c = Open();
-        using (var tx = c.BeginTransaction(deferred: false))
-        using (var cmd = c.CreateCommand())
+        using (var tx = c.BeginPortableTransaction(deferred: false))
+        using (var cmd = c.CreatePortableCommand())
         {
             cmd.Transaction = tx;
             var now = clock.UtcNow;
@@ -51,7 +51,7 @@ public sealed class PasswordResetService(AppDbContext db, ITimeProvider clock, I
         try { await sender.SendAsync(account.Email, options.Value.PublicBaseUrl.TrimEnd('/') + "/Account/ResetPassword?token=" + token); }
         catch
         {
-            using var cleanup = c.CreateCommand();cleanup.CommandText = "DELETE FROM password_reset_token WHERE token_hash=$hash";
+            using var cleanup = c.CreatePortableCommand();cleanup.CommandText = "DELETE FROM password_reset_token WHERE token_hash=$hash";
             cleanup.Parameters.AddWithValue("$hash",Hash(token));cleanup.ExecuteNonQuery();
             // Failed deliveries still consume a request, preventing retry floods during SMTP failures.
             throw;
@@ -61,7 +61,7 @@ public sealed class PasswordResetService(AppDbContext db, ITimeProvider clock, I
     public bool IsValid(string? token)
     {
         if (!TokenShape(token)) return false;
-        using var c = Open(); using var cmd = c.CreateCommand();
+        using var c = Open(); using var cmd = c.CreatePortableCommand();
         cmd.CommandText = """
             SELECT COUNT(*) FROM password_reset_token t JOIN tai_khoan a ON a.id=t.account_id
             WHERE t.token_hash=$hash AND t.used_at IS NULL AND t.expires_at>$now AND a.dang_hoat_dong=1 AND a.is_deleted=0 AND a.email_confirmed=1 AND a.vai_tro='KHACH_THUE'
@@ -73,7 +73,7 @@ public sealed class PasswordResetService(AppDbContext db, ITimeProvider clock, I
     {
         if (!TokenShape(token)) return false;
         var hash = BCrypt.Net.BCrypt.HashPassword(newPassword);
-        using var c = Open(); using var tx = c.BeginTransaction(deferred: false); using var cmd = c.CreateCommand();cmd.Transaction = tx;
+        using var c = Open(); using var tx = c.BeginPortableTransaction(deferred: false); using var cmd = c.CreatePortableCommand();cmd.Transaction = tx;
         cmd.CommandText = """
             SELECT t.account_id FROM password_reset_token t JOIN tai_khoan a ON a.id=t.account_id
             WHERE t.token_hash=$token AND t.used_at IS NULL AND t.expires_at>$now AND a.dang_hoat_dong=1 AND a.is_deleted=0 AND a.email_confirmed=1 AND a.vai_tro='KHACH_THUE'

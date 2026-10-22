@@ -15,7 +15,7 @@ public sealed partial class TatToanService
     // Payments/refunds recorded after confirmation must never change this statement.
     public async Task<(string FileName, byte[] Content)> PdfAsync(int actor, int contract)
     {
-        await using var read = await db.Database.BeginTransactionAsync();
+        await using var read = await db.Database.BeginProtectedTransactionAsync();
         await KiemTraQuyenAsync(actor, contract, false);
         var info = await (from h in db.HopDongs.AsNoTracking()
             join p in db.PhongTros on h.PhongId equals p.Id

@@ -29,7 +29,7 @@ public sealed class DichVuPhongService(AppDbContext db, DichVuService prices, IT
 
     public async Task DatMacDinhAsync(int accountId, int buildingId, int serviceId, bool enabled)
     {
-        await using var tx = await db.Database.BeginTransactionAsync();
+        await using var tx = await db.Database.BeginProtectedTransactionAsync();
         if (!await prices.SoHuuToaNhaAsync(accountId, buildingId)) throw new UnauthorizedAccessException();
         var catalog = await db.DichVuToaNhas.SingleOrDefaultAsync(x => x.ToaNhaId == buildingId && x.DichVuId == serviceId)
             ?? throw new InvalidOperationException("Không tìm thấy dịch vụ trong tòa nhà.");
@@ -48,7 +48,7 @@ public sealed class DichVuPhongService(AppDbContext db, DichVuService prices, IT
     public async Task DatDichVuAsync(int accountId, int roomId, int catalogId, bool enabled, long? donGiaRieng = null)
     {
         if (donGiaRieng < 0) throw new ArgumentOutOfRangeException(nameof(donGiaRieng));
-        await using var tx = await db.Database.BeginTransactionAsync();
+        await using var tx = await db.Database.BeginProtectedTransactionAsync();
         var room = await PhongAsync(accountId, roomId);
         if (!await db.DichVuToaNhas.AnyAsync(x => x.Id == catalogId && x.ToaNhaId == room.ToaNhaId))
             throw new UnauthorizedAccessException();
@@ -78,7 +78,7 @@ public sealed class DichVuPhongService(AppDbContext db, DichVuService prices, IT
     public async Task DatDonGiaRiengAsync(int accountId, int roomId, int catalogId, long? donGiaRieng)
     {
         if (donGiaRieng < 0) throw new ArgumentOutOfRangeException(nameof(donGiaRieng));
-        await using var tx = await db.Database.BeginTransactionAsync();
+        await using var tx = await db.Database.BeginProtectedTransactionAsync();
         var room = await PhongAsync(accountId, roomId);
         if (!await db.DichVuToaNhas.AnyAsync(x => x.Id == catalogId && x.ToaNhaId == room.ToaNhaId))
             throw new UnauthorizedAccessException();
