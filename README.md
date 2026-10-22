@@ -394,7 +394,7 @@ Invoke-RestMethod -Method Post -Uri 'http://localhost:5247/api/auth/login' -Body
 - Đảm bảo `JwtSettings.SecretKey` đủ dài (≥32 ký tự) và khác nhau giữa môi trường dev/staging/prod.
 
 ### ⚠️ Lưu ý build Release
-Build Debug ở trên phù hợp để chạy và báo cáo local. Build Release hiện yêu cầu cấu hình license hợp lệ cho `SixLabors.ImageSharp` 4.1.2; nếu chưa có license, bước build Release sẽ dừng thay vì chỉ cảnh báo. Không thêm khóa license vào Git; cấu hình qua secret của môi trường triển khai.
+Build Debug ở trên phù hợp để chạy và báo cáo local. Xử lý ảnh dùng `SkiaSharp` 4.153.1 (MIT), không cần đăng ký hoặc cấu hình khóa license khi build Release. Gói `SkiaSharp.NativeAssets.Linux.NoDependencies` cùng phiên bản phục vụ container Linux; bản quyền và thông báo thư viện kèm trong `QL_PhongTro/ThirdPartyNotices` và gói publish. Bản online hiện tại: [NhàTốt](https://nhatot-buk7.onrender.com), dùng Render Free và Neon Free. Xem [hướng dẫn triển khai Render/Neon](docs/trien-khai-render-neon.md); `docs/trien-khai-online.md` lưu phương án Railway trước đó.
 
 ## Nhật ký hoạt động S1-10
 

@@ -428,7 +428,7 @@ Trạng thái theo tiến độ đến **06/10/2026**. "Xong" nghĩa là đã tr
 
 ### 9.4 Cảnh báo build và test đã biết
 
-- Thiếu license **ImageSharp**: cần license hợp lệ trước khi phát hành (Release).
+- Theo yêu cầu 22/10/2026: đã thay ImageSharp bằng **SkiaSharp 4.153.1 (MIT)**, kèm native Linux; không cần khóa license để build Release. Giữ kiểm tra ảnh JPG/PNG, giới hạn dung lượng/độ phân giải, xoay EXIF, resize và thumbnail. Thông báo bản quyền tại `QL_PhongTro/ThirdPartyNotices`.
 - `NU1900`: không lấy được dữ liệu lỗ hổng NuGet (không chứng minh đã quét).
 - `CS8601` trong `AuthController` (có sẵn từ trước).
 - Lần chạy 05/10/2026: 262/263 ca đạt, 1 ca trang chủ thất bại (thiếu form tìm nhanh; test còn kỳ vọng tin nổi bật/cam kết). Chạy lại để xem hiện trạng, không giả định đã sửa.
