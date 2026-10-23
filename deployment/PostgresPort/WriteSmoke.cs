@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 using Npgsql;
 using QL_PhongTro.Data;
 using QL_PhongTro.Services;
@@ -51,8 +53,51 @@ internal static class WriteSmoke
             await using var r = await probe.ExecuteReaderAsync(); await r.ReadAsync();
             Console.WriteLine(JsonSerializer.Serialize(new { schema=r.GetString(0),version=r.IsDBNull(1)?(long?)null:r.GetInt64(1),tables=r.GetInt64(2),triggers=r.GetInt64(3) }));
         }
-        AppDbContext Db() => new(new DbContextOptionsBuilder<AppDbContext>().UseNpgsql(cs.ConnectionString).AddInterceptors(new PostgreSqlCommandInterceptor()).Options);
+        AppDbContext Db(int actorId=1) => new(new DbContextOptionsBuilder<AppDbContext>().UseNpgsql(cs.ConnectionString).AddInterceptors(new PostgreSqlCommandInterceptor()).Options,
+            new HttpContextAccessor { HttpContext=new DefaultHttpContext { User=new ClaimsPrincipal(new ClaimsIdentity([new Claim(ClaimTypes.NameIdentifier,actorId.ToString())],"synthetic")) } });
         await PostgreSqlStartup.CheckAsync(cs.ConnectionString);
+        using (var db = Db())
+        {
+            await db.Database.ExecuteSqlRawAsync("""
+                INSERT INTO tai_khoan(id,ho_ten,email,so_dien_thoai,mat_khau,vai_tro,ngay_tao,ngay_cap_nhat)
+                SELECT n,'Synthetic Requester','tenant'||n||'@example.test','090000000'||n,'synthetic-not-a-login','KHACH_THUE','2026-01-01','2026-01-01' FROM generate_series(3,5) n;
+                UPDATE khach_thue SET tai_khoan_id=3 WHERE id=1;
+                SELECT setval(pg_get_serial_sequence('khach_thue','id'),1,true);
+                INSERT INTO phong_tro(id,toa_nha_id,ma_phong,tang,dien_tich,gia_thue,so_nguoi_toi_da,ngay_tao) VALUES(2,1,'REQUEST',1,20,1000000,2,'2026-01-01');
+                INSERT INTO tin_dang(id,phong_id,nguoi_dang_id,tieu_de,trang_thai,ngay_tao) VALUES(1,2,1,'Synthetic listing','DANG_HIEN_THI','2026-01-01');
+                """);
+        }
+        GuiYeuCauViewModel Request(int people=2) => new() { LoaiYeuCau="XEM_PHONG",NgayMongMuon=new(2026,10,23),SoNguoiDuKien=people,LoiNhan="Synthetic test" };
+        using (var db = Db(3))
+        {
+            var service = new YeuCauThueService(db,new Clock());
+            if ((await service.Send(1,3,Request()))?.MaYeuCau!="YC-202610-0001") throw new Exception("First request failed.");
+        }
+        using (var db = Db(4))
+        {
+            var service = new YeuCauThueService(db,new Clock());
+            try { await service.Send(1,3,Request()); throw new Exception("Duplicate request accepted."); } catch(OpenRequestExistsException) { }
+            try { await service.Send(1,4,Request(3)); throw new Exception("Capacity guard missing."); } catch(RoomCapacityException) { }
+            if ((await service.Send(1,4,Request()))?.MaYeuCau!="YC-202610-0002") throw new Exception("Counter increment/profile creation failed.");
+            await db.Database.ExecuteSqlRawAsync("UPDATE rental_request_counter SET so_cuoi=9999 WHERE thang='202610'");
+        }
+        using (var db = Db(5))
+        {
+            try { await new YeuCauThueService(db,new Clock()).Send(1,5,Request()); throw new Exception("Counter limit ignored."); } catch(RequestCodeExhaustedException) { }
+        }
+        using (var db = Db())
+        {
+            if (await db.YeuCauThues.CountAsync()!=2 || await db.KhachThues.AnyAsync(x=>x.TaiKhoanId==5)) throw new Exception("Request rollback failed.");
+            await db.Database.ExecuteSqlRawAsync("""
+                INSERT INTO app_role("Code","Name","SortOrder") VALUES('KHACH_THUE','Synthetic tenant',1);
+                INSERT INTO app_module("Code","Name","GroupName","SortOrder") VALUES('BAO_HONG','Synthetic repairs','Synthetic',1);
+                INSERT INTO role_permission("RoleCode","ModuleCode","AccessLevel","OwnDataOnly") VALUES('KHACH_THUE','BAO_HONG','WRITE',1);
+                """);
+            var repairs = new BaoHongService(db,new Clock(),new BaoHongImageStore(Path.Combine(Path.GetTempPath(),schema)));
+            BaoHongInput Repair() => new() { HopDongId=1,LoaiThietBi="Synthetic",MoTa="Synthetic test",MucDo="THUONG",KhoaChongTrung=Guid.NewGuid().ToString("N") };
+            if ((await repairs.GuiAsync(3,Repair())).MaBaoHong!="BH-202610-0001" || (await repairs.GuiAsync(3,Repair())).MaBaoHong!="BH-202610-0002") throw new Exception("Repair counter failed.");
+        }
+        Console.WriteLine("Synthetic rental request: insert, increment, duplicate, capacity, exhaustion rollback; repair counter: insert and increment passed. No emails sent.");
         GhiThuHoaDonInput Receipt(int id, long amount, string? key=null) => new() { HoaDonId=id, SoTien=amount, NgayThu=new(2026,10,23), HinhThuc="TIEN_MAT", KhoaChongTrung=key??Guid.NewGuid().ToString("N") };
         using (var db = Db())
         {

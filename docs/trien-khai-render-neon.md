@@ -82,3 +82,9 @@ Chưa tích hợp S3 vào các store; các thư mục private còn suy ra từ D
 - Không cam kết có URL ngay chỉ bằng đổi connection string. Mã hiện có phụ thuộc SQLite ở nhiều module; bỏ kiểm tra schema/trigger/khóa để app chạy không phải hoàn thành triển khai.
 - Máy hiện có Docker CLI nhưng Docker Linux engine chưa chạy. Chưa có PostgreSQL local đang dùng để kiểm chứng; có thể dùng DB nhánh thử trên Neon sau khi kết nối và xác minh Free. Không tự bật dịch vụ tính phí làm môi trường test.
 - Bản Railway/Brevo Release sạch vẫn giữ tại `data/online/20261022-193959-6891a421`; chưa thay bằng một bản PostgreSQL chưa kiểm chứng.
+
+## Sửa lỗi cấp mã yêu cầu ngày 23/10/2026
+
+Log production tại `/TinDang/GuiYeuCau/91` xác nhận PostgreSQL 42702 do `so_cuoi` không định danh trong `ON CONFLICT DO UPDATE`. Hai bộ đếm yêu cầu thuê và báo hỏng nay định danh rõ bảng đích, vẫn dùng chung SQL cho SQLite/PostgreSQL và giữ transaction hiện có. Không chạy migration hoặc chỉnh bộ đếm production.
+
+93 kiểm thử HTTP/email giả/ngày/báo hỏng đạt, Release build đạt. `PostgresPort --write-smoke` trên nhánh test ghim sẵn xác minh tạo và tăng mã yêu cầu, tạo hồ sơ, chống trùng, giới hạn sức chứa, rollback hồ sơ khi hết mã, và hai mã báo hỏng liên tiếp. Dữ liệu fixture hoàn toàn giả; không gửi email thật. Trạng thái triển khai cuối cùng được kiểm tra qua Render và HTTPS sau khi push main cùng nhánh `codex/render-neon`.

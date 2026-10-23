@@ -131,7 +131,7 @@ public sealed class BaoHongService(AppDbContext db, ITimeProvider clock, BaoHong
         using var counter = sqlite.Connection!.CreatePortableCommand(); counter.Transaction = sqlite;
         counter.CommandText = """
             INSERT INTO bao_hong_so_ma(thang,so_cuoi) VALUES($month,1)
-            ON CONFLICT(thang) DO UPDATE SET so_cuoi=so_cuoi+1 WHERE so_cuoi<9999
+            ON CONFLICT(thang) DO UPDATE SET so_cuoi=bao_hong_so_ma.so_cuoi+1 WHERE bao_hong_so_ma.so_cuoi<9999
             RETURNING so_cuoi
             """;
         counter.Parameters.AddWithValue("$month", month);

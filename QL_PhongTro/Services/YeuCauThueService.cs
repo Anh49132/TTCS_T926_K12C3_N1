@@ -92,7 +92,7 @@ public class YeuCauThueService(AppDbContext db, ITimeProvider clock)
         cmd.Transaction = tx;
         cmd.CommandText = """
             INSERT INTO rental_request_counter(thang,so_cuoi) VALUES($month,1)
-            ON CONFLICT(thang) DO UPDATE SET so_cuoi=so_cuoi+1 WHERE so_cuoi<9999
+            ON CONFLICT(thang) DO UPDATE SET so_cuoi=rental_request_counter.so_cuoi+1 WHERE rental_request_counter.so_cuoi<9999
             RETURNING so_cuoi;
             """;
         cmd.Parameters.AddWithValue("$month", month);

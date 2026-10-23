@@ -1512,3 +1512,10 @@ Gộp origin/feature/S4-07/ui-improvements (0784cf5) vào dev928b2e2. Chỉ xung
 - Xung đột duy nhất ở tien-do.md được giải quyết bằng cách giữ cả ghi chép main 21/10 và các mốc triển khai 22–23/10. Không đổi mã ứng dụng so với nhánh deploy đã kiểm thử; không sửa project test hoặc CSDL.
 - Build Release ra data/main-merge-check đạt 0 lỗi, còn 2 CS8601 cũ trong AuthController. Kiểm tra conflict/whitespace và guard secret/data đạt. Các tệp review/output local không đưa vào commit.
 - Giữ cấu hình Render hiện tại; hợp nhất Git không thay nhánh deploy, không chạy initializer/updater hoặc gửi email thật.
+
+## 23/10/2026 — Sửa lỗi gửi yêu cầu trên PostgreSQL
+
+- Log Render xác nhận SQLSTATE 42702: `so_cuoi` mơ hồ trong UPSERT cấp mã yêu cầu. Định danh bảng đích ở phần tăng/giới hạn bộ đếm; sửa cùng mẫu trong báo hỏng. Không đổi schema/dữ liệu hoặc cơ chế phân quyền, transaction và email.
+- 93/93 kiểm thử liên quan đạt: HTTP gửi yêu cầu với email giả thành công/thất bại, ngày mong muốn và báo hỏng. Build Release thành công; còn cảnh báo NU1900 môi trường và CS8601 cũ khi biên dịch lại ứng dụng.
+- Mở rộng `--write-smoke` trên nhánh Neon test, schema chỉ chứa dữ liệu giả: tạo yêu cầu mới, tạo hồ sơ, tăng mã, chặn trùng/quá sức chứa, hết mã rollback cả hồ sơ; báo hỏng cấp mã đầu/tiếp theo đều đạt. Các kiểm chứng thu tiền/đồng thời/audit/bất biến/phiên/sắp ảnh cũng đạt. Không gửi email thật hoặc tạo yêu cầu trên dữ liệu production.
+- Triển khai qua nhánh Render hiện tại, compute Free, sau khi push cùng bản sửa lên main. Theo dõi deploy đến live và kiểm tra HTTPS trước khi thông báo hoàn tất.
