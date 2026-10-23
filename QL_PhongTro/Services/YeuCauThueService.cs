@@ -88,14 +88,25 @@ public class YeuCauThueService(AppDbContext db, ITimeProvider clock)
         var vietnam = TimeZoneInfo.FindSystemTimeZoneById("Asia/Ho_Chi_Minh");
         var month = TimeZoneInfo.ConvertTimeFromUtc(DateTime.SpecifyKind(clock.UtcNow, DateTimeKind.Utc), vietnam)
             .ToString("yyyyMM", CultureInfo.InvariantCulture);
+        // Imported/legacy rows may predate the counter. Reconcile under the same
+        // writer lock, retaining codes of cancelled requests and counter high-water marks.
+        var prefix = $"YC-{month}-";
+        var codes = await db.YeuCauThues.AsNoTracking().Where(r => r.MaYeuCau.StartsWith(prefix))
+            .Select(r => r.MaYeuCau).ToListAsync();
+        var maximum = codes.Where(c => c.Length == prefix.Length + 4 && c[prefix.Length..].All(char.IsAsciiDigit))
+            .Select(c => int.Parse(c[prefix.Length..], CultureInfo.InvariantCulture)).DefaultIfEmpty(0).Max();
+        if (maximum >= 9999) throw new RequestCodeExhaustedException();
         using var cmd = tx.Connection!.CreatePortableCommand();
         cmd.Transaction = tx;
         cmd.CommandText = """
-            INSERT INTO rental_request_counter(thang,so_cuoi) VALUES($month,1)
-            ON CONFLICT(thang) DO UPDATE SET so_cuoi=rental_request_counter.so_cuoi+1 WHERE rental_request_counter.so_cuoi<9999
+            INSERT INTO rental_request_counter(thang,so_cuoi) VALUES($month,$next)
+            ON CONFLICT(thang) DO UPDATE SET so_cuoi=CASE
+                WHEN rental_request_counter.so_cuoi >= $next THEN rental_request_counter.so_cuoi+1
+                ELSE $next END WHERE rental_request_counter.so_cuoi<9999
             RETURNING so_cuoi;
             """;
         cmd.Parameters.AddWithValue("$month", month);
+        cmd.Parameters.AddWithValue("$next", maximum + 1);
         var number = await cmd.ExecuteScalarAsync();
         if (number is null) throw new RequestCodeExhaustedException();
         var request = new YeuCauThue

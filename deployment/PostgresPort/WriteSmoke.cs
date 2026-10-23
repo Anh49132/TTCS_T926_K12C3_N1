@@ -65,20 +65,24 @@ internal static class WriteSmoke
                 SELECT setval(pg_get_serial_sequence('khach_thue','id'),1,true);
                 INSERT INTO phong_tro(id,toa_nha_id,ma_phong,tang,dien_tich,gia_thue,so_nguoi_toi_da,ngay_tao) VALUES(2,1,'REQUEST',1,20,1000000,2,'2026-01-01');
                 INSERT INTO tin_dang(id,phong_id,nguoi_dang_id,tieu_de,trang_thai,ngay_tao) VALUES(1,2,1,'Synthetic listing','DANG_HIEN_THI','2026-01-01');
+                INSERT INTO yeu_cau_thue(id,ma_yeu_cau,tin_dang_id,khach_thue_id,loai_yeu_cau,ngay_mong_muon,so_nguoi_du_kien,trang_thai,ngay_tao)
+                VALUES(1,'YC-202610-0020',1,1,'XEM_PHONG','2026-10-23',1,'DA_HUY','2026-01-01');
+                SELECT setval(pg_get_serial_sequence('yeu_cau_thue','id'),1,true);
                 """);
         }
         GuiYeuCauViewModel Request(int people=2) => new() { LoaiYeuCau="XEM_PHONG",NgayMongMuon=new(2026,10,23),SoNguoiDuKien=people,LoiNhan="Synthetic test" };
         using (var db = Db(3))
         {
             var service = new YeuCauThueService(db,new Clock());
-            if ((await service.Send(1,3,Request()))?.MaYeuCau!="YC-202610-0001") throw new Exception("First request failed.");
+            if ((await service.Send(1,3,Request()))?.MaYeuCau!="YC-202610-0021") throw new Exception("Legacy request with missing counter failed.");
+            await db.Database.ExecuteSqlRawAsync("UPDATE rental_request_counter SET so_cuoi=1 WHERE thang='202610'");
         }
         using (var db = Db(4))
         {
             var service = new YeuCauThueService(db,new Clock());
             try { await service.Send(1,3,Request()); throw new Exception("Duplicate request accepted."); } catch(OpenRequestExistsException) { }
             try { await service.Send(1,4,Request(3)); throw new Exception("Capacity guard missing."); } catch(RoomCapacityException) { }
-            if ((await service.Send(1,4,Request()))?.MaYeuCau!="YC-202610-0002") throw new Exception("Counter increment/profile creation failed.");
+            if ((await service.Send(1,4,Request()))?.MaYeuCau!="YC-202610-0022") throw new Exception("Stale counter recovery/profile creation failed.");
             await db.Database.ExecuteSqlRawAsync("UPDATE rental_request_counter SET so_cuoi=9999 WHERE thang='202610'");
         }
         using (var db = Db(5))
@@ -87,7 +91,8 @@ internal static class WriteSmoke
         }
         using (var db = Db())
         {
-            if (await db.YeuCauThues.CountAsync()!=2 || await db.KhachThues.AnyAsync(x=>x.TaiKhoanId==5)) throw new Exception("Request rollback failed.");
+            if (await db.YeuCauThues.CountAsync()!=3 || await db.KhachThues.AnyAsync(x=>x.TaiKhoanId==5)
+                || !await db.YeuCauThues.AnyAsync(x=>x.Id==1 && x.MaYeuCau=="YC-202610-0020" && x.TrangThai=="DA_HUY")) throw new Exception("Request rollback/legacy preservation failed.");
             await db.Database.ExecuteSqlRawAsync("""
                 INSERT INTO app_role("Code","Name","SortOrder") VALUES('KHACH_THUE','Synthetic tenant',1);
                 INSERT INTO app_module("Code","Name","GroupName","SortOrder") VALUES('BAO_HONG','Synthetic repairs','Synthetic',1);
@@ -95,9 +100,11 @@ internal static class WriteSmoke
                 """);
             var repairs = new BaoHongService(db,new Clock(),new BaoHongImageStore(Path.Combine(Path.GetTempPath(),schema)));
             BaoHongInput Repair() => new() { HopDongId=1,LoaiThietBi="Synthetic",MoTa="Synthetic test",MucDo="THUONG",KhoaChongTrung=Guid.NewGuid().ToString("N") };
-            if ((await repairs.GuiAsync(3,Repair())).MaBaoHong!="BH-202610-0001" || (await repairs.GuiAsync(3,Repair())).MaBaoHong!="BH-202610-0002") throw new Exception("Repair counter failed.");
+            if ((await repairs.GuiAsync(3,Repair())).MaBaoHong!="BH-202610-0001") throw new Exception("Repair counter failed.");
+            await db.Database.ExecuteSqlRawAsync("UPDATE bao_hong SET ma_bao_hong='BH-202610-0070'; UPDATE bao_hong_so_ma SET so_cuoi=1 WHERE thang='202610'");
+            if ((await repairs.GuiAsync(3,Repair())).MaBaoHong!="BH-202610-0071") throw new Exception("Stale repair counter recovery failed.");
         }
-        Console.WriteLine("Synthetic rental request: insert, increment, duplicate, capacity, exhaustion rollback; repair counter: insert and increment passed. No emails sent.");
+        Console.WriteLine("Synthetic rental request: missing/stale counter recovery, legacy preservation, duplicate, capacity, exhaustion rollback; repair counter recovery passed. No emails sent.");
         GhiThuHoaDonInput Receipt(int id, long amount, string? key=null) => new() { HoaDonId=id, SoTien=amount, NgayThu=new(2026,10,23), HinhThuc="TIEN_MAT", KhoaChongTrung=key??Guid.NewGuid().ToString("N") };
         using (var db = Db())
         {

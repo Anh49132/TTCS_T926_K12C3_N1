@@ -1519,3 +1519,11 @@ Gộp origin/feature/S4-07/ui-improvements (0784cf5) vào dev928b2e2. Chỉ xung
 - 93/93 kiểm thử liên quan đạt: HTTP gửi yêu cầu với email giả thành công/thất bại, ngày mong muốn và báo hỏng. Build Release thành công; còn cảnh báo NU1900 môi trường và CS8601 cũ khi biên dịch lại ứng dụng.
 - Mở rộng `--write-smoke` trên nhánh Neon test, schema chỉ chứa dữ liệu giả: tạo yêu cầu mới, tạo hồ sơ, tăng mã, chặn trùng/quá sức chứa, hết mã rollback cả hồ sơ; báo hỏng cấp mã đầu/tiếp theo đều đạt. Các kiểm chứng thu tiền/đồng thời/audit/bất biến/phiên/sắp ảnh cũng đạt. Không gửi email thật hoặc tạo yêu cầu trên dữ liệu production.
 - Triển khai qua nhánh Render hiện tại, compute Free, sau khi push cùng bản sửa lên main. Theo dõi deploy đến live và kiểm tra HTTPS trước khi thông báo hoàn tất.
+
+## 24/10/2026 — Tiếp nối mã yêu cầu từ dữ liệu cũ
+
+- Sau bản sửa cú pháp, log online cho thấy 23505 tại unique `yeu_cau_thue_ma_yeu_cau_key`. Truy vấn chỉ đọc xác nhận tháng 202610 có mã đến 0020 nhưng thiếu dòng rental_request_counter. Fixture trống trước đó không bao phủ dữ liệu cũ này.
+- Cấp mã yêu cầu và báo hỏng nay đọc mã hợp lệ lớn nhất trong tháng, kể cả bản đã hủy, rồi UPSERT tiếp nối với bộ đếm trong cùng khóa/transaction. Không hạ bộ đếm cao hơn, không đổi mã cũ, không sửa schema hoặc chạy script chỉnh production. Counter chỉ cập nhật cùng yêu cầu hợp lệ được lưu.
+- 99/99 kiểm thử liên quan đạt, gồm 6 ca HTTP/báo hỏng mới với counter thiếu, thấp hoặc cao hơn mã cũ. Release build đạt (cảnh báo NU1900 và 2 CS8601 cũ).
+- Neon test fixture giả tái hiện chính xác mã 0020/counter thiếu: gửi được 0021; hạ counter giả xuống 1 rồi gửi được 0022. Chặn trùng/quá sức chứa và rollback hồ sơ khi hết mã đạt; mã cũ giữ nguyên. Bộ đếm báo hỏng cũ và các kiểm chứng transaction/thu tiền/audit cũng đạt. Không tạo yêu cầu hoặc gửi email thật trên production để thử.
+- Push bản sửa lên main và codex/render-neon; deploy Render Free, xác minh live/HTTPS/log trước khi báo kết quả. SQLite nguồn và dữ liệu nghiệp vụ cũ không bị chỉnh sửa.

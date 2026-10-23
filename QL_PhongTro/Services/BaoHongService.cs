@@ -128,13 +128,22 @@ public sealed class BaoHongService(AppDbContext db, ITimeProvider clock, BaoHong
         if (contract is null) throw new BaoHongValidationException("HopDongId", "Phòng không thuộc hợp đồng còn hiệu lực của bạn tại thời điểm gửi. Hãy chọn lại phòng.");
         var profileId = await db.KhachThues.Where(x => x.TaiKhoanId == actorId).Select(x => x.Id).SingleAsync(ct);
         var month = today.ToString("yyyyMM", CultureInfo.InvariantCulture);
+        var prefix = $"BH-{month}-";
+        var codes = await db.BaoHongs.AsNoTracking().Where(b => b.MaBaoHong.StartsWith(prefix))
+            .Select(b => b.MaBaoHong).ToListAsync(ct);
+        var maximum = codes.Where(c => c.Length == prefix.Length + 4 && c[prefix.Length..].All(char.IsAsciiDigit))
+            .Select(c => int.Parse(c[prefix.Length..], CultureInfo.InvariantCulture)).DefaultIfEmpty(0).Max();
+        if (maximum >= 9999) throw new BaoHongValidationException("", "Tháng này đã hết dải 9999 mã báo hỏng. Vui lòng liên hệ chủ nhà để báo sự cố.");
         using var counter = sqlite.Connection!.CreatePortableCommand(); counter.Transaction = sqlite;
         counter.CommandText = """
-            INSERT INTO bao_hong_so_ma(thang,so_cuoi) VALUES($month,1)
-            ON CONFLICT(thang) DO UPDATE SET so_cuoi=bao_hong_so_ma.so_cuoi+1 WHERE bao_hong_so_ma.so_cuoi<9999
+            INSERT INTO bao_hong_so_ma(thang,so_cuoi) VALUES($month,$next)
+            ON CONFLICT(thang) DO UPDATE SET so_cuoi=CASE
+                WHEN bao_hong_so_ma.so_cuoi >= $next THEN bao_hong_so_ma.so_cuoi+1
+                ELSE $next END WHERE bao_hong_so_ma.so_cuoi<9999
             RETURNING so_cuoi
             """;
         counter.Parameters.AddWithValue("$month", month);
+        counter.Parameters.AddWithValue("$next", maximum + 1);
         var number = await counter.ExecuteScalarAsync(ct);
         if (number is null) throw new BaoHongValidationException("", "Tháng này đã hết dải 9999 mã báo hỏng. Vui lòng liên hệ chủ nhà để báo sự cố.");
         var issue = new BaoHong { MaBaoHong = $"BH-{month}-{Convert.ToInt32(number):D4}", NguoiBaoId = actorId,

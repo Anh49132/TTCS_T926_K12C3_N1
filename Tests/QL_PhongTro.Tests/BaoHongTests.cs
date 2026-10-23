@@ -121,6 +121,19 @@ public sealed partial class BaoHongTests
         var input=Input();var repeated=await Task.WhenAll(Enumerable.Range(0,2).Select(_=>Task.Run(async()=>{using var db=f.Context();return await new BaoHongService(db,f.Time).GuiAsync(2,input);})));
         Assert.Equal(repeated[0].Id,repeated[1].Id);Assert.Equal(9,f.Scalar("SELECT COUNT(*) FROM bao_hong"));
     }
+    [Theory]
+    [InlineData(null, 71)]
+    [InlineData(1, 71)]
+    [InlineData(90, 91)]
+    public async Task LegacyRepairCodesSurviveMissingOrStaleCounter(int? counter, int expected)
+    {
+        using var f=new Fixture(); using var db=f.Context(); var service=new BaoHongService(db,f.Time);
+        var old=await service.GuiAsync(2,Input());
+        f.Execute("UPDATE bao_hong SET ma_bao_hong='BH-202610-0070'; DELETE FROM bao_hong_so_ma;");
+        if(counter.HasValue) f.Execute($"INSERT INTO bao_hong_so_ma(thang,so_cuoi) VALUES('202610',{counter.Value})");
+        Assert.Equal($"BH-202610-{expected:D4}",(await service.GuiAsync(2,Input())).MaBaoHong);
+        Assert.Equal("BH-202610-0070",await db.BaoHongs.AsNoTracking().Where(x=>x.Id==old.Id).Select(x=>x.MaBaoHong).SingleAsync());
+    }
     [Fact]
     public async Task AuditFailureRollsBackReportAndCounter()
     {

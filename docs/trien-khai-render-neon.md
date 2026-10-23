@@ -88,3 +88,9 @@ Chưa tích hợp S3 vào các store; các thư mục private còn suy ra từ D
 Log production tại `/TinDang/GuiYeuCau/91` xác nhận PostgreSQL 42702 do `so_cuoi` không định danh trong `ON CONFLICT DO UPDATE`. Hai bộ đếm yêu cầu thuê và báo hỏng nay định danh rõ bảng đích, vẫn dùng chung SQL cho SQLite/PostgreSQL và giữ transaction hiện có. Không chạy migration hoặc chỉnh bộ đếm production.
 
 93 kiểm thử HTTP/email giả/ngày/báo hỏng đạt, Release build đạt. `PostgresPort --write-smoke` trên nhánh test ghim sẵn xác minh tạo và tăng mã yêu cầu, tạo hồ sơ, chống trùng, giới hạn sức chứa, rollback hồ sơ khi hết mã, và hai mã báo hỏng liên tiếp. Dữ liệu fixture hoàn toàn giả; không gửi email thật. Trạng thái triển khai cuối cùng được kiểm tra qua Render và HTTPS sau khi push main cùng nhánh `codex/render-neon`.
+
+## Bổ sung kiểm chứng dữ liệu cũ ngày 24/10/2026
+
+Bản sửa cú pháp chưa bao phủ counter thiếu khi đã có mã nghiệp vụ: log lần gửi tiếp theo là 23505 unique mã yêu cầu. Truy vấn chỉ đọc trên main cho thấy mã tháng 202610 lớn nhất là 0020, counter không có dòng; counter báo hỏng là 53 và khớp mã lớn nhất. Không chạy UPDATE/initializer trên production để chữa tạm.
+
+Luồng cấp mã nay tiếp nối số lớn nhất giữa mã hợp lệ hiện có và counter, dưới khóa ghi trong transaction hiện có. Giữ mã đã hủy, không hạ counter cao hơn, vẫn dừng ở 9999. Áp dụng cho yêu cầu và báo hỏng. 99 kiểm thử liên quan đạt, gồm HTTP với dữ liệu cũ/counter thiếu-thấp-cao; Neon test xác minh mã mới 0021 rồi 0022 khi counter bị thấp, giữ nguyên mã 0020 và rollback khi hết mã. Release build đạt. Không gửi email thật hoặc tạo yêu cầu thật trong quá trình kiểm thử.
